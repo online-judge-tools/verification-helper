@@ -1,0 +1,24 @@
+name: format
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up Python
+      uses: actions/setup-python@v1
+
+    - name: Install dependencies
+      run: pip3 install .[dev]
+
+    - name: Run tests
+      run: |
+        oj-ci -h
+        pylint --disable=all --enable=unused-import onlinejudge_ci setup.py
+        isort --check-only --diff --recursive onlinejudge_ci setup.py
+        yapf --diff --recursive onlinejudge_ci setup.tests | tee yapf.patch && test ! -s yapf.patch
+        mypy onlinejudge_ci setup.py

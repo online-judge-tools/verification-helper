@@ -2,11 +2,11 @@
 from setuptools import find_packages, setup
 
 setup(
-    name='competitive-programming-ci-script',
+    name='online-judge-ci-script',
     version='0.1.0',
     author='Kimiyuki Onaka',
     author_email='kimiyuki95@gmail.com',
-    url='https://github.com/kmyk/competitive-programming-ci-script',
+    url='https://github.com/kmyk/online-judge-ci-script',
     license='MIT License',
     description='',
     install_requires=[

@@ -171,13 +171,13 @@ def main(args: Optional[List[str]] = None) -> None:
     parsed = parser.parse_args(args)
 
     if parsed.subcommand == 'run':
-        fh = tempfile.NamedTemporaryFile(delete=False)
-        fh.write(bash_script.encode())
-        fh.close()
+        script = tempfile.NamedTemporaryFile(delete=False)
+        script.write(bash_script.encode())
+        script.close()
         try:
-            subprocess.check_call(['/bin/bash', fh.name] + list(map(str, parsed.path)), stdout=sys.stdout, stderr=sys.stderr)
+            subprocess.check_call(['/bin/bash', script.name] + list(map(str, parsed.path)), stdout=sys.stdout, stderr=sys.stderr)
         finally:
-            os.remove(fh.name)
+            os.remove(script.name)
 
     elif parsed.subcommand == 'init':
         if parsed.target == 'github-actions':

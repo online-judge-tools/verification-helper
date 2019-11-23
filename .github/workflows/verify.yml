@@ -1,0 +1,23 @@
+name: verify
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up Python
+      uses: actions/setup-python@v1
+
+    - name: Install dependencies
+      run: pip3 install -U git+https://github.com/kmyk/online-judge-ci-script
+
+    - name: Run tests
+      run: oj-ci run

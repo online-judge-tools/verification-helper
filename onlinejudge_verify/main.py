@@ -140,10 +140,10 @@ jobs:
       uses: actions/setup-python@v1
 
     - name: Install dependencies
-      run: pip3 install -U git+https://github.com/kmyk/online-judge-ci-script
+      run: pip3 install -U git+https://github.com/kmyk/online-judge-verify-helper
 
     - name: Run tests
-      run: oj-ci run
+      run: oj-verify run
 """
 
 

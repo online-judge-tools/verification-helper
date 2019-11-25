@@ -17,8 +17,8 @@ jobs:
 
     - name: Run tests
       run: |
-        oj-ci -h
-        pylint --disable=all --enable=unused-import onlinejudge_ci setup.py
-        isort --check-only --diff --recursive onlinejudge_ci setup.py
-        yapf --diff --recursive onlinejudge_ci setup.tests | tee yapf.patch && test ! -s yapf.patch
-        mypy onlinejudge_ci setup.py
+        oj-verify -h
+        pylint --disable=all --enable=unused-import onlinejudge_verify setup.py
+        isort --check-only --diff --recursive onlinejudge_verify setup.py
+        yapf --diff --recursive onlinejudge_verify setup.tests | tee yapf.patch && test ! -s yapf.patch
+        mypy onlinejudge_verify setup.py

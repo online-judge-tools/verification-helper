@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='online-judge-verify-helper',
-    version='0.1.0',
+    version='0.2.0',
     author='Kimiyuki Onaka',
     author_email='kimiyuki95@gmail.com',
     url='https://github.com/kmyk/online-judge-verify-helper',
@@ -11,8 +11,15 @@ setup(
     description='',
     install_requires=[
         'online-judge-tools == 7.*',
+        'setuptools',
     ],
-    packages=find_packages(exclude=('tests', 'docs')),
+    packages=find_packages(exclude=('tests', 'docs')) + ['onlinejudge_verify.data'],
+    package_dir={
+        'onlinejudge_verify.data': 'data',
+    },
+    package_data={
+        'onlinejudge_verify.data': ['*'],
+    },
     entry_points={
         'console_scripts': [
             'oj-verify = onlinejudge_verify.main:main',

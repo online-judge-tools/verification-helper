@@ -3,7 +3,11 @@ set -e
 
 which oj > /dev/null || { echo 'ERROR: please install `oj'\'' with: $ pip3 install --user -U online-judge-tools=='\''6.*'\''' >& 1 ; exit 1 ; }
 
-CXX=${CXX:-g++}
+if [ -n "$CXX" ] ; then
+    CXX_LIST="$CXX"
+else
+    CXX_LIST="g++ clang++"
+fi
 CXXFLAGS="${CXXFLAGS:--std=c++14 -O2 -Wall -g}"
 ulimit -s unlimited || true
 
@@ -32,7 +36,7 @@ is-verified() {
 
 mark-verified() {
     file="$1"
-    cache=test/timestamp/$(echo -n "$file" | md5sum | sed 's/ .*//')
+    cache=test/timestamp/$(echo -n "$CXX/$file" | md5sum | sed 's/ .*//')
     mkdir -p test/timestamp
     touch $cache
 }
@@ -47,7 +51,7 @@ list-recently-updated() {
 
 run() {
     file="$1"
-    echo "$ ./test.sh $file"
+    echo "$ CXX=$CXX ./test.sh $file"
 
     url="$(get-url "$file")"
     dir=test/$(echo -n "$url" | md5sum | sed 's/ .*//')
@@ -90,23 +94,30 @@ if [[ $# -eq 1 && ( $1 = -h || $1 = --help || $1 = -? ) ]] ; then
     echo '-   glob files with "**/*.test.cpp" if no arguments given.'
     echo '-   cache results of tests, analyze "#include <...>" relations, and execute tests if and only if necessary.'
     echo '-   on CI environment (i.e. $CI is defined), only recently modified files are tested (without cache).'
+    echo '-   use both CXX=g++ and CXX=clang++ when $CXX is not given.'
 
 elif [[ $# -eq 0 ]] ; then
     if [[ $CI ]] ; then
         # CI
         for f in $(list-recently-updated) ; do
-            run $f
+            for CXX in $CXX_LIST ; do
+                run $f
+            done
         done
 
     else
         # local
         for f in $(find . -name \*.test.cpp) ; do
-            run $f
+            for CXX in $CXX_LIST ; do
+                run $f
+            done
         done
     fi
 else
     # specified
     for f in "$@" ; do
-        run "$f"
+        for CXX in $CXX_LIST ; do
+            run $f
+        done
     done
 fi

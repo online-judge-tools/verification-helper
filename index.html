@@ -57,10 +57,10 @@
                 const value2 = "%23define%20PROBLEM%20%22https%3A%2F%2Fonlinejudge.u-aizu.ac.jp%2Fcourses%2Flesson%2F1%2FALDS1%2F4%2FALDS1_4_B%22%0A%23include%20%3Calgorithm%3E%0A%23include%20%3Ciostream%3E%0A%23include%20%3Cvector%3E%0A%23define%20REP%28i%2C%20n%29%20for%20%28int%20i%20%3D%200%3B%20%28i%29%20%3C%20%28int%29%28n%29%3B%20%2B%2B%20%28i%29%29%0A%23define%20ALL%28x%29%20std%3A%3Abegin%28x%29%2C%20std%3A%3Aend%28x%29%0Ausing%20namespace%20std%3B%0A%0Aint%20main%28%29%20%7B%0A%20%20%20%20int%20n%3B%20cin%20%3E%3E%20n%3B%0A%20%20%20%20vector%3Cint%3E%20s%28n%29%3B%0A%20%20%20%20REP%20%28i%2C%20n%29%20%7B%0A%20%20%20%20%20%20%20%20cin%20%3E%3E%20s%5Bi%5D%3B%0A%20%20%20%20%7D%0A%20%20%20%20int%20q%3B%20cin%20%3E%3E%20q%3B%0A%20%20%20%20int%20cnt%20%3D%200%3B%0A%20%20%20%20while%20%28q%20--%29%20%7B%0A%20%20%20%20%20%20%20%20int%20t_i%3B%20cin%20%3E%3E%20t_i%3B%0A%20%20%20%20%20%20%20%20cnt%20%2B%3D%20binary_search%28ALL%28s%29%2C%20t_i%29%3B%0A%20%20%20%20%7D%0A%20%20%20%20cout%20%3C%3C%20cnt%20%3C%3C%20endl%3B%0A%20%20%20%20return%200%3B%0A%7D";
                 output2.href = url + "/new/master?filename=" + filename2 + "&value=" + value2;
 
-                output3.href = input.value.replace(/\/$/, "") + "/actions?query=workflow%3Averify";
-                output5.href = input.value.replace(/\/$/, "") + "/actions?query=workflow%3Averify";
+                output3.href = input.value.replace(/\/$/, "") + "/actions";
+                output5.href = input.value.replace(/\/$/, "") + "/actions";
 
-                output4.textContent = "[![Actions Status](" + url + "/workflows/verify/badge.svg)](" + url + "/actions?query=workflow%3Averify)";
+                output4.textContent = "[![Actions Status](" + url + "/workflows/verify/badge.svg)](" + url + "/actions";
                 output6.src = url + "/workflows/verify/badge.svg";
                 output7.src = url + "/workflows/verify/badge.svg";
             }

@@ -4,7 +4,7 @@
 
 ### かんたん Web 上インストール
 
-<http://kimiyuki.net/online-judge-verify-helper/>
+<https://kmyk.github.io/online-judge-verify-helper/>
 
 ### ターミナル上で実行
 

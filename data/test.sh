@@ -8,7 +8,7 @@ if [ -n "$CXX" ] ; then
 else
     CXX_LIST="g++ clang++"
 fi
-CXXFLAGS="${CXXFLAGS:--std=c++14 -O2 -Wall -g}"
+CXXFLAGS="${CXXFLAGS:--std=c++17 -O2 -Wall -g}"
 ulimit -s unlimited || true
 
 

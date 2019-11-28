@@ -8,7 +8,7 @@ if [ -n "$CXX" ] ; then
 else
     CXX_LIST="g++ clang++"
 fi
-CXXFLAGS="${CXXFLAGS:--std=c++14 -O2 -Wall -g}"
+CXXFLAGS="${CXXFLAGS:--std=c++17 -O2 -Wall -g}"
 ulimit -s unlimited || true
 
 
@@ -29,7 +29,7 @@ get-url() {
 
 is-verified() {
     file="$1"
-    cache=test/timestamp/$(echo -n "$file" | md5sum | sed 's/ .*//')
+    cache=test/timestamp/$(echo -n "$CXX/$file" | md5sum | sed 's/ .*//')
     timestamp="$(list-dependencies "$file" | xargs -I '{}' find "$file" '{}' -printf "%T+\t%p\n" | sort -nr | head -n 1 | cut -f 2)"
     [[ -e $cache ]] && [[ $timestamp -ot $cache ]]
 }

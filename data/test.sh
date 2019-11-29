@@ -115,15 +115,18 @@ if [[ $# -eq 1 && ( $1 = -h || $1 = --help || $1 = -? ) ]] ; then
 elif [[ $# -eq 0 ]] ; then
     if [[ $CI ]] ; then
         # CI
-        for f in $(list-recently-updated) ; do
-            for CXX in $CXX_LIST ; do
-                run $f
+        message="$(git log -1 | tail -1 | awk '{print $1}')"
+        if [[ "${message}" != '[auto-verifier]' ]] ; then
+            for f in $(list-recently-updated) ; do
+                for CXX in $CXX_LIST ; do
+                    run $f
+                done
             done
-        done
+        fi
     elif [[ $GITHUB_ACTIONS ]] ; then
         # GitHub Actions
-        username=`git remote get-url origin | sed -e 's/\(.*github.com\/\)\(.*\)\/\(.*\)/\2/'`
-        reponame=`git remote get-url origin | sed -e 's/\(.*github.com\/\)\(.*\)\/\(.*\)/\3/'`
+        username=$(git remote get-url origin | sed -e 's/\(.*github.com\/\)\(.*\)\/\(.*\)/\2/')
+        reponame=$(git remote get-url origin | sed -e 's/\(.*github.com\/\)\(.*\)\/\(.*\)/\3/')
 
         git config --global user.name ${username}
         git config --global user.email "online-judge-verify-helper@example.com"

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys, os, glob, re, urllib, shutil, markdown
+import collections
 
 class FileParser:
     # ファイルパスをもらって、行ごとに分ける
@@ -54,6 +55,14 @@ class CppFile:
 
         self.brief = self.parser.get_contents_by_tag(r'@brief')
         self.brief.extend(self.parser.get_contents_by_tag(r'#define DESCRIPTION', r'"', r'"'))
+
+        # category 指定が空なら、ディレクトリ名をカテゴリにする
+        self.category = self.parser.get_contents_by_tag(r'@category')
+        self.category.extend(self.parser.get_contents_by_tag(r'#define CATEGORY', r'"', r'"'))
+        if self.category == []:
+            self.category = os.path.dirname(self.file_path)
+        else:
+            self.category = self.category[-1]
         
         self.see = self.parser.get_contents_by_tag(r'@see')
         self.see.extend(self.parser.get_contents_by_tag(r'#define PROBLEM', r'"', r'"'))
@@ -120,8 +129,6 @@ class MarkdownPage:
                                          output=html_destination,
                                          encoding="utf-8",
                                          extensions=['fenced_code', 'tables'])
-        # with open(html_destination, 'w') as html_object:
-        #     html_object.write(data)
         
 class MarkdownArticle(MarkdownPage):
     def __init__(self, file_class, file_type, cpp_source_path, md_destination_path):
@@ -140,8 +147,9 @@ class MarkdownArticle(MarkdownPage):
         self.include_css(file_object, os.path.join(self.md_destination_path, './assets/css/copy-button.css'))
         file_object.write('\n\n')
             
-    def write_title(self, file_object):
+    def write_title(self, file_object, category, categorize):
         file_object.write('# {} {}\n'.format(self.mark, self.file_class.title))
+        if categorize: file_object.write('* category: {}\n'.format(category))
         file_object.write('\n\n')
         
     def write_contents(self, file_object, path_to_title, path_to_verification):
@@ -172,20 +180,20 @@ class MarkdownArticle(MarkdownPage):
             file_object.write('\n\n')
                 
         # cpp <= cpp
-        required_file_list = [f for f in self.file_class.required if re.match(r'^.*test\.(cpp|hpp|cc)$', f)]
+        required_file_list = [f for f in self.file_class.required if not re.match(r'^.*\.test\.(cpp|hpp|cc)$', f)]
         required_file_list = sorted(list(set(required_file_list)))
         if required_file_list != []:
             file_object.write('## Required\n')
             for required in required_file_list:
                 mark = self.get_mark(path_to_verification[required])
                 title = path_to_title[required]
-                file_type = 'verify' if re.match(r'^.*test\.(cpp|hpp|cc)$', required) else 'library'
+                file_type = 'verify' if re.match(r'^.*\.test\.(cpp|hpp|cc)$', required) else 'library'
                 link = self.get_link(self.get_destination(required, file_type))
                 file_object.write('* {} [{}]({})\n'.format(mark, title, link))
             file_object.write('\n\n')
                 
         # cpp => test.cpp
-        verified_file_list = [f for f in self.file_class.required if re.match(r'^.*test\.(cpp|hpp|cc)$', f)]
+        verified_file_list = [f for f in self.file_class.required if re.match(r'^.*\.test\.(cpp|hpp|cc)$', f)]
         verified_file_list = sorted(list(set(verified_file_list)))
         if verified_file_list != []:
             file_object.write('## Verified\n')
@@ -206,11 +214,11 @@ class MarkdownArticle(MarkdownPage):
         # back to top
         file_object.write('[Back to top page]({})\n\n'.format(back_to_top_link))
         
-    def build(self, path_to_title, path_to_verification):
+    def build(self, path_to_title, path_to_verification, category, categorize):
         self.make_directory()
         with open(self.destination + '.md', mode="w") as file_object:
             self.write_header(file_object)
-            self.write_title(file_object)
+            self.write_title(file_object, category, categorize)
             self.write_contents(file_object, path_to_title, path_to_verification)
 
 class MarkdownTopPage(MarkdownPage):
@@ -240,36 +248,67 @@ class MarkdownTopPage(MarkdownPage):
         
     def write_contents(self, file_object,
                        verify_files, library_files,
-                       path_to_title, path_to_verification):
-        if library_files != {}:
-            file_object.write('## Library\n')
-            # [TODO] (フォルダごとに表示するのか、@category ごとに表示するのか)
-            for library_file in library_files.keys():
-                mark = self.get_mark(path_to_verification[library_file])
-                title = path_to_title[library_file]
-                link = self.get_link(self.get_destination(library_file, 'library'))
-                file_object.write('* {} [{}]({})\n'.format(mark, title, link))
-            file_object.write('\n\n')
-                
-        if verify_files != {}:
-            file_object.write('## Verify Files\n')
-            # [TODO] (library のところと同様)
-            for verify_file in verify_files.keys():
-                mark = self.get_mark(path_to_verification[verify_file])
-                title = path_to_title[verify_file]
-                link = self.get_link(self.get_destination(verify_file, 'verify'))
-                file_object.write('* {} [{}]({})\n'.format(mark, title, link))
-            file_object.write('\n\n')
+                       verify_category_to_path,
+                       library_category_to_path,
+                       path_to_title, path_to_verification,
+                       categorize_verify, categorize_library):
+        if categorize_library:
+            if library_files != {}:
+                file_object.write('## Library Files\n')
+                for category, library_list in library_category_to_path.items():
+                    file_object.write('### {}\n'.format(category))
+                    for library_file in library_list:
+                        mark = self.get_mark(path_to_verification[library_file])
+                        title = path_to_title[library_file]
+                        link = self.get_link(self.get_destination(library_file, 'library'))
+                        file_object.write('* {} [{}]({})\n'.format(mark, title, link))
+                    file_object.write('\n\n')
+        else:
+            if library_files != {}:
+                file_object.write('## Library Files\n')
+                for library_file in library_files.keys():
+                    mark = self.get_mark(path_to_verification[library_file])
+                    title = path_to_title[library_file]
+                    link = self.get_link(self.get_destination(library_file, 'library'))
+                    file_object.write('* {} [{}]({})\n'.format(mark, title, link))
+                file_object.write('\n\n')
+
+        if categorize_verify:
+            if verify_files != {}:
+                file_object.write('## Verify Files\n')
+                for category, verify_list in verify_category_to_path.items():
+                    file_object.write('### {}\n'.format(category))
+                    for verify_file in verify_list:
+                        mark = self.get_mark(path_to_verification[verify_file])
+                        title = path_to_title[verify_file]
+                        link = self.get_link(self.get_destination(verify_file, 'verify'))
+                        file_object.write('* {} [{}]({})\n'.format(mark, title, link))
+                    file_object.write('\n\n')
+        else:
+            if verify_files != {}:
+                file_object.write('## Verify Files\n')
+                for verify_file in verify_files.keys():
+                    mark = self.get_mark(path_to_verification[verify_file])
+                    title = path_to_title[verify_file]
+                    link = self.get_link(self.get_destination(verify_file, 'verify'))
+                    file_object.write('* {} [{}]({})\n'.format(mark, title, link))
+                file_object.write('\n\n')
                 
     def build(self, verify_files, library_files,
-              path_to_title, path_to_verification):
+              verify_category_to_path,
+              library_category_to_path,
+              path_to_title, path_to_verification,
+              categorize_verify, categorize_library):
         self.make_directory()
         with open(self.destination + '.md', mode="w") as file_object:
             self.write_header(file_object)
             self.write_title(file_object)
             self.write_contents(file_object,
                                 verify_files, library_files,
-                                path_to_title, path_to_verification)
+                                verify_category_to_path,
+                                library_category_to_path,
+                                path_to_title, path_to_verification,
+                                categorize_verify, categorize_library)
             
 class PagesBuilder:
     def __init__(self, cpp_source_path, md_destination_path='./md-output', config={}):
@@ -277,6 +316,7 @@ class PagesBuilder:
         self.library_files = self.get_files(cpp_source_path, r'^.*\.(cpp|hpp|cc)$', self.verify_files)
         self.title_to_path = self.map_title2path()
         self.path_to_title = self.map_path2title()
+        self.verify_category_to_path, self.library_category_to_path = self.map_category2path()
         self.config = config
         self.get_required()
         self.path_to_verification = self.map_path2verification()
@@ -301,6 +341,7 @@ class PagesBuilder:
             if not self.is_ignored(matched_file) and matched_file not in ignored_files:
                 matched_file = os.path.normpath(matched_file)
                 files[matched_file] = CppFile(matched_file, source_path)
+        files = collections.OrderedDict(sorted(files.items(), key=lambda x: x[0]))
         return files
 
     # title の重複があったらナンバリング付与
@@ -317,14 +358,33 @@ class PagesBuilder:
                 title_num[title] += 1
                 title += '{:02}'.format(title_num[title])
             result[title] = cpp_class.file_path
+        result = collections.OrderedDict(sorted(result.items(), key=lambda x: x[0]))
         return result    
         
     def map_path2title(self):
         result = {}
         for cpp_class in dict(**self.library_files, **self.verify_files).values():
             result[cpp_class.file_path] = cpp_class.title
+        result = collections.OrderedDict(sorted(result.items(), key=lambda x: x[0]))            
         return result
 
+    def map_category2path(self):
+        verify_result, library_result = {}, {}
+        for cpp_class in self.verify_files.values():
+            verify_result.setdefault(cpp_class.category, [])
+            verify_result[cpp_class.category].append(cpp_class.file_path)
+        for file_path_list in verify_result.values():
+            file_path_list.sort()
+        verify_result = collections.OrderedDict(sorted(verify_result.items(), key=lambda x: x[0]))
+            
+        for cpp_class in self.library_files.values():
+            library_result.setdefault(cpp_class.category, [])
+            library_result[cpp_class.category].append(cpp_class.file_path)
+        for file_path_list in library_result.values():
+            file_path_list.sort()
+        library_result = collections.OrderedDict(sorted(library_result.items(), key=lambda x: x[0]))
+        return verify_result, library_result
+            
     def get_required(self):
         map_required = {}
         for cpp_class in dict(**self.library_files, **self.verify_files).values():
@@ -351,31 +411,42 @@ class PagesBuilder:
         for cpp_file, cpp_class in self.library_files.items():
             verify_file_cnt, cond = 0, True
             for verify in cpp_class.required:
-                if re.match(r'^.*test\.(cpp|hpp|cc)$', verify):
+                if re.match(r'^.*\.test\.(cpp|hpp|cc)$', verify):
                     verify_file_cnt += 1
                     cond &= result[verify]
             result[cpp_file] = (verify_file_cnt > 0 and cond)
         return result
             
     def build_verify_files(self, cpp_source_path, md_destination_path):
-        for verify_file in self.verify_files.values():
-            page = MarkdownArticle(verify_file, 'verify', cpp_source_path, md_destination_path)
-            html_cond = self.config.setdefault('html', False)
-            page.build(self.path_to_title, self.path_to_verification)
-            if html_cond: page.convert_to_html()
+        for category, verify_path_list in self.verify_category_to_path.items():
+            for matched_file_path in verify_path_list:
+                verify_file_class = self.verify_files[matched_file_path]
+                page = MarkdownArticle(verify_file_class, 'verify', cpp_source_path, md_destination_path)
+                html_cond = self.config.setdefault('html', False)
+                categorize_verify_cond = self.config.setdefault('categorize_verify', False)
+                page.build(self.path_to_title, self.path_to_verification, category, categorize_verify_cond)
+                if html_cond: page.convert_to_html()
 
     def build_library_files(self, cpp_source_path, md_destination_path):
-        for library_file in self.library_files.values():
-            page = MarkdownArticle(library_file, 'library', cpp_source_path, md_destination_path)
-            html_cond = self.config.setdefault('html', False)
-            page.build(self.path_to_title, self.path_to_verification)
-            if html_cond: page.convert_to_html()
+        for category, library_path_list in self.library_category_to_path.items():
+            for matched_file_path in library_path_list:
+                library_file_class = self.library_files[matched_file_path]
+                page = MarkdownArticle(library_file_class, 'library', cpp_source_path, md_destination_path)
+                html_cond = self.config.setdefault('html', False)
+                categorize_library_cond = self.config.setdefault('categorize_library', True)
+                page.build(self.path_to_title, self.path_to_verification, category, categorize_library_cond)
+                if html_cond: page.convert_to_html()
             
     def build_top_page(self, cpp_source_path, md_destination_path):
         page = MarkdownTopPage(cpp_source_path, md_destination_path, self.config)
         html_cond = self.config.setdefault('html', False)
+        categorize_verify_cond = self.config.setdefault('categorize_verify', False)
+        categorize_library_cond = self.config.setdefault('categorize_library', True)
         page.build(self.verify_files, self.library_files,
-                   self.path_to_title, self.path_to_verification)
+                   self.verify_category_to_path,
+                   self.library_category_to_path,
+                   self.path_to_title, self.path_to_verification,
+                   categorize_verify_cond, categorize_library_cond)
         if html_cond: page.convert_to_html()
         
     def build_assets(self, md_destination_path):
@@ -386,10 +457,12 @@ class PagesBuilder:
 def main():
     # 実行テスト
     config = {
-        'title': 'ライブラリの HTML ビルドテスト',
-        'description': 'ここに書いた内容がトップページに足されます',
+        'title': 'ライブラリの HTML ビルドテスト', # title of top page
+        'description': 'ここに書いた内容がトップページに足されます', # description of top page
         'toc': True, # table of contents (default: False)
-        'html': True # generate HTML as well as Markdown (default: False)
+        'html': True, # generate HTML as well as Markdown (default: False)
+        'categorize_library': True, # show library files with categorizing (default: True)
+        'categorize_verify': False, # show verify files with categorizing (default: False)
     }
     builder = PagesBuilder(cpp_source_path='../', config=config)
     

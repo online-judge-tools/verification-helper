@@ -27,18 +27,24 @@ get-url() {
     list-defined "$file" | grep '^#define PROBLEM ' | sed 's/^#define PROBLEM "\(.*\)"$/\1/'
 }
 
+get-last-commit-date() {
+    file="$1"
+    list-dependencies "$file" | xargs git log -1 --date=iso --pretty=%ad
+}
+
 is-verified() {
     file="$1"
     cache=test/timestamp/$(echo -n "$CXX/$file" | md5sum | sed 's/ .*//')
-    timestamp="$(list-dependencies "$file" | xargs -I '{}' find "$file" '{}' -printf "%T+\t%p\n" | sort -nr | head -n 1 | cut -f 2)"
-    [[ -e $cache ]] && [[ $timestamp -ot $cache ]]
+    timestamp="$(get-last-commit-date "$file")"
+    [[ -e $cache ]] && [[ $timestamp = $(cat $cache) ]]
 }
 
 mark-verified() {
     file="$1"
     cache=test/timestamp/$(echo -n "$CXX/$file" | md5sum | sed 's/ .*//')
     mkdir -p test/timestamp
-    touch $cache
+    timestamp="$(get-last-commit-date "$file")"
+    echo $timestamp > $cache
 }
 
 list-recently-updated() {
@@ -104,7 +110,29 @@ elif [[ $# -eq 0 ]] ; then
                 run $f
             done
         done
+    elif [[ $GITHUB_ACTIONS ]] ; then
+        # GitHub Actions
+        username=`git remote get-url origin | sed -e 's/\(.*github.com\/\)\(.*\)\/\(.*\)/\2/'`
+        reponame=`git remote get-url origin | sed -e 's/\(.*github.com\/\)\(.*\)\/\(.*\)/\3/'`
 
+        git config --global user.name ${username}
+        git config --global user.email "online-judge-verify-helper@example.com"
+
+        git remote set-url origin https://${username}:${GITHUB_TOKEN}@github.com/${username}/${reponame}
+        git checkout -b master
+        
+        for f in $(find . -name \*.test.cpp) ; do
+            for CXX in $CXX_LIST ; do
+                run $f
+            done
+        done
+                
+        if [ -n "$(git status -s)" ]; then
+            last_commit="$(git log -1 | head -1 | awk '{print $2}')"
+            git add test/timestamp/
+            git commit -m "[auto-verifier] verify commit ${last_commit}"
+            git push origin HEAD
+        fi
     else
         # local
         for f in $(find . -name \*.test.cpp) ; do

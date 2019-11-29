@@ -133,14 +133,17 @@ elif [[ $# -eq 0 ]] ; then
         git remote set-url origin https://${username}:${GITHUB_TOKEN}@github.com/${username}/${reponame}
         git checkout "${GITHUB_REF##*/}"
         
-        for f in $(find . -name \*.test.cpp | head -n 5) ; do
+        for f in $(find . -name \*.test.cpp) ; do
             for CXX in $CXX_LIST ; do
                 run $f
-            done
+            done            
+            if [[ $SECONDS -gt 60 ]] ; then
+                break
+            fi
         done
         
         git status -s
-        if [ -n "$(git status -s)" ]; then
+        if [[ -n "$(git status -s)" ]]; then
             last_commit="$(git log -1 | head -1 | awk '{print $2}')"
             git add test/timestamp/
             git commit -m "[auto-verifier] verify commit ${last_commit}"

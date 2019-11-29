@@ -119,7 +119,7 @@ elif [[ $# -eq 0 ]] ; then
         git config --global user.email "online-judge-verify-helper@example.com"
 
         git remote set-url origin https://${username}:${GITHUB_TOKEN}@github.com/${username}/${reponame}
-        git checkout -b master
+        git checkout "${GITHUB_REF##*/}"
         
         for f in $(find . -name \*.test.cpp) ; do
             for CXX in $CXX_LIST ; do

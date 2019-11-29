@@ -128,15 +128,18 @@ elif [[ $# -eq 0 ]] ; then
         git config --global user.name ${username}
         git config --global user.email "online-judge-verify-helper@example.com"
 
+        echo https://${username}:${GITHUB_TOKEN}@github.com/${username}/${reponame}
+        echo "${GITHUB_REF##*/}"
         git remote set-url origin https://${username}:${GITHUB_TOKEN}@github.com/${username}/${reponame}
         git checkout "${GITHUB_REF##*/}"
         
-        for f in $(find . -name \*.test.cpp) ; do
+        for f in $(find . -name \*.test.cpp | head -n 5) ; do
             for CXX in $CXX_LIST ; do
                 run $f
             done
         done
-                
+        
+        git status -s
         if [ -n "$(git status -s)" ]; then
             last_commit="$(git log -1 | head -1 | awk '{print $2}')"
             git add test/timestamp/

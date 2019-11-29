@@ -137,7 +137,7 @@ elif [[ $# -eq 0 ]] ; then
             for CXX in $CXX_LIST ; do
                 run $f
             done            
-            if [[ $SECONDS -gt 60 ]] ; then
+            if [[ $SECONDS -gt 600 ]] ; then
                 break
             fi
         done

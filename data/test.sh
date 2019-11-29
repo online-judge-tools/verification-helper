@@ -32,6 +32,11 @@ get-last-commit-date() {
     list-dependencies "$file" | xargs git log -1 --date=iso --pretty=%ad
 }
 
+get-error() {
+    file="$1"
+    list-defined "$file" | grep '^#define ERROR ' | sed 's/^#define ERROR "\(.*\)"$/\1/'
+}
+
 is-verified() {
     file="$1"
     cache=test/timestamp/$(echo -n "$CXX/$file" | md5sum | sed 's/ .*//')

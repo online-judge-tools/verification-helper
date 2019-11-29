@@ -35,3 +35,13 @@ $ git push origin master
 
 加えて `README.md` に `[![Actions Status](https://github.com/kmyk/online-judge-verify-helper/workflows/verify/badge.svg)](https://github.com/kmyk/online-judge-verify-helper/actions)` のように書いておくとよいでしょう。URL は適切に書き換えてください。
 [![Actions Status](https://github.com/kmyk/online-judge-verify-helper/workflows/verify/badge.svg)](https://github.com/kmyk/online-judge-verify-helper/actions) のようなバッチが貼られ、verify に成功したかが簡単に確認できます。
+
+## License
+
+MIT License
+
+## Authors
+
+-   committer 1: [@kmyk](https://github.com/kmyk) (AtCoder: [kimiyuki](https://atcoder.jp/users/kimiyuki))
+-   committer 2: [@beet-aizu](https://github.com/beet-aizu) (AtCoder: [beet](https://atcoder.jp/users/beet))
+-   special thanks: [@yosupo06](http://github.com/yosupo06) (AtCoder: [yosupo](https://atcoder.jp/users/yosupo)) for their [Library Checker](https://judge.yosupo.jp/)

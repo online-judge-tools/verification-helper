@@ -80,7 +80,12 @@ run() {
             fi
             # test
             echo '$ oj t'
-            oj test -c ${dir}/a.out -d ${dir}/test
+            if list-defined "$file" | grep '^#define ERROR ' > /dev/null ; then
+                error=$(get-error "$file")
+                oj test -e ${error} -c ${dir}/a.out -d ${dir}/test
+            else
+                oj test -c ${dir}/a.out -d ${dir}/test
+            fi
         else
             # run
             echo "$ ./a.out"

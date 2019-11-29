@@ -27,18 +27,24 @@ get-url() {
     list-defined "$file" | grep '^#define PROBLEM ' | sed 's/^#define PROBLEM "\(.*\)"$/\1/'
 }
 
+get-last-commit-date() {
+    file="$1"
+    list-dependencies "$file" | xargs git log -1 --date=iso --pretty=%ad
+}
+
 is-verified() {
     file="$1"
     cache=test/timestamp/$(echo -n "$CXX/$file" | md5sum | sed 's/ .*//')
-    timestamp="$(list-dependencies "$file" | xargs -I '{}' find "$file" '{}' -printf "%T+\t%p\n" | sort -nr | head -n 1 | cut -f 2)"
-    [[ -e $cache ]] && [[ $timestamp -ot $cache ]]
+    timestamp="$(get-last-commit-date "$file")"
+    [[ -e $cache ]] && [[ $timestamp = $(cat $cache) ]]
 }
 
 mark-verified() {
     file="$1"
     cache=test/timestamp/$(echo -n "$CXX/$file" | md5sum | sed 's/ .*//')
     mkdir -p test/timestamp
-    touch $cache
+    timestamp="$(get-last-commit-date "$file")"
+    echo $timestamp > $cache
 }
 
 list-recently-updated() {

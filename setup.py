@@ -3,14 +3,12 @@ from setuptools import find_packages, setup
 
 setup(
     name='online-judge-verify-helper',
-    version='2.0.0',
+    version='2.0.1',
     author='Kimiyuki Onaka',
     author_email='kimiyuki95@gmail.com',
     url='https://github.com/kmyk/online-judge-verify-helper',
     license='MIT License',
     description='',
-    long_description=open('README.md').read(),
-    long_description_content_type="text/markdown",
     install_requires=[
         'markdown',
         'online-judge-tools == 7.*',

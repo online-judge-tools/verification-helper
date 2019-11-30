@@ -1,7 +1,7 @@
 #define PROBLEM "https://judge.yosupo.jp/problem/unionfind"
 #include <iostream>
-#include "examples/union_find_tree.hpp"
-#include "examples/macros.hpp"
+#include "./union_find_tree.hpp"
+#include "./macros.hpp"
 using namespace std;
 
 int main() {

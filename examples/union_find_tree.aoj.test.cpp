@@ -1,7 +1,7 @@
 #define PROBLEM "https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_1_A"
 #include <iostream>
-#include "examples/union_find_tree.hpp"
-#include "examples/macros.hpp"
+#include "./union_find_tree.hpp"
+#include "./macros.hpp"
 using namespace std;
 
 int main() {

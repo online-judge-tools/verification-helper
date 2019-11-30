@@ -61,7 +61,8 @@ def subcommand_init() -> None:
 
 def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-pages') -> None:
     # read config
-    username, reponame = os.environ['GITHUB_REPOSITORY'].split('/')
+    username = os.environ['GITHUB_ACTOR']
+    reponame = os.environ['GITHUB_REPOSITORY'].partition('/')[2]
     url = 'https://{}:{}@github.com/{}/{}'.format(username, os.environ['GITHUB_TOKEN'], username, reponame)
     logger.info('username = %s', username)
     logger.info('reponame = %s', reponame)
@@ -93,7 +94,7 @@ def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-p
 
     # commit and push
     logger.info('$ git add . && git commit && git push')
-    author = '{} <online-judge-verify-helper@example.com>'.format(username)
+    author = '{} <{}@users.noreply.github.com>'.format(username, username)
     message = '[auto-verifier] docs commit {}'.format(os.environ['GITHUB_SHA'])
     subprocess.check_call(['git', 'add', '.'])
     if subprocess.run(['git', 'diff', '--quiet', '--staged']).returncode:

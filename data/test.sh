@@ -130,16 +130,7 @@ elif [[ $# -eq 0 ]] ; then
         fi
     elif [[ $GITHUB_ACTIONS ]] ; then
         # GitHub Actions
-        username=$(git remote get-url origin | sed -e 's/\(.*github.com\/\)\(.*\)\/\(.*\)/\2/')
-        reponame=$(git remote get-url origin | sed -e 's/\(.*github.com\/\)\(.*\)\/\(.*\)/\3/')
-
-        git config --global user.name ${username}
-        git config --global user.email "online-judge-verify-helper@example.com"
-
-        echo "https://${username}:"'${GITHUB_TOKEN}'"@github.com/${username}/${reponame}"
-        echo "${GITHUB_REF##*/}"
-        git remote set-url origin https://${username}:${GITHUB_TOKEN}@github.com/${username}/${reponame}
-        git checkout "${GITHUB_REF##*/}"
+        git checkout "${GITHUB_REF#refs/heads/}"
         
         for f in $(find . -name \*.test.cpp) ; do
             for CXX in $CXX_LIST ; do
@@ -152,10 +143,11 @@ elif [[ $# -eq 0 ]] ; then
         
         git status -s
         if [[ -n "$(git status -s)" ]]; then
-            last_commit="$(git log -1 | head -1 | awk '{print $2}')"
+            author="${GITHUB_ACTOR} <${GITHUB_ACTOR}@users.noreply.github.com>"
+            origin="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}"
             git add .verify-helper/timestamp/
-            git commit -m "[auto-verifier] verify commit ${last_commit}"
-            git push origin HEAD
+            git commit --author "$author" -m "[auto-verifier] verify commit ${GITHUB_SHA}"
+            git push "$origin" HEAD
         fi
     else
         # local

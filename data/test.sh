@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# use #624
+pip3 install -U git+https://github.com/kmyk/online-judge-tools@master
+
 which oj > /dev/null || { echo 'ERROR: please install `oj'\'' with: $ pip3 install --user -U online-judge-tools=='\''6.*'\''' >& 1 ; exit 1 ; }
 
 if [ -n "$CXX" ] ; then
@@ -85,7 +88,12 @@ run() {
             fi
             # test
             echo '$ oj t'
-            if list-defined "$file" | grep '^#define ERROR ' > /dev/null ; then
+            if [[ -z ${url%%*judge.yosupo.jp*} ]]; then
+                python3 -c "$(echo "import onlinejudge, sys ; sys.stdout.buffer.write(onlinejudge.dispatch.problem_from_url(\"${url}\").download_checker_cpp())")" | sed -e '1,5d' > ${dir}/checker.cpp
+                wget https://raw.githubusercontent.com/MikeMirzayanov/testlib/master/testlib.h -O testlib.h
+                $CXX $CXXFLAGS -I . -o ${dir}/checker.out ${dir}/checker.cpp
+                oj test --judge-command ${dir}/checker.out -c ${dir}/a.out -d ${dir}/test
+            elif list-defined "$file" | grep '^#define ERROR ' > /dev/null ; then
                 error=$(get-error "$file")
                 oj test -e ${error} -c ${dir}/a.out -d ${dir}/test
             else

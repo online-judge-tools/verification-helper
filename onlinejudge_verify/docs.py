@@ -515,13 +515,13 @@ class PagesBuilder:
                 shutil.copyfile(str(src_path), str(dst_path))
 
 
-def main():
+def main(*, html=True):
     # 実行テスト
     config = {
         'title': 'ライブラリの HTML ビルドテスト',  # title of top page
         'description': 'ここに書いた内容がトップページに足されます',  # description of top page
         'toc': True,  # table of contents (default: False)
-        'html': True,  # generate HTML as well as Markdown (default: False)
+        'html': html,  # generate HTML as well as Markdown (default: True)
         'categorize_library': True,  # show library files with categorizing (default: True)
         'categorize_verify': False,  # show verify files with categorizing (default: False)
     }

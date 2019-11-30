@@ -101,12 +101,17 @@ def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-p
 
 
 def subcommand_docs() -> None:
-    logger.info('generate documents...')
-    onlinejudge_verify.docs.main()
+    if 'GITHUB_ACTION' in os.environ:
+        if os.environ['GITHUB_REF'] == 'refs/heads/master':
+            logger.info('generate documents...')
+            onlinejudge_verify.docs.main(html=False)
 
-    if 'GITHUB_ACTION' in os.environ and os.environ['GITHUB_REF'] == 'refs/heads/master':
-        logger.info('upload documents...')
-        push_documents_to_gh_pages(src_dir=pathlib.Path('md-output'))
+            logger.info('upload documents...')
+            push_documents_to_gh_pages(src_dir=pathlib.Path('md-output'))
+
+    else:
+        logger.info('generate documents...')
+        onlinejudge_verify.docs.main(html=True)
 
 
 def main(args: Optional[List[str]] = None) -> None:

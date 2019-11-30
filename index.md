@@ -38,6 +38,7 @@
 
 ## Verify Files
 * :warning: [example.test.cpp](verify/example.test.cpp.html)
+* :warning: [examples/hoge.test.cpp](verify/examples/hoge.test.cpp.html)
 * :warning: [examples/segment_tree.point_set_range_composite.test.cpp](verify/examples/segment_tree.point_set_range_composite.test.cpp.html)
 * :warning: [examples/segment_tree.range_minimum_query.test.cpp](verify/examples/segment_tree.range_minimum_query.test.cpp.html)
 * :warning: [examples/segment_tree.range_sum_query.test.cpp](verify/examples/segment_tree.range_sum_query.test.cpp.html)

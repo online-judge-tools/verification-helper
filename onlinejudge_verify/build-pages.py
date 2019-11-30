@@ -4,8 +4,6 @@ import glob
 import os
 import re
 import shutil
-import sys
-import urllib
 
 import markdown
 

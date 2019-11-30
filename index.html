@@ -1,74 +1,49 @@
-<!DOCTYPE html>
-<html>
+<!-- mathjax config similar to math.stackexchange -->
 
-<head>
-    <meta charset="UTF-8">
-    <title>kmyk/online-judge-verify-script</title>
-</head>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
 
-<body>
-    <main>
-        <h1><a href="https://github.com/kmyk/online-judge-verify-helper"><code>online-judge-verify-script</code></a>: 競プロライブラリに自動で verify をしてくれる CI を簡単に設定できる Web ページ</h1>
-        <p>
-            手順:
-        </p>
-        <ol>
-            <li>
-                <form>
-                    <label>競プロライブラリの GitHub のレポジトリの URL を右の textbox に入力: </label><input type="text" id="input"
-                        placeholder="https://github.com/beet-aizu/library" value="https://github.com/beet-aizu/library" size="48">
-                </form>
-            </li>
-            <li>
-                ページ <a id="output" target="_blank"></a> を開き、下の方にある緑の <code>Commit new file</code> ボタンを押す
-            </li>
-            <li>
-                <a href="https://github.com/kmyk/online-judge-verify-helper/blob/master/example.test.cpp">example.test.cpp</a> のように <code>#define PROBLEM "https://..."</code> が書かれている <code>hoge.test.cpp</code> のようなファイル名の C++ コードを追加する
-                (<a id="output2" target="_blank">例を自動で追加するリンク</a>)
-            </li>
-            <li>
-                <a id="output3" target="_blank">GitHub Actions <img id="output7"></a> のページから結果を確認する
-            </li>
-            <li>
-                (おまけ) <code>README.md</code> に <code id="output4"></code> と書き足す (バッチ <a id="output5" target="_blank"><img id="output6"></a> が貼られる)
-            </li>
-        </ol>
-    </main>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    TeX: { equationNumbers: { autoNumber: "AMS" }},
+    tex2jax: {
+      inlineMath: [ ['$','$'] ],
+      processEscapes: true
+    },
+    "HTML-CSS": { matchFontHeight: false },
+    displayAlign: "left",
+    displayIndent: "2em"
+  });
+</script>
 
-    <script>
-        const input = document.getElementById("input");
-        const output = document.getElementById("output");
-        const output2 = document.getElementById("output2");
-        const output3 = document.getElementById("output3");
-        const output4 = document.getElementById("output4");
-        const output5 = document.getElementById("output5");
-        const output6 = document.getElementById("output6");
-        const output7 = document.getElementById("output7");
-        function update() {
-            if (input.value.match(/\/github.com\/[^\/]+\/[^\/]+/)) {
-                const url = input.value.replace(/\/$/, "");
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-                const filename = ".github%2Fworkflows%2Fverify.yml"
-                const value = "name%3A%20verify%0A%0Aon%3A%20push%0A%0Ajobs%3A%0A%20%20build%3A%0A%20%20%20%20runs-on%3A%20ubuntu-latest%0A%0A%20%20%20%20steps%3A%0A%20%20%20%20-%20uses%3A%20actions%2Fcheckout%40v1%0A%0A%20%20%20%20-%20name%3A%20Set%20up%20Python%0A%20%20%20%20%20%20uses%3A%20actions%2Fsetup-python%40v1%0A%0A%20%20%20%20-%20name%3A%20Install%20dependencies%0A%20%20%20%20%20%20run%3A%20pip3%20install%20-U%20git%2Bhttps%3A%2F%2Fgithub.com%2Fkmyk%2Fonline-judge-verify-helper.git%40v1%0A%0A%20%20%20%20-%20name%3A%20Run%20tests%0A%20%20%20%20%20%20env%3A%0A%20%20%20%20%20%20%20%20GITHUB_TOKEN%3A%20%24%7B%7B%20secrets.GITHUB_TOKEN%20%7D%7D%0A%20%20%20%20%20%20run%3A%20oj-verify%20run";
-                output.href = url + "/new/master?filename=" + filename + "&value=" + value;
-                output.textContent = url + "&value=...";
+<script src="https://cdn.jsdelivr.net/npm/jquery-balloon-js@1.1.2/jquery.balloon.min.js" integrity="sha256-ZEYs9VrgAeNuPvs15E39OsyOJaIkXEEt10fzxJ20+2I=" crossorigin="anonymous"></script>
 
-                const filename2 = "example.test.cpp";
-                const value2 = "%23define%20PROBLEM%20%22https%3A%2F%2Fonlinejudge.u-aizu.ac.jp%2Fcourses%2Flesson%2F1%2FALDS1%2F4%2FALDS1_4_B%22%0A%23include%20%3Calgorithm%3E%0A%23include%20%3Ciostream%3E%0A%23include%20%3Cvector%3E%0A%23define%20REP%28i%2C%20n%29%20for%20%28int%20i%20%3D%200%3B%20%28i%29%20%3C%20%28int%29%28n%29%3B%20%2B%2B%20%28i%29%29%0A%23define%20ALL%28x%29%20std%3A%3Abegin%28x%29%2C%20std%3A%3Aend%28x%29%0Ausing%20namespace%20std%3B%0A%0Aint%20main%28%29%20%7B%0A%20%20%20%20int%20n%3B%20cin%20%3E%3E%20n%3B%0A%20%20%20%20vector%3Cint%3E%20s%28n%29%3B%0A%20%20%20%20REP%20%28i%2C%20n%29%20%7B%0A%20%20%20%20%20%20%20%20cin%20%3E%3E%20s%5Bi%5D%3B%0A%20%20%20%20%7D%0A%20%20%20%20int%20q%3B%20cin%20%3E%3E%20q%3B%0A%20%20%20%20int%20cnt%20%3D%200%3B%0A%20%20%20%20while%20%28q%20--%29%20%7B%0A%20%20%20%20%20%20%20%20int%20t_i%3B%20cin%20%3E%3E%20t_i%3B%0A%20%20%20%20%20%20%20%20cnt%20%2B%3D%20binary_search%28ALL%28s%29%2C%20t_i%29%3B%0A%20%20%20%20%7D%0A%20%20%20%20cout%20%3C%3C%20cnt%20%3C%3C%20endl%3B%0A%20%20%20%20return%200%3B%0A%7D";
-                output2.href = url + "/new/master?filename=" + filename2 + "&value=" + value2;
+<script type="text/javascript" src="assets/js/copy-button.js"></script>
 
-                output3.href = input.value.replace(/\/$/, "") + "/actions";
-                output5.href = input.value.replace(/\/$/, "") + "/actions";
-
-                output4.textContent = "[![Actions Status](" + url + "/workflows/verify/badge.svg)](" + url + "/actions)";
-                output6.src = url + "/workflows/verify/badge.svg";
-                output7.src = url + "/workflows/verify/badge.svg";
-            }
-        }
-        input.addEventListener('change', update);
-        input.addEventListener('keyup', update);
-        update();
-    </script>
-</body>
-
-</html>
+<p><link rel="stylesheet" href="assets/css/copy-button.css" /></p>
+<h1>ライブラリの HTML ビルドテスト</h1>
+<p>ここに書いた内容がトップページに足されます</p>
+<ul>
+<li>this unordered seed list will be replaced by toc as unordered list
+{:toc}</li>
+</ul>
+<h2>Library Files</h2>
+<h3>examples</h3>
+<ul>
+<li>:warning: <a href="library/examples/macros.hpp.html">examples/macros.hpp</a></li>
+<li>:warning: <a href="library/examples/monoids.hpp.html">examples/monoids.hpp</a></li>
+<li>:warning: <a href="library/examples/segment_tree.hpp.html">examples/segment_tree.hpp</a></li>
+<li>:warning: <a href="library/examples/union_find_tree.hpp.html">examples/union_find_tree.hpp</a></li>
+</ul>
+<h2>Verify Files</h2>
+<ul>
+<li>:warning: <a href="verify/example.test.cpp.html">example.test.cpp</a></li>
+<li>:warning: <a href="verify/examples/segment_tree.point_set_range_composite.test.cpp.html">examples/segment_tree.point_set_range_composite.test.cpp</a></li>
+<li>:warning: <a href="verify/examples/segment_tree.range_minimum_query.test.cpp.html">examples/segment_tree.range_minimum_query.test.cpp</a></li>
+<li>:warning: <a href="verify/examples/segment_tree.range_sum_query.test.cpp.html">examples/segment_tree.range_sum_query.test.cpp</a></li>
+<li>:warning: <a href="verify/examples/union_find_tree.aoj.test.cpp.html">examples/union_find_tree.aoj.test.cpp</a></li>
+<li>:warning: <a href="verify/examples/union_find_tree.yosupo.test.cpp.html">examples/union_find_tree.yosupo.test.cpp</a></li>
+</ul>

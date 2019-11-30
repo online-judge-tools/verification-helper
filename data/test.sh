@@ -130,6 +130,7 @@ elif [[ $# -eq 0 ]] ; then
         fi
     elif [[ $GITHUB_ACTIONS ]] ; then
         # GitHub Actions
+        echo '$' git checkout "${GITHUB_REF#refs/heads/}"
         git checkout "${GITHUB_REF#refs/heads/}"
         
         for f in $(find . -name \*.test.cpp) ; do
@@ -140,13 +141,16 @@ elif [[ $# -eq 0 ]] ; then
                 break
             fi
         done
-        
+
         git status -s
         if [[ -n "$(git status -s)" ]]; then
             author="${GITHUB_ACTOR} <${GITHUB_ACTOR}@users.noreply.github.com>"
             origin="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}"
+            echo '$' git add .verify-helper/timestamp/
             git add .verify-helper/timestamp/
+            echo '$' git commit --author "$author" -m "[auto-verifier] verify commit ${GITHUB_SHA}"
             git commit --author "$author" -m "[auto-verifier] verify commit ${GITHUB_SHA}"
+            echo '$' git push "https://${GITHUB_ACTOR}:"'${GITHUB_TOKEN}'"@github.com/${GITHUB_REPOSITORY}" HEAD
             git push "$origin" HEAD
         fi
     else

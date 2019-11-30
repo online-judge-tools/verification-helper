@@ -7,6 +7,7 @@ import sys
 import tempfile
 from typing import *
 
+import onlinejudge_verify.docs
 import pkg_resources
 
 package = 'onlinejudge_verify.data'
@@ -27,8 +28,7 @@ def get_parser() -> argparse.ArgumentParser:
     subparser = subparsers.add_parser('export')
     subparser.add_argument('path', type=pathlib.Path)
 
-    subparser = subparsers.add_parser('snippet')
-    subparser.add_argument('--target', choices=['vscode'], required=True)
+    subparser = subparsers.add_parser('docs')
 
     return parser
 
@@ -58,8 +58,8 @@ def main(args: Optional[List[str]] = None) -> None:
     elif parsed.subcommand == 'export':
         raise NotImplementedError('#include "hoge.hpp" みたいなやつをいい感じに展開してそのまま提出できる形コードを出力してほしい')
 
-    elif parsed.subcommand == 'snippet':
-        raise NotImplementedError('ついでに VS Code 用の snippet.json みたいなやつもいい感じに出力されてほしい')
+    elif parsed.subcommand == 'docs':
+        onlinejudge_verify.docs.main()
 
     else:
         parser.print_help()

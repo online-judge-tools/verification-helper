@@ -1,6 +1,32 @@
 # -*- coding: utf-8 -*-
-import sys, os, glob, re, urllib, shutil, markdown
 import collections
+import glob
+import os
+import re
+import shutil
+
+import markdown
+import pkg_resources
+
+package = 'onlinejudge_verify.data'
+assets_site_header_txt = pkg_resources.resource_string(package, 'assets/site-header.txt')
+assets_copy_button_js = pkg_resources.resource_string(package, 'assets/js/copy-button.js')
+assets_copy_button_css = pkg_resources.resource_string(package, 'assets/css/copy-button.css')
+assets = {
+    'css': [
+        {
+            'name': 'copy-button.js',
+            'data': assets_copy_button_css
+        },
+    ],
+    'js': [
+        {
+            'name': 'copy-button.js',
+            'data': assets_copy_button_js
+        },
+    ],
+}
+
 
 class FileParser:
     # ファイルパスをもらって、行ごとに分ける
@@ -9,7 +35,7 @@ class FileParser:
             raise FileNotFoundError('{} does not exist'.format(file_path))
         with open(file_path) as f:
             self.lines = [line.strip() for line in f.readlines()]
-            
+
     # タグをもらって、コンテンツの配列を出す
     def get_contents_by_tag(self, tag_name, l_pat='', r_pat=''):
         tag_name = re.escape(tag_name)
@@ -37,9 +63,10 @@ class FileParser:
         reg2 = r'^#include[ ]*"(.*)".*$'
         results = [re.sub(reg2, r'\1', line).strip() for line in matches]
         return results
-        
+
+
 # 現状は C++ のみのサポートを考える
-class CppFile:        
+class CppFile:
     def __init__(self, file_path, source_path):
         self.file_path = os.path.normpath(file_path)
         self.source_path = source_path
@@ -63,24 +90,24 @@ class CppFile:
             self.category = os.path.dirname(self.file_path)
         else:
             self.category = self.category[-1]
-        
+
         self.see = self.parser.get_contents_by_tag(r'@see')
         self.see.extend(self.parser.get_contents_by_tag(r'#define PROBLEM', r'"', r'"'))
-                          
+
         self.docs = self.parser.get_contents_by_tag(r'@docs')
         self.docs.extend(self.parser.get_contents_by_tag(r'#define DOCS', r'"', r'"'))
-        
+
         self.depends = self.parser.get_contents_by_tag(r'@depends')
         self.depends.extend(self.parser.get_implicit_dependencies())
         self.depends.extend(self.parser.get_contents_by_tag(r'#define REQUIRES', r'"', r'"'))
         self.depends = self.to_source_relpath(self.depends)
-        
+
         self.required = []
         self.is_verified = self.get_verification_status()
 
     def get_verification_status(self):
-        return False # [TODO]
-        
+        return False  # [TODO]
+
     def to_source_relpath(self, item_list):
         result, file_dir = [], os.path.dirname(self.file_path)
         for item in item_list:
@@ -90,6 +117,7 @@ class CppFile:
 
     def set_required(self, required_list):
         self.required = required_list
+
 
 class MarkdownPage:
     # requires: self.cpp_source_path, self.md_destination_path, self.destination
@@ -101,8 +129,8 @@ class MarkdownPage:
 
     def get_destination(self, file_path, file_type=''):
         dst_file_dir, file_name = os.path.split(file_path)
-        dst_file_dir = os.path.relpath(dst_file_dir, self.cpp_source_path)
-        md_file_dir = os.path.normpath(os.path.join(self.md_destination_path, file_type, dst_file_dir))
+        dst_file_dir = os.path.relpath(dst_file_dir or '.', self.cpp_source_path)
+        md_file_dir = os.path.normpath(os.path.join(self.md_destination_path, file_type, dst_file_dir), )
         return os.path.join(md_file_dir, file_name)
 
     def get_link(self, link_href):
@@ -116,7 +144,7 @@ class MarkdownPage:
         js_file_name = os.path.relpath(js_file_name, os.path.dirname(self.destination))
         html = '<script type="text/javascript" src="{}"></script>\n'.format(js_file_name)
         file_object.write(html)
-        
+
     def include_css(self, file_object, css_file_name):
         css_file_name = os.path.relpath(css_file_name, os.path.dirname(self.destination))
         html = '<link rel="stylesheet" href="{}" />\n'.format(css_file_name)
@@ -125,11 +153,9 @@ class MarkdownPage:
     def convert_to_html(self):
         md_destination = self.destination + '.md'
         html_destination = self.destination + '.html'
-        data = markdown.markdownFromFile(input=md_destination,
-                                         output=html_destination,
-                                         encoding="utf-8",
-                                         extensions=['fenced_code', 'tables'])
-        
+        data = markdown.markdownFromFile(input=md_destination, output=html_destination, encoding="utf-8", extensions=['fenced_code', 'tables'])
+
+
 class MarkdownArticle(MarkdownPage):
     def __init__(self, file_class, file_type, cpp_source_path, md_destination_path):
         self.file_class = file_class
@@ -137,21 +163,19 @@ class MarkdownArticle(MarkdownPage):
         self.cpp_source_path = cpp_source_path
         self.destination = self.get_destination(self.file_class.file_path, file_type)
         self.mark = self.get_mark(self.file_class.is_verified)
-            
+
     # include (mathjax, js, css)
     def write_header(self, file_object):
-        with open('./assets/site-header.txt') as f:
-            file_object.write(f.read())
-        self.include_js(file_object, os.path.join(self.md_destination_path, './assets/js/balloons.js'))
+        file_object.buffer.write(assets_site_header_txt)
         self.include_js(file_object, os.path.join(self.md_destination_path, './assets/js/copy-button.js'))
         self.include_css(file_object, os.path.join(self.md_destination_path, './assets/css/copy-button.css'))
         file_object.write('\n\n')
-            
+
     def write_title(self, file_object, category, categorize):
         file_object.write('# {} {}\n'.format(self.mark, self.file_class.title))
         if categorize: file_object.write('* category: {}\n'.format(category))
         file_object.write('\n\n')
-        
+
     def write_contents(self, file_object, path_to_title, path_to_verification):
         back_to_top_link = os.path.relpath(os.path.join(self.md_destination_path, 'index.html'), os.path.dirname(self.destination))
 
@@ -178,7 +202,7 @@ class MarkdownArticle(MarkdownPage):
                 link = self.get_link(self.get_destination(depends, 'library'))
                 file_object.write('* {} [{}]({})\n'.format(mark, title, link))
             file_object.write('\n\n')
-                
+
         # cpp <= cpp
         required_file_list = [f for f in self.file_class.required if not re.match(r'^.*\.test\.(cpp|hpp|cc)$', f)]
         required_file_list = sorted(list(set(required_file_list)))
@@ -191,7 +215,7 @@ class MarkdownArticle(MarkdownPage):
                 link = self.get_link(self.get_destination(required, file_type))
                 file_object.write('* {} [{}]({})\n'.format(mark, title, link))
             file_object.write('\n\n')
-                
+
         # cpp => test.cpp
         verified_file_list = [f for f in self.file_class.required if re.match(r'^.*\.test\.(cpp|hpp|cc)$', f)]
         verified_file_list = sorted(list(set(verified_file_list)))
@@ -213,13 +237,14 @@ class MarkdownArticle(MarkdownPage):
 
         # back to top
         file_object.write('[Back to top page]({})\n\n'.format(back_to_top_link))
-        
+
     def build(self, path_to_title, path_to_verification, category, categorize):
         self.make_directory()
         with open(self.destination + '.md', mode="w") as file_object:
             self.write_header(file_object)
             self.write_title(file_object, category, categorize)
             self.write_contents(file_object, path_to_title, path_to_verification)
+
 
 class MarkdownTopPage(MarkdownPage):
     def __init__(self, cpp_source_path, md_destination_path, config):
@@ -229,13 +254,11 @@ class MarkdownTopPage(MarkdownPage):
         self.config = config
 
     def write_header(self, file_object):
-        with open('./assets/site-header.txt') as f:
-            file_object.write(f.read())
-        self.include_js(file_object, os.path.join(self.md_destination_path, './assets/js/balloons.js'))
+        file_object.buffer.write(assets_site_header_txt)
         self.include_js(file_object, os.path.join(self.md_destination_path, './assets/js/copy-button.js'))
         self.include_css(file_object, os.path.join(self.md_destination_path, './assets/css/copy-button.css'))
-        file_object.write('\n\n')        
-        
+        file_object.write('\n\n')
+
     def write_title(self, file_object):
         title = self.config.setdefault('title', 'C++ Competitive Programming Library')
         file_object.write('# {}\n\n'.format(title))
@@ -245,13 +268,19 @@ class MarkdownTopPage(MarkdownPage):
         if toc:
             file_object.write('* this unordered seed list will be replaced by toc as unordered list\n')
             file_object.write('{:toc}\n\n')
-        
-    def write_contents(self, file_object,
-                       verify_files, library_files,
-                       verify_category_to_path,
-                       library_category_to_path,
-                       path_to_title, path_to_verification,
-                       categorize_verify, categorize_library):
+
+    def write_contents(
+            self,
+            file_object,
+            verify_files,
+            library_files,
+            verify_category_to_path,
+            library_category_to_path,
+            path_to_title,
+            path_to_verification,
+            categorize_verify,
+            categorize_library,
+    ):
         if categorize_library:
             if library_files != {}:
                 file_object.write('## Library Files\n')
@@ -293,23 +322,35 @@ class MarkdownTopPage(MarkdownPage):
                     link = self.get_link(self.get_destination(verify_file, 'verify'))
                     file_object.write('* {} [{}]({})\n'.format(mark, title, link))
                 file_object.write('\n\n')
-                
-    def build(self, verify_files, library_files,
-              verify_category_to_path,
-              library_category_to_path,
-              path_to_title, path_to_verification,
-              categorize_verify, categorize_library):
+
+    def build(
+            self,
+            verify_files,
+            library_files,
+            verify_category_to_path,
+            library_category_to_path,
+            path_to_title,
+            path_to_verification,
+            categorize_verify,
+            categorize_library,
+    ):
         self.make_directory()
         with open(self.destination + '.md', mode="w") as file_object:
             self.write_header(file_object)
             self.write_title(file_object)
-            self.write_contents(file_object,
-                                verify_files, library_files,
-                                verify_category_to_path,
-                                library_category_to_path,
-                                path_to_title, path_to_verification,
-                                categorize_verify, categorize_library)
-            
+            self.write_contents(
+                file_object,
+                verify_files,
+                library_files,
+                verify_category_to_path,
+                library_category_to_path,
+                path_to_title,
+                path_to_verification,
+                categorize_verify,
+                categorize_library,
+            )
+
+
 class PagesBuilder:
     def __init__(self, cpp_source_path, md_destination_path='./md-output', config={}):
         self.verify_files = self.get_files(cpp_source_path, r'^.*\.test\.(cpp|hpp|cc)$')
@@ -338,7 +379,9 @@ class PagesBuilder:
         match_result = [p for p in glob.glob(path, recursive=True) if re.search(extension, p)]
         files = {}
         for matched_file in match_result:
-            if not self.is_ignored(matched_file) and matched_file not in ignored_files:
+            if any([os.path.realpath(matched_file) == os.path.realpath(ignored_file) for ignored_file in ignored_files]):
+                continue
+            if not self.is_ignored(matched_file):
                 matched_file = os.path.normpath(matched_file)
                 files[matched_file] = CppFile(matched_file, source_path)
         files = collections.OrderedDict(sorted(files.items(), key=lambda x: x[0]))
@@ -354,18 +397,18 @@ class PagesBuilder:
         for cpp_class in dict(**self.library_files, **self.verify_files).values():
             title = cpp_class.title
             if title_cnt[title] >= 2:
-                title_num.setdefault(title, 0);
+                title_num.setdefault(title, 0)
                 title_num[title] += 1
                 title += '{:02}'.format(title_num[title])
             result[title] = cpp_class.file_path
         result = collections.OrderedDict(sorted(result.items(), key=lambda x: x[0]))
-        return result    
-        
+        return result
+
     def map_path2title(self):
         result = {}
         for cpp_class in dict(**self.library_files, **self.verify_files).values():
             result[cpp_class.file_path] = cpp_class.title
-        result = collections.OrderedDict(sorted(result.items(), key=lambda x: x[0]))            
+        result = collections.OrderedDict(sorted(result.items(), key=lambda x: x[0]))
         return result
 
     def map_category2path(self):
@@ -376,7 +419,7 @@ class PagesBuilder:
         for file_path_list in verify_result.values():
             file_path_list.sort()
         verify_result = collections.OrderedDict(sorted(verify_result.items(), key=lambda x: x[0]))
-            
+
         for cpp_class in self.library_files.values():
             library_result.setdefault(cpp_class.category, [])
             library_result[cpp_class.category].append(cpp_class.file_path)
@@ -384,7 +427,7 @@ class PagesBuilder:
             file_path_list.sort()
         library_result = collections.OrderedDict(sorted(library_result.items(), key=lambda x: x[0]))
         return verify_result, library_result
-            
+
     def get_required(self):
         map_required = {}
         for cpp_class in dict(**self.library_files, **self.verify_files).values():
@@ -395,11 +438,11 @@ class PagesBuilder:
         for cpp_file in self.library_files.keys():
             map_required.setdefault(cpp_file, [])
             self.library_files[cpp_file].set_required(map_required[cpp_file])
-            
+
         for cpp_file in self.verify_files.keys():
             map_required.setdefault(cpp_file, [])
             self.verify_files[cpp_file].set_required(map_required[cpp_file])
-        
+
     def map_path2verification(self):
         result = {}
         # .test.cpp の verify 状況確認
@@ -416,7 +459,7 @@ class PagesBuilder:
                     cond &= result[verify]
             result[cpp_file] = (verify_file_cnt > 0 and cond)
         return result
-            
+
     def build_verify_files(self, cpp_source_path, md_destination_path):
         for category, verify_path_list in self.verify_category_to_path.items():
             for matched_file_path in verify_path_list:
@@ -436,35 +479,47 @@ class PagesBuilder:
                 categorize_library_cond = self.config.setdefault('categorize_library', True)
                 page.build(self.path_to_title, self.path_to_verification, category, categorize_library_cond)
                 if html_cond: page.convert_to_html()
-            
+
     def build_top_page(self, cpp_source_path, md_destination_path):
         page = MarkdownTopPage(cpp_source_path, md_destination_path, self.config)
         html_cond = self.config.setdefault('html', False)
         categorize_verify_cond = self.config.setdefault('categorize_verify', False)
         categorize_library_cond = self.config.setdefault('categorize_library', True)
-        page.build(self.verify_files, self.library_files,
-                   self.verify_category_to_path,
-                   self.library_category_to_path,
-                   self.path_to_title, self.path_to_verification,
-                   categorize_verify_cond, categorize_library_cond)
+        page.build(
+            self.verify_files,
+            self.library_files,
+            self.verify_category_to_path,
+            self.library_category_to_path,
+            self.path_to_title,
+            self.path_to_verification,
+            categorize_verify_cond,
+            categorize_library_cond,
+        )
         if html_cond: page.convert_to_html()
-        
+
     def build_assets(self, md_destination_path):
         destination = os.path.join(md_destination_path, './assets/')
         if os.path.exists(destination): shutil.rmtree(destination)
-        shutil.copytree('./assets/', destination)
-            
+        os.mkdir(destination)
+        for kind in ['css', 'js']:
+            os.mkdir(destination + kind)
+            for item in assets[kind]:
+                with open(destination + kind + '/' + item['name'], 'wb') as fh:
+                    fh.write(item['data'])
+
+
 def main():
     # 実行テスト
     config = {
-        'title': 'ライブラリの HTML ビルドテスト', # title of top page
-        'description': 'ここに書いた内容がトップページに足されます', # description of top page
-        'toc': True, # table of contents (default: False)
-        'html': True, # generate HTML as well as Markdown (default: False)
-        'categorize_library': True, # show library files with categorizing (default: True)
-        'categorize_verify': False, # show verify files with categorizing (default: False)
+        'title': 'ライブラリの HTML ビルドテスト',  # title of top page
+        'description': 'ここに書いた内容がトップページに足されます',  # description of top page
+        'toc': True,  # table of contents (default: False)
+        'html': True,  # generate HTML as well as Markdown (default: False)
+        'categorize_library': True,  # show library files with categorizing (default: True)
+        'categorize_verify': False,  # show verify files with categorizing (default: False)
     }
-    builder = PagesBuilder(cpp_source_path='../', config=config)
-    
+    builder = PagesBuilder(cpp_source_path='.', config=config)
+
+
 if __name__ == '__main__':
     main()

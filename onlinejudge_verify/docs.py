@@ -254,8 +254,7 @@ class MarkdownTopPage(MarkdownPage):
         self.config = config
 
     def write_header(self, file_object):
-        with open('./assets/site-header.txt') as f:
-            file_object.write(f.read())
+        file_object.buffer.write(assets_site_header_txt)
         self.include_js(file_object, os.path.join(self.md_destination_path, './assets/js/copy-button.js'))
         self.include_css(file_object, os.path.join(self.md_destination_path, './assets/css/copy-button.css'))
         file_object.write('\n\n')
@@ -499,11 +498,11 @@ class PagesBuilder:
     def build_assets(self, md_destination_path):
         destination = os.path.join(md_destination_path, './assets/')
         if os.path.exists(destination): shutil.rmtree(destination)
-        os.mkdir('assets')
+        os.mkdir(destination)
         for kind in ['css', 'js']:
-            os.mkdir('assets/' + kind)
+            os.mkdir(destination + kind)
             for item in assets[kind]:
-                with open('assets/' + kind + '/' + item['name'], 'wb') as fh:
+                with open(destination + kind + '/' + item['name'], 'wb') as fh:
                     fh.write(item['data'])
 
 

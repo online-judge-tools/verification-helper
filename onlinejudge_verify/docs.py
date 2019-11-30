@@ -2,6 +2,7 @@
 import collections
 import glob
 import os
+import pathlib
 import re
 import shutil
 
@@ -10,22 +11,20 @@ import pkg_resources
 
 package = 'onlinejudge_verify.data'
 assets_site_header_txt = pkg_resources.resource_string(package, 'assets/site-header.txt')
-assets_copy_button_js = pkg_resources.resource_string(package, 'assets/js/copy-button.js')
-assets_copy_button_css = pkg_resources.resource_string(package, 'assets/css/copy-button.css')
-assets = {
-    'css': [
-        {
-            'name': 'copy-button.js',
-            'data': assets_copy_button_css
-        },
-    ],
-    'js': [
-        {
-            'name': 'copy-button.js',
-            'data': assets_copy_button_js
-        },
-    ],
-}
+deployed_assets = [
+    {
+        'path': pathlib.Path('css/copy-button.css'),
+        'data': pkg_resources.resource_string(package, 'assets/css/copy-button.css'),
+    },
+    {
+        'path': pathlib.Path('js/copy-button.js'),
+        'data': pkg_resources.resource_string(package, 'assets/js/copy-button.js'),
+    },
+    {
+        'path': pathlib.Path('_config.yml'),
+        'data': pkg_resources.resource_string(package, 'assets/_config.yml'),
+    },
+]
 
 
 class FileParser:
@@ -498,14 +497,14 @@ class PagesBuilder:
         if html_cond: page.convert_to_html()
 
     def build_assets(self, md_destination_path):
-        destination = os.path.join(md_destination_path, './assets/')
-        if os.path.exists(destination): shutil.rmtree(destination)
-        os.mkdir(destination)
-        for kind in ['css', 'js']:
-            os.mkdir(destination + kind)
-            for item in assets[kind]:
-                with open(destination + kind + '/' + item['name'], 'wb') as fh:
-                    fh.write(item['data'])
+        assets_dir = pathlib.Path(md_destination_path) / 'assets'
+        if assets_dir.exists():
+            shutil.rmtree(str(assets_dir))
+        for asset in deployed_assets:
+            path = pathlib.Path(md_destination_path) / asset['path']
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with open(str(path), 'wb') as fh:
+                fh.write(asset['data'])
 
 
 def main():

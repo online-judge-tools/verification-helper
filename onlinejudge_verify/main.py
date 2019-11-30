@@ -56,7 +56,7 @@ def subcommand_init() -> None:
     path = pathlib.Path('.github/workflows/verify.yml')
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(str(path), 'wb') as fh:
-        fh.write(verify_yml)
+        fh.write(verify_yml.replace(b'git+https://github.com/kmyk/online-judge-verify-helper.git@master', b'"online-judge-verify-helper==2.*"'))
 
 
 def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-pages') -> None:

@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-# use #624
-pip3 install -U git+https://github.com/kmyk/online-judge-tools@master
-
 which oj > /dev/null || { echo 'ERROR: please install `oj'\'' with: $ pip3 install --user -U online-judge-tools=='\''6.*'\''' >& 1 ; exit 1 ; }
 
 if [ -n "$CXX" ] ; then

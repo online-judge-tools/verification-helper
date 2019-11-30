@@ -19,11 +19,12 @@ def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest='subcommand')
 
+    subparser = subparsers.add_parser('all')
+
     subparser = subparsers.add_parser('run')
     subparser.add_argument('path', nargs='*', type=pathlib.Path)
 
     subparser = subparsers.add_parser('init')
-    subparser.add_argument('--target', choices=['github-actions'], default='github-actions')
 
     subparser = subparsers.add_parser('export')
     subparser.add_argument('path', type=pathlib.Path)
@@ -33,27 +34,40 @@ def get_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def subcommand_run(paths: List[str]) -> None:
+    """
+    :raises Exception: if test.sh fails
+    """
+
+    script = tempfile.NamedTemporaryFile(delete=False)
+    script.write(bash_script)
+    script.close()
+    try:
+        subprocess.check_call(['/bin/bash', script.name] + list(map(str, paths)), stdout=sys.stdout, stderr=sys.stderr)
+    finally:
+        os.remove(script.name)
+
+
+def subcommand_init() -> None:
+    path = pathlib.Path('.github/workflows/verify.yml')
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(str(path), 'wb') as fh:
+        fh.write(verify_yml)
+
+
 def main(args: Optional[List[str]] = None) -> None:
     parser = get_parser()
     parsed = parser.parse_args(args)
 
-    if parsed.subcommand == 'run':
-        script = tempfile.NamedTemporaryFile(delete=False)
-        script.write(bash_script)
-        script.close()
-        try:
-            subprocess.check_call(['/bin/bash', script.name] + list(map(str, parsed.path)), stdout=sys.stdout, stderr=sys.stderr)
-        finally:
-            os.remove(script.name)
+    if parsed.subcommand == 'all':
+        subcommand_run(paths=[])
+        onlinejudge_verify.docs.main()
+
+    elif parsed.subcommand == 'run':
+        subcommand_run(paths=parsed.path)
 
     elif parsed.subcommand == 'init':
-        if parsed.target == 'github-actions':
-            path = pathlib.Path('.github/workflows/verify.yml')
-            path.parent.mkdir(parents=True, exist_ok=True)
-            with open(str(path), 'wb') as fh:
-                fh.write(verify_yml)
-        else:
-            assert False
+        subcommand_init()
 
     elif parsed.subcommand == 'export':
         raise NotImplementedError('#include "hoge.hpp" みたいなやつをいい感じに展開してそのまま提出できる形コードを出力してほしい')

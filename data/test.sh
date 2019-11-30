@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-which oj > /dev/null || { echo 'ERROR: please install `oj'\'' with: $ pip3 install --user -U online-judge-tools=='\''6.*'\''' >& 1 ; exit 1 ; }
+which oj > /dev/null || { echo 'ERROR: please install `oj'\'' with: $ pip3 install --user -U online-judge-tools' >& 1 ; exit 1 ; }
 
 if [ -n "$CXX" ] ; then
     CXX_LIST="$CXX"
@@ -118,21 +118,10 @@ if [[ $# -eq 1 && ( $1 = -h || $1 = --help || $1 = -? ) ]] ; then
     echo '-   use both CXX=g++ and CXX=clang++ when $CXX is not given.'
 
 elif [[ $# -eq 0 ]] ; then
-    if [[ $CI ]] ; then
-        # CI
-        message="$(git log -1 | tail -1 | awk '{print $1}')"
-        if [[ "${message}" != '[auto-verifier]' ]] ; then
-            for f in $(list-recently-updated) ; do
-                for CXX in $CXX_LIST ; do
-                    run $f
-                done
-            done
-        fi
-    elif [[ $GITHUB_ACTIONS ]] ; then
-        # GitHub Actions
+    if [[ $GITHUB_ACTIONS ]] ; then
         echo '$' git checkout "${GITHUB_REF#refs/heads/}"
         git checkout "${GITHUB_REF#refs/heads/}"
-        
+
         for f in $(find . -name \*.test.cpp) ; do
             for CXX in $CXX_LIST ; do
                 run $f

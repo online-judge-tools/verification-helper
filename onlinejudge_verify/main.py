@@ -92,8 +92,8 @@ def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-p
 
     # commit and push
     logger.info('$ git add . && git commit && git push')
-    subprocess.check_call(['git', 'config', '--global', 'user.name', os.environ['GITHUB_ACTOR']])
-    subprocess.check_call(['git', 'config', '--global', 'user.email', '{}@users.noreply.github.com'.format(os.environ['GITHUB_ACTOR'])])
+    subprocess.check_call(['git', 'config', '--global', 'user.name', 'GitHub'])
+    subprocess.check_call(['git', 'config', '--global', 'user.email', 'noreply@github.com'])
     subprocess.check_call(['git', 'add', '.'])
     if subprocess.run(['git', 'diff', '--quiet', '--staged']).returncode:
         message = '[auto-verifier] docs commit {}'.format(os.environ['GITHUB_SHA'])

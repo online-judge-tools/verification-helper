@@ -144,8 +144,8 @@ elif [[ $# -eq 0 ]] ; then
 
         git status -s
         if [[ -n "$(git status -s)" ]]; then
-            git config --global user.name ${GITHUB_ACTOR}
-            git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+            git config --global user.name GitHub
+            git config --global user.email "noreply@github.com"
 
             echo '$' git add .verify-helper/timestamp/
             git add .verify-helper/timestamp/

@@ -41,7 +41,6 @@
 ## Code
 ```cpp
 #pragma once
-#include <algorithm>
 #include <cassert>
 #include <vector>
 

@@ -11,7 +11,7 @@ setup(
     description='',
     install_requires=[
         'markdown',
-        'online-judge-tools == 7.*',
+        'online-judge-tools >= 7.4.*',
         'setuptools',
     ],
     packages=find_packages(exclude=('tests', 'docs')) + ['onlinejudge_verify.data'],

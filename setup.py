@@ -18,7 +18,7 @@ setup(
         'onlinejudge_verify.data': 'data',
     },
     package_data={
-        'onlinejudge_verify.data': ['*'],
+        'onlinejudge_verify.data': ['*', 'assets/*', 'assets/css/*', 'assets/js/*'],
     },
     entry_points={
         'console_scripts': [

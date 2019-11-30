@@ -82,9 +82,10 @@ def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-p
 
     # remove all non-hidden files and write new files
     logger.info('write files to . on %s', dst_branch)
-    for path in map(pathlib.Path, glob.glob('**/*', recursive=True)):
-        if path.is_file():
-            path.unlink()
+    for pattern in ('**/*', '.*/**/*'):
+        for path in map(pathlib.Path, glob.glob(pattern, recursive=True)):
+            if path.is_file() and path.parts[0] != '.git':
+                path.unlink()
     for path, data in src_files.items():
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(str(path), 'wb') as fh:

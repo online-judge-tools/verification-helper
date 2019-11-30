@@ -129,7 +129,7 @@ class MarkdownPage:
 
     def get_destination(self, file_path, file_type=''):
         dst_file_dir, file_name = os.path.split(file_path)
-        dst_file_dir = os.path.relpath(dst_file_dir, self.cpp_source_path)
+        dst_file_dir = os.path.relpath(dst_file_dir or '.', self.cpp_source_path)
         md_file_dir = os.path.normpath(os.path.join(self.md_destination_path, file_type, dst_file_dir), )
         return os.path.join(md_file_dir, file_name)
 
@@ -379,7 +379,9 @@ class PagesBuilder:
         match_result = [p for p in glob.glob(path, recursive=True) if re.search(extension, p)]
         files = {}
         for matched_file in match_result:
-            if not self.is_ignored(matched_file) and matched_file not in ignored_files:
+            if any([os.path.realpath(matched_file) == os.path.realpath(ignored_file) for ignored_file in ignored_files]):
+                continue
+            if not self.is_ignored(matched_file):
                 matched_file = os.path.normpath(matched_file)
                 files[matched_file] = CppFile(matched_file, source_path)
         files = collections.OrderedDict(sorted(files.items(), key=lambda x: x[0]))

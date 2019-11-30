@@ -17,7 +17,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip3 install .
-        pip3 install setuptools
+        pip3 install setuptools wheel
 
     - name: Build package
       run: python3 setup.py bdist_wheel

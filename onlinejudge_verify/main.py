@@ -95,8 +95,9 @@ def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-p
     author = '{} <online-judge-verify-helper@example.com>'.format(username)
     message = '[auto-verifier] docs commit {}'.format(os.environ['GITHUB_SHA'])
     subprocess.check_call(['git', 'add', '.'])
-    subprocess.check_call(['git', 'commit', '--author', author, '-m', message])
-    subprocess.check_call(['git', 'push', url, 'HEAD'])
+    if subprocess.run(['git', 'diff', '--quiet', '--staged']).returncode:
+        subprocess.check_call(['git', 'commit', '--author', author, '-m', message])
+        subprocess.check_call(['git', 'push', url, 'HEAD'])
 
 
 def subcommand_docs() -> None:

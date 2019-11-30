@@ -10,6 +10,7 @@ setup(
     license='MIT License',
     description='',
     install_requires=[
+        'markdown',
         'online-judge-tools == 7.*',
         'setuptools',
     ],

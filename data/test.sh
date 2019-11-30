@@ -42,15 +42,15 @@ get-error() {
 
 is-verified() {
     file="$1"
-    cache=test/timestamp/$(echo -n "$CXX/$file" | md5sum | sed 's/ .*//')
+    cache=.verify-helper/timestamp/$(echo -n "$CXX/$file" | md5sum | sed 's/ .*//')
     timestamp="$(get-last-commit-date "$file")"
     [[ -e $cache ]] && [[ $timestamp = $(cat $cache) ]]
 }
 
 mark-verified() {
     file="$1"
-    cache=test/timestamp/$(echo -n "$CXX/$file" | md5sum | sed 's/ .*//')
-    mkdir -p test/timestamp
+    cache=.verify-helper/timestamp/$(echo -n "$CXX/$file" | md5sum | sed 's/ .*//')
+    mkdir -p .verify-helper/timestamp
     timestamp="$(get-last-commit-date "$file")"
     echo $timestamp > $cache
 }
@@ -68,7 +68,7 @@ run() {
     echo "$ CXX=$CXX ./test.sh $file"
 
     url="$(get-url "$file")"
-    dir=test/$(echo -n "$url" | md5sum | sed 's/ .*//')
+    dir=.verify-helper/$(echo -n "$url" | md5sum | sed 's/ .*//')
     mkdir -p ${dir}
 
     # ignore if IGNORE is defined
@@ -156,7 +156,7 @@ elif [[ $# -eq 0 ]] ; then
         git status -s
         if [[ -n "$(git status -s)" ]]; then
             last_commit="$(git log -1 | head -1 | awk '{print $2}')"
-            git add test/timestamp/
+            git add .verify-helper/timestamp/
             git commit -m "[auto-verifier] verify commit ${last_commit}"
             git push origin HEAD
         fi

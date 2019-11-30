@@ -144,13 +144,15 @@ elif [[ $# -eq 0 ]] ; then
 
         git status -s
         if [[ -n "$(git status -s)" ]]; then
-            author="${GITHUB_ACTOR} <${GITHUB_ACTOR}@users.noreply.github.com>"
-            origin="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}"
+            git config --global user.name ${GITHUB_ACTOR}
+            git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
             echo '$' git add .verify-helper/timestamp/
             git add .verify-helper/timestamp/
-            echo '$' git commit --author "$author" -m "[auto-verifier] verify commit ${GITHUB_SHA}"
-            git commit --author "$author" -m "[auto-verifier] verify commit ${GITHUB_SHA}"
+            echo '$' git commit -m "[auto-verifier] verify commit ${GITHUB_SHA}"
+            git commit -m "[auto-verifier] verify commit ${GITHUB_SHA}"
             echo '$' git push "https://${GITHUB_ACTOR}:"'${GITHUB_TOKEN}'"@github.com/${GITHUB_REPOSITORY}" HEAD
+            origin="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}"
             git push "$origin" HEAD
         fi
     else

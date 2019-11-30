@@ -9,6 +9,7 @@
 <body>
     <main>
         <h1><a href="https://github.com/kmyk/online-judge-verify-helper"><code>online-judge-verify-script</code></a>: 競プロライブラリに自動で verify をしてくれる CI を簡単に設定できる Web ページ</h1>
+        <h2>verify を自動でしてくれるように設定するには</h2>
         <p>
             手順:
         </p>
@@ -33,6 +34,24 @@
                 (おまけ) <code>README.md</code> に <code id="output4"></code> と書き足す (バッチ <a id="output5" target="_blank"><img id="output6"></a> が貼られる)
             </li>
         </ol>
+        <h2>ドキュメントが自動生成されるように設定するには</h2>
+        <p>
+            手順:
+        </p>
+        <ol>
+            <li>
+                verify を自動でしてくれるように設定する
+            </li>
+            <li>
+                <a href="https://help.github.com/ja/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line">コマンドライン用の個人アクセストークンを作成する - GitHub ヘルプ</a> に従い、権限 `repo` を持った Personal Access Token を生成する
+            </li>
+            <li>
+                <a href="https://help.github.com/ja/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets#creating-encrypted-secrets">Creating and using encrypted secrets - GitHub ヘルプ</a> に従い、作成した Personal Access Token を `GH_PAT` という名前の secret として保存する
+            </li>
+        </ol>
+        <p>
+            (注意: この設定がなくてもドキュメントのデータ自体は自動で生成され <code>gh-pages</code> branch へ push されます。しかし GitHub Actions の制約のために GitHub Pages の更新までは行われません。その場合は <code>gh-pages</code> branch へ手動で空の commit などを push すれば GitHub Pages の更新が行われます。この制約はおそらくは GitHub Actions の設定ミスによる無限ループを抑制するためのものです。)
+        </p>
     </main>
 
     <script>

@@ -61,7 +61,11 @@ def subcommand_init() -> None:
 
 def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-pages') -> None:
     # read config
-    url = 'https://x-access-token:{}@github.com/{}.git'.format(os.environ['GITHUB_TOKEN'], os.environ['GITHUB_REPOSITORY'])
+    if os.environ.get('GH_PAT', None):
+        # see https://github.com/marketplace/actions/github-pages-deploy#secrets and https://github.com/maxheld83/ghpages/issues/1
+        url = 'https://{}@github.com/{}.git'.format(os.environ['GH_PAT'])
+    else:
+        url = 'https://{}:{}@github.com/{}.git'.format(os.environ['GITHUB_ACTOR'], os.environ['GITHUB_TOKEN'], os.environ['GITHUB_REPOSITORY'])
     logger.info('GITHUB_ACTOR = %s', os.environ['GITHUB_ACTOR'])
     logger.info('GITHUB_REPOSITORY = %s', os.environ['GITHUB_REPOSITORY'])
 

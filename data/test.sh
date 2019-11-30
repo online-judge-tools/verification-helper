@@ -131,7 +131,7 @@ elif [[ $# -eq 0 ]] ; then
         git config --global user.name ${username}
         git config --global user.email "online-judge-verify-helper@example.com"
 
-        echo https://${username}:${GITHUB_TOKEN}@github.com/${username}/${reponame}
+        echo "https://${username}:"'${GITHUB_TOKEN}'"@github.com/${username}/${reponame}"
         echo "${GITHUB_REF##*/}"
         git remote set-url origin https://${username}:${GITHUB_TOKEN}@github.com/${username}/${reponame}
         git checkout "${GITHUB_REF##*/}"

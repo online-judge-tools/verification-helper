@@ -9,7 +9,7 @@
 ### ターミナル上で実行
 
 まず `oj-verify` コマンドを使えるようにします。
-これには `pip3 install git+https://github.com/kmyk/online-judge-verify-helper` を実行します。
+これには `pip3 install online-judge-verify-helper` を実行します。
 
 テストを書いていきましょう。
 `.test.cpp` という拡張子を持つ C++ のファイルを作って、その中で [Aizu Online Judge](http://judge.u-aizu.ac.jp/onlinejudge/) や [Library Checker](https://judge.yosupo.jp/) の問題の URL を `#define PROBLEM "URL"` のように指定しておきます  (例: [example.test.cpp](https://github.com/kmyk/online-judge-verify-helper/blob/master/example.test.cpp))。
@@ -23,7 +23,7 @@
 まとめると、以下を実行すればよいということになります。
 
 ``` console
-$ pip3 install git+https://github.com/kmyk/online-judge-verify-helper
+$ pip3 install online-judge-verify-helper
 $ wget https://raw.githubusercontent.com/kmyk/online-judge-verify-helper/master/example.test.cpp
 $ oj-verify run
 $ oj-verify init

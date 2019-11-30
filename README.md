@@ -42,6 +42,7 @@ MIT License
 
 ## Authors
 
--   committer 1: [@kmyk](https://github.com/kmyk) (AtCoder: [kimiyuki](https://atcoder.jp/users/kimiyuki))
--   committer 2: [@beet-aizu](https://github.com/beet-aizu) (AtCoder: [beet](https://atcoder.jp/users/beet))
--   special thanks: [@yosupo06](http://github.com/yosupo06) (AtCoder: [yosupo](https://atcoder.jp/users/yosupo)) for their [Library Checker](https://judge.yosupo.jp/)
+-   committer: [@kmyk](https://github.com/kmyk) (AtCoder: [kimiyuki](https://atcoder.jp/users/kimiyuki)): pip での配布や [online-judge-tools](https://github.com/kmyk/online-judge-tools) などその他の諸々の担当
+-   committer: [@beet-aizu](https://github.com/beet-aizu) (AtCoder: [beet](https://atcoder.jp/users/beet)): verify 機能担当
+-   committer: [@tsutaj](https://github.com/tsutaj) (AtCoder: [Tsuta_J](https://atcoder.jp/users/Tsuta_J)): documents 生成担当
+-   special thanks: [@yosupo06](http://github.com/yosupo06) (AtCoder: [yosupo](https://atcoder.jp/users/yosupo)): verify のためのオンラインジャッジ [Library Checker](https://judge.yosupo.jp/) を管理運用してくれている

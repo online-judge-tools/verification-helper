@@ -63,7 +63,7 @@ def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-p
     # read config
     username = os.environ['GITHUB_ACTOR']
     reponame = os.environ['GITHUB_REPOSITORY'].partition('/')[2]
-    url = 'https://{}:{}@github.com/{}/{}'.format(username, os.environ['GITHUB_TOKEN'], username, reponame)
+    url = 'https://x-access-token:{}@github.com/{}/{}'.format(username, os.environ['GITHUB_TOKEN'], username, reponame)
     logger.info('username = %s', username)
     logger.info('reponame = %s', reponame)
 

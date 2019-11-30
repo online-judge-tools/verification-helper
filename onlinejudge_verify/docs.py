@@ -6,6 +6,26 @@ import re
 import shutil
 
 import markdown
+import pkg_resources
+
+package = 'onlinejudge_verify.data'
+assets_site_header_txt = pkg_resources.resource_string(package, 'assets/site-header.txt')
+assets_copy_button_js = pkg_resources.resource_string(package, 'assets/js/copy-button.js')
+assets_copy_button_css = pkg_resources.resource_string(package, 'assets/css/copy-button.css')
+assets = {
+    'css': [
+        {
+            'name': 'copy-button.js',
+            'data': assets_copy_button_css
+        },
+    ],
+    'js': [
+        {
+            'name': 'copy-button.js',
+            'data': assets_copy_button_js
+        },
+    ],
+}
 
 
 class FileParser:
@@ -146,9 +166,7 @@ class MarkdownArticle(MarkdownPage):
 
     # include (mathjax, js, css)
     def write_header(self, file_object):
-        with open('./assets/site-header.txt') as f:
-            file_object.write(f.read())
-        self.include_js(file_object, os.path.join(self.md_destination_path, './assets/js/balloons.js'))
+        file_object.buffer.write(assets_site_header_txt)
         self.include_js(file_object, os.path.join(self.md_destination_path, './assets/js/copy-button.js'))
         self.include_css(file_object, os.path.join(self.md_destination_path, './assets/css/copy-button.css'))
         file_object.write('\n\n')
@@ -238,7 +256,6 @@ class MarkdownTopPage(MarkdownPage):
     def write_header(self, file_object):
         with open('./assets/site-header.txt') as f:
             file_object.write(f.read())
-        self.include_js(file_object, os.path.join(self.md_destination_path, './assets/js/balloons.js'))
         self.include_js(file_object, os.path.join(self.md_destination_path, './assets/js/copy-button.js'))
         self.include_css(file_object, os.path.join(self.md_destination_path, './assets/css/copy-button.css'))
         file_object.write('\n\n')
@@ -482,7 +499,12 @@ class PagesBuilder:
     def build_assets(self, md_destination_path):
         destination = os.path.join(md_destination_path, './assets/')
         if os.path.exists(destination): shutil.rmtree(destination)
-        shutil.copytree('./assets/', destination)
+        os.mkdir('assets')
+        for kind in ['css', 'js']:
+            os.mkdir('assets/' + kind)
+            for item in assets[kind]:
+                with open('assets/' + kind + '/' + item['name'], 'wb') as fh:
+                    fh.write(item['data'])
 
 
 def main():
@@ -495,7 +517,7 @@ def main():
         'categorize_library': True,  # show library files with categorizing (default: True)
         'categorize_verify': False,  # show verify files with categorizing (default: False)
     }
-    builder = PagesBuilder(cpp_source_path='../', config=config)
+    builder = PagesBuilder(cpp_source_path='.', config=config)
 
 
 if __name__ == '__main__':

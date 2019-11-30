@@ -4,7 +4,7 @@
 
 /**
  * @brief a disjoint set structure
- * @note most operations in O(alpha(n)) where alpha(n) is the inverse of Ackermann function
+ * @note most operations in $O(\alpha(n))$ where $\alpha(n)$ is the inverse of Ackermann function
  * @note implemented with union-by-size + path-compression
  */
 struct union_find_tree {

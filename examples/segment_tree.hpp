@@ -21,7 +21,7 @@ struct segment_tree {
     }
 
     /**
-     * @brief set a_i as b in O(log n)
+     * @brief set $a_i$ as b in $O(\log n)$
      * @arg i is 0-based
      */
     void point_set(int i, value_type b) {
@@ -33,7 +33,7 @@ struct segment_tree {
     }
 
     /**
-     * @brief compute a_l * a_{l+1} * ... * a_{r-1} in O(log n)
+     * @brief compute $a_l \cdot a _ {l + 1} \cdot ... \cdot a _ {r - 1}$ in $O(\log n)$
      * @arg l, r are 0-based
      */
     value_type range_concat(int l, int r) {

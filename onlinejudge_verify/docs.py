@@ -364,6 +364,7 @@ class PagesBuilder:
         self.build_library_files(cpp_source_path, md_destination_path)
         self.build_top_page(cpp_source_path, md_destination_path)
         self.build_assets(md_destination_path)
+        self.build_static_files(md_destination_path)
 
     # ignore が付いているか？
     def is_ignored(self, file_path):
@@ -505,6 +506,13 @@ class PagesBuilder:
             path.parent.mkdir(parents=True, exist_ok=True)
             with open(str(path), 'wb') as fh:
                 fh.write(asset['data'])
+
+    def build_static_files(self, md_destination_path):
+        static_dir = pathlib.Path('.verify-helper/docs/static')
+        for src_path in map(pathlib.Path, glob.glob(str(static_dir) + '/**/*', recursive=True)):
+            dst_path = pathlib.Path(md_destination_path) / src_path.relative_to(static_dir)
+            if src_path.is_file():
+                shutil.copyfile(str(src_path), str(dst_path))
 
 
 def main():

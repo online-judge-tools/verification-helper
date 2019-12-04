@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 import collections
 import glob
+import hashlib
 import os
 import pathlib
 import re
+import shlex
 import shutil
+import subprocess
 
 import markdown
 import pkg_resources
@@ -104,8 +107,17 @@ class CppFile:
         self.required = []
         self.is_verified = self.get_verification_status()
 
-    def get_verification_status(self):
-        return False  # [TODO]
+    def get_verification_status(self) -> bool:
+        for compiler in ('g++', 'clang++'):
+            timestamp_path = pathlib.Path('.verify-helper/timestamp') / hashlib.md5(compiler.encode() + b'/./' + self.file_path.encode()).hexdigest()
+            if not timestamp_path.exists():
+                return False
+            code = r"""{} --std=c++17 -O2 -Wall -g -I . -MD -MF /dev/stdout -MM {} | sed '1s/[^:].*: // ; s/\\$//' | xargs -n 1 | xargs git log -1 --date=iso --pretty=%ad""".format(compiler, shlex.quote(self.file_path))
+            timestamp = subprocess.check_output(code, shell=True).decode()
+            with open(str(timestamp_path)) as fh:
+                if fh.read() < timestamp:
+                    return False
+        return True
 
     def to_source_relpath(self, item_list):
         result, file_dir = [], os.path.dirname(self.file_path)

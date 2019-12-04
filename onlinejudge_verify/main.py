@@ -81,10 +81,10 @@ def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-p
     # checkout gh-pages
     logger.info('$ git checkout %s', dst_branch)
     subprocess.check_call(['git', 'stash'])
-    if subprocess.run(['git', 'rev-parse', '--verify', dst_branch]).returncode:
-        subprocess.check_call(['git', 'checkout', '--orphan', dst_branch])
-    else:
+    try:
         subprocess.check_call(['git', 'checkout', dst_branch])
+    except subprocess.CalledProcessError:
+        subprocess.check_call(['git', 'checkout', '--orphan', dst_branch])
 
     # remove all non-hidden files and write new files
     logger.info('write files to . on %s', dst_branch)

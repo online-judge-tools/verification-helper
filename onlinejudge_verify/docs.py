@@ -110,8 +110,11 @@ class CppFile:
     def to_source_relpath(self, item_list):
         result, file_dir = [], os.path.dirname(self.file_path)
         for item in item_list:
-            relpath_from_source = os.path.join(file_dir, item)
-            result.append(os.path.normpath(relpath_from_source))
+            if item.startswith('.'):
+                relpath_from_source = os.path.join(file_dir, item)
+                result.append(os.path.normpath(relpath_from_source))
+            else:
+                result.append(os.path.normpath(item))
         return result
 
     def set_required(self, required_list):

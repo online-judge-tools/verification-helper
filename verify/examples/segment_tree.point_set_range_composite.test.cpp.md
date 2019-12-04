@@ -21,7 +21,7 @@
 <link rel="stylesheet" href="../../assets/css/copy-button.css" />
 
 
-# :warning: examples/segment_tree.point_set_range_composite.test.cpp
+# :heavy_check_mark: examples/segment_tree.point_set_range_composite.test.cpp
 
 
 [Back to top page](../../index.html)
@@ -30,8 +30,8 @@
 
 
 ## Dependencies
-* :warning: [examples/macros.hpp](../../library/examples/macros.hpp.html)
-* :warning: [examples/segment_tree.hpp](../../library/examples/segment_tree.hpp.html)
+* :heavy_check_mark: [examples/macros.hpp](../../library/examples/macros.hpp.html)
+* :heavy_check_mark: [examples/segment_tree.hpp](../../library/examples/segment_tree.hpp.html)
 
 
 ## Code
@@ -41,8 +41,8 @@
 #include <iostream>
 #include <tuple>
 #include <utility>
-#include "./segment_tree.hpp"
-#include "./macros.hpp"
+#include "examples/segment_tree.hpp"
+#include "examples/macros.hpp"
 using namespace std;
 
 template <int32_t MOD>

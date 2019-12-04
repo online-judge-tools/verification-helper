@@ -21,7 +21,7 @@
 <link rel="stylesheet" href="../../assets/css/copy-button.css" />
 
 
-# :warning: examples/segment_tree.range_minimum_query.test.cpp
+# :heavy_check_mark: examples/segment_tree.range_minimum_query.test.cpp
 
 
 [Back to top page](../../index.html)
@@ -30,18 +30,18 @@
 
 
 ## Dependencies
-* :warning: [examples/macros.hpp](../../library/examples/macros.hpp.html)
-* :warning: [examples/monoids.hpp](../../library/examples/monoids.hpp.html)
-* :warning: [examples/segment_tree.hpp](../../library/examples/segment_tree.hpp.html)
+* :heavy_check_mark: [examples/macros.hpp](../../library/examples/macros.hpp.html)
+* :heavy_check_mark: [examples/monoids.hpp](../../library/examples/monoids.hpp.html)
+* :heavy_check_mark: [examples/segment_tree.hpp](../../library/examples/segment_tree.hpp.html)
 
 
 ## Code
 ```cpp
 #define PROBLEM "https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_A"
 #include <iostream>
-#include "./segment_tree.hpp"
-#include "./monoids.hpp"
-#include "./macros.hpp"
+#include "examples/segment_tree.hpp"
+#include "examples/monoids.hpp"
+#include "examples/macros.hpp"
 using namespace std;
 
 int main() {

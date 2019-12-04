@@ -30,11 +30,12 @@
 
 
 ## Verified
-* :warning: [examples/segment_tree.point_set_range_composite.test.cpp](../../verify/examples/segment_tree.point_set_range_composite.test.cpp.html)
-* :warning: [examples/segment_tree.range_minimum_query.test.cpp](../../verify/examples/segment_tree.range_minimum_query.test.cpp.html)
-* :warning: [examples/segment_tree.range_sum_query.test.cpp](../../verify/examples/segment_tree.range_sum_query.test.cpp.html)
-* :warning: [examples/union_find_tree.aoj.test.cpp](../../verify/examples/union_find_tree.aoj.test.cpp.html)
-* :warning: [examples/union_find_tree.yosupo.test.cpp](../../verify/examples/union_find_tree.yosupo.test.cpp.html)
+* :heavy_check_mark: [examples/include_relative.test.cpp](../../verify/examples/include_relative.test.cpp.html)
+* :heavy_check_mark: [examples/segment_tree.point_set_range_composite.test.cpp](../../verify/examples/segment_tree.point_set_range_composite.test.cpp.html)
+* :heavy_check_mark: [examples/segment_tree.range_minimum_query.test.cpp](../../verify/examples/segment_tree.range_minimum_query.test.cpp.html)
+* :heavy_check_mark: [examples/segment_tree.range_sum_query.test.cpp](../../verify/examples/segment_tree.range_sum_query.test.cpp.html)
+* :heavy_check_mark: [examples/union_find_tree.aoj.test.cpp](../../verify/examples/union_find_tree.aoj.test.cpp.html)
+* :heavy_check_mark: [examples/union_find_tree.yosupo.test.cpp](../../verify/examples/union_find_tree.yosupo.test.cpp.html)
 
 
 ## Code

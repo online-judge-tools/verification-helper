@@ -21,7 +21,7 @@
 <link rel="stylesheet" href="../assets/css/copy-button.css" />
 
 
-# :warning: example.test.cpp
+# :heavy_check_mark: example.test.cpp
 
 
 [Back to top page](../index.html)

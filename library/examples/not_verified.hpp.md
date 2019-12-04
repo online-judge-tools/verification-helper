@@ -21,7 +21,8 @@
 <link rel="stylesheet" href="../../assets/css/copy-button.css" />
 
 
-# :warning: examples/hoge.test.cpp
+# :warning: examples/not_verified.hpp
+* category: examples
 
 
 [Back to top page](../../index.html)
@@ -30,11 +31,11 @@
 
 ## Code
 ```cpp
-#include <cstdio>
+#pragma once
 
-int main() {
-    printf("Hello World\n");
-    return 0;
+inline string get_the_proof_of_P_equal_NP() {
+    while (true) {
+    }
 }
 
 ```

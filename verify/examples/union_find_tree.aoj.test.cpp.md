@@ -21,7 +21,7 @@
 <link rel="stylesheet" href="../../assets/css/copy-button.css" />
 
 
-# :warning: examples/union_find_tree.aoj.test.cpp
+# :heavy_check_mark: examples/union_find_tree.aoj.test.cpp
 
 
 [Back to top page](../../index.html)
@@ -30,16 +30,16 @@
 
 
 ## Dependencies
-* :warning: [examples/macros.hpp](../../library/examples/macros.hpp.html)
-* :warning: [examples/union_find_tree.hpp](../../library/examples/union_find_tree.hpp.html)
+* :heavy_check_mark: [examples/macros.hpp](../../library/examples/macros.hpp.html)
+* :heavy_check_mark: [examples/union_find_tree.hpp](../../library/examples/union_find_tree.hpp.html)
 
 
 ## Code
 ```cpp
 #define PROBLEM "https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_1_A"
 #include <iostream>
-#include "./union_find_tree.hpp"
-#include "./macros.hpp"
+#include "examples/union_find_tree.hpp"
+#include "examples/macros.hpp"
 using namespace std;
 
 int main() {

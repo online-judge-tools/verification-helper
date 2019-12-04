@@ -21,37 +21,27 @@
 <link rel="stylesheet" href="../../assets/css/copy-button.css" />
 
 
-# :heavy_check_mark: examples/union_find_tree.yosupo.test.cpp
+# :heavy_check_mark: examples/include_relative.test.cpp
 
 
 [Back to top page](../../index.html)
 
-* see: [https://judge.yosupo.jp/problem/unionfind](https://judge.yosupo.jp/problem/unionfind)
+* see: [http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_A](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_A)
 
 
 ## Dependencies
 * :heavy_check_mark: [examples/macros.hpp](../../library/examples/macros.hpp.html)
-* :heavy_check_mark: [examples/union_find_tree.hpp](../../library/examples/union_find_tree.hpp.html)
 
 
 ## Code
 ```cpp
-#define PROBLEM "https://judge.yosupo.jp/problem/unionfind"
-#include <iostream>
-#include "examples/union_find_tree.hpp"
-#include "examples/macros.hpp"
-using namespace std;
+#define PROBLEM "http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_A"
+#include <cstdio>
+#include "./macros.hpp"
 
 int main() {
-    int n, q; cin >> n >> q;
-    union_find_tree uft(n);
-    REP (i, q) {
-        int t, u, v; cin >> t >> u >> v;
-        if (t == 0) {
-            uft.unite_trees(u, v);
-        } else if (t == 1) {
-            cout << uft.is_same(u, v) << endl;
-        }
+    REP (i, 1000) {
+        printf("Hello World\n");
     }
     return 0;
 }

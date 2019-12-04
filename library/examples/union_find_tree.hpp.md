@@ -31,8 +31,8 @@
 
 
 ## Verified
-* :warning: [examples/union_find_tree.aoj.test.cpp](../../verify/examples/union_find_tree.aoj.test.cpp.html)
-* :warning: [examples/union_find_tree.yosupo.test.cpp](../../verify/examples/union_find_tree.yosupo.test.cpp.html)
+* :heavy_check_mark: [examples/union_find_tree.aoj.test.cpp](../../verify/examples/union_find_tree.aoj.test.cpp.html)
+* :heavy_check_mark: [examples/union_find_tree.yosupo.test.cpp](../../verify/examples/union_find_tree.yosupo.test.cpp.html)
 
 
 ## Code
@@ -43,7 +43,7 @@
 
 /**
  * @brief a disjoint set structure
- * @note most operations in O(alpha(n)) where alpha(n) is the inverse of Ackermann function
+ * @note most operations in $O(\alpha(n))$ where $\alpha(n)$ is the inverse of Ackermann function
  * @note implemented with union-by-size + path-compression
  */
 struct union_find_tree {

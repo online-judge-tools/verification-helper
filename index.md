@@ -30,19 +30,20 @@
 
 ## Library Files
 ### examples
-* :warning: [examples/macros.hpp](library/examples/macros.hpp.html)
-* :warning: [examples/monoids.hpp](library/examples/monoids.hpp.html)
-* :warning: [examples/segment_tree.hpp](library/examples/segment_tree.hpp.html)
-* :warning: [examples/union_find_tree.hpp](library/examples/union_find_tree.hpp.html)
+* :heavy_check_mark: [examples/macros.hpp](library/examples/macros.hpp.html)
+* :heavy_check_mark: [examples/monoids.hpp](library/examples/monoids.hpp.html)
+* :warning: [examples/not_verified.hpp](library/examples/not_verified.hpp.html)
+* :heavy_check_mark: [examples/segment_tree.hpp](library/examples/segment_tree.hpp.html)
+* :heavy_check_mark: [examples/union_find_tree.hpp](library/examples/union_find_tree.hpp.html)
 
 
 ## Verify Files
-* :warning: [example.test.cpp](verify/example.test.cpp.html)
-* :warning: [examples/hoge.test.cpp](verify/examples/hoge.test.cpp.html)
-* :warning: [examples/segment_tree.point_set_range_composite.test.cpp](verify/examples/segment_tree.point_set_range_composite.test.cpp.html)
-* :warning: [examples/segment_tree.range_minimum_query.test.cpp](verify/examples/segment_tree.range_minimum_query.test.cpp.html)
-* :warning: [examples/segment_tree.range_sum_query.test.cpp](verify/examples/segment_tree.range_sum_query.test.cpp.html)
-* :warning: [examples/union_find_tree.aoj.test.cpp](verify/examples/union_find_tree.aoj.test.cpp.html)
-* :warning: [examples/union_find_tree.yosupo.test.cpp](verify/examples/union_find_tree.yosupo.test.cpp.html)
+* :heavy_check_mark: [example.test.cpp](verify/example.test.cpp.html)
+* :heavy_check_mark: [examples/include_relative.test.cpp](verify/examples/include_relative.test.cpp.html)
+* :heavy_check_mark: [examples/segment_tree.point_set_range_composite.test.cpp](verify/examples/segment_tree.point_set_range_composite.test.cpp.html)
+* :heavy_check_mark: [examples/segment_tree.range_minimum_query.test.cpp](verify/examples/segment_tree.range_minimum_query.test.cpp.html)
+* :heavy_check_mark: [examples/segment_tree.range_sum_query.test.cpp](verify/examples/segment_tree.range_sum_query.test.cpp.html)
+* :heavy_check_mark: [examples/union_find_tree.aoj.test.cpp](verify/examples/union_find_tree.aoj.test.cpp.html)
+* :heavy_check_mark: [examples/union_find_tree.yosupo.test.cpp](verify/examples/union_find_tree.yosupo.test.cpp.html)
 
 

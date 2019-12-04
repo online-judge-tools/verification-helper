@@ -68,7 +68,7 @@
                 const url = input.value.replace(/\/$/, "");
 
                 const filename = ".github%2Fworkflows%2Fverify.yml"
-                const value = "name%3A%20verify%0A%0Aon%3A%20push%0A%0Ajobs%3A%0A%20%20build%3A%0A%20%20%20%20runs-on%3A%20ubuntu-latest%0A%0A%20%20%20%20steps%3A%0A%20%20%20%20-%20uses%3A%20actions%2Fcheckout%40v1%0A%0A%20%20%20%20-%20name%3A%20Set%20up%20Python%0A%20%20%20%20%20%20uses%3A%20actions%2Fsetup-python%40v1%0A%0A%20%20%20%20-%20name%3A%20Install%20dependencies%0A%20%20%20%20%20%20run%3A%20pip3%20install%20-U%20online-judge-verify-helper%0A%0A%20%20%20%20-%20name%3A%20Run%20tests%0A%20%20%20%20%20%20env%3A%0A%20%20%20%20%20%20%20%20GITHUB_TOKEN%3A%20%24%7B%7B%20secrets.GITHUB_TOKEN%20%7D%7D%0A%20%20%20%20%20%20run%3A%20oj-verify%20all";
+                const value = "name%3A%20verify%0A%0Aon%3A%20push%0A%0Ajobs%3A%0A%20%20build%3A%0A%20%20%20%20runs-on%3A%20ubuntu-latest%0A%0A%20%20%20%20steps%3A%0A%20%20%20%20-%20uses%3A%20actions%2Fcheckout%40v1%0A%0A%20%20%20%20-%20name%3A%20Set%20up%20Python%0A%20%20%20%20%20%20uses%3A%20actions%2Fsetup-python%40v1%0A%0A%20%20%20%20-%20name%3A%20Install%20dependencies%0A%20%20%20%20%20%20run%3A%20pip3%20install%20-U%20git%2Bhttps%3A%2F%2Fgithub.com%2Fkmyk%2Fonline-judge-verify-helper.git%40master%0A%0A%20%20%20%20-%20name%3A%20Run%20tests%0A%20%20%20%20%20%20env%3A%0A%20%20%20%20%20%20%20%20GITHUB_TOKEN%3A%20%24%7B%7B%20secrets.GITHUB_TOKEN%20%7D%7D%0A%20%20%20%20%20%20%20%20GH_PAT%3A%20%24%7B%7B%20secrets.GH_PAT%20%7D%7D%0A%20%20%20%20%20%20run%3A%20oj-verify%20all";
                 output.href = url + "/new/master?filename=" + filename + "&value=" + value;
                 output.textContent = url + "&value=...";
 

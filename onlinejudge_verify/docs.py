@@ -8,11 +8,13 @@ import re
 import shlex
 import shutil
 import subprocess
-# typing.OrderedDict is available (>= 3.7.2)
-from typing import IO, Any, Dict, List, OrderedDict, Tuple
+from typing import IO, Any, Dict, List, Tuple
 
 import markdown
 import pkg_resources
+
+# typing.OrderedDict is not recognized by mypy
+OrderedDict = collections.OrderedDict
 
 package = 'onlinejudge_verify.data'
 assets_site_header_txt = pkg_resources.resource_string(package, 'assets/site-header.txt')

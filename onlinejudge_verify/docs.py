@@ -628,10 +628,10 @@ class PagesBuilder:
         if assets_dir.exists():
             shutil.rmtree(str(assets_dir))
         for asset in deployed_assets:
-            path = md_destination_path / asset['path']
+            path = md_destination_path / asset['path']  # type: ignore
             path.parent.mkdir(parents=True, exist_ok=True)
             with open(str(path), 'wb') as fh:
-                fh.write(asset['data'])
+                fh.write(asset['data'])  # type: ignore
 
     def build_static_files(self, md_destination_path: pathlib.Path) -> None:
         static_dir = pathlib.Path('.verify-helper/docs/static')

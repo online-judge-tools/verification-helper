@@ -31,6 +31,7 @@ deployed_assets = [
     },
 ]
 
+
 class FileParser:
     # ファイルパスをもらって、行ごとに分ける
     def __init__(self, file_path: pathlib.Path) -> None:
@@ -40,7 +41,7 @@ class FileParser:
             self.lines = [line.decode().strip() for line in f.readlines()]
 
     # タグをもらって、コンテンツの配列を出す
-    def get_contents_by_tag(self, tag_name: str, l_pat: str ='', r_pat: str ='') -> List[str]:
+    def get_contents_by_tag(self, tag_name: str, l_pat: str = '', r_pat: str = '') -> List[str]:
         tag_name = re.escape(tag_name)
         l_pat, r_pat = re.escape(l_pat), re.escape(r_pat)
 
@@ -87,7 +88,7 @@ class CppFile:
 
         self.brief = self.parser.get_contents_by_tag(r'@brief')
         self.brief.extend(self.parser.get_contents_by_tag(r'#define DESCRIPTION', r'"', r'"'))
-        
+
         # category 指定が空なら、source_path から見た file_path が属するディレクトリ名をカテゴリにする
         category_list = self.parser.get_contents_by_tag(r'@category')
         category_list.extend(self.parser.get_contents_by_tag(r'#define CATEGORY', r'"', r'"'))
@@ -100,13 +101,13 @@ class CppFile:
         self.see = self.parser.get_contents_by_tag(r'@see')
         self.see.extend(self.parser.get_contents_by_tag(r'#define PROBLEM', r'"', r'"'))
         self.see.extend(self.parser.get_contents_by_tag(r'#define SEE', r'"', r'"'))
-        
+
         # pathlib 型に直し、相対パスである場合は絶対パスに直す
         docs_list = self.parser.get_contents_by_tag(r'@docs')
         docs_list.extend(self.parser.get_contents_by_tag(r'#define DOCS', r'"', r'"'))
         self.docs = [pathlib.Path(path) for path in docs_list]
         self.docs = self.to_abspath(self.docs)
-        
+
         # pathlib 型に直し、相対パスである場合は絶対パスに直す
         depends_list = self.parser.get_contents_by_tag(r'@depends')
         depends_list.extend(self.parser.get_implicit_dependencies())
@@ -115,8 +116,8 @@ class CppFile:
         self.depends = [pathlib.Path(path) for path in depends_list]
         self.depends = self.to_abspath(self.depends)
         self.depends.sort()
-        
-        self.required = [] # type: List[pathlib.Path]
+
+        self.required = []  # type: List[pathlib.Path]
         self.is_verified = self.get_verification_status()
 
     def get_verification_status(self) -> bool:
@@ -147,12 +148,13 @@ class CppFile:
         self.required = required_list
         self.required.sort()
 
+
 class MarkdownPage:
     def __init__(self) -> None:
         self.cpp_source_path = pathlib.Path()
         self.md_destination_path = pathlib.Path()
         self.destination = pathlib.Path()
-        
+
     def get_mark(self, cond: bool) -> str:
         if cond:
             return ':heavy_check_mark:'
@@ -162,12 +164,12 @@ class MarkdownPage:
     # file_path の markdown 生成先はどのような絶対パスになるべきか
     # prefix は [cpp_source_path までのパス] でなければならない
     # [markdown 生成先ディレクトリまでのパス] + [file_type] + [cpp_source_path より深いパス] を返す？
-    def get_destination(self, file_path: pathlib.Path, file_type: str ='') -> pathlib.Path:
+    def get_destination(self, file_path: pathlib.Path, file_type: str = '') -> pathlib.Path:
         try:
             file_path.relative_to(self.cpp_source_path)
         except ValueError:
             raise ValueError('{} does not have prefix {}\n'.format(str(file_path), str(self.cpp_source_path)))
-            
+
         file_path = file_path.resolve()
         path_suf = file_path.relative_to(self.cpp_source_path)
         return (self.md_destination_path / file_type / path_suf).resolve()
@@ -196,12 +198,9 @@ class MarkdownPage:
         html_destination = str(self.destination) + '.html'
         data = markdown.markdownFromFile(input=md_destination, output=html_destination, encoding="utf-8", extensions=['fenced_code', 'tables'])
 
+
 class MarkdownArticle(MarkdownPage):
-    def __init__(self,
-                 file_class: CppFile,
-                 file_type: str,
-                 cpp_source_path: pathlib.Path,
-                 md_destination_path: pathlib.Path) -> None:
+    def __init__(self, file_class: CppFile, file_type: str, cpp_source_path: pathlib.Path, md_destination_path: pathlib.Path) -> None:
         self.file_class = file_class
         self.cpp_source_path = cpp_source_path.resolve()
         self.md_destination_path = md_destination_path.resolve()
@@ -220,10 +219,7 @@ class MarkdownArticle(MarkdownPage):
         if categorize: file_object.write('* category: {}\n'.format(category).encode())
         file_object.write('\n\n'.encode())
 
-    def write_contents(self,
-                       file_object: IO,
-                       path_to_title: OrderedDict[pathlib.Path, str],
-                       path_to_verification: Dict[pathlib.Path, bool]) -> None:
+    def write_contents(self, file_object: IO, path_to_title: OrderedDict[pathlib.Path, str], path_to_verification: Dict[pathlib.Path, bool]) -> None:
         back_to_top_link = self.get_link(self.md_destination_path / 'index.html')
 
         # back to top
@@ -265,7 +261,7 @@ class MarkdownArticle(MarkdownPage):
                 if required not in path_to_verification:
                     raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(required))
                 mark = self.get_mark(path_to_verification[required])
-                
+
                 if required not in path_to_title:
                     raise FileNotFoundError('{} seems not to exist in path_to_title'.format(required))
                 title = path_to_title[required]
@@ -281,7 +277,7 @@ class MarkdownArticle(MarkdownPage):
             file_object.write('## Verified\n'.encode())
             for verified in verified_file_list:
                 if verified not in path_to_verification:
-                    raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(verified)) 
+                    raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(verified))
                 mark = self.get_mark(path_to_verification[verified])
 
                 if verified not in path_to_title:
@@ -302,22 +298,16 @@ class MarkdownArticle(MarkdownPage):
         # back to top
         file_object.write('[Back to top page]({})\n\n'.format(back_to_top_link).encode())
 
-    def build(self,
-              path_to_title: OrderedDict[pathlib.Path, str],
-              path_to_verification: Dict[pathlib.Path, bool],
-              category: str,
-              categorize: bool) -> None:
+    def build(self, path_to_title: OrderedDict[pathlib.Path, str], path_to_verification: Dict[pathlib.Path, bool], category: str, categorize: bool) -> None:
         self.make_directory()
         with open(str(self.destination) + '.md', mode='wb') as file_object:
             self.write_header(file_object)
             self.write_title(file_object, category, categorize)
             self.write_contents(file_object, path_to_title, path_to_verification)
 
+
 class MarkdownTopPage(MarkdownPage):
-    def __init__(self,
-                 cpp_source_path: pathlib.Path,
-                 md_destination_path: pathlib.Path,
-                 config: Dict[str, Any]) -> None:
+    def __init__(self, cpp_source_path: pathlib.Path, md_destination_path: pathlib.Path, config: Dict[str, Any]) -> None:
         self.cpp_source_path = cpp_source_path.resolve()
         self.md_destination_path = md_destination_path.resolve()
         self.destination = md_destination_path / 'index'
@@ -364,7 +354,7 @@ class MarkdownTopPage(MarkdownPage):
                         if library_file not in path_to_title:
                             raise FileNotFoundError('{} seems not to exist in path_to_title'.format(library_file))
                         title = path_to_title[library_file]
-                        
+
                         link = self.get_link(self.get_destination(library_file, 'library')) + '.html'
                         file_object.write('* {} [{}]({})\n'.format(mark, title, link).encode())
                     file_object.write('\n\n'.encode())
@@ -379,7 +369,7 @@ class MarkdownTopPage(MarkdownPage):
                     if library_file not in path_to_title:
                         raise FileNotFoundError('{} seems not to exist in path_to_title'.format(library_file))
                     title = path_to_title[library_file]
-                    
+
                     link = self.get_link(self.get_destination(library_file, 'library')) + '.html'
                     file_object.write('* {} [{}]({})\n'.format(mark, title, link).encode())
                 file_object.write('\n\n'.encode())
@@ -397,7 +387,7 @@ class MarkdownTopPage(MarkdownPage):
                         if verify_file not in path_to_title:
                             raise FileNotFoundError('{} seems not to exist in path_to_title'.format(verify_file))
                         title = path_to_title[verify_file]
-                        
+
                         link = self.get_link(self.get_destination(verify_file, 'verify')) + '.html'
                         file_object.write('* {} [{}]({})\n'.format(mark, title, link).encode())
                     file_object.write('\n\n'.encode())
@@ -412,7 +402,7 @@ class MarkdownTopPage(MarkdownPage):
                     if verify_file not in path_to_title:
                         raise FileNotFoundError('{} seems not to exist in path_to_title'.format(verify_file))
                     title = path_to_title[verify_file]
-                    
+
                     link = self.get_link(self.get_destination(verify_file, 'verify')) + '.html'
                     file_object.write('* {} [{}]({})\n'.format(mark, title, link).encode())
                 file_object.write('\n\n'.encode())
@@ -446,11 +436,7 @@ class MarkdownTopPage(MarkdownPage):
 
 
 class PagesBuilder:
-    def __init__(self,
-                 cpp_source_pathstr: str,
-                 md_destination_pathstr: str ='./md-output',
-                 config: Dict[str, Any] ={}
-    ) -> None:
+    def __init__(self, cpp_source_pathstr: str, md_destination_pathstr: str = './md-output', config: Dict[str, Any] = {}) -> None:
         # ビルド対象ファイル一覧
         cpp_source_path = pathlib.Path(cpp_source_pathstr).resolve()
         md_destination_path = pathlib.Path(md_destination_pathstr).resolve()
@@ -490,11 +476,7 @@ class PagesBuilder:
 
     # source_path 内にあって拡張子末尾が extension であるファイル一覧
     # ignored_files に含まれるならば無視
-    def get_files(self,
-                  source_path: pathlib.Path,
-                  extension: str,
-                  ignored_files: OrderedDict[pathlib.Path, CppFile] = OrderedDict()
-    ) -> OrderedDict[pathlib.Path, CppFile]:
+    def get_files(self, source_path: pathlib.Path, extension: str, ignored_files: OrderedDict[pathlib.Path, CppFile] = OrderedDict()) -> OrderedDict[pathlib.Path, CppFile]:
         match_result = [p for p in source_path.glob(r'./**/*') if re.search(extension, str(p))]
         files = {}
         for matched_file in match_result:
@@ -508,14 +490,14 @@ class PagesBuilder:
 
     # title の重複があったらナンバリング付与
     def map_title2path(self) -> OrderedDict[str, pathlib.Path]:
-        title_cnt, title_num, result = {}, {}, {} # type: Dict[str, int], Dict[str, int], Dict[str, pathlib.Path]
+        title_cnt, title_num, result = {}, {}, {}  # type: Dict[str, int], Dict[str, int], Dict[str, pathlib.Path]
         for cpp_class in self.library_files.values():
             title_cnt.setdefault(cpp_class.title, 0)
             title_cnt[cpp_class.title] += 1
         for cpp_class in self.verify_files.values():
             title_cnt.setdefault(cpp_class.title, 0)
             title_cnt[cpp_class.title] += 1
-            
+
         for cpp_class in self.library_files.values():
             title = cpp_class.title
             if title_cnt[title] >= 2:
@@ -545,11 +527,11 @@ class PagesBuilder:
             self.verify_files[verify].title = result[verify]
         for library in self.library_files.keys():
             self.library_files[library].title = result[library]
-        
+
         return result
 
-    def map_category2path(self) -> Tuple[ OrderedDict[str, List[pathlib.Path]], OrderedDict[str, List[pathlib.Path]] ]:
-        verify_result, library_result = {}, {} # type: Dict[str, List[pathlib.Path]], Dict[str, List[pathlib.Path]]
+    def map_category2path(self) -> Tuple[OrderedDict[str, List[pathlib.Path]], OrderedDict[str, List[pathlib.Path]]]:
+        verify_result, library_result = {}, {}  # type: Dict[str, List[pathlib.Path]], Dict[str, List[pathlib.Path]]
         for cpp_class in self.verify_files.values():
             verify_result.setdefault(cpp_class.category, [])
             verify_result[cpp_class.category].append(cpp_class.file_path)
@@ -566,7 +548,7 @@ class PagesBuilder:
         return verify_result_ordered, library_result_ordered
 
     def get_required(self) -> None:
-        map_required = {} # type: Dict[pathlib.Path, List[pathlib.Path]]
+        map_required = {}  # type: Dict[pathlib.Path, List[pathlib.Path]]
         for cpp_class in self.library_files.values():
             for depends in cpp_class.depends:
                 map_required.setdefault(depends, [])
@@ -575,10 +557,10 @@ class PagesBuilder:
             for depends in cpp_class.depends:
                 map_required.setdefault(depends, [])
                 map_required[depends].append(cpp_class.file_path)
-                
+
         for depends_list in map_required.values():
             depends_list.sort()
-                
+
         for cpp_file in self.library_files.keys():
             map_required.setdefault(cpp_file, [])
             self.library_files[cpp_file].set_required(map_required[cpp_file])
@@ -588,7 +570,7 @@ class PagesBuilder:
             self.verify_files[cpp_file].set_required(map_required[cpp_file])
 
     def map_path2verification(self) -> Dict[pathlib.Path, bool]:
-        result = {} # type: Dict[pathlib.Path, bool]
+        result = {}  # type: Dict[pathlib.Path, bool]
         # .test.cpp の verify 状況確認
         for cpp_file, cpp_class in self.verify_files.items():
             result[cpp_file] = cpp_class.is_verified
@@ -659,7 +641,7 @@ class PagesBuilder:
                 shutil.copyfile(str(src_path), str(dst_path))
 
 
-def main(*, html: bool =True) -> None:
+def main(*, html: bool = True) -> None:
     # 実行テスト
     config = {
         'title': 'ライブラリの HTML ビルドテスト',  # title of top page

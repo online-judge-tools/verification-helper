@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import collections
 import glob
 import hashlib
 import os
@@ -8,13 +7,12 @@ import re
 import shlex
 import shutil
 import subprocess
-from typing import IO, Any, Dict, List, Tuple
+# typing.OrderedDict is not recognized by mypy
+from collections import OrderedDict
+from typing import IO, Any, Dict, List, NewType, Tuple
 
 import markdown
 import pkg_resources
-
-# typing.OrderedDict is not recognized by mypy
-OrderedDict = collections.OrderedDict
 
 package = 'onlinejudge_verify.data'
 assets_site_header_txt = pkg_resources.resource_string(package, 'assets/site-header.txt')
@@ -221,7 +219,7 @@ class MarkdownArticle(MarkdownPage):
         if categorize: file_object.write('* category: {}\n'.format(category).encode())
         file_object.write('\n\n'.encode())
 
-    def write_contents(self, file_object: IO, path_to_title: OrderedDict[pathlib.Path, str], path_to_verification: Dict[pathlib.Path, bool]) -> None:
+    def write_contents(self, file_object: IO, path_to_title: 'OrderedDict[pathlib.Path, str]', path_to_verification: Dict[pathlib.Path, bool]) -> None:
         back_to_top_link = self.get_link(self.md_destination_path / 'index.html')
 
         # back to top
@@ -300,7 +298,7 @@ class MarkdownArticle(MarkdownPage):
         # back to top
         file_object.write('[Back to top page]({})\n\n'.format(back_to_top_link).encode())
 
-    def build(self, path_to_title: OrderedDict[pathlib.Path, str], path_to_verification: Dict[pathlib.Path, bool], category: str, categorize: bool) -> None:
+    def build(self, path_to_title: 'OrderedDict[pathlib.Path, str]', path_to_verification: Dict[pathlib.Path, bool], category: str, categorize: bool) -> None:
         self.make_directory()
         with open(str(self.destination) + '.md', mode='wb') as file_object:
             self.write_header(file_object)
@@ -334,11 +332,11 @@ class MarkdownTopPage(MarkdownPage):
     def write_contents(
             self,
             file_object: IO,
-            verify_files: OrderedDict[pathlib.Path, CppFile],
-            library_files: OrderedDict[pathlib.Path, CppFile],
-            verify_category_to_path: OrderedDict[str, List[pathlib.Path]],
-            library_category_to_path: OrderedDict[str, List[pathlib.Path]],
-            path_to_title: OrderedDict[pathlib.Path, str],
+            verify_files: 'OrderedDict[pathlib.Path, CppFile]',
+            library_files: 'OrderedDict[pathlib.Path, CppFile]',
+            verify_category_to_path: 'OrderedDict[str, List[pathlib.Path]]',
+            library_category_to_path: 'OrderedDict[str, List[pathlib.Path]]',
+            path_to_title: 'OrderedDict[pathlib.Path, str]',
             path_to_verification: Dict[pathlib.Path, bool],
             categorize_verify: bool,
             categorize_library: bool,
@@ -411,11 +409,11 @@ class MarkdownTopPage(MarkdownPage):
 
     def build(
             self,
-            verify_files: OrderedDict[pathlib.Path, CppFile],
-            library_files: OrderedDict[pathlib.Path, CppFile],
-            verify_category_to_path: OrderedDict[str, List[pathlib.Path]],
-            library_category_to_path: OrderedDict[str, List[pathlib.Path]],
-            path_to_title: OrderedDict[pathlib.Path, str],
+            verify_files: 'OrderedDict[pathlib.Path, CppFile]',
+            library_files: 'OrderedDict[pathlib.Path, CppFile]',
+            verify_category_to_path: 'OrderedDict[str, List[pathlib.Path]]',
+            library_category_to_path: 'OrderedDict[str, List[pathlib.Path]]',
+            path_to_title: 'OrderedDict[pathlib.Path, str]',
             path_to_verification: Dict[pathlib.Path, bool],
             categorize_verify: bool,
             categorize_library: bool,
@@ -478,7 +476,7 @@ class PagesBuilder:
 
     # source_path 内にあって拡張子末尾が extension であるファイル一覧
     # ignored_files に含まれるならば無視
-    def get_files(self, source_path: pathlib.Path, extension: str, ignored_files: OrderedDict[pathlib.Path, CppFile] = OrderedDict()) -> OrderedDict[pathlib.Path, CppFile]:
+    def get_files(self, source_path: pathlib.Path, extension: str, ignored_files: 'OrderedDict[pathlib.Path, CppFile]' = OrderedDict()) -> 'OrderedDict[pathlib.Path, CppFile]':
         match_result = [p for p in source_path.glob(r'./**/*') if re.search(extension, str(p))]
         files = {}
         for matched_file in match_result:
@@ -487,11 +485,11 @@ class PagesBuilder:
             if not self.is_ignored(matched_file):
                 matched_file = matched_file.resolve()
                 files[matched_file] = CppFile(matched_file, source_path)
-        files = collections.OrderedDict(sorted(files.items(), key=lambda x: x[0]))
+        files = OrderedDict(sorted(files.items(), key=lambda x: x[0]))
         return files
 
     # title の重複があったらナンバリング付与
-    def map_title2path(self) -> OrderedDict[str, pathlib.Path]:
+    def map_title2path(self) -> 'OrderedDict[str, pathlib.Path]':
         title_cnt, title_num, result = {}, {}, {}  # type: Dict[str, int], Dict[str, int], Dict[str, pathlib.Path]
         for cpp_class in self.library_files.values():
             title_cnt.setdefault(cpp_class.title, 0)
@@ -514,15 +512,15 @@ class PagesBuilder:
                 title_num[title] += 1
                 title += '{:02}'.format(title_num[title])
             result[title] = cpp_class.file_path
-        return collections.OrderedDict(sorted(result.items(), key=lambda x: x[0]))
+        return OrderedDict(sorted(result.items(), key=lambda x: x[0]))
 
-    def map_path2title(self) -> OrderedDict[pathlib.Path, str]:
+    def map_path2title(self) -> 'OrderedDict[pathlib.Path, str]':
         result = {}
         for cpp_class in self.library_files.values():
             result[cpp_class.file_path] = cpp_class.title
         for cpp_class in self.verify_files.values():
             result[cpp_class.file_path] = cpp_class.title
-        result = collections.OrderedDict(sorted(result.items(), key=lambda x: x[0]))
+        result = OrderedDict(sorted(result.items(), key=lambda x: x[0]))
 
         # verify_files, library_files のタイトルを振り直す
         for verify in self.verify_files.keys():
@@ -532,21 +530,21 @@ class PagesBuilder:
 
         return result
 
-    def map_category2path(self) -> Tuple[OrderedDict[str, List[pathlib.Path]], OrderedDict[str, List[pathlib.Path]]]:
+    def map_category2path(self) -> Tuple['OrderedDict[str, List[pathlib.Path]]', 'OrderedDict[str, List[pathlib.Path]]']:
         verify_result, library_result = {}, {}  # type: Dict[str, List[pathlib.Path]], Dict[str, List[pathlib.Path]]
         for cpp_class in self.verify_files.values():
             verify_result.setdefault(cpp_class.category, [])
             verify_result[cpp_class.category].append(cpp_class.file_path)
         for file_path_list in verify_result.values():
             file_path_list.sort()
-        verify_result_ordered = collections.OrderedDict(sorted(verify_result.items(), key=lambda x: x[0]))
+        verify_result_ordered = OrderedDict(sorted(verify_result.items(), key=lambda x: x[0]))
 
         for cpp_class in self.library_files.values():
             library_result.setdefault(cpp_class.category, [])
             library_result[cpp_class.category].append(cpp_class.file_path)
         for file_path_list in library_result.values():
             file_path_list.sort()
-        library_result_ordered = collections.OrderedDict(sorted(library_result.items(), key=lambda x: x[0]))
+        library_result_ordered = OrderedDict(sorted(library_result.items(), key=lambda x: x[0]))
         return verify_result_ordered, library_result_ordered
 
     def get_required(self) -> None:

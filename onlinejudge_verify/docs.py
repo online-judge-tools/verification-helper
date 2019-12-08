@@ -9,7 +9,7 @@ import shutil
 import subprocess
 # typing.OrderedDict is not recognized by mypy
 from collections import OrderedDict
-from typing import IO, Any, Dict, List, NewType, Tuple
+from typing import IO, Any, Dict, List, Tuple
 
 import markdown
 import pkg_resources

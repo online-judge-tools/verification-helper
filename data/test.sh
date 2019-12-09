@@ -87,8 +87,8 @@ run() {
             echo '$ oj t'
             if [[ -z ${url%%*judge.yosupo.jp*} ]]; then
                 python3 -c "$(echo "import onlinejudge, sys ; open(\"${dir}/checker.cpp\", \"wb\").write(onlinejudge.dispatch.problem_from_url(\"${url}\").download_checker_cpp())")"
-                wget https://raw.githubusercontent.com/MikeMirzayanov/testlib/master/testlib.h -O testlib.h
-                $CXX $CXXFLAGS -I . -o ${dir}/checker.out ${dir}/checker.cpp
+                curl https://raw.githubusercontent.com/MikeMirzayanov/testlib/master/testlib.h > ${dir}/testlib.h
+                $CXX $CXXFLAGS -I ${dir} -o ${dir}/checker.out ${dir}/checker.cpp
                 oj test --judge-command ${dir}/checker.out -c ${dir}/a.out -d ${dir}/test
             elif list-defined "$file" | grep '^#define ERROR ' > /dev/null ; then
                 error=$(get-error "$file")

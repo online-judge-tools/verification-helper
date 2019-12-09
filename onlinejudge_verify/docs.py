@@ -244,7 +244,7 @@ class MarkdownArticle(MarkdownPage):
                 file_object.write(f.read())
         file_object.write('\n\n'.encode())
 
-        # cpp (絶対パス) => cpp (絶対パス): リンクは相対パスに
+        # cpp (絶対パス) => (cpp|test.cpp) (絶対パス): リンクは相対パスに
         self.file_class.depends = sorted(list(set(self.file_class.depends)))
         if self.file_class.depends != []:
             file_object.write('## Dependencies\n'.encode())
@@ -257,13 +257,23 @@ class MarkdownArticle(MarkdownPage):
                     raise FileNotFoundError('{} seems not to exist in path_to_title'.format(depends))
                 title = path_to_title[depends]
 
-                link = self.get_link(self.get_destination(depends, 'library')) + '.html'
+                file_type = 'verify' if re.match(r'^.*\.test\.(cpp|hpp|cc)$', str(depends)) else 'library'
+                link = self.get_link(self.get_destination(depends, file_type)) + '.html'
                 file_object.write('* {} [{}]({})\n'.format(mark, title, link).encode())
             file_object.write('\n\n'.encode())
 
-        # cpp <= cpp
         required_file_list = [f for f in self.file_class.required if not re.match(r'^.*\.test\.(cpp|hpp|cc)$', str(f))]
+        verified_file_list = [f for f in self.file_class.required if re.match(r'^.*\.test\.(cpp|hpp|cc)$', str(f))]
+
+        # ビルド対象ファイルが test.cpp の場合、それに依存している test.cpp ファイルは Verified ではなく Required に入れる
+        if re.match(r'^.*\.test\.(cpp|hpp|cc)$', str(self.file_class.file_path)):
+            required_file_list.extend(verified_file_list)
+            verified_file_list = []
+
         required_file_list = sorted(list(set(required_file_list)))
+        verified_file_list = sorted(list(set(verified_file_list)))
+
+        # cpp <= cpp または test.cpp <= test.cpp
         if required_file_list != []:
             file_object.write('## Required\n'.encode())
             for required in required_file_list:
@@ -275,13 +285,12 @@ class MarkdownArticle(MarkdownPage):
                     raise FileNotFoundError('{} seems not to exist in path_to_title'.format(required))
                 title = path_to_title[required]
 
-                link = self.get_link(self.get_destination(required, 'library')) + '.html'
+                file_type = 'verify' if re.match(r'^.*\.test\.(cpp|hpp|cc)$', str(required)) else 'library'
+                link = self.get_link(self.get_destination(required, file_type)) + '.html'
                 file_object.write('* {} [{}]({})\n'.format(mark, title, link).encode())
             file_object.write('\n\n'.encode())
 
         # cpp => test.cpp
-        verified_file_list = [f for f in self.file_class.required if re.match(r'^.*\.test\.(cpp|hpp|cc)$', str(f))]
-        verified_file_list = sorted(list(set(verified_file_list)))
         if verified_file_list != []:
             file_object.write('## Verified\n'.encode())
             for verified in verified_file_list:

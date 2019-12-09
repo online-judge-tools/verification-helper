@@ -38,11 +38,12 @@ def get_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def subcommand_run(paths: List[str]) -> None:
+def subcommand_run(paths: List[pathlib.Path]) -> None:
     """
     :raises Exception: if test.sh fails
     """
 
+    # verify
     script = tempfile.NamedTemporaryFile(delete=False)
     script.write(bash_script)
     script.close()
@@ -50,6 +51,29 @@ def subcommand_run(paths: List[str]) -> None:
         subprocess.check_call(['/bin/bash', script.name] + list(map(str, paths)), stdout=sys.stdout, stderr=sys.stderr)
     finally:
         os.remove(script.name)
+
+    # push
+    if 'GITHUB_ACTION' in os.environ:
+        logger.info('cache timestamp...')
+        push_timestamp_to_branch()
+
+
+def push_timestamp_to_branch() -> None:
+    # read config
+    logger.info('use GITHUB_TOKEN')
+    url = 'https://{}:{}@github.com/{}.git'.format(os.environ['GITHUB_ACTOR'], os.environ['GITHUB_TOKEN'], os.environ['GITHUB_REPOSITORY'])
+    logger.info('GITHUB_ACTOR = %s', os.environ['GITHUB_ACTOR'])
+    logger.info('GITHUB_REPOSITORY = %s', os.environ['GITHUB_REPOSITORY'])
+
+    # commit and push
+    logger.info('$ git add .verify-helper && git commit && git push')
+    subprocess.check_call(['git', 'config', '--global', 'user.name', 'GitHub'])
+    subprocess.check_call(['git', 'config', '--global', 'user.email', 'noreply@github.com'])
+    subprocess.check_call(['git', 'add', '.verify-helper/timestamp/'])
+    if subprocess.run(['git', 'diff', '--quiet', '--staged']).returncode:
+        message = '[auto-verifier] verify commit {}'.format(os.environ['GITHUB_SHA'])
+        subprocess.check_call(['git', 'commit', '-m', message])
+        subprocess.check_call(['git', 'push', url, os.environ['GITHUB_REF']])
 
 
 def subcommand_init() -> None:

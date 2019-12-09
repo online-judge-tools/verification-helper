@@ -119,9 +119,6 @@ if [[ $# -eq 1 && ( $1 = -h || $1 = --help || $1 = -? ) ]] ; then
 
 elif [[ $# -eq 0 ]] ; then
     if [[ $GITHUB_ACTIONS ]] ; then
-        echo '$' git checkout "${GITHUB_REF#refs/heads/}"
-        git checkout "${GITHUB_REF#refs/heads/}"
-
         for f in $(find . -name \*.test.cpp) ; do
             for CXX in $CXX_LIST ; do
                 run $f
@@ -131,19 +128,6 @@ elif [[ $# -eq 0 ]] ; then
             fi
         done
 
-        git status -s
-        if [[ -n "$(git status -s)" ]]; then
-            git config --global user.name GitHub
-            git config --global user.email "noreply@github.com"
-
-            echo '$' git add .verify-helper/timestamp/
-            git add .verify-helper/timestamp/
-            echo '$' git commit -m "[auto-verifier] verify commit ${GITHUB_SHA}"
-            git commit -m "[auto-verifier] verify commit ${GITHUB_SHA}"
-            echo '$' git push "https://${GITHUB_ACTOR}:"'${GITHUB_TOKEN}'"@github.com/${GITHUB_REPOSITORY}" HEAD
-            origin="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}"
-            git push "$origin" HEAD
-        fi
     else
         # local
         for f in $(find . -name \*.test.cpp) ; do

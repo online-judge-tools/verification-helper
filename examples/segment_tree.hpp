@@ -3,7 +3,7 @@
 #include <vector>
 
 /**
- * @brief a segment tree
+ * @brief a Segment Tree (generalized with monoids) 
  * @tparam Monoid is a monoid; commutativity is not required
  */
 template <class Monoid>

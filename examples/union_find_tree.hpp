@@ -3,7 +3,7 @@
 #include <vector>
 
 /**
- * @brief a disjoint set structure
+ * @brief a Union-Find Tree
  * @note most operations in $O(\alpha(n))$ where $\alpha(n)$ is the inverse of Ackermann function
  * @note implemented with union-by-size + path-compression
  */

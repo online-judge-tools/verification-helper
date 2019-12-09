@@ -71,8 +71,16 @@ class FileParser:
 
 # 現状は C++ のみのサポートを考える
 class CppFile:
-    # file_path: 対象としている C++ ファイル (source_path 内にあるファイル) へのパス
-    # source_path: 検索対象となっているディレクトリへのパス
+    file_path: pathlib.Path  # 対象としている C++ ファイル (source_path 内にあるファイル) への絶対パス
+    source_path: pathlib.Path  #  検索対象となっているディレクトリへの絶対パス
+    parser: FileParser
+    brief: List[str]  # @brief で指定された文字列
+    see: List[str]  # @see で指定された文字列
+    docs: List[pathlib.Path]  # @docs で指定されたファイルへの絶対パス
+    depends: List[pathlib.Path]  # @depends で指定されたファイルへの絶対パス
+    required: List[pathlib.Path]
+    is_verified: bool
+
     def __init__(self, file_path: pathlib.Path, source_path: pathlib.Path) -> None:
         self.file_path = file_path.resolve()
         self.source_path = source_path.resolve()
@@ -117,7 +125,7 @@ class CppFile:
         self.depends = self.to_abspath(self.depends)
         self.depends.sort()
 
-        self.required = []  # type: List[pathlib.Path]
+        self.required = []
         self.is_verified = self.get_verification_status()
 
     def get_verification_status(self) -> bool:

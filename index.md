@@ -37,8 +37,8 @@ layout: default
 * :heavy_check_mark: [examples/macros.hpp](library/examples/macros.hpp.html)
 * :heavy_check_mark: [examples/monoids.hpp](library/examples/monoids.hpp.html)
 * :warning: [examples/not_verified.hpp](library/examples/not_verified.hpp.html)
-* :heavy_check_mark: [a segment tree](library/examples/segment_tree.hpp.html)
-* :heavy_check_mark: [a disjoint set structure](library/examples/union_find_tree.hpp.html)
+* :heavy_check_mark: [a Segment Tree (generalized with monoids)](library/examples/segment_tree.hpp.html)
+* :heavy_check_mark: [a Union-Find Tree](library/examples/union_find_tree.hpp.html)
 
 
 ## Verify Files

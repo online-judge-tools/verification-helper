@@ -25,7 +25,7 @@ layout: default
 <link rel="stylesheet" href="../../assets/css/copy-button.css" />
 
 
-# :heavy_check_mark: a disjoint set structure
+# :heavy_check_mark: a Union-Find Tree
 * category: examples
 
 
@@ -46,7 +46,7 @@ layout: default
 #include <vector>
 
 /**
- * @brief a disjoint set structure
+ * @brief a Union-Find Tree
  * @note most operations in $O(\alpha(n))$ where $\alpha(n)$ is the inverse of Ackermann function
  * @note implemented with union-by-size + path-compression
  */

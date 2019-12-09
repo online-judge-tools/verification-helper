@@ -25,7 +25,7 @@ layout: default
 <link rel="stylesheet" href="../../assets/css/copy-button.css" />
 
 
-# :heavy_check_mark: a segment tree
+# :heavy_check_mark: a Segment Tree (generalized with monoids)
 * category: examples
 
 
@@ -49,7 +49,7 @@ layout: default
 #include <vector>
 
 /**
- * @brief a segment tree
+ * @brief a Segment Tree (generalized with monoids) 
  * @tparam Monoid is a monoid; commutativity is not required
  */
 template <class Monoid>

@@ -43,9 +43,9 @@ def subcommand_run(paths: List[pathlib.Path]) -> None:
     :raises Exception: if test.sh fails
     """
 
-    # checkout in advance to push
-    if 'GITHUB_ACTION' in os.environ:
-        assert os.environ['GITHUB_REF'].startswith('refs/heads/')
+    does_push = 'GITHUB_ACTION' in os.environ and os.environ.get('GITHUB_REF', '').startswith('refs/heads/')  # NOTE: $GITHUB_REF may be refs/pull/... or refs/tags/...
+    if does_push:
+        # checkout in advance to push
         branch = os.environ['GITHUB_REF'][len('refs/heads/'):]
         logger.info('$ git checkout %s', branch)
         subprocess.check_call(['git', 'checkout', branch])
@@ -60,7 +60,7 @@ def subcommand_run(paths: List[pathlib.Path]) -> None:
         os.remove(script.name)
 
     # push
-    if 'GITHUB_ACTION' in os.environ:
+    if does_push:
         push_timestamp_to_branch()
 
 

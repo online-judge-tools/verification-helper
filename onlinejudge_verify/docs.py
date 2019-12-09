@@ -100,7 +100,7 @@ class CppFile:
         else:
             # @title が複数あるなら最後を採用？？
             self.title = title_list[-1]
-        self.title = self.replace('[', '\[').replace(']', '\]')
+        self.title = self.title.replace('[', '\[').replace(']', '\]')
 
         # category 指定が空なら、source_path から見た file_path が属するディレクトリ名をカテゴリにする
         category_list = self.parser.get_contents_by_tag(r'@category')

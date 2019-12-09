@@ -88,7 +88,7 @@ class CppFile:
 
         self.brief = self.parser.get_contents_by_tag(r'@brief')
         self.brief.extend(self.parser.get_contents_by_tag(r'#define DESCRIPTION', r'"', r'"'))
-        
+
         # file 指定が空なら、source_path から見た file_path へのパスをタイトルにする
         title_list = self.parser.get_contents_by_tag(r'@title')
         if title_list == []:

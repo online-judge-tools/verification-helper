@@ -73,7 +73,9 @@ def push_timestamp_to_branch() -> None:
     if subprocess.run(['git', 'diff', '--quiet', '--staged']).returncode:
         message = '[auto-verifier] verify commit {}'.format(os.environ['GITHUB_SHA'])
         subprocess.check_call(['git', 'commit', '-m', message])
-        subprocess.check_call(['git', 'push', url, os.environ['GITHUB_REF']])
+        assert os.environ['GITHUB_REF'].startswith('refs/heads/')
+        branch = os.environ['GITHUB_REF'][len('refs/heads/'):]
+        subprocess.check_call(['git', 'push', url, branch])
 
 
 def subcommand_init() -> None:

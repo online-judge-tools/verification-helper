@@ -65,6 +65,16 @@ def push_timestamp_to_branch() -> None:
     logger.info('GITHUB_ACTOR = %s', os.environ['GITHUB_ACTOR'])
     logger.info('GITHUB_REPOSITORY = %s', os.environ['GITHUB_REPOSITORY'])
 
+    # checkout
+    assert os.environ['GITHUB_REF'].startswith('refs/heads/')
+    branch = os.environ['GITHUB_REF'][len('refs/heads/'):]
+    logger.info('$ git stash')
+    subprocess.check_call(['git', 'stash'])
+    logger.info('$ git checkout %s', %s)
+    subprocess.check_call(['git', 'checkout', branch])
+    logger.info('$ git stash pop')
+    subprocess.check_call(['git', 'stash', pop])
+
     # commit and push
     logger.info('$ git add .verify-helper && git commit && git push')
     subprocess.check_call(['git', 'config', '--global', 'user.name', 'GitHub'])
@@ -73,9 +83,7 @@ def push_timestamp_to_branch() -> None:
     if subprocess.run(['git', 'diff', '--quiet', '--staged']).returncode:
         message = '[auto-verifier] verify commit {}'.format(os.environ['GITHUB_SHA'])
         subprocess.check_call(['git', 'commit', '-m', message])
-        assert os.environ['GITHUB_REF'].startswith('refs/heads/')
-        branch = os.environ['GITHUB_REF'][len('refs/heads/'):]
-        subprocess.check_call(['git', 'push', url, branch])
+        subprocess.check_call(['git', 'push', url, 'HEAD'])
 
 
 def subcommand_init() -> None:

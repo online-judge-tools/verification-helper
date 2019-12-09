@@ -36,7 +36,7 @@ layout: default
 ## Dependencies
 * :heavy_check_mark: [examples/macros.hpp](../../library/examples/macros.hpp.html)
 * :heavy_check_mark: [examples/monoids.hpp](../../library/examples/monoids.hpp.html)
-* :heavy_check_mark: [examples/segment_tree.hpp](../../library/examples/segment_tree.hpp.html)
+* :heavy_check_mark: [a segment tree](../../library/examples/segment_tree.hpp.html)
 
 
 ## Code

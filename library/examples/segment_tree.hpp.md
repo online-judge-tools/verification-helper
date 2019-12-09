@@ -25,13 +25,12 @@ layout: default
 <link rel="stylesheet" href="../../assets/css/copy-button.css" />
 
 
-# :heavy_check_mark: examples/segment_tree.hpp
+# :heavy_check_mark: a segment tree
 * category: examples
 
 
 [Back to top page](../../index.html)
 
-* a segment tree
 * set $a_i$ as b in $O(\log n)$
 * compute $a_l \cdot a _ {l + 1} \cdot ... \cdot a _ {r - 1}$ in $O(\log n)$
 

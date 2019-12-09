@@ -35,7 +35,7 @@ layout: default
 
 ## Dependencies
 * :heavy_check_mark: [examples/macros.hpp](../../library/examples/macros.hpp.html)
-* :heavy_check_mark: [examples/union_find_tree.hpp](../../library/examples/union_find_tree.hpp.html)
+* :heavy_check_mark: [a disjoint set structure](../../library/examples/union_find_tree.hpp.html)
 
 
 ## Code

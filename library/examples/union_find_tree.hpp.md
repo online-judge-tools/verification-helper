@@ -25,13 +25,12 @@ layout: default
 <link rel="stylesheet" href="../../assets/css/copy-button.css" />
 
 
-# :heavy_check_mark: examples/union_find_tree.hpp
+# :heavy_check_mark: a disjoint set structure
 * category: examples
 
 
 [Back to top page](../../index.html)
 
-* a disjoint set structure
 
 
 ## Verified

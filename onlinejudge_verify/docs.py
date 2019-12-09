@@ -88,6 +88,7 @@ class CppFile:
 
         # file 指定が空なら、source_path から見た file_path へのパスをタイトルにする
         title_list = self.parser.get_contents_by_tag(r'@file')
+        title_list.extend(self.parser.get_contents_by_tag(r'@title'))
         if title_list == []:
             self.title = str(self.file_path.relative_to(self.source_path))
         else:
@@ -522,15 +523,17 @@ class PagesBuilder:
             if title_cnt[title] >= 2:
                 title_num.setdefault(title, 0)
                 title_num[title] += 1
-                title += '{:02}'.format(title_num[title])
+                title += ' ({:02})'.format(title_num[title])
             result[title] = cpp_class.file_path
+            cpp_class.title = title
         for cpp_class in self.verify_files.values():
             title = cpp_class.title
             if title_cnt[title] >= 2:
                 title_num.setdefault(title, 0)
                 title_num[title] += 1
-                title += '{:02}'.format(title_num[title])
+                title += ' ({:02})'.format(title_num[title])
             result[title] = cpp_class.file_path
+            cpp_class.title = title
         return OrderedDict(sorted(result.items(), key=lambda x: x[0]))
 
     def map_path2title(self) -> 'OrderedDict[pathlib.Path, str]':

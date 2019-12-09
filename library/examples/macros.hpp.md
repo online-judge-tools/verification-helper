@@ -25,7 +25,7 @@ layout: default
 <link rel="stylesheet" href="../../assets/css/copy-button.css" />
 
 
-# :warning: examples/macros.hpp
+# :heavy_check_mark: examples/macros.hpp
 * category: examples
 
 

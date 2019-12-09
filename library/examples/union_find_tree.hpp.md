@@ -25,7 +25,7 @@ layout: default
 <link rel="stylesheet" href="../../assets/css/copy-button.css" />
 
 
-# :warning: examples/union_find_tree.hpp
+# :heavy_check_mark: examples/union_find_tree.hpp
 * category: examples
 
 

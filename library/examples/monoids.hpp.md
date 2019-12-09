@@ -25,7 +25,7 @@ layout: default
 <link rel="stylesheet" href="../../assets/css/copy-button.css" />
 
 
-# :warning: examples/monoids.hpp
+# :heavy_check_mark: examples/monoids.hpp
 * category: examples
 
 

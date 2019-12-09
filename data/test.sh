@@ -106,18 +106,7 @@ run() {
 }
 
 
-if [[ $# -eq 1 && ( $1 = -h || $1 = --help || $1 = -? ) ]] ; then
-    echo Usage: $0 '[FILE ...]'
-    echo 'Compile and Run specified C++ code.'
-    echo 'If the given code contains macro like `#define PROBLEM "https://..."'\'', Download test cases of the problem and Test with them.'
-    echo
-    echo 'Features:'
-    echo '-   glob files with "**/*.test.cpp" if no arguments given.'
-    echo '-   cache results of tests, analyze "#include <...>" relations, and execute tests if and only if necessary.'
-    echo '-   on CI environment (i.e. $CI is defined), only recently modified files are tested (without cache).'
-    echo '-   use both CXX=g++ and CXX=clang++ when $CXX is not given.'
-
-elif [[ $# -eq 0 ]] ; then
+if [[ $# -eq 0 ]] ; then
     if [[ $GITHUB_ACTIONS ]] ; then
         for f in $(find . -name \*.test.cpp) ; do
             for CXX in $CXX_LIST ; do

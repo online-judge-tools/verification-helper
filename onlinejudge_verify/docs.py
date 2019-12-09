@@ -86,17 +86,20 @@ class CppFile:
         self.source_path = source_path.resolve()
         self.parser = FileParser(file_path)
 
+        self.brief = self.parser.get_contents_by_tag(r'@brief')
+        self.brief.extend(self.parser.get_contents_by_tag(r'#define DESCRIPTION', r'"', r'"'))
+        
         # file 指定が空なら、source_path から見た file_path へのパスをタイトルにする
-        title_list = self.parser.get_contents_by_tag(r'@file')
-        title_list.extend(self.parser.get_contents_by_tag(r'@title'))
+        title_list = self.parser.get_contents_by_tag(r'@title')
         if title_list == []:
-            self.title = str(self.file_path.relative_to(self.source_path))
+            if len(self.brief) > 0:
+                self.title = self.brief[0]
+                self.brief = self.brief[1:]
+            else:
+                self.title = str(self.file_path.relative_to(self.source_path))
         else:
             # @title が複数あるなら最後を採用？？
             self.title = title_list[-1]
-
-        self.brief = self.parser.get_contents_by_tag(r'@brief')
-        self.brief.extend(self.parser.get_contents_by_tag(r'#define DESCRIPTION', r'"', r'"'))
 
         # category 指定が空なら、source_path から見た file_path が属するディレクトリ名をカテゴリにする
         category_list = self.parser.get_contents_by_tag(r'@category')

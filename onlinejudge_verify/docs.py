@@ -586,6 +586,7 @@ class PagesBuilder:
                     verify_file_cnt += 1
                     cond = cond and result[verify]
             result[cpp_file] = (verify_file_cnt > 0 and cond)
+            self.library_files[cpp_file].is_verified = result[cpp_file]
         return result
 
     def build_verify_files(self, cpp_source_path: pathlib.Path, md_destination_path: pathlib.Path) -> None:

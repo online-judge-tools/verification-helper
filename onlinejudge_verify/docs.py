@@ -209,6 +209,7 @@ class MarkdownArticle(MarkdownPage):
 
     # include (mathjax, js, css)
     def write_header(self, file_object: IO) -> None:
+        file_object.write('---\nlayout: default\n---\n\n'.encode())
         file_object.write(assets_site_header_txt)
         self.include_js(file_object, self.md_destination_path / './assets/js/copy-button.js')
         self.include_css(file_object, self.md_destination_path / './assets/css/copy-button.css')
@@ -290,10 +291,10 @@ class MarkdownArticle(MarkdownPage):
 
         # source code
         file_object.write('## Code\n'.encode())
-        file_object.write('```cpp\n'.encode())
+        file_object.write('{% raw %}\n```cpp\n'.encode())
         with open(self.file_class.file_path, 'rb') as f:
             file_object.write(f.read())
-        file_object.write('\n```\n\n'.encode())
+        file_object.write('\n```\n{% endraw %}\n\n'.encode())
 
         # back to top
         file_object.write('[Back to top page]({})\n\n'.format(back_to_top_link).encode())
@@ -314,6 +315,7 @@ class MarkdownTopPage(MarkdownPage):
         self.config = config
 
     def write_header(self, file_object: IO) -> None:
+        file_object.write('---\nlayout: default\n---\n\n'.encode())
         file_object.write(assets_site_header_txt)
         self.include_js(file_object, self.md_destination_path / './assets/js/copy-button.js')
         self.include_css(file_object, self.md_destination_path / './assets/css/copy-button.css')
@@ -641,13 +643,13 @@ class PagesBuilder:
                 shutil.copyfile(str(src_path), str(dst_path))
 
 
-def main(*, html: bool = True) -> None:
+def main(*, html: bool = False) -> None:
     # 実行テスト
     config = {
         'title': 'ライブラリの HTML ビルドテスト',  # title of top page
         'description': 'ここに書いた内容がトップページに足されます',  # description of top page
         'toc': True,  # table of contents (default: False)
-        'html': html,  # generate HTML as well as Markdown (default: True)
+        'html': html,  # generate HTML as well as Markdown (default: False)
         'categorize_library': True,  # show library files with categorizing (default: True)
         'categorize_verify': False,  # show verify files with categorizing (default: False)
     }

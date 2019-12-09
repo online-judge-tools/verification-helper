@@ -121,7 +121,7 @@ def subcommand_docs() -> None:
 
     else:
         logger.info('generate documents...')
-        onlinejudge_verify.docs.main(html=True)
+        onlinejudge_verify.docs.main(html=False)
 
 
 def main(args: Optional[List[str]] = None) -> None:

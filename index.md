@@ -43,6 +43,7 @@ layout: default
 
 ## Verify Files
 * :heavy_check_mark: [example.test.cpp](verify/example.test.cpp.html)
+* :heavy_check_mark: [examples/develop.test.cpp](verify/examples/develop.test.cpp.html)
 * :heavy_check_mark: [examples/include_relative.test.cpp](verify/examples/include_relative.test.cpp.html)
 * :heavy_check_mark: [examples/segment_tree.point_set_range_composite.test.cpp](verify/examples/segment_tree.point_set_range_composite.test.cpp.html)
 * :heavy_check_mark: [examples/segment_tree.range_minimum_query.test.cpp](verify/examples/segment_tree.range_minimum_query.test.cpp.html)

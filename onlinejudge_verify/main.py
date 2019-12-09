@@ -66,7 +66,7 @@ def subcommand_run(paths: List[pathlib.Path]) -> None:
 
 def push_timestamp_to_branch() -> None:
     # read config
-    logger.info('use GITHUB_TOKEN')
+    logger.info('use GITHUB_TOKEN')  # NOTE: don't use GH_PAT here, because it may cause infinite loops with triggering GitHub Actions itself
     url = 'https://{}:{}@github.com/{}.git'.format(os.environ['GITHUB_ACTOR'], os.environ['GITHUB_TOKEN'], os.environ['GITHUB_REPOSITORY'])
     logger.info('GITHUB_ACTOR = %s', os.environ['GITHUB_ACTOR'])
     logger.info('GITHUB_REPOSITORY = %s', os.environ['GITHUB_REPOSITORY'])

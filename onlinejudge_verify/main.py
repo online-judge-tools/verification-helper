@@ -70,10 +70,10 @@ def push_timestamp_to_branch() -> None:
     branch = os.environ['GITHUB_REF'][len('refs/heads/'):]
     logger.info('$ git stash')
     subprocess.check_call(['git', 'stash'])
-    logger.info('$ git checkout %s', %s)
+    logger.info('$ git checkout %s', branch)
     subprocess.check_call(['git', 'checkout', branch])
     logger.info('$ git stash pop')
-    subprocess.check_call(['git', 'stash', pop])
+    subprocess.check_call(['git', 'stash', 'pop'])
 
     # commit and push
     logger.info('$ git add .verify-helper && git commit && git push')

@@ -37,14 +37,14 @@ $ oj-verify run
 
 #### ドキュメント生成
 
-以下のコマンドを実行すると、ドキュメントが生成されます。例: <https://kmyk.github.io/online-judge-verify-helper/> [![GitHub Pages](https://img.shields.io/static/v1?label=GitHub+Pages&message=+&color=brightgreen&logo=github)](https://kmyk.github.io/online-judge-verify-helper/)
+以下のコマンドを実行すると、ドキュメントが生成されます。例: [https://kmyk.github.io/online-judge-verify-helper/ ![GitHub Pages](https://img.shields.io/static/v1?label=GitHub+Pages&message=+&color=brightgreen&logo=github)](https://kmyk.github.io/online-judge-verify-helper/)
 
 ``` console
 $ oj-verify docs
 ```
 
 ドキュメント生成時に [Doxygen](http://www.doxygen.jp/) 風のコメントが見つかれば、それらは自動で利用されます。
-TeX 記法の数式 (例: `$O(N \sum_i A_i)$`) の MathJax による表示にも対応しています。
+TeX 記法の数式 (例: `$O(N \sum_i A_i)$`) の [MathJax](https://www.mathjax.org/) による表示にも対応しています。
 (TODO: どのようなコメントが認識されるかについてのドキュメントを書く)
 
 ## License

@@ -43,6 +43,13 @@ def subcommand_run(paths: List[pathlib.Path]) -> None:
     :raises Exception: if test.sh fails
     """
 
+    # checkout in advance to push
+    if 'GITHUB_ACTION' in os.environ:
+        assert os.environ['GITHUB_REF'].startswith('refs/heads/')
+        branch = os.environ['GITHUB_REF'][len('refs/heads/'):]
+        logger.info('$ git checkout %s', branch)
+        subprocess.check_call(['git', 'checkout', branch])
+
     # verify
     script = tempfile.NamedTemporaryFile(delete=False)
     script.write(bash_script)
@@ -54,7 +61,6 @@ def subcommand_run(paths: List[pathlib.Path]) -> None:
 
     # push
     if 'GITHUB_ACTION' in os.environ:
-        logger.info('cache timestamp...')
         push_timestamp_to_branch()
 
 
@@ -64,16 +70,6 @@ def push_timestamp_to_branch() -> None:
     url = 'https://{}:{}@github.com/{}.git'.format(os.environ['GITHUB_ACTOR'], os.environ['GITHUB_TOKEN'], os.environ['GITHUB_REPOSITORY'])
     logger.info('GITHUB_ACTOR = %s', os.environ['GITHUB_ACTOR'])
     logger.info('GITHUB_REPOSITORY = %s', os.environ['GITHUB_REPOSITORY'])
-
-    # checkout
-    assert os.environ['GITHUB_REF'].startswith('refs/heads/')
-    branch = os.environ['GITHUB_REF'][len('refs/heads/'):]
-    logger.info('$ git stash')
-    subprocess.check_call(['git', 'stash'])
-    logger.info('$ git checkout %s', branch)
-    subprocess.check_call(['git', 'checkout', branch])
-    logger.info('$ git stash pop')
-    subprocess.check_call(['git', 'stash', 'pop'])
 
     # commit and push
     logger.info('$ git add .verify-helper && git commit && git push')

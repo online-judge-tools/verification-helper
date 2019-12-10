@@ -727,7 +727,7 @@ class PagesBuilder:
 
 
 def main(*, html: bool = False, force: bool = False) -> None:
-    config_yml = pathlib.Path('.verify-helper/_config.yml')
+    config_yml = pathlib.Path('.verify-helper/docs/_config.yml')
     if config_yml.exists():
         with open(str(config_yml)) as fh:
             config = yaml.load(fh, Loader=yaml.SafeLoader)

@@ -149,11 +149,12 @@ class CppFile:
     def to_abspath(self, item_list: List[pathlib.Path]) -> List[pathlib.Path]:
         result, file_dir = [], self.file_path.parent
         for item in item_list:
-            # とりあえず連結して存在するなら相対パス扱い
             abspath_cand = file_dir / item
+            # とりあえず連結して存在するなら相対パス扱い
             if abspath_cand.exists():
                 result.append(abspath_cand.resolve())
-            else:
+            # 絶対パス扱いにしたものを読んで存在しないなら捨てる
+            elif item.exists():
                 result.append(item.resolve())
         return result
 
@@ -191,6 +192,10 @@ class MarkdownPage:
     # 全部絶対パスで持っているので relpath するだけでいいはず
     def get_link(self, link_href: pathlib.Path) -> str:
         return os.path.relpath(str(link_href), str(self.destination.parent))
+
+    def get_linktag(self, text: str, link: str) -> str:
+        link_text = link.replace('"', '\"')
+        return r'<a href="{}">{}</a>'.format(link_text, text)
 
     def make_directory(self) -> None:
         dir_name = self.destination.parent
@@ -237,13 +242,13 @@ class MarkdownArticle(MarkdownPage):
         back_to_top_link = self.get_link(self.md_destination_path / 'index.html')
 
         # back to top
-        file_object.write('[Back to top page]({})\n\n'.format(back_to_top_link).encode())
+        file_object.write('{}\n\n'.format(self.get_linktag('Back to top page', back_to_top_link)).encode())
 
         # brief, see, docs (絶対パス)
         for brief in self.file_class.brief:
             file_object.write('* {}\n'.format(brief).encode())
         for see in self.file_class.see:
-            file_object.write('* see: [{}]({})\n'.format(see, see).encode())
+            file_object.write('* see: {}\n'.format(self.get_linktag(see, see)).encode())
         for docs in self.file_class.docs:
             with open(docs, 'rb') as f:
                 file_object.write(f.read())
@@ -264,7 +269,7 @@ class MarkdownArticle(MarkdownPage):
 
                 file_type = 'verify' if re.match(r'^.*\.test\.(cpp|hpp|cc)$', str(depends)) else 'library'
                 link = self.get_link(self.get_destination(depends, file_type)) + '.html'
-                file_object.write('* {} [{}]({})\n'.format(mark, title, link).encode())
+                file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
             file_object.write('\n\n'.encode())
 
         required_file_list = [f for f in self.file_class.required if not re.match(r'^.*\.test\.(cpp|hpp|cc)$', str(f))]
@@ -292,7 +297,7 @@ class MarkdownArticle(MarkdownPage):
 
                 file_type = 'verify' if re.match(r'^.*\.test\.(cpp|hpp|cc)$', str(required)) else 'library'
                 link = self.get_link(self.get_destination(required, file_type)) + '.html'
-                file_object.write('* {} [{}]({})\n'.format(mark, title, link).encode())
+                file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
             file_object.write('\n\n'.encode())
 
         # cpp => test.cpp
@@ -308,7 +313,7 @@ class MarkdownArticle(MarkdownPage):
                 title = path_to_title[verified]
 
                 link = self.get_link(self.get_destination(verified, 'verify')) + '.html'
-                file_object.write('* {} [{}]({})\n'.format(mark, title, link).encode())
+                file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
             file_object.write('\n\n'.encode())
 
         # source code
@@ -319,7 +324,7 @@ class MarkdownArticle(MarkdownPage):
         file_object.write('\n```\n{% endraw %}\n\n'.encode())
 
         # back to top
-        file_object.write('[Back to top page]({})\n\n'.format(back_to_top_link).encode())
+        file_object.write('{}\n\n'.format(self.get_linktag('Back to top page', back_to_top_link)).encode())
 
     def build(self, path_to_title: 'OrderedDict[pathlib.Path, str]', path_to_verification: Dict[pathlib.Path, bool], category: str, categorize: bool) -> None:
         self.make_directory()
@@ -380,7 +385,7 @@ class MarkdownTopPage(MarkdownPage):
                         title = path_to_title[library_file]
 
                         link = self.get_link(self.get_destination(library_file, 'library')) + '.html'
-                        file_object.write('* {} [{}]({})\n'.format(mark, title, link).encode())
+                        file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
                     file_object.write('\n\n'.encode())
         else:
             if library_files != {}:
@@ -395,7 +400,7 @@ class MarkdownTopPage(MarkdownPage):
                     title = path_to_title[library_file]
 
                     link = self.get_link(self.get_destination(library_file, 'library')) + '.html'
-                    file_object.write('* {} [{}]({})\n'.format(mark, title, link).encode())
+                    file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
                 file_object.write('\n\n'.encode())
 
         if categorize_verify:
@@ -413,7 +418,7 @@ class MarkdownTopPage(MarkdownPage):
                         title = path_to_title[verify_file]
 
                         link = self.get_link(self.get_destination(verify_file, 'verify')) + '.html'
-                        file_object.write('* {} [{}]({})\n'.format(mark, title, link).encode())
+                        file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
                     file_object.write('\n\n'.encode())
         else:
             if verify_files != {}:
@@ -428,7 +433,7 @@ class MarkdownTopPage(MarkdownPage):
                     title = path_to_title[verify_file]
 
                     link = self.get_link(self.get_destination(verify_file, 'verify')) + '.html'
-                    file_object.write('* {} [{}]({})\n'.format(mark, title, link).encode())
+                    file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
                 file_object.write('\n\n'.encode())
 
     def build(
@@ -480,6 +485,9 @@ class PagesBuilder:
         # 依存関係を調べる
         self.get_required()
 
+        # 各ファイルについて depends, required の対象であって @ignore されているファイルの除外
+        self.remove_ignored_file_relation()
+
         # ファイルまでの絶対パス -> Verification Status
         self.path_to_verification = self.map_path2verification()
 
@@ -492,6 +500,10 @@ class PagesBuilder:
 
     # ignore されるべきなら True
     def is_ignored(self, file_path: pathlib.Path) -> bool:
+        # ファイルパスに `.verify-helper` が含まれるなら除外
+        if re.match(r'^.*\.verify-helper.*$', str(file_path)):
+            return True
+
         parser = FileParser(file_path)
         ignore = []
         ignore.extend(parser.get_contents_by_tag(r'@ignore'))
@@ -594,6 +606,27 @@ class PagesBuilder:
         for cpp_file in self.verify_files.keys():
             map_required.setdefault(cpp_file, [])
             self.verify_files[cpp_file].set_required(map_required[cpp_file])
+
+    # @ignore されていないファイルのみを depends, required に残す
+    # 本来あるべきファイルが存在しない場合もここで怒られるはず？？
+    def remove_ignored_file_relation(self) -> None:
+        for cpp_file, cpp_class in self.verify_files.items():
+            depends_list_verify, required_list_verify = [], []  # type: List[pathlib.Path], List[pathlib.Path]
+            for depends in cpp_class.depends:
+                if not self.is_ignored(depends): depends_list_verify.append(depends)
+            for required in cpp_class.required:
+                if not self.is_ignored(required): required_list_verify.append(required)
+            self.verify_files[cpp_file].depends = depends_list_verify
+            self.verify_files[cpp_file].required = required_list_verify
+
+        for cpp_file, cpp_class in self.library_files.items():
+            depends_list_library, required_list_library = [], []  # type: List[pathlib.Path], List[pathlib.Path]
+            for depends in cpp_class.depends:
+                if not self.is_ignored(depends): depends_list_library.append(depends)
+            for required in cpp_class.required:
+                if not self.is_ignored(required): required_list_library.append(required)
+            self.library_files[cpp_file].depends = depends_list_library
+            self.library_files[cpp_file].required = required_list_library
 
     def map_path2verification(self) -> Dict[pathlib.Path, bool]:
         result = {}  # type: Dict[pathlib.Path, bool]

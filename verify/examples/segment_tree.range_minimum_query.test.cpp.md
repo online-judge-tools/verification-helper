@@ -28,7 +28,8 @@ layout: default
 # :heavy_check_mark: examples/segment_tree.range_minimum_query.test.cpp
 <a href="../../index.html">Back to top page</a>
 
-* <a href="{{ site.github.repository_url }}/blob/master/examples/segment_tree.range_minimum_query.test.cpp">View this file on GitHub</a> (Last commit date: 2019-12-09 18:30:56 +0900)
+* <a href="{{ site.github.repository_url }}/blob/master/examples/segment_tree.range_minimum_query.test.cpp">View this file on GitHub</a>
+    - Last commit date: 2019-12-09 18:30:56 +0900
 
 
 * see: <a href="https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_A">https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_A</a>

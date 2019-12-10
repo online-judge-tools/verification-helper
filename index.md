@@ -25,11 +25,11 @@ layout: default
 <link rel="stylesheet" href="assets/css/copy-button.css" />
 
 
-# ライブラリの HTML ビルドテスト
+# Docs by "online-judge-verify-helper"
 
 [![Actions Status]({{ site.github.repository_url }}/workflows/verify/badge.svg)]({{ site.github.repository_url }}/actions) <a href="{{ site.github.repository_url }}"><img src="https://img.shields.io/github/last-commit/{{ site.github.owner_name }}/{{ site.github.repository_name }}" /></a>
 
-ここに書いた内容がトップページに足されます
+This documentation is generated automatically.
 
 * this unordered seed list will be replaced by toc as unordered list
 {:toc}

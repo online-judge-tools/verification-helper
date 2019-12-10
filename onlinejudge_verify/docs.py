@@ -32,6 +32,16 @@ deployed_assets = [
 ]
 
 
+def get_current_branch() -> str:
+    code = r'git symbolic-ref --short HEAD'
+    return subprocess.check_output(code, shell=True).decode().strip()
+
+
+def get_timestamp(file_path: pathlib.Path, compiler: str) -> str:
+    code = r"""{} --std=c++17 -O2 -Wall -g -I . -MD -MF /dev/stdout -MM {} | sed '1s/[^:].*: // ; s/\\$//' | xargs -n 1 | xargs git log -1 --date=iso --pretty=%ad""".format(compiler, shlex.quote(str(file_path)))
+    return subprocess.check_output(code, shell=True).decode().strip()
+
+
 class FileParser:
     # ファイルパスをもらって、行ごとに分ける
     def __init__(self, file_path: pathlib.Path) -> None:
@@ -138,8 +148,7 @@ class CppFile:
             timestamp_path = pathlib.Path('.verify-helper/timestamp') / hashlib.md5(compiler.encode() + b'/./' + str(self.file_path.relative_to(self.source_path)).encode()).hexdigest()
             if not timestamp_path.exists():
                 return False
-            code = r"""{} --std=c++17 -O2 -Wall -g -I . -MD -MF /dev/stdout -MM {} | sed '1s/[^:].*: // ; s/\\$//' | xargs -n 1 | xargs git log -1 --date=iso --pretty=%ad""".format(compiler, shlex.quote(str(self.file_path)))
-            timestamp = subprocess.check_output(code, shell=True).decode()
+            timestamp = get_timestamp(self.file_path, compiler)
             with open(str(timestamp_path), 'rb') as fh:
                 if fh.read().decode() < timestamp:
                     return False
@@ -235,14 +244,18 @@ class MarkdownArticle(MarkdownPage):
 
     def write_title(self, file_object: IO, category: str, categorize: bool) -> None:
         file_object.write('# {} {}\n'.format(self.mark, self.file_class.title).encode())
+
+        # back to top
+        back_to_top_link = self.get_link(self.md_destination_path / 'index.html')
+        file_object.write('{}\n\n'.format(self.get_linktag('Back to top page', back_to_top_link)).encode())
+
         if categorize: file_object.write('* category: {}\n'.format(category).encode())
+        github_link = '{{ site.github.repository_url }}' + '/blob/{}/{}'.format(get_current_branch(), str(self.file_class.file_path.relative_to(self.file_class.source_path)))
+        file_object.write('* {} (Last commit date: {})\n'.format(self.get_linktag('View this file on GitHub', github_link), get_timestamp(self.file_class.file_path, 'g++')).encode())
         file_object.write('\n\n'.encode())
 
     def write_contents(self, file_object: IO, path_to_title: 'OrderedDict[pathlib.Path, str]', path_to_verification: Dict[pathlib.Path, bool]) -> None:
         back_to_top_link = self.get_link(self.md_destination_path / 'index.html')
-
-        # back to top
-        file_object.write('{}\n\n'.format(self.get_linktag('Back to top page', back_to_top_link)).encode())
 
         # brief, see, docs (絶対パス)
         for brief in self.file_class.brief:

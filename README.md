@@ -47,10 +47,6 @@ $ oj-verify docs
 TeX 記法の数式 (例: `$O(N \sum_i A_i)$`) の [MathJax](https://www.mathjax.org/) による表示にも対応しています。
 (TODO: どのようなコメントが認識されるかについてのドキュメントを書く)
 
-## License
-
-MIT License
-
 ## Authors
 
 -   committer: [@kmyk](https://github.com/kmyk) (AtCoder: [kimiyuki](https://atcoder.jp/users/kimiyuki)): pip での配布や [online-judge-tools](https://github.com/kmyk/online-judge-tools) などその他の諸々の担当

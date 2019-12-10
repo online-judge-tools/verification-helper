@@ -29,17 +29,17 @@ layout: default
 * category: examples
 
 
-[Back to top page](../../index.html)
+<a href="../../index.html">Back to top page</a>
 
 
 
 ## Verified
-* :heavy_check_mark: [examples/include_relative.test.cpp](../../verify/examples/include_relative.test.cpp.html)
-* :heavy_check_mark: [examples/segment_tree.point_set_range_composite.test.cpp](../../verify/examples/segment_tree.point_set_range_composite.test.cpp.html)
-* :heavy_check_mark: [examples/segment_tree.range_minimum_query.test.cpp](../../verify/examples/segment_tree.range_minimum_query.test.cpp.html)
-* :heavy_check_mark: [examples/segment_tree.range_sum_query.test.cpp](../../verify/examples/segment_tree.range_sum_query.test.cpp.html)
-* :heavy_check_mark: [examples/union_find_tree.aoj.test.cpp](../../verify/examples/union_find_tree.aoj.test.cpp.html)
-* :heavy_check_mark: [examples/union_find_tree.yosupo.test.cpp](../../verify/examples/union_find_tree.yosupo.test.cpp.html)
+* :heavy_check_mark: <a href="../../verify/examples/include_relative.test.cpp.html">examples/include_relative.test.cpp</a>
+* :heavy_check_mark: <a href="../../verify/examples/segment_tree.point_set_range_composite.test.cpp.html">examples/segment_tree.point_set_range_composite.test.cpp</a>
+* :heavy_check_mark: <a href="../../verify/examples/segment_tree.range_minimum_query.test.cpp.html">examples/segment_tree.range_minimum_query.test.cpp</a>
+* :heavy_check_mark: <a href="../../verify/examples/segment_tree.range_sum_query.test.cpp.html">examples/segment_tree.range_sum_query.test.cpp</a>
+* :heavy_check_mark: <a href="../../verify/examples/union_find_tree.aoj.test.cpp.html">examples/union_find_tree.aoj.test.cpp</a>
+* :heavy_check_mark: <a href="../../verify/examples/union_find_tree.yosupo.test.cpp.html">examples/union_find_tree.yosupo.test.cpp</a>
 
 
 ## Code
@@ -55,5 +55,5 @@ layout: default
 ```
 {% endraw %}
 
-[Back to top page](../../index.html)
+<a href="../../index.html">Back to top page</a>
 

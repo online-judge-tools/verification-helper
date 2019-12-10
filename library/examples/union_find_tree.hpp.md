@@ -29,13 +29,13 @@ layout: default
 * category: examples
 
 
-[Back to top page](../../index.html)
+<a href="../../index.html">Back to top page</a>
 
 
 
 ## Verified
-* :heavy_check_mark: [examples/union_find_tree.aoj.test.cpp](../../verify/examples/union_find_tree.aoj.test.cpp.html)
-* :heavy_check_mark: [examples/union_find_tree.yosupo.test.cpp](../../verify/examples/union_find_tree.yosupo.test.cpp.html)
+* :heavy_check_mark: <a href="../../verify/examples/union_find_tree.aoj.test.cpp.html">examples/union_find_tree.aoj.test.cpp</a>
+* :heavy_check_mark: <a href="../../verify/examples/union_find_tree.yosupo.test.cpp.html">examples/union_find_tree.yosupo.test.cpp</a>
 
 
 ## Code
@@ -72,5 +72,5 @@ struct union_find_tree {
 ```
 {% endraw %}
 
-[Back to top page](../../index.html)
+<a href="../../index.html">Back to top page</a>
 

@@ -28,15 +28,15 @@ layout: default
 # :heavy_check_mark: examples/segment_tree.range_minimum_query.test.cpp
 
 
-[Back to top page](../../index.html)
+<a href="../../index.html">Back to top page</a>
 
-* see: [https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_A](https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_A)
+* see: <a href="https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_A">https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_A</a>
 
 
 ## Dependencies
-* :heavy_check_mark: [examples/macros.hpp](../../library/examples/macros.hpp.html)
-* :heavy_check_mark: [examples/monoids.hpp](../../library/examples/monoids.hpp.html)
-* :heavy_check_mark: [a Segment Tree (generalized with monoids)](../../library/examples/segment_tree.hpp.html)
+* :heavy_check_mark: <a href="../../library/examples/macros.hpp.html">examples/macros.hpp</a>
+* :heavy_check_mark: <a href="../../library/examples/monoids.hpp.html">examples/monoids.hpp</a>
+* :heavy_check_mark: <a href="../../library/examples/segment_tree.hpp.html">a Segment Tree (generalized with monoids)</a>
 
 
 ## Code
@@ -69,5 +69,5 @@ int main() {
 ```
 {% endraw %}
 
-[Back to top page](../../index.html)
+<a href="../../index.html">Back to top page</a>
 

@@ -28,14 +28,14 @@ layout: default
 # :heavy_check_mark: examples/segment_tree.point_set_range_composite.test.cpp
 
 
-[Back to top page](../../index.html)
+<a href="../../index.html">Back to top page</a>
 
-* see: [https://judge.yosupo.jp/problem/point_set_range_composite](https://judge.yosupo.jp/problem/point_set_range_composite)
+* see: <a href="https://judge.yosupo.jp/problem/point_set_range_composite">https://judge.yosupo.jp/problem/point_set_range_composite</a>
 
 
 ## Dependencies
-* :heavy_check_mark: [examples/macros.hpp](../../library/examples/macros.hpp.html)
-* :heavy_check_mark: [a Segment Tree (generalized with monoids)](../../library/examples/segment_tree.hpp.html)
+* :heavy_check_mark: <a href="../../library/examples/macros.hpp.html">examples/macros.hpp</a>
+* :heavy_check_mark: <a href="../../library/examples/segment_tree.hpp.html">a Segment Tree (generalized with monoids)</a>
 
 
 ## Code
@@ -86,5 +86,5 @@ int main() {
 ```
 {% endraw %}
 
-[Back to top page](../../index.html)
+<a href="../../index.html">Back to top page</a>
 

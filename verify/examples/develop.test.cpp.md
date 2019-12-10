@@ -28,9 +28,9 @@ layout: default
 # :heavy_check_mark: examples/develop.test.cpp
 
 
-[Back to top page](../../index.html)
+<a href="../../index.html">Back to top page</a>
 
-* see: [https://onlinejudge.u-aizu.ac.jp/courses/lesson/2/ITP1/1/ITP1_1_A](https://onlinejudge.u-aizu.ac.jp/courses/lesson/2/ITP1/1/ITP1_1_A)
+* see: <a href="https://onlinejudge.u-aizu.ac.jp/courses/lesson/2/ITP1/1/ITP1_1_A">https://onlinejudge.u-aizu.ac.jp/courses/lesson/2/ITP1/1/ITP1_1_A</a>
 
 
 ## Code
@@ -49,5 +49,5 @@ int main() {
 ```
 {% endraw %}
 
-[Back to top page](../../index.html)
+<a href="../../index.html">Back to top page</a>
 

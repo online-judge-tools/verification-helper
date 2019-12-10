@@ -28,13 +28,13 @@ layout: default
 # :heavy_check_mark: examples/include_relative.test.cpp
 
 
-[Back to top page](../../index.html)
+<a href="../../index.html">Back to top page</a>
 
-* see: [http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_A](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_A)
+* see: <a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_A">http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_A</a>
 
 
 ## Dependencies
-* :heavy_check_mark: [examples/macros.hpp](../../library/examples/macros.hpp.html)
+* :heavy_check_mark: <a href="../../library/examples/macros.hpp.html">examples/macros.hpp</a>
 
 
 ## Code
@@ -54,5 +54,5 @@ int main() {
 ```
 {% endraw %}
 
-[Back to top page](../../index.html)
+<a href="../../index.html">Back to top page</a>
 

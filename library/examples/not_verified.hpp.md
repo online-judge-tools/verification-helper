@@ -29,7 +29,7 @@ layout: default
 * category: examples
 
 
-[Back to top page](../../index.html)
+<a href="../../index.html">Back to top page</a>
 
 
 
@@ -46,5 +46,5 @@ inline string get_the_proof_of_P_equal_NP() {
 ```
 {% endraw %}
 
-[Back to top page](../../index.html)
+<a href="../../index.html">Back to top page</a>
 

@@ -28,14 +28,14 @@ layout: default
 # :heavy_check_mark: examples/union_find_tree.yosupo.test.cpp
 
 
-[Back to top page](../../index.html)
+<a href="../../index.html">Back to top page</a>
 
-* see: [https://judge.yosupo.jp/problem/unionfind](https://judge.yosupo.jp/problem/unionfind)
+* see: <a href="https://judge.yosupo.jp/problem/unionfind">https://judge.yosupo.jp/problem/unionfind</a>
 
 
 ## Dependencies
-* :heavy_check_mark: [examples/macros.hpp](../../library/examples/macros.hpp.html)
-* :heavy_check_mark: [a Union-Find Tree](../../library/examples/union_find_tree.hpp.html)
+* :heavy_check_mark: <a href="../../library/examples/macros.hpp.html">examples/macros.hpp</a>
+* :heavy_check_mark: <a href="../../library/examples/union_find_tree.hpp.html">a Union-Find Tree</a>
 
 
 ## Code
@@ -64,5 +64,5 @@ int main() {
 ```
 {% endraw %}
 
-[Back to top page](../../index.html)
+<a href="../../index.html">Back to top page</a>
 

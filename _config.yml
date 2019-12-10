@@ -1,3 +1,11 @@
+docs:
+  categorize_library: true
+  categorize_verify: false
+  description: This documentation is generated automatically.
+  html: false
+  title: Docs by "online-judge-verify-helper"
+  toc: true
+html: false
 plugins:
-  - jemoji
+- jemoji
 theme: jekyll-theme-dinky

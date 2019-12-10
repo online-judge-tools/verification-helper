@@ -26,10 +26,11 @@ layout: default
 
 
 # :heavy_check_mark: a Segment Tree (generalized with monoids)
-* category: examples
-
-
 <a href="../../index.html">Back to top page</a>
+
+* category: examples
+* <a href="{{ site.github.repository_url }}/blob/master/examples/segment_tree.hpp">View this file on GitHub</a> (Last commit date: 2019-12-09 18:30:56 +0900)
+
 
 * set $a_i$ as b in $O(\log n)$
 * compute $a_l \cdot a _ {l + 1} \cdot ... \cdot a _ {r - 1}$ in $O(\log n)$

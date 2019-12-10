@@ -38,11 +38,19 @@ def get_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def subcommand_run(paths: List[str]) -> None:
+def subcommand_run(paths: List[pathlib.Path]) -> None:
     """
     :raises Exception: if test.sh fails
     """
 
+    does_push = 'GITHUB_ACTION' in os.environ and os.environ.get('GITHUB_REF', '').startswith('refs/heads/')  # NOTE: $GITHUB_REF may be refs/pull/... or refs/tags/...
+    if does_push:
+        # checkout in advance to push
+        branch = os.environ['GITHUB_REF'][len('refs/heads/'):]
+        logger.info('$ git checkout %s', branch)
+        subprocess.check_call(['git', 'checkout', branch])
+
+    # verify
     script = tempfile.NamedTemporaryFile(delete=False)
     script.write(bash_script)
     script.close()
@@ -50,6 +58,28 @@ def subcommand_run(paths: List[str]) -> None:
         subprocess.check_call(['/bin/bash', script.name] + list(map(str, paths)), stdout=sys.stdout, stderr=sys.stderr)
     finally:
         os.remove(script.name)
+
+    # push
+    if does_push:
+        push_timestamp_to_branch()
+
+
+def push_timestamp_to_branch() -> None:
+    # read config
+    logger.info('use GITHUB_TOKEN')  # NOTE: don't use GH_PAT here, because it may cause infinite loops with triggering GitHub Actions itself
+    url = 'https://{}:{}@github.com/{}.git'.format(os.environ['GITHUB_ACTOR'], os.environ['GITHUB_TOKEN'], os.environ['GITHUB_REPOSITORY'])
+    logger.info('GITHUB_ACTOR = %s', os.environ['GITHUB_ACTOR'])
+    logger.info('GITHUB_REPOSITORY = %s', os.environ['GITHUB_REPOSITORY'])
+
+    # commit and push
+    logger.info('$ git add .verify-helper && git commit && git push')
+    subprocess.check_call(['git', 'config', '--global', 'user.name', 'GitHub'])
+    subprocess.check_call(['git', 'config', '--global', 'user.email', 'noreply@github.com'])
+    subprocess.check_call(['git', 'add', '.verify-helper/timestamp/'])
+    if subprocess.run(['git', 'diff', '--quiet', '--staged']).returncode:
+        message = '[auto-verifier] verify commit {}'.format(os.environ['GITHUB_SHA'])
+        subprocess.check_call(['git', 'commit', '-m', message])
+        subprocess.check_call(['git', 'push', url, 'HEAD'])
 
 
 def subcommand_init() -> None:

@@ -26,10 +26,6 @@ deployed_assets = [
         'path': pathlib.Path('assets/js/copy-button.js'),
         'data': pkg_resources.resource_string(package, 'assets/js/copy-button.js'),
     },
-    {
-        'path': pathlib.Path('_config.yml'),
-        'data': pkg_resources.resource_string(package, 'assets/_config.yml'),
-    },
 ]
 
 
@@ -363,12 +359,12 @@ class MarkdownTopPage(MarkdownPage):
         file_object.write('\n\n'.encode())
 
     def write_title(self, file_object: IO) -> None:
-        title = self.config.setdefault('title', 'C++ Competitive Programming Library')
+        title = self.config['docs']['title']
         file_object.write('# {}\n\n'.format(title).encode())
         file_object.write('[![Actions Status]({{ site.github.repository_url }}/workflows/verify/badge.svg)]({{ site.github.repository_url }}/actions) <a href="{{ site.github.repository_url }}"><img src="https://img.shields.io/github/last-commit/{{ site.github.owner_name }}/{{ site.github.repository_name }}" /></a>\n\n'.encode())
-        description = self.config.setdefault('description', '')
+        description = self.config['docs']['description']
         if description != '': file_object.write('{}\n\n'.format(description).encode())
-        toc = self.config.setdefault('toc', False)
+        toc = self.config['docs']['toc']
         if toc:
             file_object.write('* this unordered seed list will be replaced by toc as unordered list\n'.encode())
             file_object.write('{:toc}\n\n'.encode())
@@ -481,9 +477,15 @@ class MarkdownTopPage(MarkdownPage):
 
 class PagesBuilder:
     def __init__(self, cpp_source_pathstr: str, md_destination_pathstr: str = './md-output', config: Dict[str, Any] = {}) -> None:
-        # ビルド対象ファイル一覧
         cpp_source_path = pathlib.Path(cpp_source_pathstr).resolve()
         md_destination_path = pathlib.Path(md_destination_pathstr).resolve()
+
+        # (指定がなければ) config にデフォルト値を入れる
+        # _config.yml を書き出す
+        self.config = config
+        self.build_config(md_destination_path)
+
+        # ビルド対象ファイル一覧
         self.verify_files = self.get_files(cpp_source_path, r'^.*\.test\.(cpp|hpp|cc)$')
         self.library_files = self.get_files(cpp_source_path, r'^.*\.(cpp|hpp|cc)$', self.verify_files)
 
@@ -513,8 +515,19 @@ class PagesBuilder:
         self.build_assets(md_destination_path)
         self.build_static_files(md_destination_path)
 
-        # _config.yml にテーマの記述追加
-        self.apply_specified_theme(md_destination_path)
+    def build_config(self, md_destination_path: pathlib.Path) -> None:
+        # デフォルト値
+        self.config.setdefault('theme', 'jekyll-theme-dinky')
+        self.config['docs'].setdefault('title', 'C++ Competitive Programming Library')
+        self.config['docs'].setdefault('description', '')
+        self.config['docs'].setdefault('toc', False)
+        self.config['docs'].setdefault('html', False)
+        self.config['docs'].setdefault('categorize_library', True)
+        self.config['docs'].setdefault('categorize_verify', False)
+
+        dst_path = md_destination_path / '_config.yml'
+        with open(dst_path, "wb") as f:
+            f.write(yaml.dump(self.config, default_flow_style=False).encode())
 
     # ignore されるべきなら True
     def is_ignored(self, file_path: pathlib.Path) -> bool:
@@ -669,8 +682,8 @@ class PagesBuilder:
             for matched_file_path in verify_path_list:
                 verify_file_class = self.verify_files[matched_file_path]
                 page = MarkdownArticle(verify_file_class, 'verify', cpp_source_path, md_destination_path)
-                html_cond = self.config.setdefault('html', False)
-                categorize_verify_cond = self.config.setdefault('categorize_verify', False)
+                html_cond = self.config['docs']['html']
+                categorize_verify_cond = self.config['docs']['categorize_verify']
                 page.build(self.path_to_title, self.path_to_verification, category, categorize_verify_cond)
                 if html_cond: page.convert_to_html()
 
@@ -679,16 +692,16 @@ class PagesBuilder:
             for matched_file_path in library_path_list:
                 library_file_class = self.library_files[matched_file_path]
                 page = MarkdownArticle(library_file_class, 'library', cpp_source_path, md_destination_path)
-                html_cond = self.config.setdefault('html', False)
-                categorize_library_cond = self.config.setdefault('categorize_library', True)
+                html_cond = self.config['docs']['html']
+                categorize_library_cond = self.config['docs']['categorize_library']
                 page.build(self.path_to_title, self.path_to_verification, category, categorize_library_cond)
                 if html_cond: page.convert_to_html()
 
     def build_top_page(self, cpp_source_path: pathlib.Path, md_destination_path: pathlib.Path) -> None:
         page = MarkdownTopPage(cpp_source_path, md_destination_path, self.config)
-        html_cond = self.config.setdefault('html', False)
-        categorize_verify_cond = self.config.setdefault('categorize_verify', False)
-        categorize_library_cond = self.config.setdefault('categorize_library', True)
+        html_cond = self.config['docs']['html']
+        categorize_verify_cond = self.config['docs']['categorize_verify']
+        categorize_library_cond = self.config['docs']['categorize_library']
         page.build(
             self.verify_files,
             self.library_files,
@@ -717,13 +730,6 @@ class PagesBuilder:
             dst_path = md_destination_path / src_path.relative_to(static_dir)
             if src_path.is_file():
                 shutil.copyfile(str(src_path), str(dst_path))
-
-    def apply_specified_theme(self, md_destination_path: pathlib.Path) -> None:
-        yml_path = md_destination_path / '_config.yml'
-        self.config.setdefault('theme', 'jekyll-theme-dinky')
-        theme_line = 'theme: {}\n'.format(self.config['theme'])
-        with open(yml_path, 'ab+') as f:
-            f.write(theme_line.encode())
 
 
 def main(*, html: bool = False, force: bool = False) -> None:

@@ -1,18 +1,23 @@
-# title (default: 'C++ Competitive Programming Library')
-title: 'Docs by "online-judge-verify-helper"'
-# description (default: '')
-description: 'This documentation is generated automatically.'
-
 # jekyll theme (default: 'jekyll-theme-dinky')
 theme: 'jekyll-theme-dinky'
 
-# show table-of-contents (default: False)
-toc: True
+docs:
+  # title (default: 'C++ Competitive Programming Library')
+  title: 'Docs by "online-judge-verify-helper"'
+  # description (default: '')
+  description: 'This documentation is generated automatically.'
 
-# generate HTML as well as Markdown (default: False)
-html: False
+  # show table-of-contents (default: False)
+  toc: True
 
-# show library files with categorizing (default: True)
-categorize_library: True
-# show verify files with categorizing (default: False)
-categorize_verify: False
+  # generate HTML as well as Markdown (default: False)
+  html: False
+
+  # show library files with categorizing (default: True)
+  categorize_library: True
+  # show verify files with categorizing (default: False)
+  categorize_verify: False
+
+# plugin (necessary for showing emoji)
+plugins:
+  - jemoji

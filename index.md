@@ -27,6 +27,8 @@ layout: default
 
 # ライブラリの HTML ビルドテスト
 
+[![Actions Status]({{ site.github.repository_url }}/workflows/verify/badge.svg)]({{ site.github.repository_url }}/actions) <a href="{{ site.github.repository_url }}">View on GitHub</a>
+
 ここに書いた内容がトップページに足されます
 
 * this unordered seed list will be replaced by toc as unordered list

@@ -526,6 +526,7 @@ class PagesBuilder:
         self.config['docs'].setdefault('categorize_verify', False)
 
         dst_path = md_destination_path / '_config.yml'
+        dst_path.parent.mkdir(parents=True, exist_ok=True)
         with open(dst_path, "wb") as f:
             f.write(yaml.dump(self.config, default_flow_style=False).encode())
 

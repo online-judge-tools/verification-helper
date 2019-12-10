@@ -351,7 +351,7 @@ class MarkdownTopPage(MarkdownPage):
     def write_title(self, file_object: IO) -> None:
         title = self.config.setdefault('title', 'C++ Competitive Programming Library')
         file_object.write('# {}\n\n'.format(title).encode())
-        file_object.write('[![Actions Status]({{ site.github.repository_url }}/workflows/verify/badge.svg)]({{ site.github.repository_url }}/actions) <a href="{{ site.github.repository_url }}">View on GitHub</a>')
+        file_object.write('[![Actions Status]({{ site.github.repository_url }}/workflows/verify/badge.svg)]({{ site.github.repository_url }}/actions) <a href="{{ site.github.repository_url }}">View on GitHub</a>\n\n'.encode())
         description = self.config.setdefault('description', '')
         if description != '': file_object.write('{}\n\n'.format(description).encode())
         toc = self.config.setdefault('toc', False)

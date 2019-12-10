@@ -144,14 +144,14 @@ def subcommand_docs() -> None:
     if 'GITHUB_ACTION' in os.environ:
         if os.environ['GITHUB_REF'] == 'refs/heads/master':
             logger.info('generate documents...')
-            onlinejudge_verify.docs.main(html=False)
+            onlinejudge_verify.docs.main(html=False, force=True)
 
             logger.info('upload documents...')
             push_documents_to_gh_pages(src_dir=pathlib.Path('md-output'))
 
     else:
         logger.info('generate documents...')
-        onlinejudge_verify.docs.main(html=False)
+        onlinejudge_verify.docs.main(html=False, force=True)
 
 
 def main(args: Optional[List[str]] = None) -> None:

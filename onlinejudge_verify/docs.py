@@ -13,6 +13,7 @@ from typing import IO, Any, Dict, List, Tuple
 
 import markdown
 import pkg_resources
+import yaml
 
 package = 'onlinejudge_verify.data'
 assets_site_header_txt = pkg_resources.resource_string(package, 'assets/site-header.txt')
@@ -251,7 +252,7 @@ class MarkdownArticle(MarkdownPage):
 
         if categorize: file_object.write('* category: {}\n'.format(category).encode())
         github_link = '{{ site.github.repository_url }}' + '/blob/{}/{}'.format(get_current_branch(), str(self.file_class.file_path.relative_to(self.file_class.source_path)))
-        file_object.write('* {} (Last commit date: {})\n'.format(self.get_linktag('View this file on GitHub', github_link), get_timestamp(self.file_class.file_path, 'g++')).encode())
+        file_object.write('* {}\n    - Last commit date: {}\n'.format(self.get_linktag('View this file on GitHub', github_link), get_timestamp(self.file_class.file_path, 'g++')).encode())
         file_object.write('\n\n'.encode())
 
     def write_contents(self, file_object: IO, path_to_title: 'OrderedDict[pathlib.Path, str]', path_to_verification: Dict[pathlib.Path, bool]) -> None:
@@ -512,6 +513,9 @@ class PagesBuilder:
         self.build_assets(md_destination_path)
         self.build_static_files(md_destination_path)
 
+        # _config.yml にテーマの記述追加
+        self.apply_specified_theme(md_destination_path)
+
     # ignore されるべきなら True
     def is_ignored(self, file_path: pathlib.Path) -> bool:
         # ファイルパスに `.verify-helper` が含まれるなら除外
@@ -714,17 +718,25 @@ class PagesBuilder:
             if src_path.is_file():
                 shutil.copyfile(str(src_path), str(dst_path))
 
+    def apply_specified_theme(self, md_destination_path: pathlib.Path) -> None:
+        yml_path = md_destination_path / '_config.yml'
+        self.config.setdefault('theme', 'jekyll-theme-dinky')
+        theme_line = 'theme: {}\n'.format(self.config['theme'])
+        with open(yml_path, 'ab+') as f:
+            f.write(theme_line.encode())
 
-def main(*, html: bool = False) -> None:
-    # 実行テスト
-    config = {
-        'title': 'ライブラリの HTML ビルドテスト',  # title of top page
-        'description': 'ここに書いた内容がトップページに足されます',  # description of top page
-        'toc': True,  # table of contents (default: False)
-        'html': html,  # generate HTML as well as Markdown (default: False)
-        'categorize_library': True,  # show library files with categorizing (default: True)
-        'categorize_verify': False,  # show verify files with categorizing (default: False)
-    }
+
+def main(*, html: bool = False, force: bool = False) -> None:
+    if pathlib.Path('./_docs.yml').exists():
+        config = yaml.load(open('./_docs.yml'), Loader=yaml.SafeLoader)
+    else:
+        config = {}  # use default settings
+
+    # config に 'html' key が存在しなければ入れる
+    # 存在するときでも force オプションが効いていれば書き換える
+    if ('html' not in config) or force:
+        config['html'] = html
+
     builder = PagesBuilder(cpp_source_pathstr='.', config=config)
 
 

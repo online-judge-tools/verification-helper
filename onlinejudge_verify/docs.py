@@ -727,8 +727,10 @@ class PagesBuilder:
 
 
 def main(*, html: bool = False, force: bool = False) -> None:
-    if pathlib.Path('.verify-helper/_config.yml').exists():
-        config = yaml.load(open('.verify-helper/_config.yml'), Loader=yaml.SafeLoader)
+    config_yml = pathlib.Path('.verify-helper/_config.yml')
+    if config_yml.exists():
+        with open(str(config_yml)) as fh:
+            config = yaml.load(fh, Loader=yaml.SafeLoader)
     else:
         config = {}  # use default settings
 

@@ -27,17 +27,21 @@
 <script>
     const data = {};
     data["verify.yml"] = (function () {
-        let req = new XMLHttpRequest();
+        const req = new XMLHttpRequest();
         req.open("GET", "https://raw.githubusercontent.com/kmyk/online-judge-verify-helper/master/.github/workflows/verify.yml", true);
         req.send();
-        return req.response;
+        return req.responseText;
     })();
     data["example.test.cpp"] = (function () {
-        let req = new XMLHttpRequest();
+        const req = new XMLHttpRequest();
         req.open("GET", "https://raw.githubusercontent.com/kmyk/online-judge-verify-helper/master/example.test.cpp", true);
         req.send();
-        return req.response;
+        return req.responseText;
     })();
+    // test
+    const req = new XMLHttpRequest();
+    req.open("GET", "https://raw.githubusercontent.com/kmyk/online-judge-verify-helper/master/.github/workflows/verify.yml", true);
+    req.send();
 
     const input = document.getElementById("input");
     const output = document.getElementById("output");
@@ -73,8 +77,8 @@
     update();
 
     // workaround for the Dinky theme
-    output6.margin = 0;
-    output6.padding = 0;
-    output7.margin = 0;
-    output7.padding = 0;
+    output6.style.margin = 0;
+    output6.style.padding = 0;
+    output7.style.margin = 0;
+    output7.style.padding = 0;
 </script>

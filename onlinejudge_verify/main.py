@@ -4,16 +4,14 @@ import glob
 import os
 import pathlib
 import subprocess
-import sys
-import tempfile
 from logging import DEBUG, basicConfig, getLogger
 from typing import *
 
 import onlinejudge_verify.docs
+import onlinejudge_verify.verify
 import pkg_resources
 
 package = 'onlinejudge_verify.data'
-bash_script = pkg_resources.resource_string(package, 'test.sh')
 verify_yml = pkg_resources.resource_string(package, 'verify.yml')
 
 logger = getLogger(__name__)
@@ -50,15 +48,9 @@ def subcommand_run(paths: List[pathlib.Path]) -> None:
         logger.info('$ git checkout %s', branch)
         subprocess.check_call(['git', 'checkout', branch])
 
-    # verify
-    script = tempfile.NamedTemporaryFile(delete=False)
-    script.write(bash_script)
-    script.close()
-    try:
-        for path in paths:
-            subprocess.check_call(['/bin/bash', script.name, path], stdout=sys.stdout, stderr=sys.stderr)
-    finally:
-        os.remove(script.name)
+    if not paths:
+        paths = list(map(pathlib.Path, glob.glob('**/*.test.cpp', recursive=True)))
+    onlinejudge_verify.verify.main(paths)
 
     # push
     if does_push:
@@ -165,8 +157,6 @@ def main(args: Optional[List[str]] = None) -> None:
         subcommand_docs()
 
     elif parsed.subcommand == 'run':
-        if not parsed.path:
-            parsed.path = glob.glob('**/*.test.cpp', recursive=True)
         subcommand_run(paths=parsed.path)
 
     elif parsed.subcommand == 'init':

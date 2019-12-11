@@ -5,14 +5,14 @@
 手順:
 
 1.  <form>
-        <label>競プロライブラリの GitHub のレポジトリの URL を右の textbox に入力: </label><input type="text" id="input"
-            placeholder="https://github.com/beet-aizu/library" value="https://github.com/beet-aizu/library" size="48">
+        <label>競プロライブラリの GitHub のレポジトリの URL を右の textbox に入力: </label>
+        <input type="text" id="input" placeholder="https://github.com/beet-aizu/library" value="https://github.com/beet-aizu/library" size="48">
     </form>
 
 1.  ページ <a id="output" target="_blank"></a> を開き、下の方にある緑の `Commit new file` ボタンを押す
-1.  <a href="https://github.com/kmyk/online-judge-verify-helper/blob/master/example.test.cpp">example.test.cpp</a> のように `#define PROBLEM "https://..."` が書かれている `hoge.test.cpp` のようなファイル名の C++ コードを追加する (<a id="output2" target="_blank">例を自動で追加するリンク</a>)
+1.  [example.test.cpp](https://github.com/kmyk/online-judge-verify-helper/blob/master/example.test.cpp) のように `#define PROBLEM "https://..."` が書かれている `hoge.test.cpp` のようなファイル名の C++ コードを追加する (<a id="output2" target="_blank">例を自動で追加するリンク</a>)
 1.  <a id="output3" target="_blank">GitHub Actions <img id="output7"></a> のページから結果を確認する
-1.  (おまけ) <code>README.md</code> に <code id="output4"></code> と書き足す (バッチ <a id="output5" target="_blank"><img id="output6"></a> が貼られる)
+1.  (おまけ) `README.md` に <code id="output4"></code> と書き足す (バッチ <a id="output5" target="_blank"><img id="output6"></a> が貼られる)
 
 ## ドキュメントが自動生成されるように設定するには
 

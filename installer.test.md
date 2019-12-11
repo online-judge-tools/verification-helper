@@ -52,12 +52,12 @@
             const url = input.value.replace(/\/$/, "");
 
             const filename = ".github%2Fworkflows%2Fverify.yml"
-            const value = btoa(data["verify.yml"].replace("git+https://github.com/kmyk/online-judge-verify-helper.git@master", "online-judge-verify-helper"));
+            const value = encodeURIComponent(data["verify.yml"].replace("git+https://github.com/kmyk/online-judge-verify-helper.git@master", "online-judge-verify-helper"));
             output.href = url + "/new/master?filename=" + filename + "&value=" + value;
             output.textContent = url + "&value=...";
 
             const filename2 = "example.test.cpp";
-            const value2 = btoa(data["example.test.cpp"]);
+            const value2 = encodeURIComponent(data["example.test.cpp"]);
             output2.href = url + "/new/master?filename=" + filename2 + "&value=" + value2;
 
             output3.href = input.value.replace(/\/$/, "") + "/actions";

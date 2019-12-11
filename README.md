@@ -47,9 +47,14 @@ $ oj-verify docs
 TeX 記法の数式 (例: `$O(N \sum_i A_i)$`) の [MathJax](https://www.mathjax.org/) による表示にも対応しています。
 (TODO: どのようなコメントが認識されるかについてのドキュメントを書く)
 
+## Tips
+
+-   ライブラリを verify するための問題が見つからないときは他の人のライブラリを参考にするとよいでしょう。online-judge-verify-helper のユーザの一覧は <https://github.com/search?q=online-judge-verify-helper+path%3A.github> から見ることができます
+-   ライブラリを verify するための問題がそれでも見つからないとき [Library Checker](https://judge.yosupo.jp/) に要望を出す ([issue](https://github.com/yosupo06/library-checker-problems/issues/3)) とよいかもしれません
+-   GitHub Actions から online-judge-verify-helper を呼び出すといった通常想定される利用法においては MIT License に関する著作権表示は要求されません ([詳細](https://github.com/kmyk/online-judge-verify-helper/issues/34))
+
 ## Authors
 
 -   committer: [@kmyk](https://github.com/kmyk) (AtCoder: [kimiyuki](https://atcoder.jp/users/kimiyuki)): pip での配布や [online-judge-tools](https://github.com/kmyk/online-judge-tools) などその他の諸々の担当
 -   committer: [@beet-aizu](https://github.com/beet-aizu) (AtCoder: [beet](https://atcoder.jp/users/beet)): verify 機能担当
 -   committer: [@tsutaj](https://github.com/tsutaj) (AtCoder: [Tsuta_J](https://atcoder.jp/users/Tsuta_J)): documents 生成担当
--   special thanks: [@yosupo06](http://github.com/yosupo06) (AtCoder: [yosupo](https://atcoder.jp/users/yosupo)): verify のためのオンラインジャッジ [Library Checker](https://judge.yosupo.jp/) を管理運用してくれている

@@ -533,6 +533,9 @@ class PagesBuilder:
         self.config['docs'].setdefault('html', False)
         self.config['docs'].setdefault('categorize_library', True)
         self.config['docs'].setdefault('categorize_verify', False)
+        self.config.setdefault('plugins', []).append('jemoji')
+        if 'jemoji' not in self.config['plugins']:
+            self.config['plugins'].append('jemoji')
 
         dst_path = md_destination_path / '_config.yml'
         dst_path.parent.mkdir(parents=True, exist_ok=True)

@@ -4,7 +4,6 @@ import hashlib
 import os
 import pathlib
 import re
-import shlex
 import shutil
 import subprocess
 # typing.OrderedDict is not recognized by mypy
@@ -12,6 +11,7 @@ from collections import OrderedDict
 from typing import IO, Any, Dict, List, Tuple
 
 import markdown
+import onlinejudge_verify.utils as utils
 import pkg_resources
 import yaml
 
@@ -31,16 +31,6 @@ deployed_assets = [
 
 def get_current_branch() -> str:
     code = r'git symbolic-ref --short HEAD'
-    return subprocess.check_output(code, shell=True).decode().strip()
-
-
-def get_implicit_dependencies(compiler: str, file_path: pathlib.Path) -> List[str]:
-    code = r"""{} --std=c++17 -O2 -Wall -g -I . -MD -MF /dev/stdout -MM {} | sed '1s/[^:].*: // ; s/\\$//' | xargs -n 1""".format(compiler, shlex.quote(str(file_path)))
-    return subprocess.check_output(code, shell=True).decode().strip().splitlines()
-
-
-def get_timestamp(file_path: pathlib.Path, compiler: str) -> str:
-    code = r"""{} --std=c++17 -O2 -Wall -g -I . -MD -MF /dev/stdout -MM {} | sed '1s/[^:].*: // ; s/\\$//' | xargs -n 1 | xargs git log -1 --date=iso --pretty=%ad""".format(compiler, shlex.quote(str(file_path)))
     return subprocess.check_output(code, shell=True).decode().strip()
 
 
@@ -137,7 +127,7 @@ class CppFile:
 
         # pathlib 型に直し、相対パスである場合は絶対パスに直す
         depends_list = self.parser.get_contents_by_tag(r'@depends')
-        depends_list.extend(get_implicit_dependencies('g++', self.file_path))
+        depends_list.extend(map(str, utils.list_depending_files(self.file_path, compiler='g++')))
         depends_list.extend(self.parser.get_contents_by_tag(r'#define REQUIRES', r'"', r'"'))
         depends_list.extend(self.parser.get_contents_by_tag(r'#define DEPENDS', r'"', r'"'))
         self.depends = [pathlib.Path(path) for path in depends_list]
@@ -152,7 +142,7 @@ class CppFile:
             timestamp_path = pathlib.Path('.verify-helper/timestamp') / hashlib.md5(compiler.encode() + b'/./' + str(self.file_path.relative_to(self.source_path)).encode()).hexdigest()
             if not timestamp_path.exists():
                 return False
-            timestamp = get_timestamp(self.file_path, compiler)
+            timestamp = utils.get_last_commit_time_to_verify(self.file_path, compiler=compiler)
             with open(str(timestamp_path), 'rb') as fh:
                 if fh.read().decode() < timestamp:
                     return False
@@ -257,7 +247,7 @@ class MarkdownArticle(MarkdownPage):
 
         if categorize: file_object.write('* category: {}\n'.format(category).encode())
         github_link = '{{ site.github.repository_url }}' + '/blob/{}/{}'.format(get_current_branch(), str(self.file_class.file_path.relative_to(self.file_class.source_path)))
-        file_object.write('* {}\n    - Last commit date: {}\n'.format(self.get_linktag('View this file on GitHub', github_link), get_timestamp(self.file_class.file_path, 'g++')).encode())
+        file_object.write('* {}\n    - Last commit date: {}\n'.format(self.get_linktag('View this file on GitHub', github_link), utils.get_last_commit_time_to_verify(self.file_class.file_path, compiler='g++')).encode())
         file_object.write('\n\n'.encode())
 
     def write_contents(self, file_object: IO, path_to_title: 'OrderedDict[pathlib.Path, str]', path_to_verification: Dict[pathlib.Path, bool]) -> None:

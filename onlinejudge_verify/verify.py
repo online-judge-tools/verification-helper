@@ -1,6 +1,7 @@
 # Python Version: 3.x
 import os
 import pathlib
+import resource
 import subprocess
 import sys
 import tempfile
@@ -16,6 +17,11 @@ logger = getLogger(__name__)
 
 
 def main(paths: List[pathlib.Path]) -> None:
+    try:
+        resource.setrlimit(resource.RLIMIT_STACK, (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
+    except OSError:
+        logger.warning('failed to make the stack size unlimited')
+
     script = tempfile.NamedTemporaryFile(delete=False)
     script.write(bash_script)
     script.close()

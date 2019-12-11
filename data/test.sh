@@ -9,7 +9,6 @@ else
     CXX_LIST="g++ clang++"
 fi
 CXXFLAGS="${CXXFLAGS:--std=c++17 -O2 -Wall -g}"
-ulimit -s unlimited || true
 
 
 list-dependencies() {

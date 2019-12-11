@@ -73,8 +73,8 @@
     update();
 
     // workaround for the Dinky theme
-    output6.margin = 0;
-    output6.padding = 0;
-    output7.margin = 0;
-    output7.padding = 0;
+    output6.style.margin = 0;
+    output6.style.padding = 0;
+    output7.style.margin = 0;
+    output7.style.padding = 0;
 </script>

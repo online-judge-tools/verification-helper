@@ -55,7 +55,8 @@ def subcommand_run(paths: List[pathlib.Path]) -> None:
     script.write(bash_script)
     script.close()
     try:
-        subprocess.check_call(['/bin/bash', script.name] + list(map(str, paths)), stdout=sys.stdout, stderr=sys.stderr)
+        for path in paths:
+            subprocess.check_call(['/bin/bash', script.name, path], stdout=sys.stdout, stderr=sys.stderr)
     finally:
         os.remove(script.name)
 
@@ -164,6 +165,8 @@ def main(args: Optional[List[str]] = None) -> None:
         subcommand_docs()
 
     elif parsed.subcommand == 'run':
+        if not parsed.path:
+            parsed.path = glob.glob('**/*.test.cpp', recursive=True)
         subcommand_run(paths=parsed.path)
 
     elif parsed.subcommand == 'init':

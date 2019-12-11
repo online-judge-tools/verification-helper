@@ -60,21 +60,20 @@ list-recently-updated() {
     done | sort -nr | head -n 20 | cut -f 2
 }
 
-run() {
+for CXX in $CXX_LIST ; do
     file="$1"
-    echo "$ CXX=$CXX ./test.sh $file"
-
     url="$(get-url "$file")"
     dir=.verify-helper/$(echo -n "$url" | md5sum | sed 's/ .*//')
     mkdir -p ${dir}
 
     # ignore if IGNORE is defined
     if list-defined "$file" | grep '^#define IGNORE ' > /dev/null ; then
-        return
+        exit
     fi
 
     if ! is-verified "$file" ; then
         # compile
+        echo "$ $CXX $CXXFLAGS -I . $file"
         $CXX $CXXFLAGS -I . -o ${dir}/a.out "$file"
         if [[ -n ${url} ]] ; then
             # download
@@ -103,33 +102,4 @@ run() {
         fi
         mark-verified "$file"
     fi
-}
-
-
-if [[ $# -eq 0 ]] ; then
-    if [[ $GITHUB_ACTIONS ]] ; then
-        for f in $(find . -name \*.test.cpp) ; do
-            for CXX in $CXX_LIST ; do
-                run $f
-            done            
-            if [[ $SECONDS -gt 600 ]] ; then
-                break
-            fi
-        done
-
-    else
-        # local
-        for f in $(find . -name \*.test.cpp) ; do
-            for CXX in $CXX_LIST ; do
-                run $f
-            done
-        done
-    fi
-else
-    # specified
-    for f in "$@" ; do
-        for CXX in $CXX_LIST ; do
-            run $f
-        done
-    done
-fi
+done

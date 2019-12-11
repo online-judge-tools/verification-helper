@@ -43,7 +43,7 @@ class FileParser:
             self.lines = [line.decode().strip() for line in f.readlines()]
 
     # タグをもらって、コンテンツの配列を出す
-    def get_contents_by_tag(self, tag_name: str, l_pat: str = '', r_pat: str = '') -> List[str]:
+    def get_contents_by_tag(self, tag_name: str, *, l_pat: str = '', r_pat: str = '') -> List[str]:
         tag_name = re.escape(tag_name)
         l_pat, r_pat = re.escape(l_pat), re.escape(r_pat)
 
@@ -91,7 +91,7 @@ class CppFile:
         self.parser = FileParser(file_path)
 
         self.brief = self.parser.get_contents_by_tag(r'@brief')
-        self.brief.extend(self.parser.get_contents_by_tag(r'#define DESCRIPTION', r'"', r'"'))
+        self.brief.extend(self.parser.get_contents_by_tag(r'#define DESCRIPTION', l_pat=r'"', r_pat=r'"'))
 
         # file 指定が空なら、source_path から見た file_path へのパスをタイトルにする
         title_list = self.parser.get_contents_by_tag(r'@title')
@@ -108,7 +108,7 @@ class CppFile:
 
         # category 指定が空なら、source_path から見た file_path が属するディレクトリ名をカテゴリにする
         category_list = self.parser.get_contents_by_tag(r'@category')
-        category_list.extend(self.parser.get_contents_by_tag(r'#define CATEGORY', r'"', r'"'))
+        category_list.extend(self.parser.get_contents_by_tag(r'#define CATEGORY', l_pat=r'"', r_pat=r'"'))
         if category_list == []:
             self.category = str(self.file_path.parent.relative_to(self.source_path))
         else:
@@ -116,20 +116,20 @@ class CppFile:
 
         # see で指定されるのは URL: パス修正は不要
         self.see = self.parser.get_contents_by_tag(r'@see')
-        self.see.extend(self.parser.get_contents_by_tag(r'#define PROBLEM', r'"', r'"'))
-        self.see.extend(self.parser.get_contents_by_tag(r'#define SEE', r'"', r'"'))
+        self.see.extend(self.parser.get_contents_by_tag(r'#define PROBLEM', l_pat=r'"', r_pat=r'"'))
+        self.see.extend(self.parser.get_contents_by_tag(r'#define SEE', l_pat=r'"', r_pat=r'"'))
 
         # pathlib 型に直し、相対パスである場合は絶対パスに直す
         docs_list = self.parser.get_contents_by_tag(r'@docs')
-        docs_list.extend(self.parser.get_contents_by_tag(r'#define DOCS', r'"', r'"'))
+        docs_list.extend(self.parser.get_contents_by_tag(r'#define DOCS', l_pat=r'"', r_pat=r'"'))
         self.docs = [pathlib.Path(path) for path in docs_list]
         self.docs = self.to_abspath(self.docs)
 
         # pathlib 型に直し、相対パスである場合は絶対パスに直す
         depends_list = self.parser.get_contents_by_tag(r'@depends')
         depends_list.extend(map(str, utils.list_depending_files(self.file_path, compiler='g++')))
-        depends_list.extend(self.parser.get_contents_by_tag(r'#define REQUIRES', r'"', r'"'))
-        depends_list.extend(self.parser.get_contents_by_tag(r'#define DEPENDS', r'"', r'"'))
+        depends_list.extend(self.parser.get_contents_by_tag(r'#define REQUIRES', l_pat=r'"', r_pat=r'"'))
+        depends_list.extend(self.parser.get_contents_by_tag(r'#define DEPENDS', l_pat=r'"', r_pat=r'"'))
         self.depends = [pathlib.Path(path) for path in depends_list]
         self.depends = list(set(self.to_abspath(self.depends)))
         self.depends.sort()
@@ -183,7 +183,7 @@ class MarkdownPage:
     # file_path の markdown 生成先はどのような絶対パスになるべきか
     # prefix は [cpp_source_path までのパス] でなければならない
     # [markdown 生成先ディレクトリまでのパス] + [file_type] + [cpp_source_path より深いパス] を返す？
-    def get_destination(self, file_path: pathlib.Path, file_type: str = '') -> pathlib.Path:
+    def get_destination(self, file_path: pathlib.Path, file_type: str) -> pathlib.Path:
         try:
             file_path.relative_to(self.cpp_source_path)
         except ValueError:
@@ -475,7 +475,7 @@ class MarkdownTopPage(MarkdownPage):
 
 
 class PagesBuilder:
-    def __init__(self, cpp_source_pathstr: str, md_destination_pathstr: str = './md-output', config: Dict[str, Any] = {}) -> None:
+    def __init__(self, *, cpp_source_pathstr: str, md_destination_pathstr: str = './md-output', config: Dict[str, Any] = {}) -> None:
         cpp_source_path = pathlib.Path(cpp_source_pathstr).resolve()
         md_destination_path = pathlib.Path(md_destination_pathstr).resolve()
 
@@ -486,7 +486,7 @@ class PagesBuilder:
 
         # ビルド対象ファイル一覧
         self.verify_files = self.get_files(cpp_source_path, r'^.*\.test\.(cpp|hpp|cc)$')
-        self.library_files = self.get_files(cpp_source_path, r'^.*\.(cpp|hpp|cc)$', self.verify_files)
+        self.library_files = self.get_files(cpp_source_path, r'^.*\.(cpp|hpp|cc)$', ignored_files=self.verify_files)
 
         # ファイルまでの絶対パス <-> タイトル
         self.title_to_path = self.map_title2path()
@@ -546,7 +546,7 @@ class PagesBuilder:
 
     # source_path 内にあって拡張子末尾が extension であるファイル一覧
     # ignored_files に含まれるならば無視
-    def get_files(self, source_path: pathlib.Path, extension: str, ignored_files: 'OrderedDict[pathlib.Path, CppFile]' = OrderedDict()) -> 'OrderedDict[pathlib.Path, CppFile]':
+    def get_files(self, source_path: pathlib.Path, extension: str, *, ignored_files: 'OrderedDict[pathlib.Path, CppFile]' = OrderedDict()) -> 'OrderedDict[pathlib.Path, CppFile]':
         match_result = [p for p in source_path.glob(r'./**/*') if re.search(extension, str(p))]
         files = {}
         for matched_file in match_result:

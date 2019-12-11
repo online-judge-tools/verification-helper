@@ -267,7 +267,7 @@ class MarkdownArticle(MarkdownPage):
         # cpp (絶対パス) => (cpp|test.cpp) (絶対パス): リンクは相対パスに
         self.file_class.depends = sorted(list(set(self.file_class.depends)))
         if self.file_class.depends != []:
-            file_object.write('## Dependencies\n'.encode())
+            file_object.write('## Depends On\n'.encode())
             for depends in self.file_class.depends:
                 if depends not in path_to_verification:
                     raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(depends))
@@ -295,7 +295,7 @@ class MarkdownArticle(MarkdownPage):
 
         # cpp <= cpp または test.cpp <= test.cpp
         if required_file_list != []:
-            file_object.write('## Required\n'.encode())
+            file_object.write('## Required By\n'.encode())
             for required in required_file_list:
                 if required not in path_to_verification:
                     raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(required))
@@ -312,7 +312,7 @@ class MarkdownArticle(MarkdownPage):
 
         # cpp => test.cpp
         if verified_file_list != []:
-            file_object.write('## Verified\n'.encode())
+            file_object.write('## Verified With\n'.encode())
             for verified in verified_file_list:
                 if verified not in path_to_verification:
                     raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(verified))

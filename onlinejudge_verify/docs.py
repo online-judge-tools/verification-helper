@@ -753,7 +753,8 @@ def main(*, html: bool = False, force: bool = False) -> None:
     # config に 'html' key が存在しなければ入れる
     # 存在するときでも force オプションが効いていれば書き換える
     if ('html' not in config) or force:
-        config['docs']['html'] = html
+        config.setdefault('docs', {})
+        config['docs'].setdefault('html', html)
 
     builder = PagesBuilder(cpp_source_pathstr='.', config=config)
 

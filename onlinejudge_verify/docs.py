@@ -34,6 +34,11 @@ def get_current_branch() -> str:
     return subprocess.check_output(code, shell=True).decode().strip()
 
 
+def get_implicit_dependencies(compiler: str, file_path: pathlib.Path) -> List[str]:
+    code = r"""{} --std=c++17 -O2 -Wall -g -I . -MD -MF /dev/stdout -MM {} | sed '1s/[^:].*: // ; s/\\$//' | xargs -n 1""".format(compiler, shlex.quote(str(file_path)))
+    return subprocess.check_output(code, shell=True).decode().strip().splitlines()
+
+
 def get_timestamp(file_path: pathlib.Path, compiler: str) -> str:
     code = r"""{} --std=c++17 -O2 -Wall -g -I . -MD -MF /dev/stdout -MM {} | sed '1s/[^:].*: // ; s/\\$//' | xargs -n 1 | xargs git log -1 --date=iso --pretty=%ad""".format(compiler, shlex.quote(str(file_path)))
     return subprocess.check_output(code, shell=True).decode().strip()
@@ -68,12 +73,14 @@ class FileParser:
         results = [re.sub(reg2, r'\1', line).strip() for line in matches]
         return results
 
+    """
     def get_implicit_dependencies(self) -> List[str]:
         reg1 = r'^#include[ ]*".*".*$'
         matches = [line for line in self.lines if re.match(reg1, line)]
         reg2 = r'^#include[ ]*"(.*)".*$'
         results = [re.sub(reg2, r'\1', line).strip() for line in matches]
         return results
+    """
 
 
 # 現状は C++ のみのサポートを考える
@@ -130,11 +137,11 @@ class CppFile:
 
         # pathlib 型に直し、相対パスである場合は絶対パスに直す
         depends_list = self.parser.get_contents_by_tag(r'@depends')
-        depends_list.extend(self.parser.get_implicit_dependencies())
+        depends_list.extend(get_implicit_dependencies('g++', self.file_path))
         depends_list.extend(self.parser.get_contents_by_tag(r'#define REQUIRES', r'"', r'"'))
         depends_list.extend(self.parser.get_contents_by_tag(r'#define DEPENDS', r'"', r'"'))
         self.depends = [pathlib.Path(path) for path in depends_list]
-        self.depends = self.to_abspath(self.depends)
+        self.depends = list(set(self.to_abspath(self.depends)))
         self.depends.sort()
 
         self.required = []
@@ -158,10 +165,12 @@ class CppFile:
             abspath_cand = file_dir / item
             # とりあえず連結して存在するなら相対パス扱い
             if abspath_cand.exists():
-                result.append(abspath_cand.resolve())
+                abspath_cand = abspath_cand.resolve()
+                if abspath_cand != self.file_path: result.append(abspath_cand)
             # 絶対パス扱いにしたものを読んで存在しないなら捨てる
             elif item.exists():
-                result.append(item.resolve())
+                item = item.resolve()
+                if item != self.file_path: result.append(item)
         return result
 
     def set_required(self, required_list: List[pathlib.Path]) -> None:
@@ -744,7 +753,7 @@ def main(*, html: bool = False, force: bool = False) -> None:
     # config に 'html' key が存在しなければ入れる
     # 存在するときでも force オプションが効いていれば書き換える
     if ('html' not in config) or force:
-        config['html'] = html
+        config['docs']['html'] = html
 
     builder = PagesBuilder(cpp_source_pathstr='.', config=config)
 

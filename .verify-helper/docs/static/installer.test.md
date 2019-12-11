@@ -28,20 +28,16 @@
     const data = {};
     data["verify.yml"] = (function () {
         const req = new XMLHttpRequest();
-        req.open("GET", "https://raw.githubusercontent.com/kmyk/online-judge-verify-helper/master/.github/workflows/verify.yml", true);
+        req.open("GET", "https://raw.githubusercontent.com/kmyk/online-judge-verify-helper/master/.github/workflows/verify.yml", false);
         req.send();
         return req.responseText;
     })();
     data["example.test.cpp"] = (function () {
         const req = new XMLHttpRequest();
-        req.open("GET", "https://raw.githubusercontent.com/kmyk/online-judge-verify-helper/master/example.test.cpp", true);
+        req.open("GET", "https://raw.githubusercontent.com/kmyk/online-judge-verify-helper/master/example.test.cpp", false);
         req.send();
         return req.responseText;
     })();
-    // test
-    const req = new XMLHttpRequest();
-    req.open("GET", "https://raw.githubusercontent.com/kmyk/online-judge-verify-helper/master/.github/workflows/verify.yml", true);
-    req.send();
 
     const input = document.getElementById("input");
     const output = document.getElementById("output");

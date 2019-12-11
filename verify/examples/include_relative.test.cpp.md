@@ -35,7 +35,7 @@ layout: default
 * see: <a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_A">http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_A</a>
 
 
-## Dependencies
+## Depends On
 * :heavy_check_mark: <a href="../../library/examples/macros.hpp.html">examples/macros.hpp</a>
 
 

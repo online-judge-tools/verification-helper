@@ -35,7 +35,7 @@ layout: default
 * see: <a href="https://judge.yosupo.jp/problem/unionfind">https://judge.yosupo.jp/problem/unionfind</a>
 
 
-## Dependencies
+## Depends On
 * :heavy_check_mark: <a href="../../library/examples/macros.hpp.html">examples/macros.hpp</a>
 * :heavy_check_mark: <a href="../../library/examples/union_find_tree.hpp.html">a Union-Find Tree</a>
 

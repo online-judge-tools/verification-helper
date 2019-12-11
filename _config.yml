@@ -5,7 +5,6 @@ docs:
   html: false
   title: Docs by "online-judge-verify-helper"
   toc: true
-html: false
 plugins:
 - jemoji
 theme: jekyll-theme-dinky

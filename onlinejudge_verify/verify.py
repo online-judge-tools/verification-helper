@@ -5,6 +5,7 @@ import resource
 import subprocess
 import sys
 import tempfile
+import time
 from logging import getLogger
 from typing import *
 
@@ -26,8 +27,11 @@ def main(paths: List[pathlib.Path]) -> None:
     script.write(bash_script)
     script.close()
     try:
+        start = time.time()
         for path in paths:
             logger.info('verify %s', path)
             subprocess.check_call(['/bin/bash', script.name, path], stdout=sys.stdout, stderr=sys.stderr)
+            if time.time() - start > 600:
+                break
     finally:
         os.remove(script.name)

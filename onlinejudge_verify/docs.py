@@ -139,7 +139,7 @@ class CppFile:
 
     def get_verification_status(self) -> bool:
         for compiler in ('g++', 'clang++'):
-            timestamp_path = pathlib.Path('.verify-helper/timestamp') / hashlib.md5(compiler.encode() + b'/./' + str(self.file_path.relative_to(self.source_path)).encode()).hexdigest()
+            timestamp_path = pathlib.Path('.verify-helper/timestamp') / hashlib.md5(compiler.encode() + str(self.file_path.relative_to(self.source_path)).encode()).hexdigest()
             if not timestamp_path.exists():
                 return False
             timestamp = utils.get_last_commit_time_to_verify(self.file_path, compiler=compiler)

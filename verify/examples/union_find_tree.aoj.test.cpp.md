@@ -25,7 +25,7 @@ layout: default
 <link rel="stylesheet" href="../../assets/css/copy-button.css" />
 
 
-# :warning: examples/union_find_tree.aoj.test.cpp
+# :heavy_check_mark: examples/union_find_tree.aoj.test.cpp
 <a href="../../index.html">Back to top page</a>
 
 * <a href="{{ site.github.repository_url }}/blob/master/examples/union_find_tree.aoj.test.cpp">View this file on GitHub</a>
@@ -36,8 +36,8 @@ layout: default
 
 
 ## Depends On
-* :warning: <a href="../../library/examples/macros.hpp.html">examples/macros.hpp</a>
-* :warning: <a href="../../library/examples/union_find_tree.hpp.html">a Union-Find Tree</a>
+* :heavy_check_mark: <a href="../../library/examples/macros.hpp.html">examples/macros.hpp</a>
+* :heavy_check_mark: <a href="../../library/examples/union_find_tree.hpp.html">a Union-Find Tree</a>
 
 
 ## Code

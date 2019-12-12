@@ -245,7 +245,8 @@ class MarkdownArticle(MarkdownPage):
         back_to_top_link = self.get_link(self.md_destination_path / 'index.html')
         file_object.write('{}\n\n'.format(self.get_linktag('Back to top page', back_to_top_link)).encode())
 
-        if categorize: file_object.write('* category: {}\n'.format(category).encode())
+        top_page_category_link = back_to_top_link + '#' + hashlib.md5(category.encode()).hexdigest()
+        if categorize: file_object.write('* category: {}\n'.format(self.get_linktag(category, top_page_category_link)).encode())
         github_link = '{{ site.github.repository_url }}' + '/blob/{}/{}'.format(get_current_branch(), str(self.file_class.file_path.relative_to(self.file_class.source_path)))
         file_object.write('* {}\n    - Last commit date: {}\n'.format(self.get_linktag('View this file on GitHub', github_link), utils.get_last_commit_time_to_verify(self.file_class.file_path, compiler='g++')).encode())
         file_object.write('\n\n'.encode())
@@ -384,6 +385,7 @@ class MarkdownTopPage(MarkdownPage):
             if library_files != {}:
                 file_object.write('## Library Files\n'.encode())
                 for category, library_list in library_category_to_path.items():
+                    file_object.write('<div id="{}"></div>\n'.format(hashlib.md5(category.encode()).hexdigest()).encode())
                     file_object.write('### {}\n'.format(category).encode())
                     for library_file in library_list:
                         if library_file not in path_to_verification:
@@ -417,6 +419,7 @@ class MarkdownTopPage(MarkdownPage):
             if verify_files != {}:
                 file_object.write('## Verify Files\n'.encode())
                 for category, verify_list in verify_category_to_path.items():
+                    file_object.write('<div id="{}"></div>\n'.format(hashlib.md5(category.encode()).hexdigest()).encode())
                     file_object.write('### {}\n'.format(category).encode())
                     for verify_file in verify_list:
                         if verify_file not in path_to_verification:

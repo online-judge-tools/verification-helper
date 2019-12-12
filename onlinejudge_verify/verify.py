@@ -31,7 +31,7 @@ def main(paths: List[pathlib.Path]) -> None:
         for path in paths:
             logger.info('verify %s', path)
             subprocess.check_call(['/bin/bash', script.name, path], stdout=sys.stdout, stderr=sys.stderr)
-            if time.time() - start > 600:
+            if time.time() - start > 60:
                 break
     finally:
         os.remove(script.name)

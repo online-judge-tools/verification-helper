@@ -1,6 +1,7 @@
 # Python Version: 3.x
 import argparse
 import glob
+import math
 import os
 import pathlib
 import subprocess
@@ -48,9 +49,13 @@ def subcommand_run(paths: List[pathlib.Path]) -> None:
         logger.info('$ git checkout %s', branch)
         subprocess.check_call(['git', 'checkout', branch])
 
+    # NOTE: the GITHUB_TOKEN expires in 60 minutes (https://help.github.com/en/actions/automating-your-workflow-with-github-actions/authenticating-with-the-github_token#about-the-github_token-secret)
+    # use 10 minutes as timeout for safety; 理由はよく分かってないぽいけど以前 20 分でやって死んだことがあるらしいので
+    timeout = 10 * 60 if 'GITHUB_ACTION' in os.environ else math.inf
+
     if not paths:
         paths = list(map(pathlib.Path, glob.glob('**/*.test.cpp', recursive=True)))
-    onlinejudge_verify.verify.main(paths)
+    onlinejudge_verify.verify.main(paths, timeout=timeout)
 
     # push
     if does_push:

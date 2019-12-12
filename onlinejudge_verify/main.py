@@ -4,11 +4,14 @@ import glob
 import math
 import os
 import pathlib
+import re
+import shlex
 import subprocess
 from logging import DEBUG, basicConfig, getLogger
 from typing import *
 
 import onlinejudge_verify.docs
+import onlinejudge_verify.utils
 import onlinejudge_verify.verify
 import pkg_resources
 
@@ -85,6 +88,40 @@ def subcommand_init() -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(str(path), 'wb') as fh:
         fh.write(verify_yml.replace(b'git+https://github.com/kmyk/online-judge-verify-helper.git@master', b'"online-judge-verify-helper==2.*"'))
+
+
+def subcommand_export(*, path: pathlib.Path, source_dir: pathlib.Path) -> Tuple[str, Set[pathlib.Path]]:
+    dir_path = path.parent
+    if source_dir == pathlib.Path(): source_dir = pathlib.Path(os.getcwd()).resolve()
+
+    # コメントアウトを消す (コメントアウトされた #include を誤認識しないための処理)
+    code = """g++ -I {} -fpreprocessed -dD -E {} | tail -n +2""".format(shlex.quote(str(source_dir)), shlex.quote(str(path)))
+    lines = subprocess.check_output(code, shell=True).decode().strip().splitlines()
+
+    # すでに include したものを記録しておく (include してるなら無視)
+    included_files = set()  # type: Set[pathlib.Path]
+    results = []
+    for line in lines:
+        if re.match(r'^#include[ ]*".*".*$', line):
+            rel_path = pathlib.Path(re.sub(r'^#include[ ]*"(.*)".*$', r'\1', line).strip())
+
+            # 普通の相対パス
+            if (dir_path / rel_path).exists():
+                depends = (dir_path / rel_path).resolve()
+            # 実行元ディレクトリからの相対パス (-I . しているため？)
+            elif (source_dir / rel_path).exists():
+                depends = (source_dir / rel_path).resolve()
+            else:
+                raise FileNotFoundError('{} does not exist'.format(rel_path))
+
+            if depends not in included_files:
+                included_files.add(depends)
+                depends_str, depends_set = subcommand_export(path=depends, source_dir=source_dir)
+                results.append(depends_str)
+                included_files = included_files | depends_set
+        else:
+            results.append(line)
+    return '\n'.join(results), included_files
 
 
 def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-pages') -> None:
@@ -168,7 +205,8 @@ def main(args: Optional[List[str]] = None) -> None:
         subcommand_init()
 
     elif parsed.subcommand == 'export':
-        raise NotImplementedError('#include "hoge.hpp" みたいなやつをいい感じに展開してそのまま提出できる形コードを出力してほしい')
+        result_str, result_set = subcommand_export(path=parsed.path, source_dir=pathlib.Path())
+        print(result_str)
 
     elif parsed.subcommand == 'docs':
         subcommand_docs()

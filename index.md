@@ -36,21 +36,21 @@ This documentation is generated automatically.
 
 ## Library Files
 ### examples
-* :heavy_check_mark: <a href="library/examples/macros.hpp.html">examples/macros.hpp</a>
-* :heavy_check_mark: <a href="library/examples/monoids.hpp.html">examples/monoids.hpp</a>
+* :warning: <a href="library/examples/macros.hpp.html">examples/macros.hpp</a>
+* :warning: <a href="library/examples/monoids.hpp.html">examples/monoids.hpp</a>
 * :warning: <a href="library/examples/not_verified.hpp.html">examples/not_verified.hpp</a>
-* :heavy_check_mark: <a href="library/examples/segment_tree.hpp.html">a Segment Tree (generalized with monoids)</a>
-* :heavy_check_mark: <a href="library/examples/union_find_tree.hpp.html">a Union-Find Tree</a>
+* :warning: <a href="library/examples/segment_tree.hpp.html">a Segment Tree (generalized with monoids)</a>
+* :warning: <a href="library/examples/union_find_tree.hpp.html">a Union-Find Tree</a>
 
 
 ## Verify Files
-* :heavy_check_mark: <a href="verify/example.test.cpp.html">example.test.cpp</a>
-* :heavy_check_mark: <a href="verify/examples/develop.test.cpp.html">examples/develop.test.cpp</a>
-* :heavy_check_mark: <a href="verify/examples/include_relative.test.cpp.html">examples/include_relative.test.cpp</a>
-* :heavy_check_mark: <a href="verify/examples/segment_tree.point_set_range_composite.test.cpp.html">examples/segment_tree.point_set_range_composite.test.cpp</a>
-* :heavy_check_mark: <a href="verify/examples/segment_tree.range_minimum_query.test.cpp.html">examples/segment_tree.range_minimum_query.test.cpp</a>
-* :heavy_check_mark: <a href="verify/examples/segment_tree.range_sum_query.test.cpp.html">examples/segment_tree.range_sum_query.test.cpp</a>
-* :heavy_check_mark: <a href="verify/examples/union_find_tree.aoj.test.cpp.html">examples/union_find_tree.aoj.test.cpp</a>
-* :heavy_check_mark: <a href="verify/examples/union_find_tree.yosupo.test.cpp.html">examples/union_find_tree.yosupo.test.cpp</a>
+* :warning: <a href="verify/example.test.cpp.html">example.test.cpp</a>
+* :warning: <a href="verify/examples/develop.test.cpp.html">examples/develop.test.cpp</a>
+* :warning: <a href="verify/examples/include_relative.test.cpp.html">examples/include_relative.test.cpp</a>
+* :warning: <a href="verify/examples/segment_tree.point_set_range_composite.test.cpp.html">examples/segment_tree.point_set_range_composite.test.cpp</a>
+* :warning: <a href="verify/examples/segment_tree.range_minimum_query.test.cpp.html">examples/segment_tree.range_minimum_query.test.cpp</a>
+* :warning: <a href="verify/examples/segment_tree.range_sum_query.test.cpp.html">examples/segment_tree.range_sum_query.test.cpp</a>
+* :warning: <a href="verify/examples/union_find_tree.aoj.test.cpp.html">examples/union_find_tree.aoj.test.cpp</a>
+* :warning: <a href="verify/examples/union_find_tree.yosupo.test.cpp.html">examples/union_find_tree.yosupo.test.cpp</a>
 
 

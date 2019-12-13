@@ -18,7 +18,8 @@ logger = getLogger(__name__)
 
 
 def exec_command(command: List[str]):
-    subprocess.check_call(shlex.split(' '.join(command)))
+    logger.info('$ %s', ' '.join(command))
+    subprocess.check_call(command)
 
 
 def main(paths: List[pathlib.Path], *, timeout: float = math.inf) -> None:
@@ -34,7 +35,7 @@ def main(paths: List[pathlib.Path], *, timeout: float = math.inf) -> None:
         compilers.append('g++')
         compilers.append('clang++')
 
-    cxxflags = os.environ.get('CXXFLAGS', '-std=c++17 -O2 -Wall -g')
+    cxxflags = shlex.split(os.environ.get('CXXFLAGS', '-std=c++17 -O2 -Wall -g'))
 
     start = time.time()
     for path in paths:
@@ -57,11 +58,11 @@ def main(paths: List[pathlib.Path], *, timeout: float = math.inf) -> None:
             if not directory.exists():
                 directory.mkdir(parents=True)
                 exec_command(['sleep', '2'])
-                exec_command(['oj', 'download', '--system', url, '-d', str(directory / 'test')])
+                exec_command(['oj', 'download', '--system', '-d', shlex.quote(str(directory / 'test')), url])
 
-            print("$ $CXX $CXXFLAGS -I . $file")
-            exec_command([cxx, cxxflags, '-I', '.', '-o', str(directory / 'a.out'), str(path)])
+            exec_command([cxx, *cxxflags, '-I', '.', '-o', shlex.quote(str(directory / 'a.out')), shlex.quote(str(path))])
 
+            command = ['oj', 'test', '-c', shlex.quote(str(directory / 'a.out')), '-d', shlex.quote(str(directory / 'test'))]
             if 'judge.yosupo.jp' in url:
                 checker = onlinejudge.dispatch.problem_from_url(url).download_checker_cpp()
                 with open(directory / "checker.cpp", "wb") as f:
@@ -70,14 +71,12 @@ def main(paths: List[pathlib.Path], *, timeout: float = math.inf) -> None:
                 with open(directory / 'testlib.h', 'wb') as f:
                     subprocess.call(['curl', 'https://raw.githubusercontent.com/MikeMirzayanov/testlib/master/testlib.h'], stdout=f)
 
-                exec_command([cxx, cxxflags, '-I', '.', '-o', str(directory / 'checker.out'), str(directory / 'checker.cpp')])
+                exec_command([cxx, *cxxflags, '-I', '.', '-o', str(directory / 'checker.out'), str(directory / 'checker.cpp')])
+                command += ['--judge-command', shlex.quote(str(directory / 'checker.out'))]
 
-                exec_command(['oj', 'test', '--judge-command', str(directory / 'checker.out'), '-c', str(directory / 'a.out'), '-d', str(directory / 'test')])
-            elif 'ERROR' in macros:
-                error = shlex.split(macros['ERROR'])[0]
-                exec_command(['oj', 'test', '-e', error, '-c', str(directory / 'a.out'), '-d', str(directory / 'test')])
-            else:
-                exec_command(['oj', 'test', '-c', str(directory / 'a.out'), '-d', str(directory / 'test')])
+            if 'ERROR' in macros:
+                command += ['-e', shlex.quote(macros['ERROR'])]
+            exec_command(command)
             verified = True
 
         if verified:

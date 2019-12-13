@@ -73,7 +73,7 @@ def push_timestamp_to_branch() -> None:
     logger.info('$ git add .verify-helper && git commit && git push')
     subprocess.check_call(['git', 'config', '--global', 'user.name', 'GitHub'])
     subprocess.check_call(['git', 'config', '--global', 'user.email', 'noreply@github.com'])
-    subprocess.check_call(['git', 'add', '.verify-helper/timestamp/'])
+    subprocess.check_call(['git', 'add', onlinejudge_verify.utils.path_timestamp])
     if subprocess.run(['git', 'diff', '--quiet', '--staged']).returncode:
         message = '[auto-verifier] verify commit {}'.format(os.environ['GITHUB_SHA'])
         subprocess.check_call(['git', 'commit', '-m', message])

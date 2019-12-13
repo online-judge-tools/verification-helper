@@ -10,7 +10,10 @@ CXXFLAGS = os.environ.get('CXXFLAGS', '--std=c++17 -O2 -Wall -g')
 
 timestamps = {'~': 'dummy'}
 
-path_timestamp = pathlib.Path('.verify-helper/timestamp/timestamp.json')
+if 'GITHUB_ACTION' in os.environ:
+    path_timestamp = pathlib.Path('.verify-helper/timestamps.remote.json')
+else:
+    path_timestamp = pathlib.Path('.verify-helper/timestamps.local.json')
 if path_timestamp.exists():
     with open(path_timestamp, 'r') as f:
         timestamps = json.loads(f.read())

@@ -65,14 +65,21 @@ def subcommand_run(paths: List[pathlib.Path]) -> None:
     try:
         with utils.VerificationMarker(json_path=timestamps_json_path) as marker:
             onlinejudge_verify.verify.main(paths, marker=marker, timeout=timeout)
-
     finally:
-        # push
+        # DEBUG
+        with open(str(timestamps_json_path)) as fh:
+            print(fh.read())
+
         if does_push:
             push_timestamp_to_branch(timestamps_json_path=timestamps_json_path)
 
 
 def push_timestamp_to_branch(*, timestamps_json_path: pathlib.Path) -> None:
+    # DEBUG
+    print(timestamps_json_path)
+    print(timestamps_json_path)
+    print(timestamps_json_path)
+
     # read config
     logger.info('use GITHUB_TOKEN')  # NOTE: don't use GH_PAT here, because it may cause infinite loops with triggering GitHub Actions itself
     url = 'https://{}:{}@github.com/{}.git'.format(os.environ['GITHUB_ACTOR'], os.environ['GITHUB_TOKEN'], os.environ['GITHUB_REPOSITORY'])

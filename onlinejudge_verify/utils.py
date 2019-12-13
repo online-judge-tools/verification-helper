@@ -8,15 +8,17 @@ from typing import *
 
 CXXFLAGS = os.environ.get('CXXFLAGS', '--std=c++17 -O2 -Wall -g')
 
-timestamps = {'~': 'dummy'}
+old_timestamps = {'~': 'dummy'}
+new_timestamps = {'~': 'dummy'}
 
 if 'GITHUB_ACTION' in os.environ:
     path_timestamp = pathlib.Path('.verify-helper/timestamps.remote.json')
 else:
     path_timestamp = pathlib.Path('.verify-helper/timestamps.local.json')
+
 if path_timestamp.exists():
     with open(path_timestamp, 'r') as f:
-        timestamps = json.loads(f.read())
+        old_timestamps = json.loads(f.read())
 
 
 def list_depending_files(path: pathlib.Path, *, compiler: str) -> List[pathlib.Path]:
@@ -43,13 +45,13 @@ def get_last_commit_time_to_verify(path: pathlib.Path, *, compiler: str) -> str:
 
 
 def is_verified(path: pathlib.Path, compiler: str) -> bool:
-    return get_last_commit_time_to_verify(path, compiler=compiler) == timestamps.get(str(path), None)
+    return get_last_commit_time_to_verify(path, compiler=compiler) == old_timestamps.get(str(path), None)
 
 
 def mark_verified(path: pathlib.Path, compiler: str):
-    timestamps[str(path)] = get_last_commit_time_to_verify(path, compiler=compiler)
+    new_timestamps[str(path)] = get_last_commit_time_to_verify(path, compiler=compiler)
 
 
 def save_timestamps():
     with open(path_timestamp, 'w') as f:
-        json.dump(timestamps, f, sort_keys=True, indent=0)
+        json.dump(new_timestamps, f, sort_keys=True, indent=0)

@@ -39,6 +39,7 @@ def main(paths: List[pathlib.Path], *, timeout: float = math.inf) -> None:
     start = time.time()
     for path in paths:
         if utils.is_verified(path, compiler=compilers[0]):
+            utils.mark_verified(path, compilers[0])
             continue
 
         verified = False

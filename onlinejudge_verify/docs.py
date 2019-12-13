@@ -138,15 +138,7 @@ class CppFile:
         self.is_verified = self.get_verification_status()
 
     def get_verification_status(self) -> bool:
-        for compiler in ('g++', 'clang++'):
-            timestamp_path = pathlib.Path('.verify-helper/timestamp') / hashlib.md5(compiler.encode() + b'/' + str(self.file_path.relative_to(self.source_path)).encode()).hexdigest()
-            if not timestamp_path.exists():
-                return False
-            timestamp = utils.get_last_commit_time_to_verify(self.file_path, compiler=compiler)
-            with open(str(timestamp_path), 'rb') as fh:
-                if fh.read().decode() < timestamp:
-                    return False
-        return True
+        return utils.is_verified(self.file_path.relative_to(self.source_path), compiler='g++')
 
     # self.file_path からの相対パスを絶対パスに直す
     def to_abspath(self, item_list: List[pathlib.Path]) -> List[pathlib.Path]:

@@ -6,6 +6,8 @@
 "examples/segment_tree.point_set_range_composite.test.cpp": "2019-12-09 18:30:56 +0900",
 "examples/segment_tree.range_minimum_query.test.cpp": "2019-12-09 18:30:56 +0900",
 "examples/segment_tree.range_sum_query.test.cpp": "2019-12-09 18:30:56 +0900",
+"examples/test-a.test.cpp": "2019-12-13 18:26:01 +0900",
+"examples/test-b.test.cpp": "2019-12-13 18:26:01 +0900",
 "examples/union_find_tree.aoj.test.cpp": "2019-12-09 18:30:56 +0900",
 "examples/union_find_tree.yosupo.test.cpp": "2019-12-09 18:30:56 +0900",
 "~": "dummy"

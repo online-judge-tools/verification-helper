@@ -19,10 +19,19 @@ logger = getLogger(__name__)
 
 def exec_command(command: List[str]):
     logger.info('$ %s', ' '.join(command))
-    subprocess.check_call(command)
+
+    cwd = pathlib.Path.cwd()
+    try:
+
+        subprocess.check_call(command)
+
+    finally:
+        # subprocess 中に Ctrl-C とかで止めるとなぜか cd しちゃったままのことがあるので戻す
+        if pathlib.Path.cwd() != cwd:
+            os.chdir(str(cwd))
 
 
-def main(paths: List[pathlib.Path], *, timeout: float = math.inf) -> None:
+def main(paths: List[pathlib.Path], *, marker: utils.VerificationMarker, timeout: float = math.inf) -> None:
     try:
         resource.setrlimit(resource.RLIMIT_STACK, (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
     except OSError:
@@ -39,8 +48,7 @@ def main(paths: List[pathlib.Path], *, timeout: float = math.inf) -> None:
 
     start = time.time()
     for path in paths:
-        if utils.is_verified(path, compiler=compilers[0]):
-            utils.mark_verified(path, compilers[0])
+        if marker.is_verified(path):
             continue
 
         verified = False
@@ -80,10 +88,8 @@ def main(paths: List[pathlib.Path], *, timeout: float = math.inf) -> None:
             verified = True
 
         if verified:
-            utils.mark_verified(path, compilers[0])
+            marker.mark_verified(path)
 
         # to prevent taking too long; we may fail to use the results of verification due to expired tokens
         if timeout is not None and time.time() - start > timeout:
             break
-
-    utils.save_timestamps()

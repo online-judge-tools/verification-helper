@@ -9,6 +9,7 @@ from logging import DEBUG, basicConfig, getLogger
 from typing import *
 
 import onlinejudge_verify.docs
+import onlinejudge_verify.utils as utils
 import onlinejudge_verify.verify
 import pkg_resources
 
@@ -53,16 +54,25 @@ def subcommand_run(paths: List[pathlib.Path]) -> None:
     # use 10 minutes as timeout for safety; 理由はよく分かってないぽいけど以前 20 分でやって死んだことがあるらしいので
     timeout = 10 * 60 if 'GITHUB_ACTION' in os.environ else math.inf
 
+    # use different files in local and in remote to avoid conflicts
+    if 'GITHUB_ACTION' in os.environ:
+        timestamps_json_path = pathlib.Path('.verify-helper/timestamps.remote.json')
+    else:
+        timestamps_json_path = pathlib.Path('.verify-helper/timestamps.local.json')
+
     if not paths:
         paths = list(map(pathlib.Path, glob.glob('**/*.test.cpp', recursive=True)))
-    onlinejudge_verify.verify.main(paths, timeout=timeout)
+    try:
+        with utils.VerificationMarker(json_path=timestamps_json_path) as marker:
+            onlinejudge_verify.verify.main(paths, marker=marker, timeout=timeout)
 
-    # push
-    if does_push:
-        push_timestamp_to_branch()
+    finally:
+        # push
+        if does_push:
+            push_timestamp_to_branch(timestamps_json_path=timestamps_json_path)
 
 
-def push_timestamp_to_branch() -> None:
+def push_timestamp_to_branch(*, timestamps_json_path: pathlib.Path) -> None:
     # read config
     logger.info('use GITHUB_TOKEN')  # NOTE: don't use GH_PAT here, because it may cause infinite loops with triggering GitHub Actions itself
     url = 'https://{}:{}@github.com/{}.git'.format(os.environ['GITHUB_ACTOR'], os.environ['GITHUB_TOKEN'], os.environ['GITHUB_REPOSITORY'])
@@ -73,7 +83,7 @@ def push_timestamp_to_branch() -> None:
     logger.info('$ git add .verify-helper && git commit && git push')
     subprocess.check_call(['git', 'config', '--global', 'user.name', 'GitHub'])
     subprocess.check_call(['git', 'config', '--global', 'user.email', 'noreply@github.com'])
-    subprocess.check_call(['git', 'add', onlinejudge_verify.utils.path_timestamp])
+    subprocess.check_call(['git', 'add', timestamps_json_path])
     if subprocess.run(['git', 'diff', '--quiet', '--staged']).returncode:
         message = '[auto-verifier] verify commit {}'.format(os.environ['GITHUB_SHA'])
         subprocess.check_call(['git', 'commit', '-m', message])

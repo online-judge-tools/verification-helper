@@ -15,6 +15,7 @@ if path_timestamp.exists():
     with open(path_timestamp, 'r') as f:
         timestamps = json.loads(f.read())
 
+
 def list_depending_files(path: pathlib.Path, *, compiler: str) -> List[pathlib.Path]:
     code = r"""{} {} -I . -MD -MF /dev/stdout -MM {} | sed '1s/[^:].*: // ; s/\\$//' | xargs -n 1""".format(compiler, CXXFLAGS, shlex.quote(str(path)))
     data = subprocess.check_output(code, shell=True)

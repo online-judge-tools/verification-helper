@@ -29,17 +29,6 @@ deployed_assets = [
 ]
 
 
-def _get_marker(*, _dummy=[]) -> utils.VerificationMarker:
-    # TODO:
-    if not _dummy:
-        if 'GITHUB_ACTION' in os.environ:
-            timestamps_json_path = pathlib.Path('.verify-helper/timestamps.remote.json')
-        else:
-            timestamps_json_path = pathlib.Path('.verify-helper/timestamps.local.json')
-        _dummy.append(utils.VerificationMarker(json_path=timestamps_json_path))
-    return _dummy[0]
-
-
 def get_current_branch() -> str:
     code = r'git symbolic-ref --short HEAD'
     return subprocess.check_output(code, shell=True).decode().strip()
@@ -146,7 +135,7 @@ class CppFile:
         self.depends.sort()
 
         self.required = []
-        self.is_verified = _get_marker().is_verified(self.file_path.relative_to(self.source_path))
+        self.is_verified = utils.get_verification_marker().is_verified(self.file_path.relative_to(self.source_path))
 
     # self.file_path からの相対パスを絶対パスに直す
     def to_abspath(self, item_list: List[pathlib.Path]) -> List[pathlib.Path]:

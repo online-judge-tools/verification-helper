@@ -51,7 +51,6 @@ def main(paths: List[pathlib.Path], *, marker: utils.VerificationMarker, timeout
         if marker.is_verified(path):
             continue
 
-        verified = False
         logger.info('verify %s', path)
         for cxx in compilers:
             macros = utils.list_defined_macros(path, compiler=cxx)
@@ -84,11 +83,14 @@ def main(paths: List[pathlib.Path], *, marker: utils.VerificationMarker, timeout
 
             if 'ERROR' in macros:
                 command += ['-e', shlex.quote(macros['ERROR'])]
-            exec_command(command)
-            verified = True
 
-        if verified:
-            marker.mark_verified(path)
+            try:
+                exec_command(command)
+            except:
+                marker.mark_failed(path)
+                raise
+
+        marker.mark_verified(path)
 
         # to prevent taking too long; we may fail to use the results of verification due to expired tokens
         if timeout is not None and time.time() - start > timeout:

@@ -45,14 +45,13 @@ def main(paths: List[pathlib.Path], *, timeout: float = math.inf) -> None:
         for cxx in compilers:
             macros = utils.list_defined_macros(path, compiler=cxx)
 
+            if 'IGNORE' in macros:
+                continue
+
             assert ('PROBLEM' in macros)
             url = shlex.split(macros['PROBLEM'])[0]
             directory = pathlib.Path('.verify-helper') / hashlib.md5(
                 url.encode()).hexdigest()
-
-            print(url)
-            if 'IGNORE' in macros:
-                continue
 
             if not directory.exists():
                 directory.mkdir()

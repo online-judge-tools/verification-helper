@@ -61,7 +61,7 @@ def subcommand_run(paths: List[pathlib.Path]) -> None:
         timestamps_json_path = pathlib.Path('.verify-helper/timestamps.local.json')
 
     if not paths:
-        paths = list(map(pathlib.Path, glob.glob('**/*.test.cpp', recursive=True)))
+        paths = sorted(map(pathlib.Path, glob.glob('**/*.test.cpp', recursive=True)))
     try:
         with utils.VerificationMarker(json_path=timestamps_json_path) as marker:
             onlinejudge_verify.verify.main(paths, marker=marker, timeout=timeout)

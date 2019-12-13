@@ -95,15 +95,26 @@ def subcommand_export(*, path: pathlib.Path, source_dir: pathlib.Path) -> Tuple[
     if source_dir == pathlib.Path(): source_dir = pathlib.Path(os.getcwd()).resolve()
 
     # コメントアウトを消す (コメントアウトされた #include を誤認識しないための処理)
-    code = """g++ -I {} -fpreprocessed -dD -E {} | tail -n +2""".format(shlex.quote(str(source_dir)), shlex.quote(str(path)))
-    lines = subprocess.check_output(code, shell=True).decode().strip().splitlines()
+    code_1 = """g++ -I {} -fpreprocessed -dD -E {} | tail -n +2""".format(shlex.quote(str(source_dir)), shlex.quote(str(path)))
+    code_2 = """cat {}""".format(shlex.quote(str(path)))
+    lines_1 = subprocess.check_output(code_1, shell=True).decode().splitlines()
+    lines_2 = subprocess.check_output(code_2, shell=True).decode().splitlines()
 
-    # すでに include したものを記録しておく (include してるなら無視)
-    included_files = set()  # type: Set[pathlib.Path]
-    results = []
-    for line in lines:
-        if re.match(r'^#include[ ]*".*".*$', line):
-            rel_path = pathlib.Path(re.sub(r'^#include[ ]*"(.*)".*$', r'\1', line).strip())
+    # `#pragma once` と書かれているファイルを記録
+    included_once_files = set()  # type: Set[pathlib.Path]
+    results = []  # type: List[str]
+
+    pragma_once = len(lines_2) > 0 and re.match(r'^#\s*pragma\s+once\s*$', lines_2[0])
+    if pragma_once:
+        included_once_files.add(path.resolve())
+        lines_1, lines_2 = lines_1[1:], lines_2[1:]
+    for line_1, line_2 in zip(lines_1, lines_2):
+        # コメントが含まれない行や、#include のコメントがない行を採用
+        if (line_1 == line_2) or (not re.match(r'^#\s*include\s*".*"\s*$', line_2)):
+            line_1, line_2 = line_2, line_1
+
+        if re.match(r'^#\s*include\s*".*"\s*$', line_1):
+            rel_path = pathlib.Path(re.sub(r'^#\s*include\s*"(.*)"\s*$', r'\1', line_1).strip())
 
             # 普通の相対パス
             if (dir_path / rel_path).exists():
@@ -111,17 +122,18 @@ def subcommand_export(*, path: pathlib.Path, source_dir: pathlib.Path) -> Tuple[
             # 実行元ディレクトリからの相対パス (-I . しているため？)
             elif (source_dir / rel_path).exists():
                 depends = (source_dir / rel_path).resolve()
+            # #include "iostream" などのケース
             else:
-                raise FileNotFoundError('{} does not exist'.format(rel_path))
+                pass
 
-            if depends not in included_files:
-                included_files.add(depends)
+            if depends not in included_once_files:
                 depends_str, depends_set = subcommand_export(path=depends, source_dir=source_dir)
-                results.append(depends_str)
-                included_files = included_files | depends_set
+                results.append('\n' + depends_str + '\n')
+                included_once_files = included_once_files | depends_set
+
         else:
-            results.append(line)
-    return '\n'.join(results), included_files
+            results.append(line_1)
+    return '\n'.join(results), included_once_files
 
 
 def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-pages') -> None:

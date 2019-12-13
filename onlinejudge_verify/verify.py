@@ -12,6 +12,7 @@ import time
 from logging import getLogger
 from typing import *
 
+import onlinejudge
 import onlinejudge_verify.utils as utils
 
 logger = getLogger(__name__)

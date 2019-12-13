@@ -54,7 +54,7 @@ def main(paths: List[pathlib.Path], *, timeout: float = math.inf) -> None:
             directory = pathlib.Path('.verify-helper/cache') / hashlib.md5(url.encode()).hexdigest()
 
             if not directory.exists():
-                directory.mkdir()
+                directory.mkdir(parents=True)
                 exec_command(['sleep', '2'])
                 exec_command(['oj', 'download', '--system', url, '-d', str(directory / 'test')])
 

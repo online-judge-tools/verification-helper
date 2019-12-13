@@ -23,7 +23,7 @@ class VerificationMarker(object):
     def is_verified(self, path: pathlib.Path) -> bool:
         return get_last_commit_time_to_verify(path, compiler=CXX) == self.old_timestamps.get(path)
 
-    def mark_verified(self, path: pathlib.Path):
+    def mark_verified(self, path: pathlib.Path) -> None:
         self.new_timestamps[path] = get_last_commit_time_to_verify(path, compiler=CXX)
 
     def load_timestamps(self) -> None:
@@ -54,6 +54,21 @@ class VerificationMarker(object):
 
     def __exit__(self, exc_type, exc_value, traceback) -> None:
         self.save_timestamps()
+
+
+_verification_marker = None  # type: Optional[VerificationMarker]
+
+
+def get_verification_marker() -> VerificationMarker:
+    global _verification_marker
+    if _verification_marker is None:
+        # use different files in local and in remote to avoid conflicts
+        if 'GITHUB_ACTION' in os.environ:
+            timestamps_json_path = pathlib.Path('.verify-helper/timestamps.remote.json')
+        else:
+            timestamps_json_path = pathlib.Path('.verify-helper/timestamps.local.json')
+        _verification_marker = VerificationMarker(json_path=timestamps_json_path)
+    return _verification_marker
 
 
 @functools.lru_cache(maxsize=None)

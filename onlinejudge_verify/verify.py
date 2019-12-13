@@ -51,7 +51,7 @@ def main(paths: List[pathlib.Path], *, timeout: float = math.inf) -> None:
 
             assert ('PROBLEM' in macros)
             url = shlex.split(macros['PROBLEM'])[0]
-            directory = pathlib.Path('.verify-helper') / hashlib.md5(url.encode()).hexdigest()
+            directory = pathlib.Path('.verify-helper/cache') / hashlib.md5(url.encode()).hexdigest()
 
             if not directory.exists():
                 directory.mkdir()

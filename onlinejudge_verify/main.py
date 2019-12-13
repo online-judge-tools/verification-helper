@@ -65,9 +65,8 @@ def subcommand_run(paths: List[pathlib.Path]) -> None:
     try:
         with utils.VerificationMarker(json_path=timestamps_json_path) as marker:
             onlinejudge_verify.verify.main(paths, marker=marker, timeout=timeout)
-
     finally:
-        # push
+        # push results even if some tests failed
         if does_push:
             push_timestamp_to_branch(timestamps_json_path=timestamps_json_path)
 
@@ -168,8 +167,11 @@ def main(args: Optional[List[str]] = None) -> None:
     parsed = parser.parse_args(args)
 
     if parsed.subcommand == 'all':
-        subcommand_run(paths=[])
-        subcommand_docs()
+        try:
+            subcommand_run(paths=[])
+        finally:
+            # generate documents even if some tests failed
+            subcommand_docs()
 
     elif parsed.subcommand == 'run':
         subcommand_run(paths=parsed.path)

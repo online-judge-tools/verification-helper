@@ -124,7 +124,7 @@ def subcommand_export(*, path: pathlib.Path, source_dir: pathlib.Path) -> Tuple[
                 depends = (source_dir / rel_path).resolve()
             # #include "iostream" などのケース
             else:
-                pass
+                continue
 
             if depends not in included_once_files:
                 depends_str, depends_set = subcommand_export(path=depends, source_dir=source_dir)

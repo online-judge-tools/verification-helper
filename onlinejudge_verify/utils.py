@@ -36,7 +36,7 @@ class VerificationMarker(object):
                 self.old_timestamps[pathlib.Path(path)] = timestamp
         self.new_timestamps = {}
         for path in self.old_timestamps.keys():
-            if self.is_verified(path):
+            if path.exists() and self.is_verified(path):
                 self.mark_verified(path)
 
     def save_timestamps(self) -> None:

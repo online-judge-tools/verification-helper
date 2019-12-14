@@ -526,7 +526,7 @@ class PagesBuilder:
         self.config['docs'].setdefault('html', False)
         self.config['docs'].setdefault('categorize_library', True)
         self.config['docs'].setdefault('categorize_verify', False)
-        self.config.setdefault('plugins', []).append('jemoji')
+        self.config.setdefault('plugins', [])
         if 'jemoji' not in self.config['plugins']:
             self.config['plugins'].append('jemoji')
 

@@ -108,7 +108,7 @@ class CppFile:
         title_list = self.parser.get_contents_by_tag(r'@title')
         if title_list == []:
             if len(self.brief) > 0:
-                self.title = self.brief[0]
+                self.title = self.brief[0] + ' <small>(' + str(self.file_path.relative_to(self.source_path)) + ')</small>'
                 self.brief = self.brief[1:]
             else:
                 self.title = str(self.file_path.relative_to(self.source_path))

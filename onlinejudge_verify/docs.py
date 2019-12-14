@@ -54,8 +54,9 @@ class FileParser:
             self.lines = [line.decode().strip() for line in f.readlines()]
 
     # タグをもらって、コンテンツの配列を出す
-    def get_contents_by_tag(self, tag_name: str, *, l_pat: str = '', r_pat: str = '') -> List[str]:
-        tag_name = re.escape(tag_name)
+    def get_contents_by_tag(self, tag_name: str, *, l_pat: str = '', r_pat: str = '', re_escape: bool = True) -> List[str]:
+        if re_escape:
+            tag_name = re.escape(tag_name)
         l_pat, r_pat = re.escape(l_pat), re.escape(r_pat)
 
         reg1, reg2 = r'^.*' + tag_name, r'^.*' + tag_name
@@ -126,7 +127,7 @@ class CppFile:
             self.category = category_list[-1]
 
         # see で指定されるのは URL: パス修正は不要
-        self.see = self.parser.get_contents_by_tag(r'@see')
+        self.see = self.parser.get_contents_by_tag(r'(?:@see|@sa)', re_escape=False)
         self.see.extend(self.parser.get_contents_by_tag(r'#define PROBLEM', l_pat=r'"', r_pat=r'"'))
         self.see.extend(self.parser.get_contents_by_tag(r'#define SEE', l_pat=r'"', r_pat=r'"'))
 

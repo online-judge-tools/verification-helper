@@ -5,6 +5,7 @@
 /**
  * @brief a Segment Tree (generalized with monoids) 
  * @tparam Monoid is a monoid; commutativity is not required
+ * @see https://en.wikipedia.org/wiki/Segment_tree
  */
 template <class Monoid>
 struct segment_tree {

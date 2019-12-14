@@ -352,8 +352,40 @@ class MarkdownTopPage(MarkdownPage):
         self.destination = md_destination_path / 'index'
         self.config = config
 
-    def write_header(self, file_object: IO) -> None:
-        file_object.write(b'---\nlayout: default\n---\n\n')
+    def write_header(self, file_object: IO, library_files: 'OrderedDict[pathlib.Path, CppFile]', library_category_to_path: 'OrderedDict[str, List[pathlib.Path]]', path_to_title: 'OrderedDict[pathlib.Path, str]', path_to_verification: Dict[pathlib.Path, bool]) -> None:
+        page = {
+            'layout': 'default',
+            'categorized_library': [],
+            'uncategorized_library': [],
+        }  # type: Dict[str, Any]
+
+        for category, library_list in library_category_to_path.items():
+            library_files_data = []
+            for library_file in library_list:
+                if library_file not in path_to_verification:
+                    raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(library_file))
+                mark = self.get_mark(path_to_verification[library_file])
+
+                if library_file not in path_to_title:
+                    raise FileNotFoundError('{} seems not to exist in path_to_title'.format(library_file))
+                title = path_to_title[library_file]
+
+                library_files_data.append({
+                    'mark': mark,
+                    'title': title,
+                    'url': self.get_link(self.get_destination(library_file, 'library')) + '.html',
+                })
+            page['categorized_library'].append({
+                'category': category,
+                'library_files': library_files_data,
+                'hash': hashlib.md5(category.encode()).hexdigest(),
+            })
+            page['uncategorized_library'].extend(library_files_data)
+
+        file_object.write(b'---\n')
+        file_object.write(yaml.dump(page, default_flow_style=False).encode())
+        file_object.write(b'layout: default\n')
+        file_object.write(b'---\n\n')
         file_object.write(assets_site_header_txt)
         self.include_js(file_object, self.md_destination_path / './assets/js/copy-button.js')
         self.include_css(file_object, self.md_destination_path / './assets/css/copy-button.css')
@@ -375,7 +407,6 @@ class MarkdownTopPage(MarkdownPage):
             self,
             file_object: IO,
             verify_files: 'OrderedDict[pathlib.Path, CppFile]',
-            library_files: 'OrderedDict[pathlib.Path, CppFile]',
             verify_category_to_path: 'OrderedDict[str, List[pathlib.Path]]',
             library_category_to_path: 'OrderedDict[str, List[pathlib.Path]]',
             path_to_title: 'OrderedDict[pathlib.Path, str]',
@@ -384,38 +415,27 @@ class MarkdownTopPage(MarkdownPage):
             categorize_library: bool,
     ) -> None:
         if categorize_library:
-            if library_files != {}:
-                file_object.write(b'## Library Files\n\n')
-                for category, library_list in library_category_to_path.items():
-                    file_object.write('<div id="{}"></div>\n\n'.format(hashlib.md5(category.encode()).hexdigest()).encode())
-                    file_object.write('### {}\n\n'.format(category).encode())
-                    for library_file in library_list:
-                        if library_file not in path_to_verification:
-                            raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(library_file))
-                        mark = self.get_mark(path_to_verification[library_file])
-
-                        if library_file not in path_to_title:
-                            raise FileNotFoundError('{} seems not to exist in path_to_title'.format(library_file))
-                        title = path_to_title[library_file]
-
-                        link = self.get_link(self.get_destination(library_file, 'library')) + '.html'
-                        file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
-                    file_object.write(b'\n\n')
+            file_object.write(rb"""
+<h2>Library Files</h2>
+{% for category in page.categorized_library %}
+<div id="{{ category.hash }}"></div>
+<h3>{{ category.title }}</h3>
+<ul>
+{% for f in category.library_files %}
+<li>{{ f.mark }} <a href="{{ f.url }}">{{ f.title }}</a></li>
+{% endfor %}
+</ul>
+{% endfor %}
+""")
         else:
-            if library_files != {}:
-                file_object.write(b'## Library Files\n\n')
-                for library_file in library_files.keys():
-                    if library_file not in path_to_verification:
-                        raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(library_file))
-                    mark = self.get_mark(path_to_verification[library_file])
-
-                    if library_file not in path_to_title:
-                        raise FileNotFoundError('{} seems not to exist in path_to_title'.format(library_file))
-                    title = path_to_title[library_file]
-
-                    link = self.get_link(self.get_destination(library_file, 'library')) + '.html'
-                    file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
-                file_object.write(b'\n\n')
+            file_object.write(rb"""
+<h2>Library Files</h2>
+<ul>
+{% for f in page.uncategorized_library %}
+<li>{{ f.mark }} <a href="{{ f.url }}">{{ f.title }}</a></li>
+{% endfor %}
+</ul>
+""")
 
         if categorize_verify:
             if verify_files != {}:
@@ -464,12 +484,11 @@ class MarkdownTopPage(MarkdownPage):
     ) -> None:
         self.make_directory()
         with open(str(self.destination) + '.md', mode='wb') as file_object:
-            self.write_header(file_object)
+            self.write_header(file_object, library_files, library_category_to_path, path_to_title, path_to_verification)
             self.write_title(file_object)
             self.write_contents(
                 file_object,
                 verify_files,
-                library_files,
                 verify_category_to_path,
                 library_category_to_path,
                 path_to_title,

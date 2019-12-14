@@ -239,7 +239,7 @@ class MarkdownArticle(MarkdownPage):
         file_object.write(b'\n\n')
 
     def write_title(self, file_object: IO, category: str, categorize: bool) -> None:
-        file_object.write('# {} {}\n'.format(self.mark, self.file_class.title).encode())
+        file_object.write('# {} {}\n\n'.format(self.mark, self.file_class.title).encode())
 
         # back to top
         back_to_top_link = self.get_link(self.md_destination_path / 'index.html')
@@ -267,7 +267,7 @@ class MarkdownArticle(MarkdownPage):
         # cpp (絶対パス) => (cpp|test.cpp) (絶対パス): リンクは相対パスに
         self.file_class.depends = sorted(list(set(self.file_class.depends)))
         if self.file_class.depends != []:
-            file_object.write(b'## Depends On\n')
+            file_object.write(b'## Depends On\n\n')
             for depends in self.file_class.depends:
                 if depends not in path_to_verification:
                     raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(depends))
@@ -295,7 +295,7 @@ class MarkdownArticle(MarkdownPage):
 
         # cpp <= cpp または test.cpp <= test.cpp
         if required_file_list != []:
-            file_object.write(b'## Required By\n')
+            file_object.write(b'## Required By\n\n')
             for required in required_file_list:
                 if required not in path_to_verification:
                     raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(required))
@@ -312,7 +312,7 @@ class MarkdownArticle(MarkdownPage):
 
         # cpp => test.cpp
         if verified_file_list != []:
-            file_object.write(b'## Verified With\n')
+            file_object.write(b'## Verified With\n\n')
             for verified in verified_file_list:
                 if verified not in path_to_verification:
                     raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(verified))
@@ -327,7 +327,7 @@ class MarkdownArticle(MarkdownPage):
             file_object.write(b'\n\n')
 
         # source code
-        file_object.write(b'## Code\n')
+        file_object.write(b'## Code\n\n')
         file_object.write(b'{% raw %}\n```cpp\n')
         with open(self.file_class.file_path, 'rb') as f:
             file_object.write(f.read())
@@ -381,10 +381,10 @@ class MarkdownTopPage(MarkdownPage):
     ) -> None:
         if categorize_library:
             if library_files != {}:
-                file_object.write(b'## Library Files\n')
+                file_object.write(b'## Library Files\n\n')
                 for category, library_list in library_category_to_path.items():
-                    file_object.write('<div id="{}"></div>\n'.format(hashlib.md5(category.encode()).hexdigest()).encode())
-                    file_object.write('### {}\n'.format(category).encode())
+                    file_object.write('<div id="{}"></div>\n\n'.format(hashlib.md5(category.encode()).hexdigest()).encode())
+                    file_object.write('### {}\n\n'.format(category).encode())
                     for library_file in library_list:
                         if library_file not in path_to_verification:
                             raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(library_file))
@@ -399,7 +399,7 @@ class MarkdownTopPage(MarkdownPage):
                     file_object.write(b'\n\n')
         else:
             if library_files != {}:
-                file_object.write(b'## Library Files\n')
+                file_object.write(b'## Library Files\n\n')
                 for library_file in library_files.keys():
                     if library_file not in path_to_verification:
                         raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(library_file))
@@ -415,10 +415,10 @@ class MarkdownTopPage(MarkdownPage):
 
         if categorize_verify:
             if verify_files != {}:
-                file_object.write(b'## Verify Files\n')
+                file_object.write(b'## Verify Files\n\n')
                 for category, verify_list in verify_category_to_path.items():
-                    file_object.write('<div id="{}"></div>\n'.format(hashlib.md5(category.encode()).hexdigest()).encode())
-                    file_object.write('### {}\n'.format(category).encode())
+                    file_object.write('<div id="{}"></div>\n\n'.format(hashlib.md5(category.encode()).hexdigest()).encode())
+                    file_object.write('### {}\n\n'.format(category).encode())
                     for verify_file in verify_list:
                         if verify_file not in path_to_verification:
                             raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(verify_file))
@@ -433,7 +433,7 @@ class MarkdownTopPage(MarkdownPage):
                     file_object.write(b'\n\n')
         else:
             if verify_files != {}:
-                file_object.write(b'## Verify Files\n')
+                file_object.write(b'## Verify Files\n\n')
                 for verify_file in verify_files.keys():
                     if verify_file not in path_to_verification:
                         raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(verify_file))

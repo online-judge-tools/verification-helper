@@ -25,7 +25,7 @@ layout: default
 <link rel="stylesheet" href="assets/css/copy-button.css" />
 
 
-# {% if site.title %}{{ site.tile }}{% else %}{{ site.github.owner_name }}/{{ site.github.repository_name }}{% endif %}}
+# {{ site.title }}
 
 [![Actions Status]({{ site.github.repository_url }}/workflows/verify/badge.svg)]({{ site.github.repository_url }}/actions) <a href="{{ site.github.repository_url }}"><img src="https://img.shields.io/github/last-commit/{{ site.github.owner_name }}/{{ site.github.repository_name }}" /></a>
 

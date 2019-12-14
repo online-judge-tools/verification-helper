@@ -232,11 +232,11 @@ class MarkdownArticle(MarkdownPage):
 
     # include (mathjax, js, css)
     def write_header(self, file_object: IO) -> None:
-        file_object.write('---\nlayout: default\n---\n\n'.encode())
+        file_object.write(b'---\nlayout: default\n---\n\n')
         file_object.write(assets_site_header_txt)
         self.include_js(file_object, self.md_destination_path / './assets/js/copy-button.js')
         self.include_css(file_object, self.md_destination_path / './assets/css/copy-button.css')
-        file_object.write('\n\n'.encode())
+        file_object.write(b'\n\n')
 
     def write_title(self, file_object: IO, category: str, categorize: bool) -> None:
         file_object.write('# {} {}\n'.format(self.mark, self.file_class.title).encode())
@@ -249,7 +249,7 @@ class MarkdownArticle(MarkdownPage):
         if categorize: file_object.write('* category: {}\n'.format(self.get_linktag(category, top_page_category_link)).encode())
         github_link = '{{ site.github.repository_url }}' + '/blob/{}/{}'.format(get_current_branch(), str(self.file_class.file_path.relative_to(self.file_class.source_path)))
         file_object.write('* {}\n    - Last commit date: {}\n'.format(self.get_linktag('View this file on GitHub', github_link), utils.get_last_commit_time_to_verify(self.file_class.file_path, compiler='g++')).encode())
-        file_object.write('\n\n'.encode())
+        file_object.write(b'\n\n')
 
     def write_contents(self, file_object: IO, path_to_title: 'OrderedDict[pathlib.Path, str]', path_to_verification: Dict[pathlib.Path, bool]) -> None:
         back_to_top_link = self.get_link(self.md_destination_path / 'index.html')
@@ -262,12 +262,12 @@ class MarkdownArticle(MarkdownPage):
         for docs in self.file_class.docs:
             with open(docs, 'rb') as f:
                 file_object.write(f.read())
-        file_object.write('\n\n'.encode())
+        file_object.write(b'\n\n')
 
         # cpp (絶対パス) => (cpp|test.cpp) (絶対パス): リンクは相対パスに
         self.file_class.depends = sorted(list(set(self.file_class.depends)))
         if self.file_class.depends != []:
-            file_object.write('## Depends On\n'.encode())
+            file_object.write(b'## Depends On\n')
             for depends in self.file_class.depends:
                 if depends not in path_to_verification:
                     raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(depends))
@@ -280,7 +280,7 @@ class MarkdownArticle(MarkdownPage):
                 file_type = 'verify' if re.match(r'^.*\.test\.(cpp|hpp|cc)$', str(depends)) else 'library'
                 link = self.get_link(self.get_destination(depends, file_type)) + '.html'
                 file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
-            file_object.write('\n\n'.encode())
+            file_object.write(b'\n\n')
 
         required_file_list = [f for f in self.file_class.required if not re.match(r'^.*\.test\.(cpp|hpp|cc)$', str(f))]
         verified_file_list = [f for f in self.file_class.required if re.match(r'^.*\.test\.(cpp|hpp|cc)$', str(f))]
@@ -295,7 +295,7 @@ class MarkdownArticle(MarkdownPage):
 
         # cpp <= cpp または test.cpp <= test.cpp
         if required_file_list != []:
-            file_object.write('## Required By\n'.encode())
+            file_object.write(b'## Required By\n')
             for required in required_file_list:
                 if required not in path_to_verification:
                     raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(required))
@@ -308,11 +308,11 @@ class MarkdownArticle(MarkdownPage):
                 file_type = 'verify' if re.match(r'^.*\.test\.(cpp|hpp|cc)$', str(required)) else 'library'
                 link = self.get_link(self.get_destination(required, file_type)) + '.html'
                 file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
-            file_object.write('\n\n'.encode())
+            file_object.write(b'\n\n')
 
         # cpp => test.cpp
         if verified_file_list != []:
-            file_object.write('## Verified With\n'.encode())
+            file_object.write(b'## Verified With\n')
             for verified in verified_file_list:
                 if verified not in path_to_verification:
                     raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(verified))
@@ -324,14 +324,14 @@ class MarkdownArticle(MarkdownPage):
 
                 link = self.get_link(self.get_destination(verified, 'verify')) + '.html'
                 file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
-            file_object.write('\n\n'.encode())
+            file_object.write(b'\n\n')
 
         # source code
-        file_object.write('## Code\n'.encode())
-        file_object.write('{% raw %}\n```cpp\n'.encode())
+        file_object.write(b'## Code\n')
+        file_object.write(b'{% raw %}\n```cpp\n')
         with open(self.file_class.file_path, 'rb') as f:
             file_object.write(f.read())
-        file_object.write('\n```\n{% endraw %}\n\n'.encode())
+        file_object.write(b'\n```\n{% endraw %}\n\n')
 
         # back to top
         file_object.write('{}\n\n'.format(self.get_linktag('Back to top page', back_to_top_link)).encode())
@@ -352,20 +352,20 @@ class MarkdownTopPage(MarkdownPage):
         self.config = config
 
     def write_header(self, file_object: IO) -> None:
-        file_object.write('---\nlayout: default\n---\n\n'.encode())
+        file_object.write(b'---\nlayout: default\n---\n\n')
         file_object.write(assets_site_header_txt)
         self.include_js(file_object, self.md_destination_path / './assets/js/copy-button.js')
         self.include_css(file_object, self.md_destination_path / './assets/css/copy-button.css')
-        file_object.write('\n\n'.encode())
+        file_object.write(b'\n\n')
 
     def write_title(self, file_object: IO) -> None:
         file_object.write(b'# {{ site.title | default: site.github.repository_nwo }}\n\n')
-        file_object.write('[![Actions Status]({{ site.github.repository_url }}/workflows/verify/badge.svg)]({{ site.github.repository_url }}/actions) <a href="{{ site.github.repository_url }}"><img src="https://img.shields.io/github/last-commit/{{ site.github.owner_name }}/{{ site.github.repository_name }}" /></a>\n\n'.encode())
+        file_object.write(b'[![Actions Status]({{ site.github.repository_url }}/workflows/verify/badge.svg)]({{ site.github.repository_url }}/actions) <a href="{{ site.github.repository_url }}"><img src="https://img.shields.io/github/last-commit/{{ site.github.owner_name }}/{{ site.github.repository_name }}" /></a>\n\n')
         file_object.write(b'{{ site.description | default: "This documentation is automatically generated by <a href=\\"https://github.com/kmyk/online-judge-verify-helper\\">online-judge-verify-helper</a>." }}\n\n')
         toc = self.config['docs']['toc']
         if toc:
-            file_object.write('* this unordered seed list will be replaced by toc as unordered list\n'.encode())
-            file_object.write('{:toc}\n\n'.encode())
+            file_object.write(b'* this unordered seed list will be replaced by toc as unordered list\n')
+            file_object.write(b'{:toc}\n\n')
 
     def write_contents(
             self,
@@ -381,7 +381,7 @@ class MarkdownTopPage(MarkdownPage):
     ) -> None:
         if categorize_library:
             if library_files != {}:
-                file_object.write('## Library Files\n'.encode())
+                file_object.write(b'## Library Files\n')
                 for category, library_list in library_category_to_path.items():
                     file_object.write('<div id="{}"></div>\n'.format(hashlib.md5(category.encode()).hexdigest()).encode())
                     file_object.write('### {}\n'.format(category).encode())
@@ -396,10 +396,10 @@ class MarkdownTopPage(MarkdownPage):
 
                         link = self.get_link(self.get_destination(library_file, 'library')) + '.html'
                         file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
-                    file_object.write('\n\n'.encode())
+                    file_object.write(b'\n\n')
         else:
             if library_files != {}:
-                file_object.write('## Library Files\n'.encode())
+                file_object.write(b'## Library Files\n')
                 for library_file in library_files.keys():
                     if library_file not in path_to_verification:
                         raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(library_file))
@@ -411,11 +411,11 @@ class MarkdownTopPage(MarkdownPage):
 
                     link = self.get_link(self.get_destination(library_file, 'library')) + '.html'
                     file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
-                file_object.write('\n\n'.encode())
+                file_object.write(b'\n\n')
 
         if categorize_verify:
             if verify_files != {}:
-                file_object.write('## Verify Files\n'.encode())
+                file_object.write(b'## Verify Files\n')
                 for category, verify_list in verify_category_to_path.items():
                     file_object.write('<div id="{}"></div>\n'.format(hashlib.md5(category.encode()).hexdigest()).encode())
                     file_object.write('### {}\n'.format(category).encode())
@@ -430,10 +430,10 @@ class MarkdownTopPage(MarkdownPage):
 
                         link = self.get_link(self.get_destination(verify_file, 'verify')) + '.html'
                         file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
-                    file_object.write('\n\n'.encode())
+                    file_object.write(b'\n\n')
         else:
             if verify_files != {}:
-                file_object.write('## Verify Files\n'.encode())
+                file_object.write(b'## Verify Files\n')
                 for verify_file in verify_files.keys():
                     if verify_file not in path_to_verification:
                         raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(verify_file))
@@ -445,7 +445,7 @@ class MarkdownTopPage(MarkdownPage):
 
                     link = self.get_link(self.get_destination(verify_file, 'verify')) + '.html'
                     file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
-                file_object.write('\n\n'.encode())
+                file_object.write(b'\n\n')
 
     def build(
             self,

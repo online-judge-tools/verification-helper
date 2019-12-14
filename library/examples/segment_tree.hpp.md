@@ -31,11 +31,12 @@ layout: default
 
 * category: <a href="../../index.html#bfebe34154a0dfd9fc7b447fc9ed74e9">examples</a>
 * <a href="{{ site.github.repository_url }}/blob/master/examples/segment_tree.hpp">View this file on GitHub</a>
-    - Last commit date: 2019-12-09 18:30:56 +0900
+    - Last commit date: 2019-12-15 05:47:31 +0900
 
 
 * set $a_i$ as b in $O(\log n)$
 * compute $a_l \cdot a _ {l + 1} \cdot ... \cdot a _ {r - 1}$ in $O(\log n)$
+* see: <a href="https://en.wikipedia.org/wiki/Segment_tree">https://en.wikipedia.org/wiki/Segment_tree</a>
 
 
 ## Verified with
@@ -56,6 +57,7 @@ layout: default
 /**
  * @brief a Segment Tree (generalized with monoids) 
  * @tparam Monoid is a monoid; commutativity is not required
+ * @see https://en.wikipedia.org/wiki/Segment_tree
  */
 template <class Monoid>
 struct segment_tree {

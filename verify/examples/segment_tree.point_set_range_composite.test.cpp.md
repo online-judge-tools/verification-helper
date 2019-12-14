@@ -36,7 +36,7 @@ layout: default
 * see: <a href="https://judge.yosupo.jp/problem/point_set_range_composite">https://judge.yosupo.jp/problem/point_set_range_composite</a>
 
 
-## Depends On
+## Depends on
 
 * :heavy_check_mark: <a href="../../library/examples/macros.hpp.html">examples/macros.hpp</a>
 * :heavy_check_mark: <a href="../../library/examples/segment_tree.hpp.html">a Segment Tree (generalized with monoids) <small>(examples/segment_tree.hpp)</small></a>

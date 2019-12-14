@@ -36,7 +36,7 @@ layout: default
 * see: <a href="https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_B">https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_B</a>
 
 
-## Depends On
+## Depends on
 
 * :heavy_check_mark: <a href="../../library/examples/macros.hpp.html">examples/macros.hpp</a>
 * :heavy_check_mark: <a href="../../library/examples/monoids.hpp.html">examples/monoids.hpp</a>

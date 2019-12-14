@@ -26,6 +26,7 @@ layout: default
 
 
 # :heavy_check_mark: examples/monoids.hpp
+
 <a href="../../index.html">Back to top page</a>
 
 * category: <a href="../../index.html#bfebe34154a0dfd9fc7b447fc9ed74e9">examples</a>
@@ -36,11 +37,13 @@ layout: default
 
 
 ## Verified With
+
 * :heavy_check_mark: <a href="../../verify/examples/segment_tree.range_minimum_query.test.cpp.html">examples/segment_tree.range_minimum_query.test.cpp</a>
 * :heavy_check_mark: <a href="../../verify/examples/segment_tree.range_sum_query.test.cpp.html">examples/segment_tree.range_sum_query.test.cpp</a>
 
 
 ## Code
+
 {% raw %}
 ```cpp
 #pragma once

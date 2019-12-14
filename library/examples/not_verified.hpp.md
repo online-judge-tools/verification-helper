@@ -26,6 +26,7 @@ layout: default
 
 
 # :warning: examples/not_verified.hpp
+
 <a href="../../index.html">Back to top page</a>
 
 * category: <a href="../../index.html#bfebe34154a0dfd9fc7b447fc9ed74e9">examples</a>
@@ -36,6 +37,7 @@ layout: default
 
 
 ## Code
+
 {% raw %}
 ```cpp
 #pragma once

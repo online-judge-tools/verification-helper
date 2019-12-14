@@ -26,6 +26,7 @@ layout: default
 
 
 # :heavy_check_mark: example.test.cpp
+
 <a href="../index.html">Back to top page</a>
 
 * <a href="{{ site.github.repository_url }}/blob/master/example.test.cpp">View this file on GitHub</a>
@@ -36,6 +37,7 @@ layout: default
 
 
 ## Code
+
 {% raw %}
 ```cpp
 #define PROBLEM "https://onlinejudge.u-aizu.ac.jp/courses/lesson/1/ALDS1/4/ALDS1_4_B"

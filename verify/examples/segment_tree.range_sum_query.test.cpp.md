@@ -26,6 +26,7 @@ layout: default
 
 
 # :heavy_check_mark: examples/segment_tree.range_sum_query.test.cpp
+
 <a href="../../index.html">Back to top page</a>
 
 * <a href="{{ site.github.repository_url }}/blob/master/examples/segment_tree.range_sum_query.test.cpp">View this file on GitHub</a>
@@ -36,12 +37,14 @@ layout: default
 
 
 ## Depends On
+
 * :heavy_check_mark: <a href="../../library/examples/macros.hpp.html">examples/macros.hpp</a>
 * :heavy_check_mark: <a href="../../library/examples/monoids.hpp.html">examples/monoids.hpp</a>
 * :heavy_check_mark: <a href="../../library/examples/segment_tree.hpp.html">a Segment Tree (generalized with monoids) <small>(examples/segment_tree.hpp)</small></a>
 
 
 ## Code
+
 {% raw %}
 ```cpp
 #define PROBLEM "https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_B"

@@ -40,8 +40,8 @@ This documentation is generated automatically.
 * :heavy_check_mark: <a href="library/examples/macros.hpp.html">examples/macros.hpp</a>
 * :heavy_check_mark: <a href="library/examples/monoids.hpp.html">examples/monoids.hpp</a>
 * :warning: <a href="library/examples/not_verified.hpp.html">examples/not_verified.hpp</a>
-* :heavy_check_mark: <a href="library/examples/segment_tree.hpp.html">a Segment Tree (generalized with monoids)</a>
-* :heavy_check_mark: <a href="library/examples/union_find_tree.hpp.html">a Union-Find Tree</a>
+* :heavy_check_mark: <a href="library/examples/segment_tree.hpp.html">a Segment Tree (generalized with monoids) <small>(examples/segment_tree.hpp)</small></a>
+* :heavy_check_mark: <a href="library/examples/union_find_tree.hpp.html">a Union-Find Tree <small>(examples/union_find_tree.hpp)</small></a>
 
 
 ## Verify Files

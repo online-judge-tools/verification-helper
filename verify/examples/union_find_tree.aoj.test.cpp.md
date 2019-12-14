@@ -37,7 +37,7 @@ layout: default
 
 ## Depends On
 * :heavy_check_mark: <a href="../../library/examples/macros.hpp.html">examples/macros.hpp</a>
-* :heavy_check_mark: <a href="../../library/examples/union_find_tree.hpp.html">a Union-Find Tree</a>
+* :heavy_check_mark: <a href="../../library/examples/union_find_tree.hpp.html">a Union-Find Tree <small>(examples/union_find_tree.hpp)</small></a>
 
 
 ## Code

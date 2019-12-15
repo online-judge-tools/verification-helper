@@ -92,13 +92,6 @@ def push_timestamp_to_branch(*, timestamps_json_path: pathlib.Path) -> None:
         subprocess.check_call(['git', 'push', url, 'HEAD'])
 
 
-def subcommand_init() -> None:
-    path = pathlib.Path('.github/workflows/verify.yml')
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with open(str(path), 'wb') as fh:
-        fh.write(verify_yml.replace(b'git+https://github.com/kmyk/online-judge-verify-helper.git@master', b'"online-judge-verify-helper==2.*"'))
-
-
 def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-pages') -> None:
     # read config
     if os.environ.get('GH_PAT', None):
@@ -184,9 +177,6 @@ def main(args: Optional[List[str]] = None) -> None:
 
     elif parsed.subcommand == 'run':
         subcommand_run(paths=parsed.path)
-
-    elif parsed.subcommand == 'init':
-        subcommand_init()
 
     elif parsed.subcommand == 'bundle':
         subcommand_bundle(parsed.path, iquote=parsed.iquote)

@@ -5,9 +5,11 @@ import math
 import os
 import pathlib
 import subprocess
+import sys
 from logging import DEBUG, basicConfig, getLogger
 from typing import *
 
+import onlinejudge_verify.bundle
 import onlinejudge_verify.docs
 import onlinejudge_verify.utils as utils
 import onlinejudge_verify.verify
@@ -30,8 +32,9 @@ def get_parser() -> argparse.ArgumentParser:
 
     subparser = subparsers.add_parser('init')
 
-    subparser = subparsers.add_parser('export')
+    subparser = subparsers.add_parser('bundle')
     subparser.add_argument('path', type=pathlib.Path)
+    subparser.add_argument('-I', metavar='dir', type=pathlib.Path, dest='iquote', default=pathlib.Path.cwd(), help='add the directory dir to the list of directories to be searched for header files during preprocessing (default: ".")')
 
     subparser = subparsers.add_parser('docs')
 
@@ -161,6 +164,12 @@ def subcommand_docs() -> None:
         onlinejudge_verify.docs.main(html=False, force=True)
 
 
+def subcommand_bundle(path: pathlib.Path, *, iquote: pathlib.Path) -> None:
+    bundler = onlinejudge_verify.bundle.Bundler(iquote=[iquote])
+    bundler.update(path)
+    sys.stdout.buffer.write(bundler.get())
+
+
 def main(args: Optional[List[str]] = None) -> None:
     basicConfig(level=DEBUG)
     parser = get_parser()
@@ -179,8 +188,8 @@ def main(args: Optional[List[str]] = None) -> None:
     elif parsed.subcommand == 'init':
         subcommand_init()
 
-    elif parsed.subcommand == 'export':
-        raise NotImplementedError('#include "hoge.hpp" みたいなやつをいい感じに展開してそのまま提出できる形コードを出力してほしい')
+    elif parsed.subcommand == 'bundle':
+        subcommand_bundle(parsed.path, iquote=parsed.iquote)
 
     elif parsed.subcommand == 'docs':
         subcommand_docs()

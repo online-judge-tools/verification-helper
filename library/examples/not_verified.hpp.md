@@ -38,9 +38,23 @@ layout: default
 
 ## Code
 
+<a id="unbundled"></a>
 {% raw %}
 ```cpp
 #pragma once
+
+inline string get_the_proof_of_P_equal_NP() {
+    while (true) {
+    }
+}
+
+```
+{% endraw %}
+
+<a id="bundled"></a>
+{% raw %}
+```cpp
+#line 2 "examples/not_verified.hpp"
 
 inline string get_the_proof_of_P_equal_NP() {
     while (true) {

@@ -38,6 +38,7 @@ layout: default
 
 ## Code
 
+<a id="unbundled"></a>
 {% raw %}
 ```cpp
 // これは online-judge-verify-helper 本体のテスト用のファイルです
@@ -49,6 +50,21 @@ int main() {
     return 0;
 }
 // hoge
+
+```
+{% endraw %}
+
+<a id="bundled"></a>
+{% raw %}
+```cpp
+#line 1 "examples/develop.test.cpp"
+// これは online-judge-verify-helper 本体のテスト用のファイルです
+#define PROBLEM "https://onlinejudge.u-aizu.ac.jp/courses/lesson/2/ITP1/1/ITP1_1_A"
+#include <cstdio>
+
+int main() {
+    printf("Hello World\n");
+    return 0;
 
 ```
 {% endraw %}

@@ -1,14 +1,20 @@
-.code-copy-btn {
+.code-btn {
     position: absolute;
     border-radius: 0 0 0 0.5em;
     background-color: #DEDEDE;
     width: 6em;
     line-height: 2.0em;
-    top: 0px;
-    right: 0px;
     font-size: 1.2em;
     font-weight: bold;
 }
-.code-copy-btn:hover {
+.code-btn:hover {
     background-color: #EFEFEF;
+}
+.code-copy-btn {
+    top: 0px;
+    right: 0px;
+}
+.code-bundle-btn {
+    top: 0px;
+    right: 6em;
 }

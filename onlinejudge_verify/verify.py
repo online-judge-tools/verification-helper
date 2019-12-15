@@ -34,7 +34,7 @@ def exec_command(command: List[str]):
 def main(paths: List[pathlib.Path], *, marker: utils.VerificationMarker, timeout: float = math.inf) -> None:
     try:
         resource.setrlimit(resource.RLIMIT_STACK, (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
-    except OSError:
+    except:
         logger.warning('failed to make the stack size unlimited')
 
     compilers = []

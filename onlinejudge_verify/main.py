@@ -26,9 +26,11 @@ def get_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest='subcommand')
 
     subparser = subparsers.add_parser('all')
+    subparser.add_argument('-j', '--jobs', type=int, default=1)
 
     subparser = subparsers.add_parser('run')
     subparser.add_argument('path', nargs='*', type=pathlib.Path)
+    subparser.add_argument('-j', '--jobs', type=int, default=1)
 
     subparser = subparsers.add_parser('init')
 
@@ -41,7 +43,7 @@ def get_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def subcommand_run(paths: List[pathlib.Path]) -> None:
+def subcommand_run(paths: List[pathlib.Path], *, jobs: int = 1) -> None:
     """
     :raises Exception: if test.sh fails
     """
@@ -67,7 +69,7 @@ def subcommand_run(paths: List[pathlib.Path]) -> None:
         paths = sorted(map(pathlib.Path, glob.glob('**/*.test.cpp', recursive=True)))
     try:
         with utils.VerificationMarker(json_path=timestamps_json_path) as marker:
-            onlinejudge_verify.verify.main(paths, marker=marker, timeout=timeout)
+            onlinejudge_verify.verify.main(paths, marker=marker, timeout=timeout, jobs=jobs)
     finally:
         # push results even if some tests failed
         if does_push:
@@ -170,13 +172,13 @@ def main(args: Optional[List[str]] = None) -> None:
 
     if parsed.subcommand == 'all':
         try:
-            subcommand_run(paths=[])
+            subcommand_run(paths=[], jobs=parsed.jobs)
         finally:
             # generate documents even if some tests failed
             subcommand_docs()
 
     elif parsed.subcommand == 'run':
-        subcommand_run(paths=parsed.path)
+        subcommand_run(paths=parsed.path, jobs=parsed.jobs)
 
     elif parsed.subcommand == 'bundle':
         subcommand_bundle(parsed.path, iquote=parsed.iquote)

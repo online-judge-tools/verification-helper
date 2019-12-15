@@ -1,4 +1,5 @@
-#pragma once
+#ifndef EXAMPLES_UNION_FIND_TREE_HPP
+#define EXAMPLES_UNION_FIND_TREE_HPP
 #include <algorithm>
 #include <vector>
 
@@ -25,3 +26,5 @@ struct union_find_tree {
     }
     bool is_same(int i, int j) { return find_root(i) == find_root(j); }
 };
+
+#endif

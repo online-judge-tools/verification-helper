@@ -45,7 +45,7 @@ class Bundler(object):
         for dir_ in self.iquote:
             if (dir_ / path).exists():
                 return dir_ / path
-        raise FileNotFoundError('failed to include "{}"'.format(str(path)))
+        raise BundleError('not found "{}"'.format(str(path)))
 
     def update(self, path: pathlib.Path) -> None:
         if path in self.pragma_once:

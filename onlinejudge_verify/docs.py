@@ -8,12 +8,16 @@ import shutil
 import subprocess
 # typing.OrderedDict is not recognized by mypy
 from collections import OrderedDict
+from logging import getLogger
 from typing import IO, Any, Dict, List, Tuple
 
 import markdown
+import onlinejudge_verify.bundle
 import onlinejudge_verify.utils as utils
 import pkg_resources
 import yaml
+
+logger = getLogger(__name__)
 
 package = 'onlinejudge_verify.data'
 assets_site_header_txt = pkg_resources.resource_string(package, 'assets/site-header.txt')
@@ -329,10 +333,23 @@ class MarkdownArticle(MarkdownPage):
 
         # source code
         file_object.write(b'## Code\n\n')
+        file_object.write(b'<a id="unbundled"></a>\n')
         file_object.write(b'{% raw %}\n```cpp\n')
         with open(self.file_class.file_path, 'rb') as f:
             file_object.write(f.read())
         file_object.write(b'\n```\n{% endraw %}\n\n')
+
+        try:
+            bundler = onlinejudge_verify.bundle.Bundler(iquote=[self.cpp_source_path])
+            bundler.update(self.file_class.file_path)
+            bundled_code = bundler.get()
+        except onlinejudge_verify.bundle.BundleError:
+            logger.warning("failed to bundle: %s", str(self.file_class.file_path))
+        else:
+            file_object.write(b'<a id="bundled"></a>\n')
+            file_object.write(b'{% raw %}\n```cpp\n')
+            file_object.write(bundled_code)
+            file_object.write(b'\n```\n{% endraw %}\n\n')
 
         # back to top
         file_object.write('{}\n\n'.format(self.get_linktag('Back to top page', back_to_top_link)).encode())

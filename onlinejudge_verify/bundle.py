@@ -1,8 +1,12 @@
 # Python Version: 3.x
 import pathlib
 import re
+import shlex
+import subprocess
 from logging import getLogger
 from typing import *
+
+import onlinejudge_verify.utils as utils
 
 logger = getLogger(__name__)
 
@@ -39,10 +43,15 @@ class Bundler(object):
 
         with open(str(path), "rb") as fh:
             self._line(1, path)
-            for i, line in enumerate(fh.readlines()):
+
+            # コメントアウトを消す (コメントアウトされた #include を誤認識しないための処理)
+            command = """{} -I {} -fpreprocessed -dD -E {} | tail -n +2""".format(utils.CXX, shlex.quote(str(self.iquote)), shlex.quote(str(path)))
+            uncommented_lines = subprocess.check_output(command, shell=True).splitlines()
+
+            for i, (line, uncommented_line) in enumerate(zip(fh.readlines(), uncommented_lines)):
 
                 # #pragma once
-                if re.match(rb'#\s*pragma\s+once\s*', line):
+                if re.match(rb'\s*#\s*pragma\s+once\s*', uncommented_line):
                     if i == 0:
                         if path.resolve() in self.pragma_once:
                             return
@@ -54,7 +63,7 @@ class Bundler(object):
                     continue
 
                 # #include "..."
-                matched = re.match(rb'#\s*include\s*"(.*)"\s*', line)
+                matched = re.match(rb'\s*#\s*include\s*"(.*)"\s*', uncommented_line)
                 if matched:
                     included = pathlib.Path(matched.group(1).decode())
                     self.update(self._resolve(included, included_from=path))

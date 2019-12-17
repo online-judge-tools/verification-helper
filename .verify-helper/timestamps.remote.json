@@ -3,6 +3,7 @@
 "examples/develop.test.cpp": "2019-12-09 19:29:58 +0900",
 "examples/gcc_only.test.cpp": "2019-11-29 11:36:33 +0900",
 "examples/include_relative.test.cpp": "2019-12-04 23:29:22 +0900",
+"examples/precision.test.cpp": "2019-12-17 16:35:01 +0900",
 "examples/segment_tree.point_set_range_composite.test.cpp": "2019-12-15 05:47:31 +0900",
 "examples/segment_tree.range_minimum_query.test.cpp": "2019-12-15 05:47:31 +0900",
 "examples/segment_tree.range_sum_query.test.cpp": "2019-12-15 05:47:31 +0900",

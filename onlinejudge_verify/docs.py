@@ -6,6 +6,7 @@ import pathlib
 import re
 import shutil
 import subprocess
+import traceback
 # typing.OrderedDict is not recognized by mypy
 from collections import OrderedDict
 from logging import getLogger
@@ -345,11 +346,11 @@ class MarkdownArticle(MarkdownPage):
             bundled_code = bundler.get()
         except onlinejudge_verify.bundle.BundleError:
             logger.warning("failed to bundle: %s", str(self.file_class.file_path))
-        else:
-            file_object.write(b'<a id="bundled"></a>\n')
-            file_object.write(b'{% raw %}\n```cpp\n')
-            file_object.write(bundled_code)
-            file_object.write(b'\n```\n{% endraw %}\n\n')
+            bundled_code = traceback.format_exc().encode()
+        file_object.write(b'<a id="bundled"></a>\n')
+        file_object.write(b'{% raw %}\n```cpp\n')
+        file_object.write(bundled_code)
+        file_object.write(b'\n```\n{% endraw %}\n\n')
 
         # back to top
         file_object.write('{}\n\n'.format(self.get_linktag('Back to top page', back_to_top_link)).encode())

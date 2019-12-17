@@ -30,10 +30,10 @@ layout: default
 <a href="../../index.html">Back to top page</a>
 
 * <a href="{{ site.github.repository_url }}/blob/master/examples/precision.test.cpp">View this file on GitHub</a>
-    - Last commit date: 2019-12-17 16:32:09 +0900
+    - Last commit date: 2019-12-17 16:35:01 +0900
 
 
-* see: <a href="https://onlinejudge.u-aizu.ac.jp/problems/ALDS1_15_B">https://onlinejudge.u-aizu.ac.jp/problems/ALDS1_15_B</a>
+* see: <a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_15_B">http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_15_B</a>
 
 
 ## Code
@@ -41,7 +41,7 @@ layout: default
 <a id="unbundled"></a>
 {% raw %}
 ```cpp
-#define PROBLEM "https://onlinejudge.u-aizu.ac.jp/problems/ALDS1_15_B"
+#define PROBLEM "http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_15_B"
 
 #include <iostream>
 #include <iomanip>
@@ -84,7 +84,7 @@ int main() {
 {% raw %}
 ```cpp
 #line 1 "examples/precision.test.cpp"
-#define PROBLEM "https://onlinejudge.u-aizu.ac.jp/problems/ALDS1_15_B"
+#define PROBLEM "http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_15_B"
 
 #include <iostream>
 #include <iomanip>

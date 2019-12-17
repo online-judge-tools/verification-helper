@@ -38,6 +38,7 @@ layout: default
 
 ### examples
 
+* :warning: <a href="library/examples/failed_to_bundle.hpp.html">examples/failed_to_bundle.hpp</a>
 * :heavy_check_mark: <a href="library/examples/macros.hpp.html">examples/macros.hpp</a>
 * :heavy_check_mark: <a href="library/examples/monoids.hpp.html">examples/monoids.hpp</a>
 * :warning: <a href="library/examples/not_verified.hpp.html">examples/not_verified.hpp</a>

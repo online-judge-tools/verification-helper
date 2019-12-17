@@ -25,20 +25,15 @@ layout: default
 <link rel="stylesheet" href="../../assets/css/copy-button.css" />
 
 
-# :heavy_check_mark: examples/include_relative.test.cpp
+# :warning: examples/failed_to_bundle.hpp
 
 <a href="../../index.html">Back to top page</a>
 
-* <a href="{{ site.github.repository_url }}/blob/master/examples/include_relative.test.cpp">View this file on GitHub</a>
-    - Last commit date: 2019-12-04 23:29:22 +0900
+* category: <a href="../../index.html#bfebe34154a0dfd9fc7b447fc9ed74e9">examples</a>
+* <a href="{{ site.github.repository_url }}/blob/master/examples/failed_to_bundle.hpp">View this file on GitHub</a>
+    - Last commit date: 2019-12-17 15:26:37 +0900
 
 
-* see: <a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_A">http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_A</a>
-
-
-## Depends on
-
-* :heavy_check_mark: <a href="../../library/examples/macros.hpp.html">examples/macros.hpp</a>
 
 
 ## Code
@@ -46,16 +41,10 @@ layout: default
 <a id="unbundled"></a>
 {% raw %}
 ```cpp
-#define PROBLEM "http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_A"
-#include <cstdio>
-#include "./macros.hpp"
-
-int main() {
-    REP (i, 1000) {
-        printf("Hello World\n");
-    }
-    return 0;
-}
+#define HOGE
+#ifndef HOGE
+#include "examples/failed_to_bundle.hpp"  // this is a self-include at a glance
+#endif
 
 ```
 {% endraw %}
@@ -66,11 +55,9 @@ int main() {
 Traceback (most recent call last):
   File "/opt/hostedtoolcache/Python/3.8.0/x64/lib/python3.8/site-packages/onlinejudge_verify/docs.py", line 345, in write_contents
     bundler.update(self.file_class.file_path)
-  File "/opt/hostedtoolcache/Python/3.8.0/x64/lib/python3.8/site-packages/onlinejudge_verify/bundle.py", line 156, in update
-    self.update(self._resolve(included, included_from=path))
-  File "/opt/hostedtoolcache/Python/3.8.0/x64/lib/python3.8/site-packages/onlinejudge_verify/bundle.py", line 54, in _resolve
-    raise BundleError(path, -1, "no such header")
-onlinejudge_verify.bundle.BundleError: macros.hpp: line -1: no such header
+  File "/opt/hostedtoolcache/Python/3.8.0/x64/lib/python3.8/site-packages/onlinejudge_verify/bundle.py", line 155, in update
+    raise BundleError(path, i + 1, "unable to process #include in #if / #ifdef / #ifndef other than include guards")
+onlinejudge_verify.bundle.BundleError: examples/failed_to_bundle.hpp: line 3: unable to process #include in #if / #ifdef / #ifndef other than include guards
 
 ```
 {% endraw %}

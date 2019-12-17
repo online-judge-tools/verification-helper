@@ -13,7 +13,11 @@ logger = getLogger(__name__)
 
 class BundleError(Exception):
     def __init__(self, path: pathlib.Path, line: int, message: str, *args, **kwargs):
-        message = '{}: line {}: {}'.format(str(path.relative_to(pathlib.Path.cwd())), line, message)
+        try:
+            path = path.resolve().relative_to(pathlib.Path.cwd())
+        except ValueError:
+            pass
+        message = '{}: line {}: {}'.format(str(path), line, message)
         super().__init__(message, *args, **kwargs)  # type: ignore
 
 

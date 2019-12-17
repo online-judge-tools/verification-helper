@@ -5,7 +5,6 @@ import os
 import pathlib
 import re
 import shutil
-import subprocess
 import traceback
 # typing.OrderedDict is not recognized by mypy
 from collections import OrderedDict
@@ -43,11 +42,6 @@ def _get_marker(*, _dummy=[]) -> utils.VerificationMarker:
             timestamps_json_path = pathlib.Path('.verify-helper/timestamps.local.json')
         _dummy.append(utils.VerificationMarker(json_path=timestamps_json_path))
     return _dummy[0]
-
-
-def get_current_branch() -> str:
-    code = r'git symbolic-ref --short HEAD'
-    return subprocess.check_output(code, shell=True).decode().strip()
 
 
 class FileParser:
@@ -253,7 +247,7 @@ class MarkdownArticle(MarkdownPage):
 
         top_page_category_link = back_to_top_link + '#' + hashlib.md5(category.encode()).hexdigest()
         if categorize: file_object.write('* category: {}\n'.format(self.get_linktag(category, top_page_category_link)).encode())
-        github_link = '{{ site.github.repository_url }}' + '/blob/{}/{}'.format(get_current_branch(), str(self.file_class.file_path.relative_to(self.file_class.source_path)))
+        github_link = '{{ site.github.repository_url }}' + '/blob/{}/{}'.format('master', str(self.file_class.file_path.relative_to(self.file_class.source_path)))
         file_object.write('* {}\n    - Last commit date: {}\n'.format(self.get_linktag('View this file on GitHub', github_link), utils.get_last_commit_time_to_verify(self.file_class.file_path, compiler='g++')).encode())
         file_object.write(b'\n\n')
 
@@ -341,7 +335,7 @@ class MarkdownArticle(MarkdownPage):
         file_object.write(b'\n```\n{% endraw %}\n\n')
 
         try:
-            bundler = onlinejudge_verify.bundle.Bundler(iquote=[self.cpp_source_path])
+            bundler = onlinejudge_verify.bundle.Bundler(iquotes=[self.cpp_source_path])
             bundler.update(self.file_class.file_path)
             bundled_code = bundler.get()
         except onlinejudge_verify.bundle.BundleError:

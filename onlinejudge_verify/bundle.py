@@ -1,8 +1,6 @@
 # Python Version: 3.x
 import pathlib
 import re
-import shlex
-import subprocess
 from logging import getLogger
 from typing import *
 
@@ -22,13 +20,13 @@ class BundleError(Exception):
 
 
 class Bundler(object):
-    iquote: List[pathlib.Path]
+    iquotes: List[pathlib.Path]
     pragma_once: Set[pathlib.Path]
     result_lines: List[bytes]
     path_stack: Set[pathlib.Path]
 
-    def __init__(self, *, iquote: List[pathlib.Path] = []) -> None:
-        self.iquote = iquote
+    def __init__(self, *, iquotes: List[pathlib.Path] = []) -> None:
+        self.iquotes = iquotes
         self.pragma_once = set()
         self.result_lines = []
         self.path_stack = set()
@@ -48,7 +46,7 @@ class Bundler(object):
     def _resolve(self, path: pathlib.Path, *, included_from: pathlib.Path) -> pathlib.Path:
         if (included_from / path).exists():
             return included_from / path
-        for dir_ in self.iquote:
+        for dir_ in self.iquotes:
             if (dir_ / path).exists():
                 return dir_ / path
         raise BundleError(path, -1, "no such header")
@@ -67,10 +65,6 @@ class Bundler(object):
             with open(str(path), "rb") as fh:
                 code = fh.read()
 
-            # コメントアウトを消す (コメントアウトされた #include を誤認識しないための処理)
-            command = """{} -I {} -fpreprocessed -dD -E {} | tail -n +2""".format(utils.CXX, shlex.quote(str(self.iquote)), shlex.quote(str(path)))
-            uncommented_code = subprocess.check_output(command, shell=True)
-
             # include guard のまわりの変数
             # NOTE: include guard に使われたマクロがそれ以外の用途にも使われたり #undef されたりすると壊れるけど、無視します
             non_guard_line_found = False
@@ -79,7 +73,7 @@ class Bundler(object):
             preprocess_if_nest = 0
 
             self._line(1, path)
-            for i, (line, uncommented_line) in enumerate(zip(code.splitlines(keepends=True), uncommented_code.splitlines(keepends=True))):
+            for i, (line, uncommented_line) in enumerate(zip(code.splitlines(keepends=True), utils.get_uncommented_code(path, iquotes=self.iquotes).splitlines(keepends=True))):
 
                 # #pragma once
                 if re.match(rb'\s*#\s*pragma\s+once\s*', line):  # #pragma once は comment 扱いで消されてしまう

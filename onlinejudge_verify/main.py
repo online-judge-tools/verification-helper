@@ -160,7 +160,7 @@ def subcommand_docs() -> None:
 
 
 def subcommand_bundle(path: pathlib.Path, *, iquote: pathlib.Path) -> None:
-    bundler = onlinejudge_verify.bundle.Bundler(iquote=[iquote])
+    bundler = onlinejudge_verify.bundle.Bundler(iquotes=[iquote])
     bundler.update(path)
     sys.stdout.buffer.write(bundler.get())
 

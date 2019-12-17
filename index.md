@@ -51,6 +51,7 @@ layout: default
 * :heavy_check_mark: <a href="verify/example.test.cpp.html">example.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/develop.test.cpp.html">examples/develop.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/include_relative.test.cpp.html">examples/include_relative.test.cpp</a>
+* :warning: <a href="verify/examples/precision.test.cpp.html">examples/precision.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/segment_tree.point_set_range_composite.test.cpp.html">examples/segment_tree.point_set_range_composite.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/segment_tree.range_minimum_query.test.cpp.html">examples/segment_tree.range_minimum_query.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/segment_tree.range_sum_query.test.cpp.html">examples/segment_tree.range_sum_query.test.cpp</a>

@@ -12,7 +12,9 @@ logger = getLogger(__name__)
 
 
 class BundleError(Exception):
-    pass
+    def __init__(self, path: pathlib.Path, line: int, message: str, *args, **kwargs):
+        message = '{}: line {}: {}'.format(str(path.relative_to(pathlib.Path.cwd())), line, message)
+        super().__init__(message, *args, **kwargs)  # type: ignore
 
 
 class Bundler(object):
@@ -45,7 +47,7 @@ class Bundler(object):
         for dir_ in self.iquote:
             if (dir_ / path).exists():
                 return dir_ / path
-        raise BundleError('not found "{}"'.format(str(path)))
+        raise BundleError(path, -1, "no such header")
 
     def update(self, path: pathlib.Path) -> None:
         if path in self.pragma_once:
@@ -54,7 +56,7 @@ class Bundler(object):
 
         # 再帰的に自分自身を #include してたら諦める
         if path in self.path_stack:
-            raise BundleError("cycle found in inclusion relations")
+            raise BundleError(path, -1, "cycle found in inclusion relations")
         self.path_stack.add(path)
         try:
 
@@ -80,7 +82,7 @@ class Bundler(object):
                     logger.info('%s: line %s: #pragma once', str(path), i + 1)
                     if i != 0:
                         # 先頭以外で #pragma once されてた場合は諦める
-                        raise BundleError("#pragma once found in a non-first line")
+                        raise BundleError(path, i + 1, "#pragma once found in a non-first line")
                     if path.resolve() in self.pragma_once:
                         return
                     self.pragma_once.add(path.resolve())
@@ -116,7 +118,7 @@ class Bundler(object):
                     # include guard の外側にコードが書かれているとまずいので検出する
                     non_guard_line_found = True
                     if include_guard_endif_found:
-                        raise BundleError("found codes out of include guard")
+                        raise BundleError(path, i + 1, "found codes out of include guard")
 
                 # #if #ifdef #ifndef
                 if re.match(rb'\s*#\s*(if|ifdef|ifndef)\s.*', uncommented_line):
@@ -127,7 +129,7 @@ class Bundler(object):
                 # #else #elif
                 if re.match(rb'\s*#\s*(else\s*|elif\s.*)', uncommented_line):
                     if preprocess_if_nest == 0:
-                        raise BundleError("unmatched #else / #elif")
+                        raise BundleError(path, i + 1, "unmatched #else / #elif")
                     self.result_lines.append(line)
                     continue
 
@@ -135,7 +137,7 @@ class Bundler(object):
                 if re.match(rb'\s*#\s*endif\s*', uncommented_line):
                     preprocess_if_nest -= 1
                     if preprocess_if_nest < 0:
-                        raise BundleError("unmatched #endif")
+                        raise BundleError(path, i + 1, "unmatched #endif")
                     self.result_lines.append(line)
                     continue
 
@@ -146,7 +148,7 @@ class Bundler(object):
                     logger.info('%s: line %s: include %s', str(path), i + 1, str(included))
                     if preprocess_if_nest:
                         # #if の中から #include されると #pragma once 系の判断が不可能になるので諦める
-                        raise BundleError("unable to process #include in #if / #ifdef / #ifndef other than include guards")
+                        raise BundleError(path, i + 1, "unable to process #include in #if / #ifdef / #ifndef other than include guards")
                     self.update(self._resolve(included, included_from=path))
                     self._line(i + 2, path)
                     continue
@@ -156,9 +158,9 @@ class Bundler(object):
 
             # #if #endif の対応が壊れてたら諦める
             if preprocess_if_nest != 0:
-                raise BundleError("unmatched #if / #ifdef / #ifndef")
+                raise BundleError(path, i + 1, "unmatched #if / #ifdef / #ifndef")
             if include_guard_macro is not None and not include_guard_endif_found:
-                raise BundleError("unmatched #ifndef")
+                raise BundleError(path, i + 1, "unmatched #ifndef")
 
         finally:
             # 中で return することがあるので finally 節に入れておく

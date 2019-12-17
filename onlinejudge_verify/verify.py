@@ -31,7 +31,7 @@ def exec_command(command: List[str]):
             os.chdir(str(cwd))
 
 
-def main(paths: List[pathlib.Path], *, marker: utils.VerificationMarker, timeout: float = math.inf) -> None:
+def main(paths: List[pathlib.Path], *, marker: utils.VerificationMarker, timeout: float = math.inf, jobs: int = 1) -> None:
     try:
         resource.setrlimit(resource.RLIMIT_STACK, (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
     except:
@@ -84,6 +84,8 @@ def main(paths: List[pathlib.Path], *, marker: utils.VerificationMarker, timeout
 
             if 'ERROR' in macros:
                 command += ['-e', shlex.split(macros['ERROR'])[0]]
+            if jobs != 1:
+                command += ['-j', str(jobs)]
             exec_command(command)
             verified = True
 

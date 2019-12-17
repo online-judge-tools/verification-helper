@@ -83,7 +83,7 @@ def main(paths: List[pathlib.Path], *, marker: utils.VerificationMarker, timeout
                 command += ['--judge-command', shlex.quote(str(directory / 'checker.out'))]
 
             if 'ERROR' in macros:
-                command += ['-e', shlex.quote(macros['ERROR'])]
+                command += ['-e', shlex.split(macros['ERROR'])[0]]
             exec_command(command)
             verified = True
 

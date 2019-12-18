@@ -64,7 +64,8 @@ TeX 記法の数式 (例: `$O(N \sum_i A_i)$`) の [MathJax](https://www.mathjax
 ## Tips
 
 -   ライブラリを verify するための問題が見つからないときは他の人のライブラリを参考にするとよいでしょう。online-judge-verify-helper のユーザの一覧は <https://github.com/search?q=online-judge-verify-helper+path%3A.github> から見ることができます
--   ライブラリを verify するための問題がそれでも見つからないとき [Library Checker](https://judge.yosupo.jp/) に要望を出す ([issue](https://github.com/yosupo06/library-checker-problems/issues/3)) とよいかもしれません
+-   ライブラリを verify するための問題がそれでも見つからないときは [Library Checker](https://judge.yosupo.jp/) に問題を追加してください
+-   高速化したい場合は頑張れば全体で 100 倍速ぐらいにできます: <https://kmyk.github.io/online-judge-verify-helper/installer.html>
 -   GitHub Actions から online-judge-verify-helper を呼び出すといった通常想定される利用法においては MIT License に関する著作権表示は要求されません ([詳細](https://github.com/kmyk/online-judge-verify-helper/issues/34))
 
 ## Authors

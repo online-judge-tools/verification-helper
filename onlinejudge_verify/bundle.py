@@ -44,8 +44,8 @@ class Bundler(object):
     # path を解決する
     # see: https://gcc.gnu.org/onlinedocs/gcc/Directory-Options.html#Directory-Options
     def _resolve(self, path: pathlib.Path, *, included_from: pathlib.Path) -> pathlib.Path:
-        if (included_from / path).exists():
-            return included_from / path
+        if (included_from.parent / path).exists():
+            return included_from.parent / path
         for dir_ in self.iquotes:
             if (dir_ / path).exists():
                 return dir_ / path

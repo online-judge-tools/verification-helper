@@ -31,7 +31,7 @@ layout: default
 
 * category: <a href="../../index.html#bfebe34154a0dfd9fc7b447fc9ed74e9">examples</a>
 * <a href="{{ site.github.repository_url }}/blob/master/examples/failed_to_bundle.hpp">View this file on GitHub</a>
-    - Last commit date: 2019-12-17 15:26:37 +0900
+    - Last commit date: 2019-12-17 15:26:37+09:00
 
 
 
@@ -53,7 +53,7 @@ layout: default
 {% raw %}
 ```cpp
 Traceback (most recent call last):
-  File "/opt/hostedtoolcache/Python/3.8.0/x64/lib/python3.8/site-packages/onlinejudge_verify/docs.py", line 339, in write_contents
+  File "/opt/hostedtoolcache/Python/3.8.0/x64/lib/python3.8/site-packages/onlinejudge_verify/docs.py", line 328, in write_contents
     bundler.update(self.file_class.file_path)
   File "/opt/hostedtoolcache/Python/3.8.0/x64/lib/python3.8/site-packages/onlinejudge_verify/bundle.py", line 149, in update
     raise BundleError(path, i + 1, "unable to process #include in #if / #ifdef / #ifndef other than include guards")

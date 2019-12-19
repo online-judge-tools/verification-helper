@@ -31,7 +31,7 @@ layout: default
 
 * category: <a href="../../index.html#bfebe34154a0dfd9fc7b447fc9ed74e9">examples</a>
 * <a href="{{ site.github.repository_url }}/blob/master/examples/monoids.hpp">View this file on GitHub</a>
-    - Last commit date: 2019-11-29 11:28:05 +0900
+    - Last commit date: 2019-11-29 11:28:05+09:00
 
 
 

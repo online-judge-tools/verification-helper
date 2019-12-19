@@ -30,7 +30,7 @@ layout: default
 <a href="../index.html">Back to top page</a>
 
 * <a href="{{ site.github.repository_url }}/blob/master/example.test.cpp">View this file on GitHub</a>
-    - Last commit date: 2019-11-24 04:01:18 +0900
+    - Last commit date: 2019-11-24 04:01:18+09:00
 
 
 * see: <a href="https://onlinejudge.u-aizu.ac.jp/courses/lesson/1/ALDS1/4/ALDS1_4_B">https://onlinejudge.u-aizu.ac.jp/courses/lesson/1/ALDS1/4/ALDS1_4_B</a>

@@ -1,4 +1,5 @@
 # Python Version: 3.x
+import datetime
 import functools
 import json
 import os
@@ -13,18 +14,28 @@ CXXFLAGS = os.environ.get('CXXFLAGS', '--std=c++17 -O2 -Wall -g')
 
 class VerificationMarker(object):
     json_path: pathlib.Path
+    use_git_timestamp: bool
     old_timestamps: Dict[pathlib.Path, str]  # TODO: make this Dict[pathlib.Path, datetime.datetime]
     new_timestamps: Dict[pathlib.Path, str]
 
-    def __init__(self, *, json_path: pathlib.Path) -> None:
+    def __init__(self, *, json_path: pathlib.Path, use_git_timestamp: bool) -> None:
         self.json_path = json_path
+        self.use_git_timestamp = use_git_timestamp
         self.load_timestamps()
 
+    def get_current_timestamp(self, path: pathlib.Path) -> str:
+        if self.use_git_timestamp:
+            return get_last_commit_time_to_verify(path, compiler=CXX)
+        else:
+            timestamp = max([x.stat().st_mtime for x in list_depending_files(path, compiler=CXX)])
+            tz = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
+            return datetime.datetime.fromtimestamp(timestamp, tz=tz).strftime('%Y-%m-%d %H:%M:%S %z')
+
     def is_verified(self, path: pathlib.Path) -> bool:
-        return get_last_commit_time_to_verify(path, compiler=CXX) == self.old_timestamps.get(path)
+        return self.get_current_timestamp(path) == self.old_timestamps.get(path)
 
     def mark_verified(self, path: pathlib.Path) -> None:
-        self.new_timestamps[path] = get_last_commit_time_to_verify(path, compiler=CXX)
+        self.new_timestamps[path] = self.get_current_timestamp(path)
 
     def load_timestamps(self) -> None:
         self.old_timestamps = {}
@@ -67,7 +78,8 @@ def get_verification_marker() -> VerificationMarker:
             timestamps_json_path = pathlib.Path('.verify-helper/timestamps.remote.json')
         else:
             timestamps_json_path = pathlib.Path('.verify-helper/timestamps.local.json')
-        _verification_marker = VerificationMarker(json_path=timestamps_json_path)
+        use_git_timestamp = 'GITHUB_ACTION' in os.environ
+        _verification_marker = VerificationMarker(json_path=timestamps_json_path, use_git_timestamp=use_git_timestamp)
     return _verification_marker
 
 

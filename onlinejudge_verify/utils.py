@@ -15,24 +15,24 @@ CXXFLAGS = os.environ.get('CXXFLAGS', '--std=c++17 -O2 -Wall -g')
 class VerificationMarker(object):
     json_path: pathlib.Path
     use_git_timestamp: bool
-    old_timestamps: Dict[pathlib.Path, str]  # TODO: make this Dict[pathlib.Path, datetime.datetime]
-    new_timestamps: Dict[pathlib.Path, str]
+    old_timestamps: Dict[pathlib.Path, datetime.datetime]
+    new_timestamps: Dict[pathlib.Path, datetime.datetime]
 
     def __init__(self, *, json_path: pathlib.Path, use_git_timestamp: bool) -> None:
         self.json_path = json_path
         self.use_git_timestamp = use_git_timestamp
         self.load_timestamps()
 
-    def get_current_timestamp(self, path: pathlib.Path) -> str:
+    def get_current_timestamp(self, path: pathlib.Path) -> datetime.datetime:
         if self.use_git_timestamp:
             return get_last_commit_time_to_verify(path, compiler=CXX)
         else:
             timestamp = max([x.stat().st_mtime for x in list_depending_files(path, compiler=CXX)])
-            tz = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
-            return datetime.datetime.fromtimestamp(timestamp, tz=tz).strftime('%Y-%m-%d %H:%M:%S %z')
+            system_local_timezone = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
+            return datetime.datetime.fromtimestamp(timestamp, tz=system_local_timezone).replace(microsecond=0)  # microsecond=0 is required because it's erased on timestamps.*.json
 
     def is_verified(self, path: pathlib.Path) -> bool:
-        return self.get_current_timestamp(path) == self.old_timestamps.get(path)
+        return path in self.old_timestamps and self.get_current_timestamp(path) <= self.old_timestamps[path]
 
     def mark_verified(self, path: pathlib.Path) -> None:
         self.new_timestamps[path] = self.get_current_timestamp(path)
@@ -45,7 +45,7 @@ class VerificationMarker(object):
             for path, timestamp in data.items():
                 if path == '~' and timestamp == 'dummy':
                     continue
-                self.old_timestamps[pathlib.Path(path)] = timestamp
+                self.old_timestamps[pathlib.Path(path)] = datetime.datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S %z')
         self.new_timestamps = {}
         for path in self.old_timestamps.keys():
             if path.exists() and self.is_verified(path):
@@ -56,7 +56,7 @@ class VerificationMarker(object):
             return
         data = {'~': 'dummy'}
         for path, timestamp in self.new_timestamps.items():
-            data[str(path)] = timestamp
+            data[str(path)] = timestamp.strftime('%Y-%m-%d %H:%M:%S %z')
         with open(str(self.json_path), 'w') as fh:
             json.dump(data, fh, sort_keys=True, indent=0)
 
@@ -111,13 +111,14 @@ def list_defined_macros(path: pathlib.Path, *, compiler: str = CXX) -> Dict[str,
 
 
 @functools.lru_cache(maxsize=None)
-def _get_last_commit_time_to_verify(path: pathlib.Path, *, compiler: str) -> str:
+def _get_last_commit_time_to_verify(path: pathlib.Path, *, compiler: str) -> datetime.datetime:
     depending_files = list_depending_files(path, compiler=compiler)
     code = ['git', 'log', '-1', '--date=iso', '--pretty=%ad', '--'] + list(map(lambda x: shlex.quote(str(x)), depending_files))
-    return subprocess.check_output(code).decode().strip()
+    timestamp = subprocess.check_output(code).decode().strip()
+    return datetime.datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S %z')
 
 
-def get_last_commit_time_to_verify(path: pathlib.Path, *, compiler: str = CXX) -> str:
+def get_last_commit_time_to_verify(path: pathlib.Path, *, compiler: str = CXX) -> datetime.datetime:
     return _get_last_commit_time_to_verify(path.resolve(), compiler=compiler)
 
 

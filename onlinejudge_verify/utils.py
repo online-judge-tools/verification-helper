@@ -116,6 +116,8 @@ def _get_last_commit_time_to_verify(path: pathlib.Path, *, compiler: str) -> dat
     depending_files = list_depending_files(path, compiler=compiler)
     code = ['git', 'log', '-1', '--date=iso', '--pretty=%ad', '--'] + list(map(lambda x: shlex.quote(str(x)), depending_files))
     timestamp = subprocess.check_output(code).decode().strip()
+    if not timestamp:
+        return datetime.datetime.fromtimestamp(0)
     return datetime.datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S %z')
 
 

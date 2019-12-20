@@ -74,6 +74,7 @@ class Bundler(object):
 
             lines = code.splitlines(keepends=True)
             uncommented_lines = utils.get_uncommented_code(path, iquotes=self.iquotes).splitlines(keepends=True)
+            uncommented_lines.extend([b''] * (len(lines) - len(uncommented_lines)))  # trailing comment lines are removed
             assert len(lines) == len(uncommented_lines)
             self._line(1, path)
             for i, (line, uncommented_line) in enumerate(zip(lines, uncommented_lines)):

@@ -69,7 +69,7 @@ def main(paths: List[pathlib.Path], *, marker: utils.VerificationMarker, timeout
 
             exec_command([cxx, *cxxflags, '-I', '.', '-o', shlex.quote(str(directory / 'a.out')), shlex.quote(str(path))])
 
-            command = ['oj', 'test', '-c', shlex.quote(str(directory / 'a.out')), '-d', shlex.quote(str(directory / 'test'))]
+            command = ['oj', 'test', '-c', shlex.quote(str(directory / 'a.out')), '-d', shlex.quote(str(directory / 'test')), '--tle', '60']
             if 'judge.yosupo.jp' in url:
                 checker = onlinejudge.dispatch.problem_from_url(url).download_checker_cpp()
                 with open(directory / "checker.cpp", "wb") as f:

@@ -237,7 +237,7 @@ class MarkdownArticle(MarkdownPage):
         top_page_category_link = back_to_top_link + '#' + hashlib.md5(category.encode()).hexdigest()
         if categorize: file_object.write('* category: {}\n'.format(self.get_linktag(category, top_page_category_link)).encode())
         github_link = '{{ site.github.repository_url }}' + '/blob/{}/{}'.format('master', str(self.file_class.file_path.relative_to(self.file_class.source_path)))
-        file_object.write('* {}\n    - Last commit date: {}\n'.format(self.get_linktag('View this file on GitHub', github_link), utils.get_last_commit_time_to_verify(self.file_class.file_path, compiler='g++')).encode())
+        file_object.write('* {}\n    - Last commit date: {}\n'.format(self.get_linktag('View this file on GitHub', github_link), utils.get_verification_marker().get_current_timestamp(self.file_class.file_path)).encode())
         file_object.write(b'\n\n')
 
     def write_contents(self, file_object: IO, path_to_title: 'OrderedDict[pathlib.Path, str]', path_to_verification: Dict[pathlib.Path, bool]) -> None:

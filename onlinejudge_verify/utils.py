@@ -33,7 +33,7 @@ class VerificationMarker(object):
             return datetime.datetime.fromtimestamp(timestamp, tz=system_local_timezone).replace(microsecond=0)  # microsecond=0 is required because it's erased on timestamps.*.json
 
     def is_verified(self, path: pathlib.Path) -> bool:
-        return path in self.old_timestamps and self.get_current_timestamp(path) <= self.old_timestamps[path]
+        return path in self.new_timestamps and self.get_current_timestamp(path) <= self.new_timestamps[path]
 
     def mark_verified(self, path: pathlib.Path) -> None:
         self.new_timestamps[path] = self.get_current_timestamp(path)
@@ -48,8 +48,8 @@ class VerificationMarker(object):
                     continue
                 self.old_timestamps[pathlib.Path(path)] = datetime.datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S %z')
         self.new_timestamps = {}
-        for path in self.old_timestamps.keys():
-            if path.exists() and self.is_verified(path):
+        for path, timestamp in self.old_timestamps.items():
+            if path.exists() and self.get_current_timestamp(path) <= timestamp:
                 self.mark_verified(path)
 
     def save_timestamps(self) -> None:

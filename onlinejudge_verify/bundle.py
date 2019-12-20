@@ -72,8 +72,11 @@ class Bundler(object):
             include_guard_endif_found = False
             preprocess_if_nest = 0
 
+            lines = code.splitlines(keepends=True)
+            uncommented_lines = utils.get_uncommented_code(path, iquotes=self.iquotes).splitlines(keepends=True)
+            assert len(lines) == len(uncommented_lines)
             self._line(1, path)
-            for i, (line, uncommented_line) in enumerate(zip(code.splitlines(keepends=True), utils.get_uncommented_code(path, iquotes=self.iquotes).splitlines(keepends=True))):
+            for i, (line, uncommented_line) in enumerate(zip(lines, uncommented_lines)):
 
                 # #pragma once
                 if re.match(rb'\s*#\s*pragma\s+once\s*', line):  # #pragma once は comment 扱いで消されてしまう

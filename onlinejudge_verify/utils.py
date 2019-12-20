@@ -4,6 +4,7 @@ import functools
 import json
 import os
 import pathlib
+import re
 import shlex
 import subprocess
 from typing import *
@@ -124,10 +125,20 @@ def get_last_commit_time_to_verify(path: pathlib.Path, *, compiler: str = CXX) -
 
 @functools.lru_cache(maxsize=None)
 def _get_uncommented_code(path: pathlib.Path, *, iquotes_options: str, compiler: str) -> bytes:
-    command = """{} {} -fpreprocessed -dD -E {} | tail -n +2""".format(compiler, iquotes_options, shlex.quote(str(path)))
+    command = """{} {} -fpreprocessed -dD -E {}""".format(compiler, iquotes_options, shlex.quote(str(path)))
     return subprocess.check_output(command, shell=True)
 
 
 def get_uncommented_code(path: pathlib.Path, *, iquotes: List[pathlib.Path], compiler: str = CXX) -> bytes:
     iquotes_options = ' '.join(map(lambda iquote: '-I {}'.format(shlex.quote(str(iquote.resolve()))), iquotes))
-    return _get_uncommented_code(path.resolve(), iquotes_options=iquotes_options, compiler=compiler)
+    code = _get_uncommented_code(path.resolve(), iquotes_options=iquotes_options, compiler=compiler)
+    lines = []  # type: List[bytes]
+    for line in code.splitlines(keepends=True):
+        m = re.match(rb'# (\d+) ".*"', line.rstrip())
+        if m:
+            lineno = int(m.group(1))
+            while len(lines) + 1 < lineno:
+                lines.append(b'\n')
+        else:
+            lines.append(line)
+    return b''.join(lines)

@@ -38,7 +38,7 @@ $ oj-verify run
 #### `#include` の自動展開
 
 与えられたファイル中の `#include "foo.hpp"` の形の include 文を展開して出力します。
-JavaScript で言うところの [webpack](https://webpack.js.org/) のような機能です。
+JavaScript で言うところの [webpack](https://webpack.js.org/) のような機能であり、ファイル分割をしても実際のオンラインジャッジへの提出が困難にならないようにするために存在しています。
 以下のように実行します。
 
 ``` console
@@ -67,6 +67,7 @@ TeX 記法の数式 (例: `$O(N \sum_i A_i)$`) の [MathJax](https://www.mathjax
 -   ライブラリを verify するための問題がそれでも見つからないときは [Library Checker](https://judge.yosupo.jp/) に問題を追加してください
 -   高速化したい場合は頑張れば全体で 100 倍速ぐらいにできます: <https://kmyk.github.io/online-judge-verify-helper/speedup.html>
 -   GitHub Actions から online-judge-verify-helper を呼び出すといった通常想定される利用法においては MIT License に関する著作権表示は要求されません ([詳細](https://github.com/kmyk/online-judge-verify-helper/issues/34))
+-   これはライブラリを効率良く verify するためのツールであり、コードの検査や整形をするためのツールではありません。必要なら [clang-format](https://clang.llvm.org/docs/ClangFormat.html) などの formatter や [cppcheck](http://cppcheck.sourceforge.net/) などの linter を利用してください
 
 ## Authors
 

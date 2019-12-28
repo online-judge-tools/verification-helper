@@ -98,7 +98,7 @@ class VerificationMarker(object):
     def save_test_results(self) -> None:
         if self.old_timestamps == self.new_timestamps:
             return
-        data = {'~': {'status': 'dummy', 'timestamps': 'dummy'}}
+        data = {'~': {'status': 'dummy', 'timestamp': 'dummy'}}
         for path in self.verification_statuses:
             assert (path in self.new_timestamps)
             status = self.verification_statuses[path]

@@ -8,6 +8,7 @@ import shutil
 import traceback
 # typing.OrderedDict is not recognized by mypy
 from collections import OrderedDict
+from enum import Enum
 from logging import getLogger
 from typing import IO, Any, Dict, List, Tuple
 
@@ -73,6 +74,12 @@ class FileParser:
     """
 
 
+class VerificationStatus(Enum):
+    VERIFIED = ':heavy_check_mark:'
+    FAILED = ':x:'
+    DEFAULT = ':warning:'
+
+
 # 現状は C++ のみのサポートを考える
 class CppFile:
     file_path: pathlib.Path  # 対象としている C++ ファイル (source_path 内にあるファイル) への絶対パス
@@ -83,7 +90,7 @@ class CppFile:
     docs: List[pathlib.Path]  # @docs で指定されたファイルへの絶対パス
     depends: List[pathlib.Path]  # @depends で指定されたファイルへの絶対パス
     required: List[pathlib.Path]
-    is_verified: bool
+    verification_status: VerificationStatus
 
     def __init__(self, file_path: pathlib.Path, source_path: pathlib.Path) -> None:
         self.file_path = file_path.resolve()
@@ -135,7 +142,15 @@ class CppFile:
         self.depends.sort()
 
         self.required = []
-        self.is_verified = utils.get_verification_marker().is_verified(self.file_path.relative_to(self.source_path))
+        # 表示するverification statusを決める
+        is_verified = utils.get_verification_marker().is_verified(self.file_path.relative_to(self.source_path))
+        is_failed = utils.get_verification_marker().is_failed(self.file_path.relative_to(self.source_path))
+        if is_verified:
+            self.verification_status = VerificationStatus.VERIFIED
+        elif is_failed:
+            self.verification_status = VerificationStatus.FAILED
+        else:
+            self.verification_status = VerificationStatus.DEFAULT
 
     # self.file_path からの相対パスを絶対パスに直す
     def to_abspath(self, item_list: List[pathlib.Path]) -> List[pathlib.Path]:
@@ -163,11 +178,8 @@ class MarkdownPage:
         self.md_destination_path = pathlib.Path()
         self.destination = pathlib.Path()
 
-    def get_mark(self, cond: bool) -> str:
-        if cond:
-            return ':heavy_check_mark:'
-        else:
-            return ':warning:'
+    def get_mark(self, verification_status: VerificationStatus) -> str:
+        return verification_status.value
 
     # file_path の markdown 生成先はどのような絶対パスになるべきか
     # prefix は [cpp_source_path までのパス] でなければならない
@@ -217,7 +229,7 @@ class MarkdownArticle(MarkdownPage):
         self.cpp_source_path = cpp_source_path.resolve()
         self.md_destination_path = md_destination_path.resolve()
         self.destination = self.get_destination(self.file_class.file_path, file_type)
-        self.mark = self.get_mark(self.file_class.is_verified)
+        self.mark = self.get_mark(self.file_class.verification_status)
 
     # include (mathjax, js, css)
     def write_header(self, file_object: IO) -> None:
@@ -240,7 +252,7 @@ class MarkdownArticle(MarkdownPage):
         file_object.write('* {}\n    - Last commit date: {}\n'.format(self.get_linktag('View this file on GitHub', github_link), utils.get_verification_marker().get_current_timestamp(self.file_class.file_path)).encode())
         file_object.write(b'\n\n')
 
-    def write_contents(self, file_object: IO, path_to_title: 'OrderedDict[pathlib.Path, str]', path_to_verification: Dict[pathlib.Path, bool]) -> None:
+    def write_contents(self, file_object: IO, path_to_title: 'OrderedDict[pathlib.Path, str]', path_to_verification: Dict[pathlib.Path, VerificationStatus]) -> None:
         back_to_top_link = self.get_link(self.md_destination_path / 'index.html')
 
         # brief, see, docs (絶対パス)
@@ -338,7 +350,7 @@ class MarkdownArticle(MarkdownPage):
         # back to top
         file_object.write('{}\n\n'.format(self.get_linktag('Back to top page', back_to_top_link)).encode())
 
-    def build(self, path_to_title: 'OrderedDict[pathlib.Path, str]', path_to_verification: Dict[pathlib.Path, bool], category: str, categorize: bool) -> None:
+    def build(self, path_to_title: 'OrderedDict[pathlib.Path, str]', path_to_verification: Dict[pathlib.Path, VerificationStatus], category: str, categorize: bool) -> None:
         self.make_directory()
         with open(str(self.destination) + '.md', mode='wb') as file_object:
             self.write_header(file_object)
@@ -380,7 +392,7 @@ class MarkdownTopPage(MarkdownPage):
             verify_category_to_path: 'OrderedDict[str, List[pathlib.Path]]',
             library_category_to_path: 'OrderedDict[str, List[pathlib.Path]]',
             path_to_title: 'OrderedDict[pathlib.Path, str]',
-            path_to_verification: Dict[pathlib.Path, bool],
+            path_to_verification: Dict[pathlib.Path, VerificationStatus],
             categorize_verify: bool,
             categorize_library: bool,
     ) -> None:
@@ -459,7 +471,7 @@ class MarkdownTopPage(MarkdownPage):
             verify_category_to_path: 'OrderedDict[str, List[pathlib.Path]]',
             library_category_to_path: 'OrderedDict[str, List[pathlib.Path]]',
             path_to_title: 'OrderedDict[pathlib.Path, str]',
-            path_to_verification: Dict[pathlib.Path, bool],
+            path_to_verification: Dict[pathlib.Path, VerificationStatus],
             categorize_verify: bool,
             categorize_library: bool,
     ) -> None:
@@ -666,22 +678,35 @@ class PagesBuilder:
             self.library_files[cpp_file].depends = depends_list_library
             self.library_files[cpp_file].required = required_list_library
 
-    def map_path2verification(self) -> Dict[pathlib.Path, bool]:
-        result = {}  # type: Dict[pathlib.Path, bool]
+    def map_path2verification(self) -> Dict[pathlib.Path, VerificationStatus]:
+        result = {}  # type: Dict[pathlib.Path, VerificationStatus]
         # .test.cpp の verify 状況確認
         for cpp_file, cpp_class in self.verify_files.items():
-            result[cpp_file] = cpp_class.is_verified
+            result[cpp_file] = cpp_class.verification_status
 
         # .cpp は、それを必要としている .test.cpp が少なくとも 1 つ存在し
         # 全ての .test.cpp が verify 済みなら OK
         for cpp_file, cpp_class in self.library_files.items():
-            verify_file_cnt, cond = 0, True
+            # cpp_fileを必要としている .test.cpp のstatusのlist
+            required_verification_statuses = []
             for verify in cpp_class.required:
                 if re.match(r'^.*\.test\.(cpp|hpp|cc)$', str(verify)):
-                    verify_file_cnt += 1
-                    cond = cond and result[verify]
-            result[cpp_file] = (verify_file_cnt > 0 and cond)
-            self.library_files[cpp_file].is_verified = result[cpp_file]
+                    required_verification_statuses.append(result[verify])
+            # verification statusを解決する
+            if len(required_verification_statuses) == 0:
+                # 一つも .test.cpp が見つからなかったらverifyされていない
+                result[cpp_file] = VerificationStatus.DEFAULT
+            elif all(status == VerificationStatus.FAILED for status in required_verification_statuses):
+                # cpp_fileを必要としている全てのtestでfailedならfailedとする
+                # 一つでもfailedならfailed、とすると自身のコードに問題ない場合も誤ってfailedとなる
+                # 可能性が高まるので避けた
+                result[cpp_file] = VerificationStatus.FAILED
+            elif all(status != VerificationStatus.DEFAULT for status in required_verification_statuses):
+                # 上記以外でcpp_fileを必要としている .test.cpp が全てverifiedかfailedならverifiedとする
+                result[cpp_file] = VerificationStatus.VERIFIED
+            else:
+                result[cpp_file] = VerificationStatus.DEFAULT
+            self.library_files[cpp_file].verification_status = result[cpp_file]
         return result
 
     def build_verify_files(self, cpp_source_path: pathlib.Path, md_destination_path: pathlib.Path) -> None:

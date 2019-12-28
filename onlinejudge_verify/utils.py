@@ -18,10 +18,12 @@ class VerificationMarker(object):
     use_git_timestamp: bool
     old_timestamps: Dict[pathlib.Path, datetime.datetime]
     new_timestamps: Dict[pathlib.Path, datetime.datetime]
+    verification_statuses: Dict[pathlib.Path, str]
 
     def __init__(self, *, json_path: pathlib.Path, use_git_timestamp: bool) -> None:
         self.json_path = json_path
         self.use_git_timestamp = use_git_timestamp
+        self.verification_statuses = {}
         self.load_timestamps()
 
     def get_current_timestamp(self, path: pathlib.Path) -> datetime.datetime:
@@ -33,10 +35,21 @@ class VerificationMarker(object):
             return datetime.datetime.fromtimestamp(timestamp, tz=system_local_timezone).replace(microsecond=0)  # microsecond=0 is required because it's erased on timestamps.*.json
 
     def is_verified(self, path: pathlib.Path) -> bool:
-        return path in self.new_timestamps and self.get_current_timestamp(path) <= self.new_timestamps[path]
+        return self.verification_statuses.get(path) == 'verified'
 
     def mark_verified(self, path: pathlib.Path) -> None:
         self.new_timestamps[path] = self.get_current_timestamp(path)
+        self.verification_statuses[path] = 'verified'
+
+    def is_failed(self, path: pathlib.Path) -> bool:
+        if path not in self.verification_statuses:
+            # verifiedの場合は必ずself.verification_status[path] == 'verified'となるのでこのifの中には入らない
+            # それ以外の場合は「そもそもテストを実行していない」可能性もあるが一旦はfailedとみなす
+            return True
+        return self.verification_statuses[path] == 'failed'
+
+    def mark_failed(self, path: pathlib.Path) -> None:
+        self.verification_statuses[path] = 'failed'
 
     def load_timestamps(self) -> None:
         self.old_timestamps = {}
@@ -51,6 +64,12 @@ class VerificationMarker(object):
         for path, timestamp in self.old_timestamps.items():
             if path.exists() and self.get_current_timestamp(path) <= timestamp:
                 self.mark_verified(path)
+                continue
+            #「そもそもテストを実行していない」のか「実行した上で失敗した」のか区別できないが、verifyできてない事には変わりないので一旦はfailedとみなす
+            self.mark_failed(path)
+            if path.exists():
+                # 過去にverifyされたことがある場合は、最終verify時刻を引き継ぐ
+                self.new_timestamps[path] = timestamp
 
     def save_timestamps(self) -> None:
         if self.old_timestamps == self.new_timestamps:

@@ -52,6 +52,7 @@ def main(paths: List[pathlib.Path], *, marker: utils.VerificationMarker, timeout
             continue
 
         logger.info('verify %s', path)
+        verified = True
         for cxx in compilers:
             macros = utils.list_defined_macros(path, compiler=cxx)
 
@@ -85,9 +86,16 @@ def main(paths: List[pathlib.Path], *, marker: utils.VerificationMarker, timeout
                 command += ['-e', shlex.split(macros['ERROR'])[0]]
             if jobs != 1:
                 command += ['-j', str(jobs)]
-            exec_command(command)
+            try:
+                exec_command(command)
+            except:
+                marker.mark_failed(path)
+                verified = False
+                # failするテストが複数ある場合に後続のテストを継続させるため、raiseして処理を終わらせるのではなくbreakする
+                break
 
-        marker.mark_verified(path)
+        if verified:
+            marker.mark_verified(path)
 
         # to prevent taking too long; we may fail to use the results of verification due to expired tokens
         if timeout is not None and time.time() - start > timeout:

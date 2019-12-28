@@ -79,6 +79,7 @@ class VerifyStatus(Enum):
     FAILED = ':x:'
     DEFAULT = ':warning:'
 
+
 # 現状は C++ のみのサポートを考える
 class CppFile:
     file_path: pathlib.Path  # 対象としている C++ ファイル (source_path 内にあるファイル) への絶対パス

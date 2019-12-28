@@ -100,9 +100,9 @@ class VerificationMarker(object):
             return
         # convert path from 'path/to/timestamps.~.json' to 'path/to/results.~.json'
         new_json_path = str(self.json_path).replace('/timestamps.', '/results.')
-        data = {'~': {}}
+        data = {'~': {"status": "dummy", "timestamps": "dummy"}}
         for path in self.verification_statuses:
-            assert(path in self.new_timestamps)
+            assert (path in self.new_timestamps)
             status = self.verification_statuses[path]
             timestamp = self.new_timestamps[path].strftime('%Y-%m-%d %H:%M:%S %z')
             data[str(path)] = {'status': status, 'timestamp': timestamp}

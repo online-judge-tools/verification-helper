@@ -18,11 +18,14 @@ class VerificationMarker(object):
     use_git_timestamp: bool
     old_timestamps: Dict[pathlib.Path, datetime.datetime]
     new_timestamps: Dict[pathlib.Path, datetime.datetime]
+    verification_statuses: Dict[pathlib.Path, str]
 
     def __init__(self, *, json_path: pathlib.Path, use_git_timestamp: bool) -> None:
         self.json_path = json_path
         self.use_git_timestamp = use_git_timestamp
+        self.verification_statuses = {}
         self.load_timestamps()
+        self.load_test_results()
 
     def get_current_timestamp(self, path: pathlib.Path) -> datetime.datetime:
         if self.use_git_timestamp:
@@ -33,10 +36,22 @@ class VerificationMarker(object):
             return datetime.datetime.fromtimestamp(timestamp, tz=system_local_timezone).replace(microsecond=0)  # microsecond=0 is required because it's erased on timestamps.*.json
 
     def is_verified(self, path: pathlib.Path) -> bool:
+        if path not in self.verification_statuses or self.verification_statuses[path] != 'verified':
+            return False
         return path in self.new_timestamps and self.get_current_timestamp(path) <= self.new_timestamps[path]
 
     def mark_verified(self, path: pathlib.Path) -> None:
         self.new_timestamps[path] = self.get_current_timestamp(path)
+        self.verification_statuses[path] = 'verified'
+
+    def is_failed(self, path: pathlib.Path) -> bool:
+        if path not in self.verification_statuses or self.verification_statuses[path] != 'failed':
+            return False
+        return path in self.new_timestamps and self.get_current_timestamp(path) <= self.new_timestamps[path]
+
+    def mark_failed(self, path: pathlib.Path) -> None:
+        self.new_timestamps[path] = self.get_current_timestamp(path)
+        self.verification_statuses[path] = 'failed'
 
     def load_timestamps(self) -> None:
         self.old_timestamps = {}
@@ -52,6 +67,25 @@ class VerificationMarker(object):
             if path.exists() and self.get_current_timestamp(path) <= timestamp:
                 self.mark_verified(path)
 
+    def load_test_results(self) -> None:
+        old_results = {}
+        # convert path from 'path/to/timestamps.~.json' to 'path/to/results.~.json'
+        result_json_path = pathlib.Path(str(self.json_path).replace('/timestamps.', '/results.'))
+        if result_json_path.exists():
+            with open(str(result_json_path)) as fh:
+                data = json.load(fh)
+            for path, result in data.items():
+                if path == '~':
+                    continue
+                old_results[pathlib.Path(path)] = result
+        for path, result in old_results.items():
+            timestamp = datetime.datetime.strptime(result['timestamp'], '%Y-%m-%d %H:%M:%S %z')
+            if path.exists() and self.get_current_timestamp(path) <= timestamp:
+                if result['status'] == 'verified':
+                    self.mark_verified(path)
+                elif result['status'] == 'failed':
+                    self.mark_failed(path)
+
     def save_timestamps(self) -> None:
         if self.old_timestamps == self.new_timestamps:
             return
@@ -61,11 +95,26 @@ class VerificationMarker(object):
         with open(str(self.json_path), 'w') as fh:
             json.dump(data, fh, sort_keys=True, indent=0)
 
+    def save_test_results(self) -> None:
+        if self.old_timestamps == self.new_timestamps:
+            return
+        data = {'~': {'status': 'dummy', 'timestamps': 'dummy'}}
+        for path in self.verification_statuses:
+            assert (path in self.new_timestamps)
+            status = self.verification_statuses[path]
+            timestamp = self.new_timestamps[path].strftime('%Y-%m-%d %H:%M:%S %z')
+            data[str(path)] = {'status': status, 'timestamp': timestamp}
+        # convert path from 'path/to/timestamps.~.json' to 'path/to/results.~.json'
+        result_json_path = str(self.json_path).replace('/timestamps.', '/results.')
+        with open(result_json_path, 'w') as fh:
+            json.dump(data, fh, sort_keys=True, indent=0)
+
     def __enter__(self) -> 'VerificationMarker':
         return self
 
     def __exit__(self, exc_type, exc_value, traceback) -> None:
         self.save_timestamps()
+        self.save_test_results()
 
 
 _verification_marker = None  # type: Optional[VerificationMarker]

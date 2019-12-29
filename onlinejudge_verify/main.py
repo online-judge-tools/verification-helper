@@ -164,6 +164,10 @@ def main(args: Optional[List[str]] = None) -> None:
     parser = get_parser()
     parsed = parser.parse_args(args)
 
+    if parsed.jobs is not None:
+        # 先に並列で読み込みしておく
+        utils.get_verification_marker(jobs=parsed.jobs)
+
     if parsed.subcommand == 'all':
         try:
             subcommand_run(paths=[], jobs=parsed.jobs)

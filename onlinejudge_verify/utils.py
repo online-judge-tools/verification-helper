@@ -1,4 +1,5 @@
 # Python Version: 3.x
+import concurrent.futures
 import datetime
 import functools
 import json
@@ -20,11 +21,11 @@ class VerificationMarker(object):
     new_timestamps: Dict[pathlib.Path, datetime.datetime]
     verification_statuses: Dict[pathlib.Path, str]
 
-    def __init__(self, *, json_path: pathlib.Path, use_git_timestamp: bool) -> None:
+    def __init__(self, *, json_path: pathlib.Path, use_git_timestamp: bool, jobs: Optional[int] = None) -> None:
         self.json_path = json_path
         self.use_git_timestamp = use_git_timestamp
         self.verification_statuses = {}
-        self.load_timestamps()
+        self.load_timestamps(jobs=jobs)
 
     def get_current_timestamp(self, path: pathlib.Path) -> datetime.datetime:
         if self.use_git_timestamp:
@@ -51,7 +52,8 @@ class VerificationMarker(object):
     def mark_failed(self, path: pathlib.Path) -> None:
         self.verification_statuses[path] = 'failed'
 
-    def load_timestamps(self) -> None:
+    def load_timestamps(self, *, jobs: Optional[int] = None) -> None:
+        # 古いものを読み込む
         self.old_timestamps = {}
         if self.json_path.exists():
             with open(str(self.json_path)) as fh:
@@ -60,16 +62,29 @@ class VerificationMarker(object):
                 if path == '~' and timestamp == 'dummy':
                     continue
                 self.old_timestamps[pathlib.Path(path)] = datetime.datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S %z')
+
+        # 新しいものに移す
         self.new_timestamps = {}
-        for path, timestamp in self.old_timestamps.items():
+
+        def load(path, timestamp):
             if path.exists() and self.get_current_timestamp(path) <= timestamp:
                 self.mark_verified(path)
-                continue
+                return
             #「そもそもテストを実行していない」のか「実行した上で失敗した」のか区別できないが、verifyできてない事には変わりないので一旦はfailedとみなす
             self.mark_failed(path)
             if path.exists():
                 # 過去にverifyされたことがある場合は、最終verify時刻を引き継ぐ
                 self.new_timestamps[path] = timestamp
+
+        if jobs is None:
+            for path, timestamp in self.old_timestamps.items():
+                load(path, timestamp)
+        else:
+            # TODO: ここ (実質 VerificationMarker.__init__) が遅いのなんだかおかしくないか？ verify時刻が古いものの処理とかは別でやるべきな気がする
+            # 依存先ファイルの解析などがあって遅いので並列でやる
+            with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as executor:
+                for path, timestamp in self.old_timestamps.items():
+                    executor.submit(load, path, timestamp)
 
     def save_timestamps(self) -> None:
         if self.old_timestamps == self.new_timestamps:
@@ -90,7 +105,7 @@ class VerificationMarker(object):
 _verification_marker = None  # type: Optional[VerificationMarker]
 
 
-def get_verification_marker() -> VerificationMarker:
+def get_verification_marker(*, jobs: Optional[int] = None) -> VerificationMarker:
     global _verification_marker
     if _verification_marker is None:
         # use different files in local and in remote to avoid conflicts
@@ -99,7 +114,7 @@ def get_verification_marker() -> VerificationMarker:
         else:
             timestamps_json_path = pathlib.Path('.verify-helper/timestamps.local.json')
         use_git_timestamp = 'GITHUB_ACTION' in os.environ
-        _verification_marker = VerificationMarker(json_path=timestamps_json_path, use_git_timestamp=use_git_timestamp)
+        _verification_marker = VerificationMarker(json_path=timestamps_json_path, use_git_timestamp=use_git_timestamp, jobs=jobs)
     return _verification_marker
 
 

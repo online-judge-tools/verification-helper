@@ -44,8 +44,6 @@ def main(paths: List[pathlib.Path], *, marker: utils.VerificationMarker, timeout
         compilers.append('g++')
         compilers.append('clang++')
 
-    cxxflags = shlex.split(os.environ.get('CXXFLAGS', '-std=c++17 -O2 -Wall -g'))
-
     failed_test_paths = []  # type: List[pathlib.Path]
 
     start = time.time()
@@ -70,20 +68,39 @@ def main(paths: List[pathlib.Path], *, marker: utils.VerificationMarker, timeout
                 exec_command(['sleep', '2'])
                 exec_command(['oj', 'download', '--system', '-d', shlex.quote(str(directory / 'test')), url])
 
-            exec_command([cxx, *cxxflags, '-I', '.', '-o', shlex.quote(str(directory / 'a.out')), shlex.quote(str(path))])
+            # Library Checker の場合は checker.out を compile する
+            if 'judge.yosupo.jp' in url:
+                checker_out_path = directory / 'checker.out'
+                checker_cpp_path = directory / 'checker.cpp'
 
+                # 再 compile が必要か確認
+                is_checker_modified = False
+                checker = onlinejudge.dispatch.problem_from_url(url).download_checker_cpp()
+                if not checker_out_path.exists():
+                    is_checker_modified = True
+                else:
+                    with open(checker_cpp_path, "rb") as fh:
+                        if fh.read() != checker:
+                            is_checker_modified = True
+
+                if is_checker_modified:
+                    # compile する
+                    with open(checker_cpp_path, "wb") as f:
+                        f.write(checker)
+                    include_directory = pathlib.Path('.verify-helper/include')
+                    include_directory.mkdir(parents=True, exist_ok=True)
+                    if not (include_directory / 'testlib.h').exists():
+                        with open(include_directory / 'testlib.h', 'wb') as f:
+                            subprocess.call(['curl', 'https://raw.githubusercontent.com/MikeMirzayanov/testlib/master/testlib.h'], stdout=f)
+                    exec_command([utils.CXX, *shlex.split(utils.CXXFLAGS), '-I', '.', '-I', str(include_directory), '-o', str(checker_out_path), str(checker_cpp_path)])
+
+            # compile the ./a.out
+            exec_command([cxx, *shlex.split(utils.CXXFLAGS), '-I', '.', '-o', shlex.quote(str(directory / 'a.out')), shlex.quote(str(path))])
+
+            # run test using oj
             command = ['oj', 'test', '-c', shlex.quote(str(directory / 'a.out')), '-d', shlex.quote(str(directory / 'test')), '--tle', '60']
             if 'judge.yosupo.jp' in url:
-                checker = onlinejudge.dispatch.problem_from_url(url).download_checker_cpp()
-                with open(directory / "checker.cpp", "wb") as f:
-                    f.write(checker)
-
-                with open(directory / 'testlib.h', 'wb') as f:
-                    subprocess.call(['curl', 'https://raw.githubusercontent.com/MikeMirzayanov/testlib/master/testlib.h'], stdout=f)
-
-                exec_command([cxx, *cxxflags, '-I', '.', '-o', str(directory / 'checker.out'), str(directory / 'checker.cpp')])
                 command += ['--judge-command', shlex.quote(str(directory / 'checker.out'))]
-
             if 'ERROR' in macros:
                 command += ['-e', shlex.split(macros['ERROR'])[0]]
             if jobs != 1:

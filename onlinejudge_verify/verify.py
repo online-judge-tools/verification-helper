@@ -6,7 +6,6 @@ import pathlib
 import resource
 import shlex
 import subprocess
-import sys
 import time
 from logging import getLogger
 from typing import *
@@ -105,7 +104,7 @@ def main(paths: List[pathlib.Path], *, marker: utils.VerificationMarker, timeout
         if timeout is not None and time.time() - start > timeout:
             break
 
-    # failするテストがあったらexitcodeを1にする
+    # failするテストがあったらraiseする
     if len(failed_test_paths) > 0:
         logger.error('%d test failed', len(failed_test_paths))
         for path in failed_test_paths:

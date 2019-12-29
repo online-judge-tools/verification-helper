@@ -110,4 +110,4 @@ def main(paths: List[pathlib.Path], *, marker: utils.VerificationMarker, timeout
         logger.error('%d test failed', len(failed_test_paths))
         for path in failed_test_paths:
             logger.error('failed: %s', str(path))
-        sys.exit(1)
+        raise Exception('{} test failed'.format(len(failed_test_paths)))

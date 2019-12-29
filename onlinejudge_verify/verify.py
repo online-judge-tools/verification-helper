@@ -6,6 +6,7 @@ import pathlib
 import resource
 import shlex
 import subprocess
+import sys
 import time
 from logging import getLogger
 from typing import *
@@ -45,6 +46,8 @@ def main(paths: List[pathlib.Path], *, marker: utils.VerificationMarker, timeout
         compilers.append('clang++')
 
     cxxflags = shlex.split(os.environ.get('CXXFLAGS', '-std=c++17 -O2 -Wall -g'))
+
+    failed_test_paths = []  # type: List[pathlib.Path]
 
     start = time.time()
     for path in paths:
@@ -91,6 +94,7 @@ def main(paths: List[pathlib.Path], *, marker: utils.VerificationMarker, timeout
             except:
                 marker.mark_failed(path)
                 verified = False
+                failed_test_paths.append(path)
                 # failするテストが複数ある場合に後続のテストを継続させるため、raiseして処理を終わらせるのではなくbreakする
                 break
 
@@ -100,3 +104,10 @@ def main(paths: List[pathlib.Path], *, marker: utils.VerificationMarker, timeout
         # to prevent taking too long; we may fail to use the results of verification due to expired tokens
         if timeout is not None and time.time() - start > timeout:
             break
+
+    # failするテストがあったらexitcodeを1にする
+    if len(failed_test_paths) > 0:
+        logger.error('%d test failed', len(failed_test_paths))
+        for path in failed_test_paths:
+            logger.error('failed: %s', str(path))
+        sys.exit(1)

@@ -164,7 +164,7 @@ def main(args: Optional[List[str]] = None) -> None:
     parser = get_parser()
     parsed = parser.parse_args(args)
 
-    if parsed.jobs is not None:
+    if getattr(parsed, 'jobs', None) is not None:
         # 先に並列で読み込みしておく
         utils.get_verification_marker(jobs=parsed.jobs)
 

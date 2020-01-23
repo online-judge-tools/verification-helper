@@ -59,7 +59,7 @@ class VerificationMarker(object):
             with open(str(self.json_path)) as fh:
                 data = json.load(fh)
             for path, timestamp in data.items():
-                if path == '~' and timestamp == 'dummy':
+                if path == '~' and timestamp == 'dummy':  # for backward compatibility
                     continue
                 self.old_timestamps[pathlib.Path(path)] = datetime.datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S %z')
 
@@ -89,7 +89,7 @@ class VerificationMarker(object):
     def save_timestamps(self) -> None:
         if self.old_timestamps == self.new_timestamps:
             return
-        data = {'~': 'dummy'}
+        data = {}
         for path, timestamp in self.new_timestamps.items():
             data[str(path)] = timestamp.strftime('%Y-%m-%d %H:%M:%S %z')
         with open(str(self.json_path), 'w') as fh:

@@ -20,7 +20,7 @@ import yaml
 
 logger = getLogger(__name__)
 
-package = 'onlinejudge_verify.data'
+package = 'onlinejudge_verify_resources'
 assets_site_header_txt = pkg_resources.resource_string(package, 'assets/site-header.txt')
 deployed_assets = [
     {

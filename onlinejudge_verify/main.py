@@ -13,10 +13,6 @@ import onlinejudge_verify.bundle
 import onlinejudge_verify.docs
 import onlinejudge_verify.utils as utils
 import onlinejudge_verify.verify
-import pkg_resources
-
-package = 'onlinejudge_verify.data'
-verify_yml = pkg_resources.resource_string(package, 'verify.yml')
 
 logger = getLogger(__name__)
 

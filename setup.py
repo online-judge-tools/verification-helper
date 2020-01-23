@@ -15,12 +15,9 @@ setup(
         'online-judge-tools >= 7.4.*',
         'setuptools',
     ],
-    packages=find_packages(exclude=('tests', 'docs')) + ['onlinejudge_verify.data'],
-    package_dir={
-        'onlinejudge_verify.data': 'data',
-    },
+    packages=find_packages(exclude=('tests', 'docs')),
     package_data={
-        'onlinejudge_verify.data': ['*', 'assets/*', 'assets/css/*', 'assets/js/*'],
+        'onlinejudge_verify_resources': ['*', 'assets/*', 'assets/css/*', 'assets/js/*'],
     },
     entry_points={
         'console_scripts': [

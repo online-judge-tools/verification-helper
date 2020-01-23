@@ -51,7 +51,7 @@ $ oj-verify bundle main.cpp
 
 #### ドキュメント生成
 
-以下のコマンドを実行すると、ドキュメントが生成されます。例: [https://kmyk.github.io/online-judge-verify-helper/ ![GitHub Pages](https://img.shields.io/static/v1?label=GitHub+Pages&message=+&color=brightgreen&logo=github)](https://kmyk.github.io/online-judge-verify-helper/)
+以下のコマンドを実行すると `.verify-helper/markdown/` にドキュメントが生成されます。例: [https://kmyk.github.io/online-judge-verify-helper/ ![GitHub Pages](https://img.shields.io/static/v1?label=GitHub+Pages&message=+&color=brightgreen&logo=github)](https://kmyk.github.io/online-judge-verify-helper/)
 
 ``` console
 $ oj-verify docs

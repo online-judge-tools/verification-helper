@@ -57,7 +57,7 @@ def subcommand_run(paths: List[pathlib.Path], *, jobs: int = 1) -> None:
 
     if not paths:
         for path in pathlib.Path.cwd().glob('**/*.test.*'):
-            if path.suffix not in ('.html', '.md'):
+            if onlinejudge_verify.languages.get(path):
                 paths.append(path)
         paths = sorted(paths)
     try:

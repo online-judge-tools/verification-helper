@@ -145,7 +145,7 @@ def subcommand_docs() -> None:
             onlinejudge_verify.docs.main(html=False, force=True)
 
             logger.info('upload documents...')
-            push_documents_to_gh_pages(src_dir=pathlib.Path('md-output'))
+            push_documents_to_gh_pages(src_dir=pathlib.Path('.verify-helper/markdown'))
 
     else:
         logger.info('generate documents...')

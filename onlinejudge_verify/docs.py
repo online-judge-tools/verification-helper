@@ -495,7 +495,7 @@ class MarkdownTopPage(MarkdownPage):
 
 
 class PagesBuilder:
-    def __init__(self, *, cpp_source_pathstr: str, md_destination_pathstr: str = './md-output', config: Dict[str, Any] = {}) -> None:
+    def __init__(self, *, cpp_source_pathstr: str, md_destination_pathstr: str = '.verify-helper/markdown', config: Dict[str, Any] = {}) -> None:
         cpp_source_path = pathlib.Path(cpp_source_pathstr).resolve()
         md_destination_path = pathlib.Path(md_destination_pathstr).resolve()
 

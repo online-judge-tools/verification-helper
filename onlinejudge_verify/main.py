@@ -9,9 +9,9 @@ import sys
 from logging import DEBUG, basicConfig, getLogger
 from typing import *
 
-import onlinejudge_verify.bundle
 import onlinejudge_verify.docs
-import onlinejudge_verify.utils as utils
+import onlinejudge_verify.languages
+import onlinejudge_verify.marker
 import onlinejudge_verify.verify
 
 logger = getLogger(__name__)
@@ -56,9 +56,12 @@ def subcommand_run(paths: List[pathlib.Path], *, jobs: int = 1) -> None:
     timeout = 10 * 60 if 'GITHUB_ACTION' in os.environ else math.inf
 
     if not paths:
-        paths = sorted(map(pathlib.Path, glob.glob('**/*.test.cpp', recursive=True)))
+        for path in pathlib.Path.cwd().glob('**/*.test.*'):
+            if path.suffix not in ('.html', '.md'):
+                paths.append(path)
+        paths = sorted(paths)
     try:
-        with utils.get_verification_marker() as marker:
+        with onlinejudge_verify.marker.get_verification_marker() as marker:
             onlinejudge_verify.verify.main(paths, marker=marker, timeout=timeout, jobs=jobs)
     finally:
         # push results even if some tests failed
@@ -77,7 +80,7 @@ def push_timestamp_to_branch() -> None:
     logger.info('$ git add .verify-helper && git commit && git push')
     subprocess.check_call(['git', 'config', '--global', 'user.name', 'GitHub'])
     subprocess.check_call(['git', 'config', '--global', 'user.email', 'noreply@github.com'])
-    subprocess.check_call(['git', 'add', utils.get_verification_marker().json_path])
+    subprocess.check_call(['git', 'add', onlinejudge_verify.marker.get_verification_marker().json_path])
     if subprocess.run(['git', 'diff', '--quiet', '--staged']).returncode:
         message = '[auto-verifier] verify commit {}'.format(os.environ['GITHUB_SHA'])
         subprocess.check_call(['git', 'commit', '-m', message])
@@ -150,9 +153,9 @@ def subcommand_docs() -> None:
 
 
 def subcommand_bundle(path: pathlib.Path, *, iquote: pathlib.Path) -> None:
-    bundler = onlinejudge_verify.bundle.Bundler(iquotes=[iquote])
-    bundler.update(path)
-    sys.stdout.buffer.write(bundler.get())
+    language = onlinejudge_verify.languages.get(path)
+    assert language is not None
+    sys.stdout.buffer.write(language.bundle(path, basedir=iquote))
 
 
 def main(args: Optional[List[str]] = None) -> None:
@@ -162,7 +165,7 @@ def main(args: Optional[List[str]] = None) -> None:
 
     if getattr(parsed, 'jobs', None) is not None:
         # 先に並列で読み込みしておく
-        utils.get_verification_marker(jobs=parsed.jobs)
+        onlinejudge_verify.marker.get_verification_marker(jobs=parsed.jobs)
 
     if parsed.subcommand == 'all':
         try:

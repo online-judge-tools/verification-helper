@@ -14,6 +14,7 @@ setup(
         'pyyaml',
         'online-judge-tools >= 7.4.*',
         'setuptools',
+        'toml',
     ],
     packages=find_packages(exclude=('tests', 'docs')),
     package_data={

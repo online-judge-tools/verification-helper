@@ -5,13 +5,11 @@ import functools
 import json
 import os
 import pathlib
-import re
 import shlex
 import subprocess
 from typing import *
 
-CXX = os.environ.get('CXX', 'g++')
-CXXFLAGS = os.environ.get('CXXFLAGS', '--std=c++17 -O2 -Wall -g')
+import onlinejudge_verify.languages
 
 
 class VerificationMarker(object):
@@ -29,20 +27,25 @@ class VerificationMarker(object):
 
     def get_current_timestamp(self, path: pathlib.Path) -> datetime.datetime:
         if self.use_git_timestamp:
-            return get_last_commit_time_to_verify(path, compiler=CXX)
+            return get_last_commit_time_to_verify(path)
         else:
-            timestamp = max([x.stat().st_mtime for x in list_depending_files(path, compiler=CXX)])
+            language = onlinejudge_verify.languages.get(path)
+            assert language is not None
+            timestamp = max([x.stat().st_mtime for x in language.list_dependencies(path, basedir=pathlib.Path.cwd())])
             system_local_timezone = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
             return datetime.datetime.fromtimestamp(timestamp, tz=system_local_timezone).replace(microsecond=0)  # microsecond=0 is required because it's erased on timestamps.*.json
 
     def is_verified(self, path: pathlib.Path) -> bool:
+        path = path.resolve().relative_to(pathlib.Path.cwd())
         return self.verification_statuses.get(path) == 'verified'
 
     def mark_verified(self, path: pathlib.Path) -> None:
+        path = path.resolve().relative_to(pathlib.Path.cwd())
         self.new_timestamps[path] = self.get_current_timestamp(path)
         self.verification_statuses[path] = 'verified'
 
     def is_failed(self, path: pathlib.Path) -> bool:
+        path = path.resolve().relative_to(pathlib.Path.cwd())
         if path not in self.verification_statuses:
             # verifiedの場合は必ずself.verification_status[path] == 'verified'となるのでこのifの中には入らない
             # それ以外の場合は「そもそもテストを実行していない」可能性もあるが一旦はfailedとみなす
@@ -50,6 +53,7 @@ class VerificationMarker(object):
         return self.verification_statuses[path] == 'failed'
 
     def mark_failed(self, path: pathlib.Path) -> None:
+        path = path.resolve().relative_to(pathlib.Path.cwd())
         self.verification_statuses[path] = 'failed'
 
     def load_timestamps(self, *, jobs: Optional[int] = None) -> None:
@@ -119,35 +123,10 @@ def get_verification_marker(*, jobs: Optional[int] = None) -> VerificationMarker
 
 
 @functools.lru_cache(maxsize=None)
-def _list_depending_files(path: pathlib.Path, *, compiler: str) -> List[pathlib.Path]:
-    code = r"""{} {} -I . -MD -MF /dev/stdout -MM {} | sed '1s/[^:].*: // ; s/\\$//' | xargs -n 1""".format(compiler, CXXFLAGS, shlex.quote(str(path)))
-    data = subprocess.check_output(code, shell=True)
-    return list(map(pathlib.Path, data.decode().splitlines()))
-
-
-def list_depending_files(path: pathlib.Path, *, compiler: str = CXX) -> List[pathlib.Path]:
-    return _list_depending_files(path.resolve(), compiler=compiler)
-
-
-@functools.lru_cache(maxsize=None)
-def _list_defined_macros(path: pathlib.Path, *, compiler: str) -> Dict[str, str]:
-    code = r"""{} {} -I . -dM -E {}""".format(compiler, CXXFLAGS, shlex.quote(str(path)))
-    data = subprocess.check_output(code, shell=True)
-    define = {}
-    for line in data.decode().splitlines():
-        assert line.startswith('#define ')
-        a, _, b = line[len('#define '):].partition(' ')
-        define[a] = b
-    return define
-
-
-def list_defined_macros(path: pathlib.Path, *, compiler: str = CXX) -> Dict[str, str]:
-    return _list_defined_macros(path.resolve(), compiler=compiler)
-
-
-@functools.lru_cache(maxsize=None)
-def _get_last_commit_time_to_verify(path: pathlib.Path, *, compiler: str) -> datetime.datetime:
-    depending_files = list_depending_files(path, compiler=compiler)
+def _get_last_commit_time_to_verify(path: pathlib.Path) -> datetime.datetime:
+    language = onlinejudge_verify.languages.get(path)
+    assert language is not None
+    depending_files = language.list_dependencies(path, basedir=pathlib.Path.cwd())
     code = ['git', 'log', '-1', '--date=iso', '--pretty=%ad', '--'] + list(map(lambda x: shlex.quote(str(x)), depending_files))
     timestamp = subprocess.check_output(code).decode().strip()
     if not timestamp:
@@ -155,26 +134,5 @@ def _get_last_commit_time_to_verify(path: pathlib.Path, *, compiler: str) -> dat
     return datetime.datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S %z')
 
 
-def get_last_commit_time_to_verify(path: pathlib.Path, *, compiler: str = CXX) -> datetime.datetime:
-    return _get_last_commit_time_to_verify(path.resolve(), compiler=compiler)
-
-
-@functools.lru_cache(maxsize=None)
-def _get_uncommented_code(path: pathlib.Path, *, iquotes_options: str, compiler: str) -> bytes:
-    command = """{} {} -fpreprocessed -dD -E {}""".format(compiler, iquotes_options, shlex.quote(str(path)))
-    return subprocess.check_output(command, shell=True)
-
-
-def get_uncommented_code(path: pathlib.Path, *, iquotes: List[pathlib.Path], compiler: str = CXX) -> bytes:
-    iquotes_options = ' '.join(map(lambda iquote: '-I {}'.format(shlex.quote(str(iquote.resolve()))), iquotes))
-    code = _get_uncommented_code(path.resolve(), iquotes_options=iquotes_options, compiler=compiler)
-    lines = []  # type: List[bytes]
-    for line in code.splitlines(keepends=True):
-        m = re.match(rb'# (\d+) ".*"', line.rstrip())
-        if m:
-            lineno = int(m.group(1))
-            while len(lines) + 1 < lineno:
-                lines.append(b'\n')
-        else:
-            lines.append(line)
-    return b''.join(lines)
+def get_last_commit_time_to_verify(path: pathlib.Path) -> datetime.datetime:
+    return _get_last_commit_time_to_verify(path.resolve())

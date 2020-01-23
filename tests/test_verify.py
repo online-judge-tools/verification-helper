@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from typing import *
 
-import onlinejudge_verify.utils as utils
+import onlinejudge_verify.marker
 import onlinejudge_verify.verify as verify
 
 
@@ -49,7 +49,7 @@ class TestStringMethods(unittest.TestCase):
         with load_files(files) as tempdir:
             with chdir(tempdir):
                 timestamps_path = tempdir / 'timestamps.json'
-                with utils.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
+                with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
                     verify.main(paths, marker=marker)
                 with open(str(timestamps_path)) as fh:
                     timestamps = json.load(fh)
@@ -72,7 +72,7 @@ class TestStringMethods(unittest.TestCase):
         with load_files(files) as tempdir:
             with chdir(tempdir):
                 timestamps_path = tempdir / 'timestamps.json'
-                with utils.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
+                with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
                     self.assertRaises(Exception, lambda: verify.main(paths, marker=marker))
                 with open(str(timestamps_path)) as fh:
                     timestamps = json.load(fh)

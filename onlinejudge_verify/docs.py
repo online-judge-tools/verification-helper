@@ -13,8 +13,8 @@ from logging import getLogger
 from typing import IO, Any, Dict, List, Tuple
 
 import markdown
-import onlinejudge_verify.bundle
-import onlinejudge_verify.utils as utils
+import onlinejudge_verify.languages
+import onlinejudge_verify.marker
 import pkg_resources
 import yaml
 
@@ -133,8 +133,10 @@ class CppFile:
         self.docs = self.to_abspath(self.docs)
 
         # pathlib 型に直し、相対パスである場合は絶対パスに直す
+        language = onlinejudge_verify.languages.get(self.file_path)
+        assert language is not None
         depends_list = self.parser.get_contents_by_tag(r'@depends')
-        depends_list.extend(map(str, utils.list_depending_files(self.file_path, compiler='g++')))
+        depends_list.extend(map(str, language.list_dependencies(self.file_path, basedir=pathlib.Path.cwd())))
         depends_list.extend(self.parser.get_contents_by_tag(r'#define REQUIRES', l_pat=r'"', r_pat=r'"'))
         depends_list.extend(self.parser.get_contents_by_tag(r'#define DEPENDS', l_pat=r'"', r_pat=r'"'))
         self.depends = [pathlib.Path(path) for path in depends_list]
@@ -143,8 +145,8 @@ class CppFile:
 
         self.required = []
         # 表示するverification statusを決める
-        is_verified = utils.get_verification_marker().is_verified(self.file_path.relative_to(self.source_path))
-        is_failed = utils.get_verification_marker().is_failed(self.file_path.relative_to(self.source_path))
+        is_verified = onlinejudge_verify.marker.get_verification_marker().is_verified(self.file_path.relative_to(self.source_path))
+        is_failed = onlinejudge_verify.marker.get_verification_marker().is_failed(self.file_path.relative_to(self.source_path))
         if is_verified:
             self.verification_status = VerificationStatus.VERIFIED
         elif is_failed:
@@ -249,7 +251,7 @@ class MarkdownArticle(MarkdownPage):
         top_page_category_link = back_to_top_link + '#' + hashlib.md5(category.encode()).hexdigest()
         if categorize: file_object.write('* category: {}\n'.format(self.get_linktag(category, top_page_category_link)).encode())
         github_link = '{{ site.github.repository_url }}' + '/blob/{}/{}'.format('master', str(self.file_class.file_path.relative_to(self.file_class.source_path)))
-        file_object.write('* {}\n    - Last commit date: {}\n'.format(self.get_linktag('View this file on GitHub', github_link), utils.get_verification_marker().get_current_timestamp(self.file_class.file_path)).encode())
+        file_object.write('* {}\n    - Last commit date: {}\n'.format(self.get_linktag('View this file on GitHub', github_link), onlinejudge_verify.marker.get_verification_marker().get_current_timestamp(self.file_class.file_path)).encode())
         file_object.write(b'\n\n')
 
     def write_contents(self, file_object: IO, path_to_title: 'OrderedDict[pathlib.Path, str]', path_to_verification: Dict[pathlib.Path, VerificationStatus]) -> None:

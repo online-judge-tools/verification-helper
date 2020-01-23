@@ -1,0 +1,21 @@
+name: format
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up Python
+      uses: actions/setup-python@v1
+
+    - name: Install dependencies
+      run: pip3 install .[dev]
+
+    - name: Run tests
+      run: |
+        oj-verify -h
+        python3 setup.py test

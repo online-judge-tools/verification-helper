@@ -114,7 +114,7 @@ class OtherLanguage(Language):
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
         command = self.config['list_dependencies'].format(path=str(path), basedir=str(basedir))
         text = subprocess.check_output(shlex.split(command))
-        dependencies = []
+        dependencies = [path]
         for line in text.splitlines():
             dependencies.append(pathlib.Path(line.decode()))
         return dependencies

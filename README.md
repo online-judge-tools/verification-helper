@@ -68,6 +68,7 @@ TeX 記法の数式 (例: `$O(N \sum_i A_i)$`) の [MathJax](https://www.mathjax
 -   高速化したい場合は頑張れば全体で 100 倍速ぐらいにできます: <https://kmyk.github.io/online-judge-verify-helper/speedup.html>
 -   GitHub Actions から online-judge-verify-helper を呼び出すといった通常想定される利用法においては MIT License に関する著作権表示は要求されません ([詳細](https://github.com/kmyk/online-judge-verify-helper/issues/34))
 -   これはライブラリを効率良く verify するためのツールであり、コードの検査や整形をするためのツールではありません。必要なら [clang-format](https://clang.llvm.org/docs/ClangFormat.html) などの formatter や [cppcheck](http://cppcheck.sourceforge.net/) などの linter を利用してください
+-   言語は C++ 以外でも利用可能です (例: [examples/circle.test.awk](https://github.com/kmyk/online-judge-verify-helper/tree/master/examples/circle.test.awk))。`.verify-helper/config.toml` というファイルを作ってコンパイルや実行のためのコマンドを書いてください (例: [.verify-helper/config.toml](https://github.com/kmyk/online-judge-verify-helper/blob/master/.verify-helper/config.toml))
 
 ## Authors
 

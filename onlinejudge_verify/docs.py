@@ -534,7 +534,7 @@ class PagesBuilder:
 
     def build_config(self, md_destination_path: pathlib.Path) -> None:
         # デフォルト値
-        self.config.setdefault('theme', 'jekyll-theme-dinky')
+        self.config.setdefault('theme', 'jekyll-theme-minimal')
         self.config['docs'].setdefault('toc', False)
         self.config['docs'].setdefault('html', False)
         self.config['docs'].setdefault('categorize_library', True)

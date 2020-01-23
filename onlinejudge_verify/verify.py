@@ -93,6 +93,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], jobs: int) -> bool:
                 exec_command([CXX, *shlex.split(CXXFLAGS), '-I', '.', '-I', str(include_directory), '-o', str(checker_out_path), str(checker_cpp_path)])
 
         # compile the ./a.out
+        language.compile(path, basedir=pathlib.Path.cwd(), tempdir=directory)
         execute = ' '.join(language.get_execute_command(path, basedir=pathlib.Path.cwd(), tempdir=directory))  # TODO: use shlex.join added in Python 3.8
 
         # run test using oj

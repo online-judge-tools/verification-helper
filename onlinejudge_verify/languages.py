@@ -45,8 +45,8 @@ def _cplusplus_list_depending_files(path: pathlib.Path, *, compiler: str) -> Lis
 
 @functools.lru_cache(maxsize=None)
 def _cplusplus_list_defined_macros(path: pathlib.Path, *, compiler: str) -> Dict[str, str]:
-    code = r"""{} -dM -E {}""".format(compiler, shlex.quote(str(path)))
-    data = subprocess.check_output(code, shell=True)
+    command = [*shlex.split(compiler), '-dM', '-E', str(path)]
+    data = subprocess.check_output(command)
     define = {}
     for line in data.decode().splitlines():
         assert line.startswith('#define ')
@@ -66,7 +66,7 @@ class CPlusPlusLanguage(Language):
         self.CXXFLAGS = CXXFLAGS
 
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
-        command = [self.CXX, *shlex.split(self.CXXFLAGS), '-I', str(basedir), '-o', shlex.quote(str(tempdir / 'a.out')), shlex.quote(str(path))]
+        command = [self.CXX, *shlex.split(self.CXXFLAGS), '-I', str(basedir), '-o', str(tempdir / 'a.out'), str(path)]
         logger.info('$ %s', ' '.join(command))
         subprocess.check_call(command)
 

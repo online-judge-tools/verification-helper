@@ -1,4 +1,4 @@
-name: format
+name: test
 
 on: [push, pull_request]
 

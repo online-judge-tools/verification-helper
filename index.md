@@ -38,6 +38,7 @@ layout: default
 
 ### examples
 
+* :heavy_check_mark: <a href="library/examples/circle.awk.html">examples/circle.awk</a>
 * :warning: <a href="library/examples/failed_to_bundle.hpp.html">examples/failed_to_bundle.hpp</a>
 * :heavy_check_mark: <a href="library/examples/macros.hpp.html">examples/macros.hpp</a>
 * :heavy_check_mark: <a href="library/examples/monoids.hpp.html">examples/monoids.hpp</a>
@@ -49,6 +50,7 @@ layout: default
 ## Verify Files
 
 * :heavy_check_mark: <a href="verify/example.test.cpp.html">example.test.cpp</a>
+* :heavy_check_mark: <a href="verify/examples/circle.test.awk.html">examples/circle.test.awk</a>
 * :heavy_check_mark: <a href="verify/examples/develop.test.cpp.html">examples/develop.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/include_relative.test.cpp.html">examples/include_relative.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/precision.test.cpp.html">examples/precision.test.cpp</a>

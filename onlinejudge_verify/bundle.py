@@ -1,12 +1,35 @@
 # Python Version: 3.x
+import functools
+import os
 import pathlib
 import re
+import shlex
+import subprocess
 from logging import getLogger
 from typing import *
 
-import onlinejudge_verify.utils as utils
-
 logger = getLogger(__name__)
+
+
+@functools.lru_cache(maxsize=None)
+def _get_uncommented_code(path: pathlib.Path, *, iquotes_options: str, compiler: str) -> bytes:
+    command = """{} {} -fpreprocessed -dD -E {}""".format(compiler, iquotes_options, shlex.quote(str(path)))
+    return subprocess.check_output(command, shell=True)
+
+
+def get_uncommented_code(path: pathlib.Path, *, iquotes: List[pathlib.Path], compiler: str) -> bytes:
+    iquotes_options = ' '.join(map(lambda iquote: '-I {}'.format(shlex.quote(str(iquote.resolve()))), iquotes))
+    code = _get_uncommented_code(path.resolve(), iquotes_options=iquotes_options, compiler=compiler)
+    lines = []  # type: List[bytes]
+    for line in code.splitlines(keepends=True):
+        m = re.match(rb'# (\d+) ".*"', line.rstrip())
+        if m:
+            lineno = int(m.group(1))
+            while len(lines) + 1 < lineno:
+                lines.append(b'\n')
+        else:
+            lines.append(line)
+    return b''.join(lines)
 
 
 class BundleError(Exception):
@@ -24,12 +47,14 @@ class Bundler(object):
     pragma_once: Set[pathlib.Path]
     result_lines: List[bytes]
     path_stack: Set[pathlib.Path]
+    compiler: str
 
     def __init__(self, *, iquotes: List[pathlib.Path] = []) -> None:
         self.iquotes = iquotes
         self.pragma_once = set()
         self.result_lines = []
         self.path_stack = set()
+        self.compiler = os.environ.get('CXX', 'g++')
 
     # これをしないと __FILE__ や __LINE__ が壊れる
     def _line(self, line: int, path: pathlib.Path) -> None:
@@ -73,7 +98,7 @@ class Bundler(object):
             preprocess_if_nest = 0
 
             lines = code.splitlines(keepends=True)
-            uncommented_lines = utils.get_uncommented_code(path, iquotes=self.iquotes).splitlines(keepends=True)
+            uncommented_lines = get_uncommented_code(path, iquotes=self.iquotes, compiler=self.compiler).splitlines(keepends=True)
             uncommented_lines.extend([b''] * (len(lines) - len(uncommented_lines)))  # trailing comment lines are removed
             assert len(lines) == len(uncommented_lines)
             self._line(1, path)

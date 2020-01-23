@@ -10,7 +10,8 @@ import time
 from logging import getLogger
 from typing import *
 
-import onlinejudge_verify.utils as utils
+import onlinejudge_verify.languages
+import onlinejudge_verify.marker
 
 import onlinejudge
 
@@ -31,7 +32,86 @@ def exec_command(command: List[str]):
             os.chdir(str(cwd))
 
 
-def main(paths: List[pathlib.Path], *, marker: utils.VerificationMarker, timeout: float = math.inf, jobs: int = 1) -> None:
+def verify_file(path: pathlib.Path, *, compilers: List[str], jobs: int) -> bool:
+    logger.info('verify: %s', path)
+
+    language_ = onlinejudge_verify.languages.get(path)
+    if language_ is None:
+        logger.error('unsupported language')
+        return False
+
+    if isinstance(language_, onlinejudge_verify.languages.CPlusPlusLanguage) and 'CXX' not in os.environ:
+        matrix: List[onlinejudge_verify.languages.Language] = [
+            onlinejudge_verify.languages.CPlusPlusLanguage(CXX='g++'),
+            onlinejudge_verify.languages.CPlusPlusLanguage(CXX='clang++'),
+        ]
+    else:
+        matrix = [language_]
+    for language in matrix:
+
+        macros = language.list_attributes(path, basedir=pathlib.Path.cwd())
+        if 'IGNORE' in macros:
+            continue
+        assert 'PROBLEM' in macros
+        url = macros['PROBLEM']
+        problem = onlinejudge.dispatch.problem_from_url(url)
+        logger.info('problem: %s', url)
+
+        directory = pathlib.Path('.verify-helper/cache') / hashlib.md5(url.encode()).hexdigest()
+        if not (directory / 'test').exists():
+            directory.mkdir(parents=True)
+            exec_command(['sleep', '2'])
+            exec_command(['oj', 'download', '--system', '-d', shlex.quote(str(directory / 'test')), url])
+
+        # Library Checker の場合は checker.out を compile する
+        if isinstance(problem, onlinejudge.service.library_checker.LibraryCheckerProblem):
+            # TODO: Library Checker の generate.py に compile してもらってその結果を使うようにする
+            checker_out_path = directory / 'checker.out'
+            checker_cpp_path = directory / 'checker.cpp'
+
+            # 再 compile が必要か確認
+            is_checker_modified = False
+            checker = onlinejudge.dispatch.problem_from_url(url).download_checker_cpp()
+            if not checker_out_path.exists():
+                is_checker_modified = True
+            else:
+                with open(checker_cpp_path, "rb") as fh:
+                    if fh.read() != checker:
+                        is_checker_modified = True
+
+            if is_checker_modified:
+                # compile する
+                with open(checker_cpp_path, "wb") as f:
+                    f.write(checker)
+                include_directory = pathlib.Path('.verify-helper/include')
+                include_directory.mkdir(parents=True, exist_ok=True)
+                if not (include_directory / 'testlib.h').exists():
+                    with open(include_directory / 'testlib.h', 'wb') as f:
+                        subprocess.call(['curl', 'https://raw.githubusercontent.com/MikeMirzayanov/testlib/master/testlib.h'], stdout=f)
+                CXX = os.environ.get('CXX', 'g++')
+                CXXFLAGS = os.environ.get('CXXFLAGS', '--std=c++17 -O2 -Wall -g')
+                exec_command([CXX, *shlex.split(CXXFLAGS), '-I', '.', '-I', str(include_directory), '-o', str(checker_out_path), str(checker_cpp_path)])
+
+        # compile the ./a.out
+        execute = ' '.join(language.get_execute_command(path, basedir=pathlib.Path.cwd(), tempdir=directory))  # TODO: use shlex.join added in Python 3.8
+
+        # run test using oj
+        command = ['oj', 'test', '-c', execute, '-d', shlex.quote(str(directory / 'test')), '--tle', '60']
+        if isinstance(problem, onlinejudge.service.library_checker.LibraryCheckerProblem):
+            command += ['--judge-command', shlex.quote(str(directory / 'checker.out'))]
+        if 'ERROR' in macros:
+            command += ['-e', macros['ERROR']]
+        if jobs != 1:
+            command += ['-j', str(jobs)]
+        try:
+            exec_command(command)
+        except:
+            return False
+
+    return True
+
+
+def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.VerificationMarker, timeout: float = math.inf, jobs: int = 1) -> None:
     try:
         resource.setrlimit(resource.RLIMIT_STACK, (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
     except:
@@ -44,78 +124,20 @@ def main(paths: List[pathlib.Path], *, marker: utils.VerificationMarker, timeout
         compilers.append('g++')
         compilers.append('clang++')
 
-    failed_test_paths = []  # type: List[pathlib.Path]
+    failed_test_paths: List[pathlib.Path] = []
 
     start = time.time()
     for path in paths:
         if marker.is_verified(path):
             continue
 
-        logger.info('verify %s', path)
-        verified = True
-        for cxx in compilers:
-            macros = utils.list_defined_macros(path, compiler=cxx)
-
-            if 'IGNORE' in macros:
-                continue
-
-            assert ('PROBLEM' in macros)
-            url = shlex.split(macros['PROBLEM'])[0]
-            directory = pathlib.Path('.verify-helper/cache') / hashlib.md5(url.encode()).hexdigest()
-
-            if not directory.exists():
-                directory.mkdir(parents=True)
-                exec_command(['sleep', '2'])
-                exec_command(['oj', 'download', '--system', '-d', shlex.quote(str(directory / 'test')), url])
-
-            # Library Checker の場合は checker.out を compile する
-            if 'judge.yosupo.jp' in url:
-                checker_out_path = directory / 'checker.out'
-                checker_cpp_path = directory / 'checker.cpp'
-
-                # 再 compile が必要か確認
-                is_checker_modified = False
-                checker = onlinejudge.dispatch.problem_from_url(url).download_checker_cpp()
-                if not checker_out_path.exists():
-                    is_checker_modified = True
-                else:
-                    with open(checker_cpp_path, "rb") as fh:
-                        if fh.read() != checker:
-                            is_checker_modified = True
-
-                if is_checker_modified:
-                    # compile する
-                    with open(checker_cpp_path, "wb") as f:
-                        f.write(checker)
-                    include_directory = pathlib.Path('.verify-helper/include')
-                    include_directory.mkdir(parents=True, exist_ok=True)
-                    if not (include_directory / 'testlib.h').exists():
-                        with open(include_directory / 'testlib.h', 'wb') as f:
-                            subprocess.call(['curl', 'https://raw.githubusercontent.com/MikeMirzayanov/testlib/master/testlib.h'], stdout=f)
-                    exec_command([utils.CXX, *shlex.split(utils.CXXFLAGS), '-I', '.', '-I', str(include_directory), '-o', str(checker_out_path), str(checker_cpp_path)])
-
-            # compile the ./a.out
-            exec_command([cxx, *shlex.split(utils.CXXFLAGS), '-I', '.', '-o', shlex.quote(str(directory / 'a.out')), shlex.quote(str(path))])
-
-            # run test using oj
-            command = ['oj', 'test', '-c', shlex.quote(str(directory / 'a.out')), '-d', shlex.quote(str(directory / 'test')), '--tle', '60']
-            if 'judge.yosupo.jp' in url:
-                command += ['--judge-command', shlex.quote(str(directory / 'checker.out'))]
-            if 'ERROR' in macros:
-                command += ['-e', shlex.split(macros['ERROR'])[0]]
-            if jobs != 1:
-                command += ['-j', str(jobs)]
-            try:
-                exec_command(command)
-            except:
-                marker.mark_failed(path)
-                verified = False
-                failed_test_paths.append(path)
-                # failするテストが複数ある場合に後続のテストを継続させるため、raiseして処理を終わらせるのではなくbreakする
-                break
+        verified = verify_file(path, compilers=compilers, jobs=jobs)
 
         if verified:
             marker.mark_verified(path)
+        else:
+            marker.mark_failed(path)
+            failed_test_paths.append(path)
 
         # to prevent taking too long; we may fail to use the results of verification due to expired tokens
         if timeout is not None and time.time() - start > timeout:

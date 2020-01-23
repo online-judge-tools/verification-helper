@@ -280,16 +280,16 @@ class MarkdownArticle(MarkdownPage):
                     raise FileNotFoundError('{} seems not to exist in path_to_title'.format(depends))
                 title = path_to_title[depends]
 
-                file_type = 'verify' if re.match(r'^.*\.test\.(cpp|hpp|cc)$', str(depends)) else 'library'
+                file_type = 'verify' if '.test.' in str(depends) else 'library'
                 link = self.get_link(self.get_destination(depends, file_type)) + '.html'
                 file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
             file_object.write(b'\n\n')
 
-        required_file_list = [f for f in self.file_class.required if not re.match(r'^.*\.test\.(cpp|hpp|cc)$', str(f))]
-        verified_file_list = [f for f in self.file_class.required if re.match(r'^.*\.test\.(cpp|hpp|cc)$', str(f))]
+        required_file_list = [f for f in self.file_class.required if '.test.' not in str(f)]
+        verified_file_list = [f for f in self.file_class.required if '.test.' in str(f)]
 
         # ビルド対象ファイルが test.cpp の場合、それに依存している test.cpp ファイルは Verified ではなく Required に入れる
-        if re.match(r'^.*\.test\.(cpp|hpp|cc)$', str(self.file_class.file_path)):
+        if '.test.' in str(self.file_class.file_path):
             required_file_list.extend(verified_file_list)
             verified_file_list = []
 
@@ -308,7 +308,7 @@ class MarkdownArticle(MarkdownPage):
                     raise FileNotFoundError('{} seems not to exist in path_to_title'.format(required))
                 title = path_to_title[required]
 
-                file_type = 'verify' if re.match(r'^.*\.test\.(cpp|hpp|cc)$', str(required)) else 'library'
+                file_type = 'verify' if '.test.' in str(required) else 'library'
                 link = self.get_link(self.get_destination(required, file_type)) + '.html'
                 file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
             file_object.write(b'\n\n')
@@ -505,8 +505,8 @@ class PagesBuilder:
         self.build_config(md_destination_path)
 
         # ビルド対象ファイル一覧
-        self.verify_files = self.get_files(cpp_source_path, r'^.*\.test\.(cpp|hpp|cc)$')
-        self.library_files = self.get_files(cpp_source_path, r'^.*\.(cpp|hpp|cc)$', ignored_files=self.verify_files)
+        self.verify_files = self.get_files(cpp_source_path, is_verify=True)
+        self.library_files = self.get_files(cpp_source_path, ignored_files=self.verify_files)
 
         # ファイルまでの絶対パス <-> タイトル
         self.title_to_path = self.map_title2path()
@@ -564,15 +564,17 @@ class PagesBuilder:
 
     # source_path 内にあって拡張子末尾が extension であるファイル一覧
     # ignored_files に含まれるならば無視
-    def get_files(self, source_path: pathlib.Path, extension: str, *, ignored_files: 'OrderedDict[pathlib.Path, CppFile]' = OrderedDict()) -> 'OrderedDict[pathlib.Path, CppFile]':
-        match_result = [p for p in source_path.glob(r'./**/*') if re.search(extension, str(p))]
+    def get_files(self, source_path: pathlib.Path, *, is_verify: bool = False, ignored_files: 'OrderedDict[pathlib.Path, CppFile]' = OrderedDict()) -> 'OrderedDict[pathlib.Path, CppFile]':
         files = {}
-        for matched_file in match_result:
-            if any([matched_file.samefile(ignored_file) for ignored_file in ignored_files]):
-                continue
-            if not self.is_ignored(matched_file):
-                matched_file = matched_file.resolve()
-                files[matched_file] = CppFile(matched_file, source_path)
+        for path in source_path.glob(r'**/*'):
+            if onlinejudge_verify.languages.get(path):
+                if is_verify and '.test.' not in str(path):
+                    continue
+                if any([path.samefile(ignored_file) for ignored_file in ignored_files]):
+                    continue
+                if not self.is_ignored(path):
+                    path = path.resolve()
+                    files[path] = CppFile(path, source_path)
         files = OrderedDict(sorted(files.items(), key=lambda x: x[0]))
         return files
 
@@ -692,7 +694,7 @@ class PagesBuilder:
             # cpp_fileを必要としている .test.cpp のstatusのlist
             required_verification_statuses = []
             for verify in cpp_class.required:
-                if re.match(r'^.*\.test\.(cpp|hpp|cc)$', str(verify)):
+                if '.test.' in str(verify):
                     required_verification_statuses.append(result[verify])
             # verification statusを解決する
             if len(required_verification_statuses) == 0:

@@ -44,7 +44,7 @@ def subcommand_run(paths: List[pathlib.Path], *, jobs: int = 1) -> None:
     :raises Exception: if test.sh fails
     """
 
-    does_push = 'GITHUB_ACTION' in os.environ and os.environ.get('GITHUB_REF', '').startswith('refs/heads/')  # NOTE: $GITHUB_REF may be refs/pull/... or refs/tags/...
+    does_push = 'GITHUB_ACTION' in os.environ and 'GITHUB_TOKEN' in os.environ and os.environ.get('GITHUB_REF', '').startswith('refs/heads/')  # NOTE: $GITHUB_REF may be refs/pull/... or refs/tags/...
     if does_push:
         # checkout in advance to push
         branch = os.environ['GITHUB_REF'][len('refs/heads/'):]
@@ -139,7 +139,7 @@ def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-p
 
 
 def subcommand_docs() -> None:
-    if 'GITHUB_ACTION' in os.environ:
+    if 'GITHUB_ACTION' in os.environ and 'GITHUB_TOKEN' in os.environ:
         if os.environ['GITHUB_REF'] == 'refs/heads/master':
             logger.info('generate documents...')
             onlinejudge_verify.docs.main(html=False, force=True)

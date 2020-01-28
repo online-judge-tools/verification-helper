@@ -27,6 +27,7 @@ def get_parser() -> argparse.ArgumentParser:
     subparser = subparsers.add_parser('run')
     subparser.add_argument('path', nargs='*', type=pathlib.Path)
     subparser.add_argument('-j', '--jobs', type=int, default=1)
+    subparser.add_argument('-t', '--terminate', action='store_true')
 
     subparser = subparsers.add_parser('init')
 
@@ -39,12 +40,12 @@ def get_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def subcommand_run(paths: List[pathlib.Path], *, jobs: int = 1) -> None:
+def subcommand_run(paths: List[pathlib.Path], *, jobs: int = 1, does_push: bool = True) -> None:
     """
     :raises Exception: if test.sh fails
     """
 
-    does_push = 'GITHUB_ACTION' in os.environ and os.environ.get('GITHUB_REF', '').startswith('refs/heads/')  # NOTE: $GITHUB_REF may be refs/pull/... or refs/tags/...
+    does_push = does_push and 'GITHUB_ACTION' in os.environ and os.environ.get('GITHUB_REF', '').startswith('refs/heads/')  # NOTE: $GITHUB_REF may be refs/pull/... or refs/tags/...
     if does_push:
         # checkout in advance to push
         branch = os.environ['GITHUB_REF'][len('refs/heads/'):]
@@ -175,7 +176,7 @@ def main(args: Optional[List[str]] = None) -> None:
             subcommand_docs()
 
     elif parsed.subcommand == 'run':
-        subcommand_run(paths=parsed.path, jobs=parsed.jobs)
+        subcommand_run(paths=parsed.path, jobs=parsed.jobs, does_push=(not parsed.terminate))
 
     elif parsed.subcommand == 'bundle':
         subcommand_bundle(parsed.path, iquote=parsed.iquote)

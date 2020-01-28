@@ -5,7 +5,7 @@
 [![PyPI](https://img.shields.io/pypi/v/online-judge-verify-helper)](https://pypi.org/project/online-judge-verify-helper/)
 [![LICENSE](https://img.shields.io/pypi/l/online-judge-verify-helper.svg)](https://github.com/kmyk/online-judge-verify-helper/blob/master/LICENSE)
 
-[English Version](README.en.md)
+[README in English](README.md)
 
 ## なにこれ
 

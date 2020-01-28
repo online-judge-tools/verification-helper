@@ -5,7 +5,7 @@
 [![PyPI](https://img.shields.io/pypi/v/online-judge-verify-helper)](https://pypi.org/project/online-judge-verify-helper/)
 [![LICENSE](https://img.shields.io/pypi/l/online-judge-verify-helper.svg)](https://github.com/kmyk/online-judge-verify-helper/blob/master/LICENSE)
 
-[日本語バージョン](README.md)
+[README 日本語バージョン](README.ja.md)
 
 ## What is this?
 

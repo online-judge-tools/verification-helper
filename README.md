@@ -5,75 +5,75 @@
 [![PyPI](https://img.shields.io/pypi/v/online-judge-verify-helper)](https://pypi.org/project/online-judge-verify-helper/)
 [![LICENSE](https://img.shields.io/pypi/l/online-judge-verify-helper.svg)](https://github.com/kmyk/online-judge-verify-helper/blob/master/LICENSE)
 
-[English Version](README.en.md)
+[日本語バージョン](README.md)
 
-## なにこれ
+## What is this?
 
-競プロライブラリの verify をお手軽に自動化するためのツールです。
+This is a tool to easily automate the verify process of your code library for competitive programming.
 
-## 使い方
+## How to use
 
-### 競プロライブラリのリポジトリに設定する
+### Set up the repository for the library
 
-これ読んで: <https://kmyk.github.io/online-judge-verify-helper/installer.html>
+Please read this (Japanese): <https://kmyk.github.io/online-judge-verify-helper/installer.html>
 
-### 手元で実行する
+### Running the program
 
-#### インストール
+#### Installation
 
 ``` console
 $ pip3 install online-judge-verify-helper
 ```
 
-#### verify 自動実行
+#### Automating the verification
 
-まず `.test.cpp` という拡張子の名前のファイルに `#define PROBLEM "https://judge.yosupo.jp/problem/unionfind"` のような形で verify 用問題の URL を書いておきます。このとき、次のコマンドで verify できているかを確認してくれます。
+First, add the problem URL to be used to verify the library in the file ending with `.test.cpp` as follows (`#define PROBLEM "https://judge.yosupo.jp/problem/unionfind"`). Then, run the following command to check if the verification can be performed.
 
 ``` console
 $ oj-verify run
 ```
 
-利用できる問題は主に [Library Checker](https://judge.yosupo.jp/) の問題と [Aizu Online Judge](https://onlinejudge.u-aizu.ac.jp/home) の問題です。
-[HackerRank](https://www.hackerrank.com/) の問題もたぶん動きますが保証はしません。
-その他サービスについてはテストケースが利用できる形で公開されていないために対応していません。
+Currently, problems on [Library Checker](https://judge.yosupo.jp/) and [Aizu Online Judge](https://onlinejudge.u-aizu.ac.jp/home) are supported. It is probable that problems on [HackerRank](https://www.hackerrank.com/) can also be used, but it is not guaranteed at the moment.
 
-#### `#include` の自動展開
+Other judging platforms do not currently publish the test cases in usable forms, and so are not currently supported.
 
-与えられたファイル中の `#include "foo.hpp"` の形の include 文を展開して出力します。
-JavaScript で言うところの [webpack](https://webpack.js.org/) のような機能であり、ファイル分割をしても実際のオンラインジャッジへの提出が困難にならないようにするために存在しています。
-以下のように実行します。
+#### Autoexpansion of `#include`s
+
+The `include` statements in your files in the form of `#include "foo.hpp"` can be expanded,
+similar to the functionality provided by [webpack](https://webpack.js.org) for JavaScript. This is to solve the problems that most online judges do not support submitting multiple files.
+The function can be used by running the following command:
 
 ``` console
 $ oj-verify bundle main.cpp
 ```
 
-競プロライブラリのディレクトリの外側にいる状態で実行する場合は `-I path/to/your/library` のように指定してください。
+If your competitive programming library resides outside the current directory, please specify the flag in the form of `-I path/to/your/library`.
 
-`#pragma once` などの [include guard](https://ja.wikibooks.org/wiki/More_C%2B%2B_Idioms/%E3%82%A4%E3%83%B3%E3%82%AF%E3%83%AB%E3%83%BC%E3%83%89%E3%82%AC%E3%83%BC%E3%83%89%E3%83%9E%E3%82%AF%E3%83%AD%28Include_Guard_Macro%29) に部分的に対応しています。複数回の include の対象になっているが出力には一度のみ含まれてほしいようなファイルがあれば、その 1 行目に `#pragma once` と書いておいてください。
+[Include guards](https://ja.wikibooks.org/wiki/More_C%2B%2B_Idioms/%E3%82%A4%E3%83%B3%E3%82%AF%E3%83%AB%E3%83%BC%E3%83%89%E3%82%AC%E3%83%BC%E3%83%89%E3%83%9E%E3%82%AF%E3%83%AD%28Include_Guard_Macro%29) like `#pragma once` are partially supported. If you have files that will be included multiple times but you only want them to appear once in the generated code, add `#pragma once` to the first line of the files.
 
-#### ドキュメント生成
+#### Generating Documentation
 
-以下のコマンドを実行すると `.verify-helper/markdown/` にドキュメントが生成されます。例: [https://kmyk.github.io/online-judge-verify-helper/ ![GitHub Pages](https://img.shields.io/static/v1?label=GitHub+Pages&message=+&color=brightgreen&logo=github)](https://kmyk.github.io/online-judge-verify-helper/)
+Run the following command to generate documentation in `.verify-helper/markdown/`. Example: [https://kmyk.github.io/online-judge-verify-helper/ ![GitHub Pages](https://img.shields.io/static/v1?label=GitHub+Pages&message=+&color=brightgreen&logo=github)](https://kmyk.github.io/online-judge-verify-helper/)
 
 ``` console
 $ oj-verify docs
 ```
 
-ドキュメント生成時に [Doxygen](http://www.doxygen.jp/) 風のコメントが見つかれば、それらは自動で利用されます。
-TeX 記法の数式 (例: `$O(N \sum_i A_i)$`) の [MathJax](https://www.mathjax.org/) による表示にも対応しています。
-(TODO: どのようなコメントが認識されるかについてのドキュメントを書く)
+If documentation generators like [Doxygen](http://www.doxygen.jp) are found when generating documentation, they will be automatically used.
+TeX expressions like `$(N \sum_i A_i)$` are also supported by the [MathJax](https://www.mathjax.org/) library.
+(TODO: document what commands are recognized)
 
 ## Tips
 
--   ライブラリを verify するための問題が見つからないときは他の人のライブラリを参考にするとよいでしょう。`online-judge-verify-helper` のユーザの一覧は <https://github.com/search?q=online-judge-verify-helper+path%3A.github> から見ることができます
--   ライブラリを verify するための問題がそれでも見つからないときは [Library Checker](https://judge.yosupo.jp/) に問題を追加してください
--   高速化したい場合は頑張れば全体で 100 倍速ぐらいにできます: <https://kmyk.github.io/online-judge-verify-helper/speedup.html>
--   GitHub Actions から online-judge-verify-helper を呼び出すといった通常想定される利用法においては MIT License に関する著作権表示は要求されません ([詳細](https://github.com/kmyk/online-judge-verify-helper/issues/34))
--   これはライブラリを効率良く verify するためのツールであり、コードの検査や整形をするためのツールではありません。必要なら [clang-format](https://clang.llvm.org/docs/ClangFormat.html) などの formatter や [cppcheck](http://cppcheck.sourceforge.net/) などの linter を利用してください
--   言語は C++ 以外でも利用可能です (例: [examples/circle.test.awk](https://github.com/kmyk/online-judge-verify-helper/tree/master/examples/circle.test.awk))。`.verify-helper/config.toml` というファイルを作ってコンパイルや実行のためのコマンドを書いてください (例: [.verify-helper/config.toml](https://github.com/kmyk/online-judge-verify-helper/blob/master/.verify-helper/config.toml))
+-   If you cannot find problems to verify your library, you can refer to other users' libraries. You can find all users of `online-judge-verify-helper` at <https://github.com/search?q=online-judge-verify-helper+path%3A.github>.
+-   If you cannot find problems to verify your library anywhere, we suggest that you add a problem to [Library Checker](https://judge.yosupo.jp/).
+-   If you want to accelerate the verify process, you can accelerate by about 100 times: <https://kmyk.github.io/online-judge-verify-helper/speedup.html> (Japanese)
+-   You do not need to display the MIT License if you call `online-judge-verify-helper` from GitHub Actions ([Details, in Japanese](https://github.com/kmyk/online-judge-verify-helper/issues/34)).
+-   This is tool to efficiently verify your library, not to check or prettify your code. If you need such functions, you can try formatters like [clang-format](https://clang.llvm.org/docs/ClangFormat.html) or linters like [cppcheck](http://cppcheck.sourceforge.net/).
+-   Languages other than C++ are also supported (Example: [examples/circle.test.awk](https://github.com/kmyk/online-judge-verify-helper/tree/master/examples/circle.test.awk)). You need a file like `.verify-helper/config.toml` that specifies the commands for compiling and running the program (Example: [.verify-helper/config.toml](https://github.com/kmyk/online-judge-verify-helper/blob/master/.verify-helper/config.toml)).
 
 ## Authors
 
--   committer: [@kmyk](https://github.com/kmyk) (AtCoder: [kimiyuki](https://atcoder.jp/users/kimiyuki)): pip での配布や [online-judge-tools](https://github.com/kmyk/online-judge-tools) などその他の諸々の担当
--   committer: [@beet-aizu](https://github.com/beet-aizu) (AtCoder: [beet](https://atcoder.jp/users/beet)): verify 機能担当
--   committer: [@tsutaj](https://github.com/tsutaj) (AtCoder: [Tsuta_J](https://atcoder.jp/users/Tsuta_J)): documents 生成担当
+-   committer: [@kmyk](https://github.com/kmyk) (AtCoder: [kimiyuki](https://atcoder.jp/users/kimiyuki)): distribution on `pip` and miscellaneous tasks on [online-judge-tools](https://github.com/kmyk/online-judge-tools)
+-   committer: [@beet-aizu](https://github.com/beet-aizu) (AtCoder: [beet](https://atcoder.jp/users/beet)): verify function
+-   committer: [@tsutaj](https://github.com/tsutaj) (AtCoder: [Tsuta_J](https://atcoder.jp/users/Tsuta_J)): documents generation

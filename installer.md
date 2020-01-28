@@ -1,6 +1,6 @@
 # 競プロライブラリに自動で verify をしてくれる CI を簡単に設定できる Web ページ
 
-[English Version](installer.en.md)
+[English Version](installer.en.html)
 
 ## verify を自動でしてくれるように設定するには
 

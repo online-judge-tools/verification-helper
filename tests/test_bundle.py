@@ -1,9 +1,8 @@
 import pathlib
 import unittest
 
-import tests.utils
-
 import onlinejudge_verify.bundle as bundle
+import tests.utils
 
 
 class TestStringMethods(unittest.TestCase):

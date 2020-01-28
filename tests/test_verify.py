@@ -3,10 +3,9 @@ import pathlib
 import unittest
 from typing import *
 
-import tests.utils
-
 import onlinejudge_verify.marker
 import onlinejudge_verify.verify as verify
+import tests.utils
 
 
 class TestStringMethods(unittest.TestCase):

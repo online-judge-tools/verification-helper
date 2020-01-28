@@ -8,10 +8,7 @@ import tests.utils
 class TestStringMethods(unittest.TestCase):
     def test_no_newline(self) -> None:
         # 末尾に改行がないコードをincludeした時に改行が足されていることの確認
-        files = {
-            'no_newline.cpp': b'void foo() {}',
-            'example.test.cpp': b'#include "no_newline.cpp"'
-        }
+        files = {'no_newline.cpp': b'void foo() {}', 'example.test.cpp': b'#include "no_newline.cpp"'}
         path = pathlib.Path('example.test.cpp')
         with tests.utils.load_files(files) as tempdir:
             with tests.utils.chdir(tempdir):

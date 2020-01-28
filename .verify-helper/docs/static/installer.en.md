@@ -1,30 +1,30 @@
-# 競プロライブラリに自動で verify をしてくれる CI を簡単に設定できる Web ページ
+# Tool to set up automated verification CI by GitHub Actions
 
-[English Version](installer.en.html)
+[日本語バージョン](installer.html)
 
-## verify を自動でしてくれるように設定するには
+## To set up automated verification
 
-手順:
+Steps:
 
 1.  <form>
-        <label>競プロライブラリの GitHub のレポジトリの URL を右の textbox に入力: </label>
+        <label>Input the URL of the library repository in the textbox on the right: </label>
         <input type="text" id="input" placeholder="https://github.com/beet-aizu/library" value="https://github.com/beet-aizu/library" size="48">
     </form>
 
-1.  ページ <a id="output" target="_blank"></a> を開き、下の方にある緑の `Commit new file` ボタンを押す
-1.  [example.test.cpp](https://github.com/kmyk/online-judge-verify-helper/blob/master/example.test.cpp) のように `#define PROBLEM "https://..."` が書かれている `hoge.test.cpp` のようなファイル名の C++ コードを追加する (<a id="output2" target="_blank">例を自動で追加するリンク</a>)
-1.  <a id="output3" target="_blank">GitHub Actions <img id="output7"></a> のページから結果を確認する
-1.  (おまけ) `README.md` に <code id="output4"></code> と書き足す (バッチ <a id="output5" target="_blank"><img id="output6"></a> が貼られる)
+1.  Open <a id="output" target="_blank"></a> and click the green `Commit new file` button.
+1.  Add C++ source files ending with `.test.cpp` and `#define PROBLEM "https://..."` added like [example.test.cpp](https://github.com/kmyk/online-judge-verify-helper/blob/master/example.test.cpp) to the repository. (<a id="output2" target="_blank">A link to add the example file to your repository</a>)
+1.  Confirm the result from the <a id="output3" target="_blank">GitHub Actions <img id="output7"></a> page.
+1.  (Additional) Add <code id="output4"></code> to `README.md` (The badge <a id="output5" target="_blank"><img id="output6"></a> will be added)
 
-## ドキュメントが自動生成されるように設定するには
+## To set up automated documentation generator
 
-手順:
+Steps:
 
-1.  verify を自動でしてくれるように設定する
-1.  [コマンドライン用の個人アクセストークンを作成する - GitHub ヘルプ](https://help.github.com/ja/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) に従い、権限 `repo` を持った Personal Access Token を生成する
-1.  [Creating and using encrypted secrets - GitHub ヘルプ](https://help.github.com/ja/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets#creating-encrypted-secrets) に従い、作成した Personal Access Token を `GH_PAT` という名前の secret として保存する
+1.  Set up the automated verification process.
+1.  Follow the steps in [Creating a personal access token for the command line - GitHub Help](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) and generate a personal access toen with the permission `repo`.
+1.  Follow the steps in [Creating and using encrypted secrets - GitHub Help](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets) and save the generated personal access token as a secret named `GH_PAT`.
 
-(注意: この設定がなくてもドキュメントのデータ自体は自動で生成され `gh-pages` branch へ push されます。しかし GitHub Actions の制約のために GitHub Pages の更新までは行われません。その場合は `gh-pages` branch へ手動で空の commit などを push すれば GitHub Pages の更新が行われます。この制約はおそらくは GitHub Actions の設定ミスによる無限ループを抑制するためのものです。)
+(Note: even without this setting, the documentation will be generated and pushed to the `gh-pages` branch. However, because of limitations from GitHub Actions, GitHub Pages cannot be automatically updated. This can be mitigated by pushing an empty commit to trigger an update on GitHub Pages. This limitation is probably to prevent infinite loop from wrong settings in GitHub Actions.)
 
 <script>
     const data = {};

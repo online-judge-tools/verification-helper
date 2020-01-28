@@ -1,6 +1,6 @@
 # Tool to set up automated verification CI by GitHub Actions
 
-[日本語バージョン](installer.md)
+[日本語バージョン](installer.html)
 
 ## To set up automated verification
 

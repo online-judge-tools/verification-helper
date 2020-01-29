@@ -59,9 +59,19 @@ $ oj-verify bundle main.cpp
 $ oj-verify docs
 ```
 
-ドキュメント生成時に [Doxygen](http://www.doxygen.jp/) 風のコメントが見つかれば、それらは自動で利用されます。
-TeX 記法の数式 (例: `$O(N \sum_i A_i)$`) の [MathJax](https://www.mathjax.org/) による表示にも対応しています。
-(TODO: どのようなコメントが認識されるかについてのドキュメントを書く)
+ドキュメント生成時に [Doxygen](http://www.doxygen.jp/) 風のコメントが見つかれば、それらは自動で利用されます。詳しくは以下の表をご覧ください。
+
+|タグ名|説明|備考|
+|---|---|---|
+|`@title`|タイトルとして使用されます。|`@title` が指定されていないとき、`@brief` が存在するならば、最初に登場する `@brief` 要素がタイトルとして使用されます。`@brief` も存在しないならば、ファイル名がタイトルになります。|
+|`@category`|そのライブラリが属するカテゴリとして使用されます。|指定されていない場合、ディレクトリ名がカテゴリになります。|
+|`@brief`|ライブラリの説明文として使用されます。|`@title` が指定されていないときは、最初に登場する `@brief` は説明文ではなくタイトルとして使用されます。|
+|`@see`, `@sa`|このタグの直後に記載された文字列に対してリンクを張ります。参考にした Web ページなどがあるときに活用するとよいでしょう。|例: `@see https://example.com/`|
+|`@docs`|説明文が長く `@brief` タグで対応することが難しい場合、説明文が書かれた Markdown ファイルへのパスを記載すると、説明文がドキュメントに反映されます。|例: `@docs path/to/markdown.md`|
+|`@depends`|そのライブラリが依存している他のファイルをタグで明示的に記載したい場合に使用します。|C++ など一部の言語ではソフトウェア側で依存関係を自動で判定するため、記載する必要がない場合があります。|
+|`@ignore`|ドキュメント生成の対象から除外します。||
+
+また、TeX 記法の数式 (例: `$O(N \sum_i A_i)$`) の [MathJax](https://www.mathjax.org/) による表示にも対応しています。
 
 ## Tips
 
@@ -76,4 +86,4 @@ TeX 記法の数式 (例: `$O(N \sum_i A_i)$`) の [MathJax](https://www.mathjax
 
 -   committer: [@kmyk](https://github.com/kmyk) (AtCoder: [kimiyuki](https://atcoder.jp/users/kimiyuki)): pip での配布や [online-judge-tools](https://github.com/kmyk/online-judge-tools) などその他の諸々の担当
 -   committer: [@beet-aizu](https://github.com/beet-aizu) (AtCoder: [beet](https://atcoder.jp/users/beet)): verify 機能担当
--   committer: [@tsutaj](https://github.com/tsutaj) (AtCoder: [Tsuta_J](https://atcoder.jp/users/Tsuta_J)): documents 生成担当
+-   committer: [@tsutaj](https://github.com/tsutaj) (AtCoder: [tsutaj](https://atcoder.jp/users/tsutaj)): documents 生成担当

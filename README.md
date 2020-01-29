@@ -59,9 +59,19 @@ Run the following command to generate documentation in `.verify-helper/markdown/
 $ oj-verify docs
 ```
 
-If documentation generators like [Doxygen](http://www.doxygen.jp) are found when generating documentation, they will be automatically used.
+If documentation generators like [Doxygen](http://www.doxygen.jp) are found when generating documentation, they will be automatically used. Available tags are shown below.
+
+|Tag name|Description|Remarks|
+|---|---|---|
+|`@title`|Library file title|If a title was not specified, the `@brief` element which appears first is used as a title. If there was no `@brief` elements, a filename is used as a title.|
+|`@category`|Category|If a category was not specified, a directory name is used as a category.|
+|`@brief`|Description of library file|If a title was not specified, the `@brief` element which appears first is not used as a description, but it is used as a title.|
+|`@see`, `@sa`|Create a hyperlink to an URL which is written right after this tag. We recommend to use this tag when you have some reference web pages.|Usage: `@see https://example.com/`
+|`@docs`|When a description of your library is too long to handle by using `@brief` tags, you can add a description which is written in Markdown file.|Usage: `@docs path/to/markdown.md`|
+|`@depends`|You can this tag when you want to write dependencies explicitly.|This application supports the automatic recognization of dependencies for some languages such as C++, so there are some cases you need not to write this.|
+|`@ignore`|This application does not generate the documentation of the library file which this tag is specified.||
+
 TeX expressions like `$(N \sum_i A_i)$` are also supported by the [MathJax](https://www.mathjax.org/) library.
-(TODO: document what commands are recognized)
 
 ## Tips
 
@@ -76,4 +86,4 @@ TeX expressions like `$(N \sum_i A_i)$` are also supported by the [MathJax](http
 
 -   committer: [@kmyk](https://github.com/kmyk) (AtCoder: [kimiyuki](https://atcoder.jp/users/kimiyuki)): distribution on `pip` and miscellaneous tasks on [online-judge-tools](https://github.com/kmyk/online-judge-tools)
 -   committer: [@beet-aizu](https://github.com/beet-aizu) (AtCoder: [beet](https://atcoder.jp/users/beet)): verify function
--   committer: [@tsutaj](https://github.com/tsutaj) (AtCoder: [Tsuta_J](https://atcoder.jp/users/Tsuta_J)): documents generation
+-   committer: [@tsutaj](https://github.com/tsutaj) (AtCoder: [tsutaj](https://atcoder.jp/users/tsutaj)): documents generation

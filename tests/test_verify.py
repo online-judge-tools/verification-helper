@@ -1,35 +1,11 @@
-import contextlib
 import json
-import os
 import pathlib
-import tempfile
 import unittest
 from typing import *
 
 import onlinejudge_verify.marker
 import onlinejudge_verify.verify as verify
-
-
-@contextlib.contextmanager
-def load_files(files: Dict[str, bytes]) -> Iterator[pathlib.Path]:
-    with tempfile.TemporaryDirectory() as tempdir_:
-        tempdir = pathlib.Path(tempdir_)
-        for relpath, data in files.items():
-            path = tempdir / relpath
-            path.parent.mkdir(parents=True, exist_ok=True)
-            with open(str(path), "wb") as fh:
-                fh.write(data)
-        yield tempdir
-
-
-@contextlib.contextmanager
-def chdir(path: pathlib.Path) -> Iterator[None]:
-    cwd = os.getcwd()
-    try:
-        os.chdir(str(path))
-        yield
-    finally:
-        os.chdir(cwd)
+import tests.utils
 
 
 class TestStringMethods(unittest.TestCase):
@@ -46,8 +22,8 @@ class TestStringMethods(unittest.TestCase):
             ]).encode(),
         }
         paths = [pathlib.Path('example.test.cpp')]
-        with load_files(files) as tempdir:
-            with chdir(tempdir):
+        with tests.utils.load_files(files) as tempdir:
+            with tests.utils.chdir(tempdir):
                 timestamps_path = tempdir / 'timestamps.json'
                 with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
                     verify.main(paths, marker=marker)
@@ -69,8 +45,8 @@ class TestStringMethods(unittest.TestCase):
             ]).encode(),
         }
         paths = [pathlib.Path('example.test.cpp')]
-        with load_files(files) as tempdir:
-            with chdir(tempdir):
+        with tests.utils.load_files(files) as tempdir:
+            with tests.utils.chdir(tempdir):
                 timestamps_path = tempdir / 'timestamps.json'
                 with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
                     self.assertRaises(Exception, lambda: verify.main(paths, marker=marker))

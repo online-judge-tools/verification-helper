@@ -7,9 +7,8 @@ import subprocess
 from logging import getLogger
 from typing import *
 
-from onlinejudge_verify.languages.base import Language
 import onlinejudge_verify.bundle as bundle
-
+from onlinejudge_verify.languages.base import Language
 
 logger = getLogger(__name__)
 

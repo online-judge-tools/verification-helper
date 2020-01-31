@@ -9,6 +9,7 @@ from onlinejudge_verify.languages.base import Language
 
 logger = getLogger(__name__)
 
+
 class OtherLanguage(Language):
     config: Dict[str, str]
 
@@ -45,4 +46,3 @@ class OtherLanguage(Language):
         command = self.config['bundle'].format(path=str(path), basedir=str(basedir))
         logger.info('$ %s', command)
         return subprocess.check_output(shlex.split(command))
-

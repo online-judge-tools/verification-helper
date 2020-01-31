@@ -3,6 +3,7 @@ import abc
 import pathlib
 from typing import *
 
+
 class Language(object):
     @abc.abstractmethod
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:

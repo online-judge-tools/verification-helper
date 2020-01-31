@@ -1,0 +1,1 @@
+from onlinejudge_verify.languages.languages import *

@@ -35,9 +35,7 @@ def _get_csx_dependencies(path: pathlib.Path) -> Set[pathlib.Path]:
 
 def _get_csx_pragmas(path: pathlib.Path) -> Dict[str, str]:
     content = path.read_text()
-    print(content)
     matchobj = re.search(r'^\s*#pragma\s*(.+)\s+(.+)\s*$', content, flags=re.MULTILINE)
-    print(matchobj)
     res: Dict[str, str] = {}
     if matchobj is None:
         return res

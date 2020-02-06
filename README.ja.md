@@ -44,10 +44,10 @@ JavaScript で言うところの [webpack](https://webpack.js.org/) のような
 以下のように実行します。
 
 ``` console
-$ oj-verify bundle main.cpp
+$ oj-bundle main.cpp
 ```
 
-競プロライブラリのディレクトリの外側にいる状態で実行する場合は `-I path/to/your/library` のように指定してください。
+競プロライブラリのディレクトリの外側にいる状態で実行する場合は `-I path/to/your/library` のように指定してください。`alias oj-bundle='\oj-bundle -I path/to/your/library'` のようなシェルのエイリアスを貼っておくのがおすすめです。
 
 `#pragma once` などの [include guard](https://ja.wikibooks.org/wiki/More_C%2B%2B_Idioms/%E3%82%A4%E3%83%B3%E3%82%AF%E3%83%AB%E3%83%BC%E3%83%89%E3%82%AC%E3%83%BC%E3%83%89%E3%83%9E%E3%82%AF%E3%83%AD%28Include_Guard_Macro%29) に部分的に対応しています。複数回の include の対象になっているが出力には一度のみ含まれてほしいようなファイルがあれば、その 1 行目に `#pragma once` と書いておいてください。
 

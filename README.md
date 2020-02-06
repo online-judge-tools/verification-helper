@@ -44,10 +44,10 @@ similar to the functionality provided by [webpack](https://webpack.js.org) for J
 The function can be used by running the following command:
 
 ``` console
-$ oj-verify bundle main.cpp
+$ oj-bundle main.cpp
 ```
 
-If your competitive programming library resides outside the current directory, please specify the flag in the form of `-I path/to/your/library`.
+If your competitive programming library resides outside the current directory, please specify the flag in the form of `-I path/to/your/library`. I recommend make shell aliases like `alias oj-bundle='\oj-bundle -I path/to/your/library'`.
 
 [Include guards](https://ja.wikibooks.org/wiki/More_C%2B%2B_Idioms/%E3%82%A4%E3%83%B3%E3%82%AF%E3%83%AB%E3%83%BC%E3%83%89%E3%82%AC%E3%83%BC%E3%83%89%E3%83%9E%E3%82%AF%E3%83%AD%28Include_Guard_Macro%29) like `#pragma once` are partially supported. If you have files that will be included multiple times but you only want them to appear once in the generated code, add `#pragma once` to the first line of the files.
 

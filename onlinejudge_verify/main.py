@@ -28,8 +28,6 @@ def get_parser() -> argparse.ArgumentParser:
     subparser.add_argument('path', nargs='*', type=pathlib.Path)
     subparser.add_argument('-j', '--jobs', type=int, default=1)
 
-    subparser = subparsers.add_parser('init')
-
     subparser = subparsers.add_parser('bundle')
     subparser.add_argument('path', type=pathlib.Path)
     subparser.add_argument('-I', metavar='dir', type=pathlib.Path, dest='iquote', default=pathlib.Path.cwd(), help='add the directory dir to the list of directories to be searched for header files during preprocessing (default: ".")')

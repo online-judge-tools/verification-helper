@@ -337,11 +337,11 @@ class MarkdownArticle(MarkdownPage):
             file_object.write(f.read())
         file_object.write(b'\n```\n{% endraw %}\n\n')
 
+        language = onlinejudge_verify.languages.get(self.file_class.file_path)
+        assert language is not None
         try:
-            bundler = onlinejudge_verify.bundle.Bundler(iquotes=[self.cpp_source_path])
-            bundler.update(self.file_class.file_path)
-            bundled_code = bundler.get()
-        except onlinejudge_verify.bundle.BundleError:
+            bundled_code = language.bundle(self.file_class.file_path, basedir=self.cpp_source_path)
+        except Exception:
             logger.warning("failed to bundle: %s", str(self.file_class.file_path))
             bundled_code = traceback.format_exc().encode()
         file_object.write(b'<a id="bundled"></a>\n')

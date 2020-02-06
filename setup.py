@@ -9,6 +9,7 @@ setup(
     url='https://github.com/kmyk/online-judge-verify-helper',
     license='MIT License',
     description='',
+    python_requires='>=3.6',
     install_requires=[
         'markdown',
         'pyyaml',

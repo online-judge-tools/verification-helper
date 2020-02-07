@@ -74,7 +74,6 @@ def push_timestamp_to_branch() -> None:
     logger.info('$ git add .verify-helper && git commit && git push')
     subprocess.check_call(['git', 'config', '--global', 'user.name', 'GitHub'])
     subprocess.check_call(['git', 'config', '--global', 'user.email', 'noreply@github.com'])
-    subprocess.check_call(['git', 'add', '.verify-helper/.gitignore'])  # required, ないとドキュメントの push のあたりの stash とかで変になるぽい
     subprocess.check_call(['git', 'add', onlinejudge_verify.marker.get_verification_marker().json_path])
     if subprocess.run(['git', 'diff', '--quiet', '--staged']).returncode:
         message = '[auto-verifier] verify commit {}'.format(os.environ['GITHUB_SHA'])

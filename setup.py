@@ -24,6 +24,7 @@ setup(
     entry_points={
         'console_scripts': [
             'oj-verify = onlinejudge_verify.main:main',
+            'oj-bundle = onlinejudge_verify.bundle:main',
         ],
     },
 )

@@ -6,6 +6,7 @@ import os
 import pathlib
 import subprocess
 import sys
+import textwrap
 from logging import DEBUG, basicConfig, getLogger
 from typing import *
 
@@ -152,6 +153,22 @@ def subcommand_docs() -> None:
         onlinejudge_verify.docs.main(html=False, force=True)
 
 
+def generate_gitignore() -> None:
+    path = pathlib.Path('.verify-helper/.gitignore')
+    data = textwrap.dedent("""\
+        cache/
+        include/
+        markdown/
+        timestamps.local.json
+    """)
+    if path.exists():
+        with open(path) as fh:
+            if fh.read() == data:
+                return
+    with open(path, 'w') as fh:
+        fh.write(data)
+
+
 def subcommand_bundle(path: pathlib.Path, *, iquote: pathlib.Path) -> None:
     language = onlinejudge_verify.languages.get(path)
     assert language is not None
@@ -168,6 +185,7 @@ def main(args: Optional[List[str]] = None) -> None:
         onlinejudge_verify.marker.get_verification_marker(jobs=parsed.jobs)
 
     if parsed.subcommand == 'all':
+        generate_gitignore()
         try:
             subcommand_run(paths=[], jobs=parsed.jobs)
         finally:
@@ -175,12 +193,14 @@ def main(args: Optional[List[str]] = None) -> None:
             subcommand_docs()
 
     elif parsed.subcommand == 'run':
+        generate_gitignore()
         subcommand_run(paths=parsed.path, jobs=parsed.jobs)
 
     elif parsed.subcommand == 'bundle':
         subcommand_bundle(parsed.path, iquote=parsed.iquote)
 
     elif parsed.subcommand == 'docs':
+        generate_gitignore()
         subcommand_docs()
 
     else:

@@ -1,7 +1,7 @@
 import pathlib
 import unittest
 
-import onlinejudge_verify.bundle as bundle
+import onlinejudge_verify.languages.cplusplus_bundle as cplusplus_bundle
 import tests.utils
 
 
@@ -12,6 +12,6 @@ class TestStringMethods(unittest.TestCase):
         path = pathlib.Path('example.test.cpp')
         with tests.utils.load_files(files) as tempdir:
             with tests.utils.chdir(tempdir):
-                bundler = bundle.Bundler(iquotes=[tempdir])
+                bundler = cplusplus_bundle.Bundler(iquotes=[tempdir])
                 bundler.update(path)
                 self.assertIn(b'void foo() {}\n', bundler.get())

@@ -159,6 +159,7 @@ def generate_gitignore() -> None:
         with open(path) as fh:
             if fh.read() == data:
                 return
+    path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, 'w') as fh:
         fh.write(data)
 

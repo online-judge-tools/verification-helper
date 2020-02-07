@@ -104,6 +104,7 @@ def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-p
 
     # checkout gh-pages
     logger.info('$ git checkout %s', dst_branch)
+    subprocess.check_call(['rm', '.verify-helper/.gitignore'])  # required, to remove .gitignore even if it is untracked
     subprocess.check_call(['git', 'stash'])
     try:
         subprocess.check_call(['git', 'checkout', dst_branch])

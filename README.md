@@ -25,6 +25,8 @@ Please read this: <https://kmyk.github.io/online-judge-verify-helper/installer.e
 $ pip3 install online-judge-verify-helper
 ```
 
+Python 3.6 or above is required.
+
 #### Automating the verification
 
 First, add the problem URL to be used to verify the library in the file ending with `.test.cpp` as follows (`#define PROBLEM "https://judge.yosupo.jp/problem/unionfind"`). Then, run the following command to check if the verification can be performed.

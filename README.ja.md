@@ -25,6 +25,8 @@
 $ pip3 install online-judge-verify-helper
 ```
 
+Python のバージョンは 3.6 以上が必要です。
+
 #### verify 自動実行
 
 まず `.test.cpp` という拡張子の名前のファイルに `#define PROBLEM "https://judge.yosupo.jp/problem/unionfind"` のような形で verify 用問題の URL を書いておきます。このとき、次のコマンドで verify できているかを確認してくれます。

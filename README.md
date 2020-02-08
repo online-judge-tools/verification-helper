@@ -15,7 +15,7 @@ This is a tool to easily automate the verify process of your code library for co
 
 ### Set up the repository for the library
 
-Please read this: <https://kmyk.github.io/online-judge-verify-helper/installer.en.html>
+Please read this: <https://kmyk.github.io/online-judge-verify-helper/installer.html>
 
 ### Running the program
 

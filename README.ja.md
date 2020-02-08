@@ -15,7 +15,7 @@
 
 ### 競プロライブラリのリポジトリに設定する
 
-これ読んで: <https://kmyk.github.io/online-judge-verify-helper/installer.html>
+これ読んで: <https://kmyk.github.io/online-judge-verify-helper/installer.ja.html>
 
 ### 手元で実行する
 

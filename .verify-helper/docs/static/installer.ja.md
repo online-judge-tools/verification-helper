@@ -22,7 +22,7 @@
 
 1.  verify を自動でしてくれるように設定する
 1.  [コマンドライン用の個人アクセストークンを作成する - GitHub ヘルプ](https://help.github.com/ja/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) に従い、権限 `repo` を持った Personal Access Token を生成する
-1.  [Creating and using encrypted secrets - GitHub ヘルプ](https://help.github.com/ja/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets#creating-encrypted-secrets) に従い、作成した Personal Access Token を `GH_PAT` という名前の secret として保存する
+1.  [暗号化されたシークレットの作成と利用 - GitHub ヘルプ](https://help.github.com/ja/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets#creating-encrypted-secrets) に従い、作成した Personal Access Token を `GH_PAT` という名前の secret として保存する
 
 (注意: この設定がなくてもドキュメントのデータ自体は自動で生成され `gh-pages` branch へ push されます。しかし GitHub Actions の制約のために GitHub Pages の更新までは行われません。その場合は `gh-pages` branch へ手動で空の commit などを push すれば GitHub Pages の更新が行われます。この制約はおそらくは GitHub Actions の設定ミスによる無限ループを抑制するためのものです。)
 

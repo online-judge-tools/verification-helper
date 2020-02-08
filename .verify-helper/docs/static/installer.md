@@ -23,6 +23,9 @@ Steps:
 1.  Set up the automated verification process.
 1.  Follow the steps in [Creating a personal access token for the command line - GitHub Help](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line) and generate a personal access toen with the permission `repo`.
 1.  Follow the steps in [Creating and using encrypted secrets - GitHub Help](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets) and save the generated personal access token as a secret named `GH_PAT`.
+1.  Confirm the result from the <a id="output8" target="_blank">GitHub Pages <img id="output9"></a> page.
+1.  (Additional) Add <code id="output10"></code> to `README.md` (The badge <a id="output11" target="_blank"><img id="output12"></a> will be added)
+1.  (Additional) Set the URL of documents to the repository description (see: [How do you change a repository description on GitHub? - Stack Overflow](https://stackoverflow.com/questions/7757751/how-do-you-change-a-repository-description-on-github))
 
 (Note: even without this setting, the documentation will be generated and pushed to the `gh-pages` branch. However, because of limitations from GitHub Actions, GitHub Pages cannot be automatically updated. This can be mitigated by pushing an empty commit to trigger an update on GitHub Pages. This limitation is probably to prevent infinite loop from wrong settings in GitHub Actions.)
 

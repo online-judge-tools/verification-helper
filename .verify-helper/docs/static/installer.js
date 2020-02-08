@@ -44,9 +44,3 @@ function update() {
 input.addEventListener('change', update);
 input.addEventListener('keyup', update);
 update();
-
-// workaround for the Dinky theme
-output6.style.margin = 0;
-output6.style.padding = 0;
-output7.style.margin = 0;
-output7.style.padding = 0;

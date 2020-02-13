@@ -19,6 +19,7 @@ logger = getLogger(__name__)
 
 
 def exec_command(command: List[str]):
+    # NOTE: secrets like YUKICODER_TOKEN are masked
     logger.info('$ %s', ' '.join(command))
 
     cwd = pathlib.Path.cwd()

@@ -70,7 +70,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], jobs: int) -> bool:
         # run test using oj
         command = ['oj', 'test', '-c', execute, '-d', shlex.quote(str(directory / 'test')), '--tle', '60']
         if isinstance(problem, onlinejudge.service.library_checker.LibraryCheckerProblem):
-            command += ['--judge-command', problem.download_checker_binary()]
+            command += ['--judge-command', str(problem.download_checker_binary())]
         if 'ERROR' in macros:
             command += ['-e', macros['ERROR']]
         if jobs != 1:

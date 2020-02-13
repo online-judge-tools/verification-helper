@@ -71,6 +71,9 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], jobs: int) -> bool:
         command = ['oj', 'test', '-c', execute, '-d', shlex.quote(str(directory / 'test')), '--tle', '60']
         if isinstance(problem, onlinejudge.service.library_checker.LibraryCheckerProblem):
             command += ['--judge-command', str(problem.download_checker_binary())]
+        if isinstance(problem, onlinejudge.service.library_checker.LibraryCheckerProblem):
+            assert 'YUKICODER_TOKEN' in os.environ
+            command += ['--yukicoder-token', os.environ['YUKICODER_TOKEN']]
         if 'ERROR' in macros:
             command += ['-e', macros['ERROR']]
         if jobs != 1:

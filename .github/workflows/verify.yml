@@ -13,12 +13,11 @@ jobs:
       uses: actions/setup-python@v1
 
     - name: Install dependencies
-      run: pip3 install -U git+https://github.com/beet-aizu/online-judge-verify-helper.git@yukicoder_token
+      run: pip3 install -U git+https://github.com/kmyk/online-judge-verify-helper.git@master
 
     - name: Run tests
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         YUKICODER_TOKEN: ${{ secrets.YUKICODER_TOKEN }}
         GH_PAT: ${{ secrets.GH_PAT }}
-      run:
-        git clone https://github.com/kmyk/online-judge-tools;cd online-judge-tools;pip3 install -e .;cd ..;oj-verify all
+      run: oj-verify all

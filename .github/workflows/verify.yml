@@ -19,4 +19,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GH_PAT: ${{ secrets.GH_PAT }}
-      run: oj-verify all
+      run:
+        git clone https://github.com/kmyk/online-judge-tools
+        cd online-judge-tools
+        pip3 install -e .
+        cd ..
+        oj-verify all

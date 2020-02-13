@@ -61,7 +61,12 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], jobs: int) -> bool:
         if not (directory / 'test').exists():
             directory.mkdir(parents=True)
             exec_command(['sleep', '2'])
-            exec_command(['oj', 'download', '--system', '-d', shlex.quote(str(directory / 'test')), url])
+            command = ['oj', 'download', '--system', '-d', shlex.quote(str(directory / 'test')), url]
+
+            if isinstance(problem, onlinejudge.service.yukicoder.YukicoderProblem):
+                assert 'YUKICODER_TOKEN' in os.environ
+                command += ['--yukicoder-token', os.environ['YUKICODER_TOKEN']]
+            exec_command(command)
 
         # compile the ./a.out
         language.compile(path, basedir=pathlib.Path.cwd(), tempdir=directory)

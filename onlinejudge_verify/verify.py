@@ -63,35 +63,6 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], jobs: int) -> bool:
             exec_command(['sleep', '2'])
             exec_command(['oj', 'download', '--system', '-d', shlex.quote(str(directory / 'test')), url])
 
-        # Library Checker の場合は checker.out を compile する
-        if isinstance(problem, onlinejudge.service.library_checker.LibraryCheckerProblem):
-            # TODO: Library Checker の generate.py に compile してもらってその結果を使うようにする
-            checker_out_path = directory / 'checker.out'
-            checker_cpp_path = directory / 'checker.cpp'
-
-            # 再 compile が必要か確認
-            is_checker_modified = False
-            checker = onlinejudge.dispatch.problem_from_url(url).download_checker_cpp()
-            if not checker_out_path.exists():
-                is_checker_modified = True
-            else:
-                with open(checker_cpp_path, "rb") as fh:
-                    if fh.read() != checker:
-                        is_checker_modified = True
-
-            if is_checker_modified:
-                # compile する
-                with open(checker_cpp_path, "wb") as f:
-                    f.write(checker)
-                include_directory = pathlib.Path('.verify-helper/include')
-                include_directory.mkdir(parents=True, exist_ok=True)
-                if not (include_directory / 'testlib.h').exists():
-                    with open(include_directory / 'testlib.h', 'wb') as f:
-                        subprocess.call(['curl', 'https://raw.githubusercontent.com/MikeMirzayanov/testlib/master/testlib.h'], stdout=f)
-                CXX = os.environ.get('CXX', 'g++')
-                CXXFLAGS = os.environ.get('CXXFLAGS', '--std=c++17 -O2 -Wall -g')
-                exec_command([CXX, *shlex.split(CXXFLAGS), '-I', '.', '-I', str(include_directory), '-o', str(checker_out_path), str(checker_cpp_path)])
-
         # compile the ./a.out
         language.compile(path, basedir=pathlib.Path.cwd(), tempdir=directory)
         execute = ' '.join(language.get_execute_command(path, basedir=pathlib.Path.cwd(), tempdir=directory))  # TODO: use shlex.join added in Python 3.8
@@ -99,7 +70,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], jobs: int) -> bool:
         # run test using oj
         command = ['oj', 'test', '-c', execute, '-d', shlex.quote(str(directory / 'test')), '--tle', '60']
         if isinstance(problem, onlinejudge.service.library_checker.LibraryCheckerProblem):
-            command += ['--judge-command', shlex.quote(str(directory / 'checker.out'))]
+            command += ['--judge-command', problem.download_checker_binary()]
         if 'ERROR' in macros:
             command += ['-e', macros['ERROR']]
         if jobs != 1:

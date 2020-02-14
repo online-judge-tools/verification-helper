@@ -19,6 +19,7 @@ logger = getLogger(__name__)
 
 
 def exec_command(command: List[str]):
+    # NOTE: secrets like YUKICODER_TOKEN are masked
     logger.info('$ %s', ' '.join(command))
 
     cwd = pathlib.Path.cwd()
@@ -63,10 +64,14 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], jobs: int) -> bool:
             exec_command(['sleep', '2'])
             command = ['oj', 'download', '--system', '-d', shlex.quote(str(directory / 'test')), url]
 
-            if isinstance(problem, onlinejudge.service.yukicoder.YukicoderProblem):
-                assert 'YUKICODER_TOKEN' in os.environ
+            if os.environ.get('YUKICODER_TOKEN'):
                 command += ['--yukicoder-token', os.environ['YUKICODER_TOKEN']]
-            exec_command(command)
+            try:
+                exec_command(command)
+            except:
+                if isinstance(problem, onlinejudge.service.yukicoder.YukicoderProblem) and not os.environ.get('YUKICODER_TOKEN'):
+                    logger.warning('the $YUKICODER_TOKEN environment variable is not set')
+                raise
 
         # compile the ./a.out
         language.compile(path, basedir=pathlib.Path.cwd(), tempdir=directory)

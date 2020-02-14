@@ -13,7 +13,7 @@ setup(
     install_requires=[
         'markdown',
         'pyyaml',
-        'online-judge-tools >= 7.4.*',
+        'online-judge-tools >= 8.0.0',
         'setuptools',
         'toml',
     ],

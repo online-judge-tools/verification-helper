@@ -5,7 +5,7 @@ import toml
 from onlinejudge_verify.languages.base import Language
 from onlinejudge_verify.languages.cplusplus import CPlusPlusLanguage
 from onlinejudge_verify.languages.csharpscript import CSharpScriptLanguage
-from onlinejudge_verify.languages.ther import OtherLanguage
+from onlinejudge_verify.languages.other import OtherLanguage
 
 _dict: Dict[str, Language] = {}
 

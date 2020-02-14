@@ -50,6 +50,7 @@ layout: default
 ## Verify Files
 
 * :heavy_check_mark: <a href="verify/example.test.cpp.html">example.test.cpp</a>
+* :heavy_check_mark: <a href="verify/examples/3872.yukicoder.test.cpp.html">examples/3872.yukicoder.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/circle.test.awk.html">examples/circle.test.awk</a>
 * :heavy_check_mark: <a href="verify/examples/develop.test.cpp.html">examples/develop.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/include_relative.test.cpp.html">examples/include_relative.test.cpp</a>

@@ -3,19 +3,16 @@ import functools
 import os
 import pathlib
 import re
-import uuid
 import subprocess
+import uuid
 from logging import getLogger
 from typing import *
 
 from onlinejudge_verify.languages.base import Language
 
-
 logger = getLogger(__name__)
 
-
 dotnet_dll_caches_dir = pathlib.Path('.verify-helper/cache') / 'dotnet-script'
-
 
 pragma_line_caches: Dict[pathlib.Path, Set[int]] = {}
 
@@ -26,7 +23,18 @@ def _publish_csx(path: pathlib.Path) -> pathlib.Path:
     if path not in pragma_line_caches:
         pragma_line_caches[path] = set()
     filename = str(uuid.uuid4())
-    command = ['dotnet-script', 'publish', str(path), '--dll', '-n', filename, '-o', str(dotnet_dll_caches_dir), '-c', 'Release',]
+    command = [
+        'dotnet-script',
+        'publish',
+        str(path),
+        '--dll',
+        '-n',
+        filename,
+        '-o',
+        str(dotnet_dll_caches_dir),
+        '-c',
+        'Release',
+    ]
     logger.info('$ %s', ' '.join(command))
     res = subprocess.check_output(command).decode().strip().splitlines()
     for warning in res[:-1]:
@@ -60,7 +68,7 @@ def _get_csx_dependencies(path: pathlib.Path) -> Set[pathlib.Path]:
             else:
                 _resolve_dependencies(path.parent / match, deps)\
 
-    res: Set[pathlib.Path] = Set()
+    res: Set[pathlib.Path] = set()
     _resolve_dependencies(path.resolve(), res)
     return res
 

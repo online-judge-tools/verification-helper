@@ -35,9 +35,8 @@ First, add the problem URL to be used to verify the library in the file ending w
 $ oj-verify run
 ```
 
-Currently, problems on [Library Checker](https://judge.yosupo.jp/) and [Aizu Online Judge](https://onlinejudge.u-aizu.ac.jp/home) are supported. It is probable that problems on [HackerRank](https://www.hackerrank.com/) can also be used, but it is not guaranteed at the moment.
-
-Other judging platforms do not currently publish the test cases in usable forms, and so are not currently supported.
+Currently, problems on [Library Checker](https://judge.yosupo.jp/) and [Aizu Online Judge](https://onlinejudge.u-aizu.ac.jp/home) are supported.
+For the details, see <https://kmyk.github.io/online-judge-verify-helper/document.html>.
 
 #### Autoexpansion of `#include`s
 
@@ -61,25 +60,14 @@ Run the following command to generate documentation in `.verify-helper/markdown/
 $ oj-verify docs
 ```
 
-If documentation generators like [Doxygen](http://www.doxygen.jp) are found when generating documentation, they will be automatically used. Available tags are shown below.
-
-|Tag name|Description|Remarks|
-|---|---|---|
-|`@title`|Library file title|If a title was not specified, the `@brief` element which appears first is used as a title. If there was no `@brief` elements, a filename is used as a title.|
-|`@category`|Category|If a category was not specified, a directory name is used as a category.|
-|`@brief`|Description of library file|If a title was not specified, the `@brief` element which appears first is not used as a description, but it is used as a title.|
-|`@see`, `@sa`|Create a hyperlink to an URL which is written right after this tag. We recommend to use this tag when you have some reference web pages.|Usage: `@see https://example.com/`
-|`@docs`|When a description of your library is too long to handle by using `@brief` tags, you can add a description which is written in Markdown file.|Usage: `@docs path/to/markdown.md`|
-|`@depends`|You can this tag when you want to write dependencies explicitly.|This application supports the automatic recognization of dependencies for some languages such as C++, so there are some cases you need not to write this.|
-|`@ignore`|This application does not generate the documentation of the library file which this tag is specified.||
-
+If documentation generators like [Doxygen](http://www.doxygen.jp) are found when generating documentation, they will be automatically used.
 TeX expressions like `$(N \sum_i A_i)$` are also supported by the [MathJax](https://www.mathjax.org/) library.
+For the details, see <https://kmyk.github.io/online-judge-verify-helper/document.html>.
 
 ## Tips
 
 -   If you cannot find problems to verify your library, you can refer to other users' libraries. You can find all users of `online-judge-verify-helper` at <https://github.com/search?q=online-judge-verify-helper+path%3A.github>.
 -   If you cannot find problems to verify your library anywhere, we suggest that you add a problem to [Library Checker](https://judge.yosupo.jp/).
--   If you want to accelerate the verify process, you can accelerate by about 100 times: <https://kmyk.github.io/online-judge-verify-helper/speedup.html> (Japanese)
 -   You do not need to display the MIT License if you call `online-judge-verify-helper` from GitHub Actions ([Details, in Japanese](https://github.com/kmyk/online-judge-verify-helper/issues/34)).
 -   This is tool to efficiently verify your library, not to check or prettify your code. If you need such functions, you can try formatters like [clang-format](https://clang.llvm.org/docs/ClangFormat.html) or linters like [cppcheck](http://cppcheck.sourceforge.net/).
 -   Languages other than C++ are also supported (Example: [examples/circle.test.awk](https://github.com/kmyk/online-judge-verify-helper/tree/master/examples/circle.test.awk)). You need a file like `.verify-helper/config.toml` that specifies the commands for compiling and running the program (Example: [.verify-helper/config.toml](https://github.com/kmyk/online-judge-verify-helper/blob/master/.verify-helper/config.toml)).

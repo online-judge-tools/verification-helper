@@ -36,8 +36,8 @@ $ oj-verify run
 ```
 
 利用できる問題は主に [Library Checker](https://judge.yosupo.jp/) の問題と [Aizu Online Judge](https://onlinejudge.u-aizu.ac.jp/home) の問題です。
-[HackerRank](https://www.hackerrank.com/) の問題もたぶん動きますが保証はしません。
-その他サービスについてはテストケースが利用できる形で公開されていないために対応していません。
+他にもいくつかのサービスの問題が利用可能です。
+より詳しい説明は <https://kmyk.github.io/online-judge-verify-helper/document.ja.html> にあります。
 
 #### `#include` の自動展開
 
@@ -61,25 +61,14 @@ $ oj-bundle main.cpp
 $ oj-verify docs
 ```
 
-ドキュメント生成時に [Doxygen](http://www.doxygen.jp/) 風のコメントが見つかれば、それらは自動で利用されます。詳しくは以下の表をご覧ください。
-
-|タグ名|説明|備考|
-|---|---|---|
-|`@title`|タイトルとして使用されます。|`@title` が指定されていないとき、`@brief` が存在するならば、最初に登場する `@brief` 要素がタイトルとして使用されます。`@brief` も存在しないならば、ファイル名がタイトルになります。|
-|`@category`|そのライブラリが属するカテゴリとして使用されます。|指定されていない場合、ディレクトリ名がカテゴリになります。|
-|`@brief`|ライブラリの説明文として使用されます。|`@title` が指定されていないときは、最初に登場する `@brief` は説明文ではなくタイトルとして使用されます。|
-|`@see`, `@sa`|このタグの直後に記載された文字列に対してリンクを張ります。参考にした Web ページなどがあるときに活用するとよいでしょう。|例: `@see https://example.com/`|
-|`@docs`|説明文が長く `@brief` タグで対応することが難しい場合、説明文が書かれた Markdown ファイルへのパスを記載すると、説明文がドキュメントに反映されます。|例: `@docs path/to/markdown.md`|
-|`@depends`|そのライブラリが依存している他のファイルをタグで明示的に記載したい場合に使用します。|C++ など一部の言語ではソフトウェア側で依存関係を自動で判定するため、記載する必要がない場合があります。|
-|`@ignore`|ドキュメント生成の対象から除外します。||
-
+ドキュメント生成時に [Doxygen](http://www.doxygen.jp/) 風のコメントが見つかれば、それらは自動で利用されます。
 また、TeX 記法の数式 (例: `$O(N \sum_i A_i)$`) の [MathJax](https://www.mathjax.org/) による表示にも対応しています。
+より詳しい説明は <https://kmyk.github.io/online-judge-verify-helper/document.ja.html> にあります。
 
 ## Tips
 
 -   ライブラリを verify するための問題が見つからないときは他の人のライブラリを参考にするとよいでしょう。`online-judge-verify-helper` のユーザの一覧は <https://github.com/search?q=online-judge-verify-helper+path%3A.github> から見ることができます
 -   ライブラリを verify するための問題がそれでも見つからないときは [Library Checker](https://judge.yosupo.jp/) に問題を追加してください
--   高速化したい場合は頑張れば全体で 100 倍速ぐらいにできます: <https://kmyk.github.io/online-judge-verify-helper/speedup.html>
 -   GitHub Actions から online-judge-verify-helper を呼び出すといった通常想定される利用法においては MIT License に関する著作権表示は要求されません ([詳細](https://github.com/kmyk/online-judge-verify-helper/issues/34))
 -   これはライブラリを効率良く verify するためのツールであり、コードの検査や整形をするためのツールではありません。必要なら [clang-format](https://clang.llvm.org/docs/ClangFormat.html) などの formatter や [cppcheck](http://cppcheck.sourceforge.net/) などの linter を利用してください
 -   言語は C++ 以外でも利用可能です (例: [examples/circle.test.awk](https://github.com/kmyk/online-judge-verify-helper/tree/master/examples/circle.test.awk))。`.verify-helper/config.toml` というファイルを作ってコンパイルや実行のためのコマンドを書いてください (例: [.verify-helper/config.toml](https://github.com/kmyk/online-judge-verify-helper/blob/master/.verify-helper/config.toml))

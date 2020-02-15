@@ -1,6 +1,6 @@
 # The reference of Online Judge Verify Helper
 
-[日本語バージョン](https://kmyk.github.io/online-judge-verify-helper/document.html)
+[日本語バージョン](https://kmyk.github.io/online-judge-verify-helper/document.ja.html)
 
 ## Automating the verification
 

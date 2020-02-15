@@ -7,8 +7,8 @@ import subprocess
 from logging import getLogger
 from typing import *
 
-import onlinejudge_verify.bundle as bundle
 from onlinejudge_verify.languages.base import Language
+from onlinejudge_verify.languages.cplusplus_bundle import Bundler
 
 logger = getLogger(__name__)
 
@@ -59,6 +59,6 @@ class CPlusPlusLanguage(Language):
         return _cplusplus_list_depending_files(path.resolve(), compiler=compiler)
 
     def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bytes:
-        bundler = bundle.Bundler(iquotes=[basedir])
+        bundler = Bundler(iquotes=[basedir])
         bundler.update(path)
         return bundler.get()

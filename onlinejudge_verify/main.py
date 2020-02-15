@@ -5,7 +5,7 @@ import math
 import os
 import pathlib
 import subprocess
-import sys
+import textwrap
 from logging import DEBUG, basicConfig, getLogger
 from typing import *
 
@@ -27,12 +27,6 @@ def get_parser() -> argparse.ArgumentParser:
     subparser = subparsers.add_parser('run')
     subparser.add_argument('path', nargs='*', type=pathlib.Path)
     subparser.add_argument('-j', '--jobs', type=int, default=1)
-
-    subparser = subparsers.add_parser('init')
-
-    subparser = subparsers.add_parser('bundle')
-    subparser.add_argument('path', type=pathlib.Path)
-    subparser.add_argument('-I', metavar='dir', type=pathlib.Path, dest='iquote', default=pathlib.Path.cwd(), help='add the directory dir to the list of directories to be searched for header files during preprocessing (default: ".")')
 
     subparser = subparsers.add_parser('docs')
 
@@ -77,10 +71,12 @@ def push_timestamp_to_branch() -> None:
     logger.info('GITHUB_REPOSITORY = %s', os.environ['GITHUB_REPOSITORY'])
 
     # commit and push
-    logger.info('$ git add .verify-helper && git commit && git push')
     subprocess.check_call(['git', 'config', '--global', 'user.name', 'GitHub'])
     subprocess.check_call(['git', 'config', '--global', 'user.email', 'noreply@github.com'])
-    subprocess.check_call(['git', 'add', onlinejudge_verify.marker.get_verification_marker().json_path])
+    path = onlinejudge_verify.marker.get_verification_marker().json_path
+    logger.info('$ git add %s && git commit && git push', str(path))
+    if path.exists():
+        subprocess.check_call(['git', 'add', str(path)])
     if subprocess.run(['git', 'diff', '--quiet', '--staged']).returncode:
         message = '[auto-verifier] verify commit {}'.format(os.environ['GITHUB_SHA'])
         subprocess.check_call(['git', 'commit', '-m', message])
@@ -110,6 +106,7 @@ def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-p
 
     # checkout gh-pages
     logger.info('$ git checkout %s', dst_branch)
+    subprocess.check_call(['rm', '.verify-helper/.gitignore'])  # required, to remove .gitignore even if it is untracked
     subprocess.check_call(['git', 'stash'])
     try:
         subprocess.check_call(['git', 'checkout', dst_branch])
@@ -152,10 +149,21 @@ def subcommand_docs() -> None:
         onlinejudge_verify.docs.main(html=False, force=True)
 
 
-def subcommand_bundle(path: pathlib.Path, *, iquote: pathlib.Path) -> None:
-    language = onlinejudge_verify.languages.get(path)
-    assert language is not None
-    sys.stdout.buffer.write(language.bundle(path, basedir=iquote))
+def generate_gitignore() -> None:
+    path = pathlib.Path('.verify-helper/.gitignore')
+    data = textwrap.dedent("""\
+        cache/
+        include/
+        markdown/
+        timestamps.local.json
+    """)
+    if path.exists():
+        with open(path) as fh:
+            if fh.read() == data:
+                return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, 'w') as fh:
+        fh.write(data)
 
 
 def main(args: Optional[List[str]] = None) -> None:
@@ -168,6 +176,7 @@ def main(args: Optional[List[str]] = None) -> None:
         onlinejudge_verify.marker.get_verification_marker(jobs=parsed.jobs)
 
     if parsed.subcommand == 'all':
+        generate_gitignore()
         try:
             subcommand_run(paths=[], jobs=parsed.jobs)
         finally:
@@ -175,12 +184,11 @@ def main(args: Optional[List[str]] = None) -> None:
             subcommand_docs()
 
     elif parsed.subcommand == 'run':
+        generate_gitignore()
         subcommand_run(paths=parsed.path, jobs=parsed.jobs)
 
-    elif parsed.subcommand == 'bundle':
-        subcommand_bundle(parsed.path, iquote=parsed.iquote)
-
     elif parsed.subcommand == 'docs':
+        generate_gitignore()
         subcommand_docs()
 
     else:

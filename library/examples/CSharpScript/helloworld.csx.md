@@ -21,19 +21,24 @@ layout: default
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-balloon-js@1.1.2/jquery.balloon.min.js" integrity="sha256-ZEYs9VrgAeNuPvs15E39OsyOJaIkXEEt10fzxJ20+2I=" crossorigin="anonymous"></script>
-<script type="text/javascript" src="../../assets/js/copy-button.js"></script>
-<link rel="stylesheet" href="../../assets/css/copy-button.css" />
+<script type="text/javascript" src="../../../assets/js/copy-button.js"></script>
+<link rel="stylesheet" href="../../../assets/css/copy-button.css" />
 
 
-# :warning: examples/failed_to_bundle.hpp
+# :x: examples/CSharpScript/helloworld.csx
 
-<a href="../../index.html">Back to top page</a>
+<a href="../../../index.html">Back to top page</a>
 
-* category: <a href="../../index.html#bfebe34154a0dfd9fc7b447fc9ed74e9">examples</a>
-* <a href="{{ site.github.repository_url }}/blob/master/examples/failed_to_bundle.hpp">View this file on GitHub</a>
-    - Last commit date: 2019-12-17 15:26:37+09:00
+* category: <a href="../../../index.html#433c524e1d7a3bcf80702df144efa9e9">examples/CSharpScript</a>
+* <a href="{{ site.github.repository_url }}/blob/master/examples/CSharpScript/helloworld.csx">View this file on GitHub</a>
+    - Last commit date: 2020-02-01 22:42:27+09:00
 
 
+
+
+## Verified with
+
+* :x: <a href="../../../verify/examples/CSharpScript/csharpscript.test.csx.html">examples/CSharpScript/csharpscript.test.csx</a>
 
 
 ## Code
@@ -41,11 +46,7 @@ layout: default
 <a id="unbundled"></a>
 {% raw %}
 ```cpp
-#define HOGE
-#ifndef HOGE
-#include "examples/failed_to_bundle.hpp"  // this is a self-include at a glance
-#endif
-
+Console.WriteLine("Hello World");
 ```
 {% endraw %}
 
@@ -82,14 +83,12 @@ During handling of the above exception, another exception occurred:
 Traceback (most recent call last):
   File "/opt/hostedtoolcache/Python/3.8.1/x64/lib/python3.8/site-packages/onlinejudge_verify/docs.py", line 343, in write_contents
     bundled_code = language.bundle(self.file_class.file_path, basedir=self.cpp_source_path)
-  File "/opt/hostedtoolcache/Python/3.8.1/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/cplusplus.py", line 63, in bundle
-    bundler.update(path)
-  File "/opt/hostedtoolcache/Python/3.8.1/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/cplusplus_bundle.py", line 181, in update
-    raise BundleError(path, i + 1, "unable to process #include in #if / #ifdef / #ifndef other than include guards")
-onlinejudge_verify.languages.cplusplus_bundle.BundleError: examples/failed_to_bundle.hpp: line 3: unable to process #include in #if / #ifdef / #ifndef other than include guards
+  File "/opt/hostedtoolcache/Python/3.8.1/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/csharpscript.py", line 108, in bundle
+    raise NotImplementedError
+NotImplementedError
 
 ```
 {% endraw %}
 
-<a href="../../index.html">Back to top page</a>
+<a href="../../../index.html">Back to top page</a>
 

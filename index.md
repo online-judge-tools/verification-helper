@@ -47,10 +47,18 @@ layout: default
 * :heavy_check_mark: <a href="library/examples/union_find_tree.hpp.html">a Union-Find Tree <small>(examples/union_find_tree.hpp)</small></a>
 
 
+<div id="433c524e1d7a3bcf80702df144efa9e9"></div>
+
+### examples/CSharpScript
+
+* :x: <a href="library/examples/CSharpScript/helloworld.csx.html">examples/CSharpScript/helloworld.csx</a>
+
+
 ## Verify Files
 
 * :heavy_check_mark: <a href="verify/example.test.cpp.html">example.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/3872.yukicoder.test.cpp.html">examples/3872.yukicoder.test.cpp</a>
+* :x: <a href="verify/examples/CSharpScript/csharpscript.test.csx.html">examples/CSharpScript/csharpscript.test.csx</a>
 * :heavy_check_mark: <a href="verify/examples/circle.test.awk.html">examples/circle.test.awk</a>
 * :heavy_check_mark: <a href="verify/examples/develop.test.cpp.html">examples/develop.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/include_relative.test.cpp.html">examples/include_relative.test.cpp</a>

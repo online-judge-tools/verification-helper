@@ -31,6 +31,10 @@ deployed_assets = [
         'path': pathlib.Path('assets/js/copy-button.js'),
         'data': pkg_resources.resource_string(package, 'assets/js/copy-button.js'),
     },
+    {
+        'path': pathlib.Path('Gemfile'),
+        'data': pkg_resources.resource_string(package, 'Gemfile'),
+    },
 ]
 
 

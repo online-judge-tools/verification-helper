@@ -127,7 +127,7 @@ def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.Verific
 
     # failするテストがあったらraiseする
     if len(failed_test_paths) > 0:
-        logger.error('%d test failed', len(failed_test_paths))
+        logger.error('%d tests failed', len(failed_test_paths))
         for path in failed_test_paths:
             logger.error('failed: %s', str(path))
-        raise Exception('{} test failed'.format(len(failed_test_paths)))
+        raise Exception('{} tests failed: {}'.format(len(failed_test_paths), [str(path.relative_to(pathlib.Path.cwd())) for path in failed_test_paths]))

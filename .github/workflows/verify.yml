@@ -15,6 +15,15 @@ jobs:
     - name: Install dependencies
       run: pip3 install -U git+https://github.com/kmyk/online-judge-verify-helper.git@master
 
+
+    # if you want to verify csharp script file.
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.1.101'  # SDK Version to use.
+    - name: Install dependencies (C#)
+        run: dotnet tool install -g dotnet-script
+
+
     - name: Run tests
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

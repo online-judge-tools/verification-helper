@@ -25,7 +25,7 @@ layout: default
 <link rel="stylesheet" href="../../../assets/css/copy-button.css" />
 
 
-# :x: examples/CSharpScript/csharpscript.test.csx
+# :heavy_check_mark: examples/CSharpScript/csharpscript.test.csx
 
 <a href="../../../index.html">Back to top page</a>
 
@@ -37,7 +37,7 @@ layout: default
 
 ## Depends on
 
-* :x: <a href="../../../library/examples/CSharpScript/helloworld.csx.html">examples/CSharpScript/helloworld.csx</a>
+* :heavy_check_mark: <a href="../../../library/examples/CSharpScript/helloworld.csx.html">examples/CSharpScript/helloworld.csx</a>
 
 
 ## Code
@@ -54,33 +54,6 @@ layout: default
 <a id="bundled"></a>
 {% raw %}
 ```cpp
-Traceback (most recent call last):
-  File "/opt/hostedtoolcache/Python/3.8.1/x64/lib/python3.8/site-packages/onlinejudge_verify/main.py", line 181, in main
-    subcommand_run(paths=[], jobs=parsed.jobs)
-  File "/opt/hostedtoolcache/Python/3.8.1/x64/lib/python3.8/site-packages/onlinejudge_verify/main.py", line 59, in subcommand_run
-    onlinejudge_verify.verify.main(paths, marker=marker, timeout=timeout, jobs=jobs)
-  File "/opt/hostedtoolcache/Python/3.8.1/x64/lib/python3.8/site-packages/onlinejudge_verify/verify.py", line 116, in main
-    verified = verify_file(path, compilers=compilers, jobs=jobs)
-  File "/opt/hostedtoolcache/Python/3.8.1/x64/lib/python3.8/site-packages/onlinejudge_verify/verify.py", line 53, in verify_file
-    macros = language.list_attributes(path, basedir=pathlib.Path.cwd())
-  File "/opt/hostedtoolcache/Python/3.8.1/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/csharpscript.py", line 102, in list_attributes
-    return _get_csx_pragmas(path.resolve())
-  File "/opt/hostedtoolcache/Python/3.8.1/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/csharpscript.py", line 80, in _get_csx_pragmas
-    _publish_csx(path)
-  File "/opt/hostedtoolcache/Python/3.8.1/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/csharpscript.py", line 39, in _publish_csx
-    res = subprocess.check_output(command).decode().strip().splitlines()
-  File "/opt/hostedtoolcache/Python/3.8.1/x64/lib/python3.8/subprocess.py", line 411, in check_output
-    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
-  File "/opt/hostedtoolcache/Python/3.8.1/x64/lib/python3.8/subprocess.py", line 489, in run
-    with Popen(*popenargs, **kwargs) as process:
-  File "/opt/hostedtoolcache/Python/3.8.1/x64/lib/python3.8/subprocess.py", line 854, in __init__
-    self._execute_child(args, executable, preexec_fn, close_fds,
-  File "/opt/hostedtoolcache/Python/3.8.1/x64/lib/python3.8/subprocess.py", line 1702, in _execute_child
-    raise child_exception_type(errno_num, err_msg, err_filename)
-FileNotFoundError: [Errno 2] No such file or directory: 'dotnet-script'
-
-During handling of the above exception, another exception occurred:
-
 Traceback (most recent call last):
   File "/opt/hostedtoolcache/Python/3.8.1/x64/lib/python3.8/site-packages/onlinejudge_verify/docs.py", line 343, in write_contents
     bundled_code = language.bundle(self.file_class.file_path, basedir=self.cpp_source_path)

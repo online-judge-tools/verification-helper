@@ -1,8 +1,11 @@
 {
 "example.test.cpp": "2019-11-24 04:01:18 +0900",
 "examples/3872.yukicoder.test.cpp": "2020-02-13 20:43:50 +0900",
-"examples/CSharpScript/csharpscript.test.csx": "2020-02-01 22:42:27 +0900",
 "examples/circle.test.awk": "2020-01-24 05:02:31 +0900",
+"examples/csharpscript/helloworld.test.csx": "2020-02-16 04:29:07 +0900",
+"examples/csharpscript/segment_tree.point_set_range_composite.test.csx": "2020-02-16 04:32:52 +0900",
+"examples/csharpscript/segment_tree.range_minimum_query.test.csx": "2020-02-16 04:32:52 +0900",
+"examples/csharpscript/segment_tree.range_sum_query.test.csx": "2020-02-16 04:32:52 +0900",
 "examples/develop.test.cpp": "2019-12-09 19:29:58 +0900",
 "examples/gcc_only.test.cpp": "2019-11-29 11:36:33 +0900",
 "examples/include_relative.test.cpp": "2019-12-04 23:29:22 +0900",

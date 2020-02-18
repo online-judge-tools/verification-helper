@@ -190,7 +190,7 @@ def main(args: Optional[List[str]] = None) -> None:
 
     elif parsed.subcommand == 'run':
         generate_gitignore()
-        subcommand_run(paths=[], timeout=parsed.timeout, tle=parsed.tle, jobs=parsed.jobs)
+        subcommand_run(paths=parsed.path, timeout=parsed.timeout, tle=parsed.tle, jobs=parsed.jobs)
 
     elif parsed.subcommand == 'docs':
         generate_gitignore()

@@ -33,7 +33,7 @@ def exec_command(command: List[str]):
             os.chdir(str(cwd))
 
 
-def verify_file(path: pathlib.Path, *, compilers: List[str], jobs: int) -> bool:
+def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: int) -> bool:
     logger.info('verify: %s', path)
 
     language_ = onlinejudge_verify.languages.get(path)
@@ -78,7 +78,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], jobs: int) -> bool:
         execute = ' '.join(language.get_execute_command(path, basedir=pathlib.Path.cwd(), tempdir=directory))  # TODO: use shlex.join added in Python 3.8
 
         # run test using oj
-        command = ['oj', 'test', '-c', execute, '-d', shlex.quote(str(directory / 'test')), '--tle', '60']
+        command = ['oj', 'test', '-c', execute, '-d', shlex.quote(str(directory / 'test')), '--tle', str(tle)]
         if isinstance(problem, onlinejudge.service.library_checker.LibraryCheckerProblem):
             command += ['--judge-command', str(problem.download_checker_binary())]
         if 'ERROR' in macros:
@@ -93,7 +93,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], jobs: int) -> bool:
     return True
 
 
-def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.VerificationMarker, timeout: float = math.inf, jobs: int = 1) -> None:
+def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.VerificationMarker, timeout: float = math.inf, tle: float = 60, jobs: int = 1) -> None:
     try:
         resource.setrlimit(resource.RLIMIT_STACK, (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
     except:
@@ -113,7 +113,7 @@ def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.Verific
         if marker.is_verified(path):
             continue
 
-        verified = verify_file(path, compilers=compilers, jobs=jobs)
+        verified = verify_file(path, compilers=compilers, tle=tle, jobs=jobs)
 
         if verified:
             marker.mark_verified(path)

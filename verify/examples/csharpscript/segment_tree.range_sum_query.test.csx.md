@@ -25,20 +25,19 @@ layout: default
 <link rel="stylesheet" href="../../../assets/css/copy-button.css" />
 
 
-# :heavy_check_mark: examples/CSharpScript/helloworld.csx
+# :heavy_check_mark: examples/csharpscript/segment_tree.range_sum_query.test.csx
 
 <a href="../../../index.html">Back to top page</a>
 
-* category: <a href="../../../index.html#433c524e1d7a3bcf80702df144efa9e9">examples/CSharpScript</a>
-* <a href="{{ site.github.repository_url }}/blob/master/examples/CSharpScript/helloworld.csx">View this file on GitHub</a>
-    - Last commit date: 2020-02-01 22:42:27+09:00
+* <a href="{{ site.github.repository_url }}/blob/master/examples/csharpscript/segment_tree.range_sum_query.test.csx">View this file on GitHub</a>
+    - Last commit date: 2020-02-16 04:32:52+09:00
 
 
 
 
-## Verified with
+## Depends on
 
-* :heavy_check_mark: <a href="../../../verify/examples/CSharpScript/csharpscript.test.csx.html">examples/CSharpScript/csharpscript.test.csx</a>
+* :heavy_check_mark: <a href="../../../library/examples/csharpscript/segment_tree.csx.html">examples/csharpscript/segment_tree.csx</a>
 
 
 ## Code
@@ -46,7 +45,29 @@ layout: default
 <a id="unbundled"></a>
 {% raw %}
 ```cpp
-Console.WriteLine("Hello World");
+#load "./segment_tree.csx"
+#pragma PROBLEM https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_B
+
+using System;
+using System.Linq;
+
+var nq = Console.ReadLine().Split().Select(int.Parse).ToArray();
+var (n, q) = (nq[0], nq[1]);
+SegmentTree<int> segTree = new SegmentTree<int>(n, 0, (x, y) => x + y);
+
+for (int i = 0; i < q; i++)
+{
+    var query = Console.ReadLine().Split().Select(int.Parse).ToArray();
+    if (query[0] == 0)
+    {
+        segTree[query[1] - 1] += query[2];
+    }
+    else
+    {
+        Console.WriteLine(segTree[(query[1] - 1)..query[2]]);
+    }
+}
+
 ```
 {% endraw %}
 

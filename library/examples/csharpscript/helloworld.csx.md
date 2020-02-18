@@ -25,19 +25,20 @@ layout: default
 <link rel="stylesheet" href="../../../assets/css/copy-button.css" />
 
 
-# :heavy_check_mark: examples/CSharpScript/csharpscript.test.csx
+# :heavy_check_mark: examples/csharpscript/helloworld.csx
 
 <a href="../../../index.html">Back to top page</a>
 
-* <a href="{{ site.github.repository_url }}/blob/master/examples/CSharpScript/csharpscript.test.csx">View this file on GitHub</a>
-    - Last commit date: 2020-02-01 22:42:27+09:00
+* category: <a href="../../../index.html#441c1a781d23a6e65db56eaa313dbebd">examples/csharpscript</a>
+* <a href="{{ site.github.repository_url }}/blob/master/examples/csharpscript/helloworld.csx">View this file on GitHub</a>
+    - Last commit date: 2020-02-16 04:29:07+09:00
 
 
 
 
-## Depends on
+## Verified with
 
-* :heavy_check_mark: <a href="../../../library/examples/CSharpScript/helloworld.csx.html">examples/CSharpScript/helloworld.csx</a>
+* :heavy_check_mark: <a href="../../../verify/examples/csharpscript/helloworld.test.csx.html">examples/csharpscript/helloworld.test.csx</a>
 
 
 ## Code
@@ -45,9 +46,7 @@ layout: default
 <a id="unbundled"></a>
 {% raw %}
 ```cpp
-#load "helloworld.csx"
-#pragma PROBLEM https://onlinejudge.u-aizu.ac.jp/courses/lesson/2/ITP1/1/ITP1_1_A
-
+Console.WriteLine("Hello World");
 ```
 {% endraw %}
 

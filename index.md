@@ -47,19 +47,23 @@ layout: default
 * :heavy_check_mark: <a href="library/examples/union_find_tree.hpp.html">a Union-Find Tree <small>(examples/union_find_tree.hpp)</small></a>
 
 
-<div id="433c524e1d7a3bcf80702df144efa9e9"></div>
+<div id="441c1a781d23a6e65db56eaa313dbebd"></div>
 
-### examples/CSharpScript
+### examples/csharpscript
 
-* :heavy_check_mark: <a href="library/examples/CSharpScript/helloworld.csx.html">examples/CSharpScript/helloworld.csx</a>
+* :heavy_check_mark: <a href="library/examples/csharpscript/helloworld.csx.html">examples/csharpscript/helloworld.csx</a>
+* :heavy_check_mark: <a href="library/examples/csharpscript/segment_tree.csx.html">examples/csharpscript/segment_tree.csx</a>
 
 
 ## Verify Files
 
 * :heavy_check_mark: <a href="verify/example.test.cpp.html">example.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/3872.yukicoder.test.cpp.html">examples/3872.yukicoder.test.cpp</a>
-* :heavy_check_mark: <a href="verify/examples/CSharpScript/csharpscript.test.csx.html">examples/CSharpScript/csharpscript.test.csx</a>
 * :heavy_check_mark: <a href="verify/examples/circle.test.awk.html">examples/circle.test.awk</a>
+* :heavy_check_mark: <a href="verify/examples/csharpscript/helloworld.test.csx.html">examples/csharpscript/helloworld.test.csx</a>
+* :heavy_check_mark: <a href="verify/examples/csharpscript/segment_tree.point_set_range_composite.test.csx.html">examples/csharpscript/segment_tree.point_set_range_composite.test.csx</a>
+* :heavy_check_mark: <a href="verify/examples/csharpscript/segment_tree.range_minimum_query.test.csx.html">examples/csharpscript/segment_tree.range_minimum_query.test.csx</a>
+* :heavy_check_mark: <a href="verify/examples/csharpscript/segment_tree.range_sum_query.test.csx.html">examples/csharpscript/segment_tree.range_sum_query.test.csx</a>
 * :heavy_check_mark: <a href="verify/examples/develop.test.cpp.html">examples/develop.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/include_relative.test.cpp.html">examples/include_relative.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/precision.test.cpp.html">examples/precision.test.cpp</a>

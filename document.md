@@ -2,6 +2,15 @@
 
 [日本語バージョン](https://kmyk.github.io/online-judge-verify-helper/document.ja.html)
 
+## Supported languages
+
+| Language | Compilers | How to specify attributes | Features (verify / bundle / doc) | Examples |
+|---|---|---|---|---|
+| C++ | GCC / Clang | `#define [KEY] [VALUE]` | :heavy_check_mark: / :heavy_check_mark: / :heavy_check_mark: | [examples/segment_tree.range_sum_query.test.cpp](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/segment_tree.range_sum_query.test.cpp) |
+| C# script | .NET Core | `#pragma [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [examples/csharpscript/segment_tree.range_sum_query.test.csx](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/csharpscript/segment_tree.range_sum_query.test.csx) |
+
+You can use languages other than above (e.g. AWK [examples/circle.test.awk](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/circle.test.awk)). Please write commands to compile and execute in the config file `.verify-helper/config.toml` (e.g. [.verify-helper/config.toml](https://github.com/kmyk/online-judge-verify-helper/blob/master/.verify-helper/config.toml)).
+
 ## Automating the verification
 
 ### Available judging platforms

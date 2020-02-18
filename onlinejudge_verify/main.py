@@ -23,17 +23,21 @@ def get_parser() -> argparse.ArgumentParser:
 
     subparser = subparsers.add_parser('all')
     subparser.add_argument('-j', '--jobs', type=int, default=1)
+    subparser.add_argument('--timeout', type=float, default=600)
+    subparser.add_argument('--tle', type=float, default=60)
 
     subparser = subparsers.add_parser('run')
     subparser.add_argument('path', nargs='*', type=pathlib.Path)
     subparser.add_argument('-j', '--jobs', type=int, default=1)
+    subparser.add_argument('--timeout', type=float, default=600)
+    subparser.add_argument('--tle', type=float, default=60)
 
     subparser = subparsers.add_parser('docs')
 
     return parser
 
 
-def subcommand_run(paths: List[pathlib.Path], *, jobs: int = 1) -> None:
+def subcommand_run(paths: List[pathlib.Path], *, timeout: float = 600, tle: float = 60, jobs: int = 1) -> None:
     """
     :raises Exception: if test.sh fails
     """
@@ -47,7 +51,8 @@ def subcommand_run(paths: List[pathlib.Path], *, jobs: int = 1) -> None:
 
     # NOTE: the GITHUB_TOKEN expires in 60 minutes (https://help.github.com/en/actions/automating-your-workflow-with-github-actions/authenticating-with-the-github_token#about-the-github_token-secret)
     # use 10 minutes as timeout for safety; 理由はよく分かってないぽいけど以前 20 分でやって死んだことがあるらしいので
-    timeout = 10 * 60 if 'GITHUB_ACTION' in os.environ else math.inf
+    if 'GITHUB_ACTION' not in os.environ:
+        timeout = math.inf
 
     if not paths:
         for path in pathlib.Path.cwd().glob('**/*.test.*'):
@@ -56,7 +61,7 @@ def subcommand_run(paths: List[pathlib.Path], *, jobs: int = 1) -> None:
         paths = sorted(paths)
     try:
         with onlinejudge_verify.marker.get_verification_marker() as marker:
-            onlinejudge_verify.verify.main(paths, marker=marker, timeout=timeout, jobs=jobs)
+            onlinejudge_verify.verify.main(paths, marker=marker, timeout=timeout, tle=tle, jobs=jobs)
     finally:
         # push results even if some tests failed
         if does_push:
@@ -178,14 +183,14 @@ def main(args: Optional[List[str]] = None) -> None:
     if parsed.subcommand == 'all':
         generate_gitignore()
         try:
-            subcommand_run(paths=[], jobs=parsed.jobs)
+            subcommand_run(paths=[], timeout=parsed.timeout, tle=parsed.tle, jobs=parsed.jobs)
         finally:
             # generate documents even if some tests failed
             subcommand_docs()
 
     elif parsed.subcommand == 'run':
         generate_gitignore()
-        subcommand_run(paths=parsed.path, jobs=parsed.jobs)
+        subcommand_run(paths=[], timeout=parsed.timeout, tle=parsed.tle, jobs=parsed.jobs)
 
     elif parsed.subcommand == 'docs':
         generate_gitignore()

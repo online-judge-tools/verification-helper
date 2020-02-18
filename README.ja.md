@@ -29,7 +29,7 @@ Python のバージョンは 3.6 以上が必要です。
 
 #### verify 自動実行
 
-拡張子の前に `.test` をつけたファイルに、特定の方法で verify 用問題の URL を書いておきます。 (`C++` であれば、 `#define PROBLEM "https://judge.yosupo.jp/problem/unionfind"` のような形です。他の言語については、後述のリファレンスを参照してください。)
+拡張子の前に `.test` をつけたファイルに、特定の方法で verify 用問題の URL を書いておきます。 (たとえば `C++` であれば、`example.test.cpp` のようなファイルに `#define PROBLEM "https://judge.yosupo.jp/problem/unionfind"` のような形で書きます。他の言語については[リファレンス](https://kmyk.github.io/online-judge-verify-helper/document.ja.html)を参照してください。)
 このとき、次のコマンドで verify できているかを確認してくれます。
 
 ``` console

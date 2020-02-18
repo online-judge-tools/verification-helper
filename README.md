@@ -29,14 +29,14 @@ Python 3.6 or above is required.
 
 #### Automating the verification
 
-First, add the problem URL to be used to verify the library in the file ending with `.test.cpp` as follows (`#define PROBLEM "https://judge.yosupo.jp/problem/unionfind"`). Then, run the following command to check if the verification can be performed.
+First, specify the problem URL to be used to verify the library in the file including `.test.` in its path (e.g. for C++, write `#define PROBLEM "https://judge.yosupo.jp/problem/unionfind"` in a file like `example.test.cpp`; see [the reference](https://kmyk.github.io/online-judge-verify-helper/document.html) for other languages). Then, run the following command to check if the verification can be performed.
 
 ``` console
 $ oj-verify run
 ```
 
 Currently, problems on [Library Checker](https://judge.yosupo.jp/) and [Aizu Online Judge](https://onlinejudge.u-aizu.ac.jp/home) are supported.
-For the details, see <https://kmyk.github.io/online-judge-verify-helper/document.html>.
+For the details, see [the reference](https://kmyk.github.io/online-judge-verify-helper/document.html).
 
 #### Autoexpansion of `#include`s
 
@@ -62,7 +62,7 @@ $ oj-verify docs
 
 If documentation generators like [Doxygen](http://www.doxygen.jp) are found when generating documentation, they will be automatically used.
 TeX expressions like `$(N \sum_i A_i)$` are also supported by the [MathJax](https://www.mathjax.org/) library.
-For the details, see <https://kmyk.github.io/online-judge-verify-helper/document.html>.
+For the details, see [the reference](https://kmyk.github.io/online-judge-verify-helper/document.html).
 
 ## Tips
 
@@ -70,7 +70,6 @@ For the details, see <https://kmyk.github.io/online-judge-verify-helper/document
 -   If you cannot find problems to verify your library anywhere, we suggest that you add a problem to [Library Checker](https://judge.yosupo.jp/).
 -   You do not need to display the MIT License if you call `online-judge-verify-helper` from GitHub Actions ([Details, in Japanese](https://github.com/kmyk/online-judge-verify-helper/issues/34)).
 -   This is tool to efficiently verify your library, not to check or prettify your code. If you need such functions, you can try formatters like [clang-format](https://clang.llvm.org/docs/ClangFormat.html) or linters like [cppcheck](http://cppcheck.sourceforge.net/).
--   Languages other than C++ are also supported (Example: [examples/circle.test.awk](https://github.com/kmyk/online-judge-verify-helper/tree/master/examples/circle.test.awk)). You need a file like `.verify-helper/config.toml` that specifies the commands for compiling and running the program (Example: [.verify-helper/config.toml](https://github.com/kmyk/online-judge-verify-helper/blob/master/.verify-helper/config.toml)).
 
 ## Authors
 

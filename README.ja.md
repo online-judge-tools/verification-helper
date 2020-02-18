@@ -29,7 +29,8 @@ Python のバージョンは 3.6 以上が必要です。
 
 #### verify 自動実行
 
-まず `.test.cpp` という拡張子の名前のファイルに `#define PROBLEM "https://judge.yosupo.jp/problem/unionfind"` のような形で verify 用問題の URL を書いておきます。このとき、次のコマンドで verify できているかを確認してくれます。
+拡張子の前に `.test` をつけたファイルに、特定の方法で verify 用問題の URL を書いておきます。 (たとえば `C++` であれば、`example.test.cpp` のようなファイルに `#define PROBLEM "https://judge.yosupo.jp/problem/unionfind"` のような形で書きます。他の言語については[リファレンス](https://kmyk.github.io/online-judge-verify-helper/document.ja.html)を参照してください。)
+このとき、次のコマンドで verify できているかを確認してくれます。
 
 ``` console
 $ oj-verify run
@@ -37,7 +38,7 @@ $ oj-verify run
 
 利用できる問題は主に [Library Checker](https://judge.yosupo.jp/) の問題と [Aizu Online Judge](https://onlinejudge.u-aizu.ac.jp/home) の問題です。
 他にもいくつかのサービスの問題が利用可能です。
-より詳しい説明は <https://kmyk.github.io/online-judge-verify-helper/document.ja.html> にあります。
+より詳しい説明は[リファレンス](https://kmyk.github.io/online-judge-verify-helper/document.ja.html)にあります。
 
 #### `#include` の自動展開
 
@@ -63,7 +64,7 @@ $ oj-verify docs
 
 ドキュメント生成時に [Doxygen](http://www.doxygen.jp/) 風のコメントが見つかれば、それらは自動で利用されます。
 また、TeX 記法の数式 (例: `$O(N \sum_i A_i)$`) の [MathJax](https://www.mathjax.org/) による表示にも対応しています。
-より詳しい説明は <https://kmyk.github.io/online-judge-verify-helper/document.ja.html> にあります。
+より詳しい説明は[リファレンス](https://kmyk.github.io/online-judge-verify-helper/document.ja.html)にあります。
 
 ## Tips
 
@@ -71,7 +72,6 @@ $ oj-verify docs
 -   ライブラリを verify するための問題がそれでも見つからないときは [Library Checker](https://judge.yosupo.jp/) に問題を追加してください
 -   GitHub Actions から online-judge-verify-helper を呼び出すといった通常想定される利用法においては MIT License に関する著作権表示は要求されません ([詳細](https://github.com/kmyk/online-judge-verify-helper/issues/34))
 -   これはライブラリを効率良く verify するためのツールであり、コードの検査や整形をするためのツールではありません。必要なら [clang-format](https://clang.llvm.org/docs/ClangFormat.html) などの formatter や [cppcheck](http://cppcheck.sourceforge.net/) などの linter を利用してください
--   言語は C++ 以外でも利用可能です (例: [examples/circle.test.awk](https://github.com/kmyk/online-judge-verify-helper/tree/master/examples/circle.test.awk))。`.verify-helper/config.toml` というファイルを作ってコンパイルや実行のためのコマンドを書いてください (例: [.verify-helper/config.toml](https://github.com/kmyk/online-judge-verify-helper/blob/master/.verify-helper/config.toml))
 
 ## Authors
 

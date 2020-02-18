@@ -2,6 +2,16 @@
 
 [English Version](https://kmyk.github.io/online-judge-verify-helper/document.html)
 
+## 対応している言語
+
+| 言語 | コンパイラ | 属性指定方法 | 対応機能 (verify / bundle / doc) | 例 |
+|---|---|---|---|---|
+| C++ | GCC / Clang | `#define [KEY] [VALUE]` | :heavy_check_mark: / :heavy_check_mark: / :heavy_check_mark: | [examples/segment_tree.range_sum_query.test.cpp](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/segment_tree.range_sum_query.test.cpp) |
+| C# script | .NET Core | `#pragma [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [examples/csharpscript/segment_tree.range_sum_query.test.csx](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/csharpscript/segment_tree.range_sum_query.test.csx) |
+
+上記以外の言語でも実行可能です (例: [examples/circle.test.awk](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/circle.test.awk))。 `.verify-helper/config.toml` というファイルを作って、コンパイルや実行のためのコマンドを書いてください。 (例: [.verify-helper/config.toml](https://github.com/kmyk/online-judge-verify-helper/blob/master/.verify-helper/config.toml))
+
+
 ## verify 自動実行
 
 ### 対応サービス一覧

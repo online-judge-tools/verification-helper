@@ -78,7 +78,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
         execute = ' '.join(language.get_execute_command(path, basedir=pathlib.Path.cwd(), tempdir=directory))  # TODO: use shlex.join added in Python 3.8
 
         # run test using oj
-        command = ['oj', 'test', '-c', execute, '-d', shlex.quote(str(directory / 'test')), '--tle', tle]
+        command = ['oj', 'test', '-c', execute, '-d', shlex.quote(str(directory / 'test')), '--tle', str(tle)]
         if isinstance(problem, onlinejudge.service.library_checker.LibraryCheckerProblem):
             command += ['--judge-command', str(problem.download_checker_binary())]
         if 'ERROR' in macros:

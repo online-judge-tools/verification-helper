@@ -59,8 +59,8 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
         logger.info('problem: %s', url)
 
         directory = pathlib.Path('.verify-helper/cache') / hashlib.md5(url.encode()).hexdigest()
-        if not (directory / 'test').exists():
-            directory.mkdir(parents=True)
+        if not (directory / 'test').exists() or not len(list((directory / 'test').iterdir())):
+            directory.mkdir(parents=True, exist_ok=True)
             exec_command(['sleep', '2'])
             command = ['oj', 'download', '--system', '-d', shlex.quote(str(directory / 'test')), url]
 
@@ -71,7 +71,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
             except:
                 if isinstance(problem, onlinejudge.service.yukicoder.YukicoderProblem) and not os.environ.get('YUKICODER_TOKEN'):
                     logger.warning('the $YUKICODER_TOKEN environment variable is not set')
-                raise
+                return False
 
         # compile the ./a.out
         language.compile(path, basedir=pathlib.Path.cwd(), tempdir=directory)

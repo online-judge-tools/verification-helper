@@ -37,7 +37,7 @@ def get_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def subcommand_run(paths: List[pathlib.Path], *, timeout: float = 600, tle: float = 60, jobs: int = 1) -> None:
+def subcommand_run(paths: List[pathlib.Path], *, timeout: float = 600, tle: float = 60, jobs: int = 1) -> onlinejudge_verify.verify.VerificationSummary:
     """
     :raises Exception: if test.sh fails
     """
@@ -61,7 +61,7 @@ def subcommand_run(paths: List[pathlib.Path], *, timeout: float = 600, tle: floa
         paths = sorted(paths)
     try:
         with onlinejudge_verify.marker.get_verification_marker() as marker:
-            onlinejudge_verify.verify.main(paths, marker=marker, timeout=timeout, tle=tle, jobs=jobs)
+            return onlinejudge_verify.verify.main(paths, marker=marker, timeout=timeout, tle=tle, jobs=jobs)
     finally:
         # push results even if some tests failed
         if does_push:
@@ -182,15 +182,14 @@ def main(args: Optional[List[str]] = None) -> None:
 
     if parsed.subcommand == 'all':
         generate_gitignore()
-        try:
-            subcommand_run(paths=[], timeout=parsed.timeout, tle=parsed.tle, jobs=parsed.jobs)
-        finally:
-            # generate documents even if some tests failed
-            subcommand_docs()
+        summary = subcommand_run(paths=[], timeout=parsed.timeout, tle=parsed.tle, jobs=parsed.jobs)
+        subcommand_docs()
+        summary.show()
 
     elif parsed.subcommand == 'run':
         generate_gitignore()
-        subcommand_run(paths=parsed.path, timeout=parsed.timeout, tle=parsed.tle, jobs=parsed.jobs)
+        summary = subcommand_run(paths=parsed.path, timeout=parsed.timeout, tle=parsed.tle, jobs=parsed.jobs)
+        summary.show()
 
     elif parsed.subcommand == 'docs':
         generate_gitignore()

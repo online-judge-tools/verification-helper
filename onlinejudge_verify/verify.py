@@ -18,6 +18,22 @@ import onlinejudge
 logger = getLogger(__name__)
 
 
+class VerificationSummary(object):
+    def __init__(self, *, failed_test_paths: List[pathlib.Path], ulimit_success: bool):
+        self.failed_test_paths = failed_test_paths
+        self.ulimit_success = ulimit_success
+
+    def show(self) -> None:
+        if self.failed_test_paths:
+            if not self.ulimit_success:
+                logger.warning('failed to make the stack size unlimited')
+            logger.error('%d tests failed', len(self.failed_test_paths))
+            for path in self.failed_test_paths:
+                logger.error('failed: %s', str(path.resolve().relative_to(pathlib.Path.cwd())))
+        else:
+            logger.info('all tests succeeded')
+
+
 def exec_command(command: List[str]):
     # NOTE: secrets like YUKICODER_TOKEN are masked
     logger.info('$ %s', ' '.join(command))
@@ -95,11 +111,14 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
     return True
 
 
-def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.VerificationMarker, timeout: float = math.inf, tle: float = 60, jobs: int = 1) -> None:
+def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.VerificationMarker, timeout: float = math.inf, tle: float = 60, jobs: int = 1) -> VerificationSummary:
     try:
         resource.setrlimit(resource.RLIMIT_STACK, (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
     except:
         logger.warning('failed to make the stack size unlimited')
+        ulimit_success = False
+    else:
+        ulimit_success = True
 
     compilers = []
     if 'CXX' in os.environ:
@@ -127,9 +146,4 @@ def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.Verific
         if timeout is not None and time.time() - start > timeout:
             break
 
-    # failするテストがあったらraiseする
-    if len(failed_test_paths) > 0:
-        logger.error('%d tests failed', len(failed_test_paths))
-        for path in failed_test_paths:
-            logger.error('failed: %s', str(path))
-        raise Exception('{} tests failed: {}'.format(len(failed_test_paths), [str(path.relative_to(pathlib.Path.cwd())) for path in failed_test_paths]))
+    return VerificationSummary(failed_test_paths=failed_test_paths, ulimit_success=ulimit_success)

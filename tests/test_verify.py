@@ -26,7 +26,7 @@ class TestStringMethods(unittest.TestCase):
             with tests.utils.chdir(tempdir):
                 timestamps_path = tempdir / 'timestamps.json'
                 with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
-                    verify.main(paths, marker=marker)
+                    self.assertEqual(verify.main(paths, marker=marker).failed_test_paths, [])
                 with open(str(timestamps_path)) as fh:
                     timestamps = json.load(fh)
                 self.assertEqual(list(timestamps.keys()), ['example.test.cpp'])
@@ -49,7 +49,7 @@ class TestStringMethods(unittest.TestCase):
             with tests.utils.chdir(tempdir):
                 timestamps_path = tempdir / 'timestamps.json'
                 with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
-                    self.assertRaises(Exception, lambda: verify.main(paths, marker=marker))
+                    self.assertEqual(verify.main(paths, marker=marker).failed_test_paths, paths)
                 with open(str(timestamps_path)) as fh:
                     timestamps = json.load(fh)
                 self.assertEqual(timestamps, {})

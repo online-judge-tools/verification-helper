@@ -188,8 +188,7 @@ def main(args: Optional[List[str]] = None) -> None:
 
     elif parsed.subcommand == 'run':
         generate_gitignore()
-        paths = [path.resolve() for path in parsed.path]
-        summary = subcommand_run(paths=paths, timeout=parsed.timeout, tle=parsed.tle, jobs=parsed.jobs)
+        summary = subcommand_run(paths=parsed.path, timeout=parsed.timeout, tle=parsed.tle, jobs=parsed.jobs)
         summary.show()
 
     elif parsed.subcommand == 'docs':

@@ -29,7 +29,7 @@ class VerificationSummary(object):
                 logger.warning('failed to make the stack size unlimited')
             logger.error('%d tests failed', len(self.failed_test_paths))
             for path in self.failed_test_paths:
-                logger.error('failed: %s', str(path.relative_to(pathlib.Path.cwd())))
+                logger.error('failed: %s', str(path.resolve().relative_to(pathlib.Path.cwd())))
         else:
             logger.info('all tests succeeded')
 

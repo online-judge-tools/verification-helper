@@ -267,6 +267,7 @@ class MarkdownArticle(MarkdownPage):
         for see in self.file_class.see:
             file_object.write('* see: {}\n'.format(self.get_linktag(see, see)).encode())
         for docs in self.file_class.docs:
+            file_object.write(b'\n\n')
             with open(docs, 'rb') as f:
                 file_object.write(f.read())
         file_object.write(b'\n\n')

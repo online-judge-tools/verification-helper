@@ -182,15 +182,18 @@ def main(args: Optional[List[str]] = None) -> None:
 
     if parsed.subcommand == 'all':
         generate_gitignore()
-        try:
-            subcommand_run(paths=[], timeout=parsed.timeout, tle=parsed.tle, jobs=parsed.jobs)
-        finally:
-            # generate documents even if some tests failed
-            subcommand_docs()
+        with onlinejudge_verify.verify.show_summary():
+            try:
+                subcommand_run(paths=[], timeout=parsed.timeout, tle=parsed.tle, jobs=parsed.jobs)
+            finally:
+                # generate documents even if some tests failed
+                subcommand_docs()
 
     elif parsed.subcommand == 'run':
+        paths = [path.resolve() for path in parsed.path]
         generate_gitignore()
-        subcommand_run(paths=parsed.path, timeout=parsed.timeout, tle=parsed.tle, jobs=parsed.jobs)
+        with onlinejudge_verify.verify.show_summary():
+            subcommand_run(paths=paths, timeout=parsed.timeout, tle=parsed.tle, jobs=parsed.jobs)
 
     elif parsed.subcommand == 'docs':
         generate_gitignore()

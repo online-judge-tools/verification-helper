@@ -1,5 +1,4 @@
 # Python Version: 3.x
-import contextlib
 import hashlib
 import math
 import os
@@ -19,24 +18,20 @@ import onlinejudge
 logger = getLogger(__name__)
 
 
-class VerificationFailure(Exception):
+class VerificationSummary(object):
     def __init__(self, *, failed_test_paths: List[pathlib.Path], ulimit_success: bool):
         self.failed_test_paths = failed_test_paths
         self.ulimit_success = ulimit_success
 
-
-@contextlib.contextmanager
-def show_summary() -> Iterator[None]:
-    try:
-        yield
-    except VerificationFailure as e:
-        if not e.ulimit_success:
-            logger.warning('failed to make the stack size unlimited')
-        logger.error('%d tests failed', len(e.failed_test_paths))
-        for path in e.failed_test_paths:
-            logger.error('failed: %s', str(path.relative_to(pathlib.Path.cwd())))
-    else:
-        logger.info('all tests succeeded')
+    def show(self) -> None:
+        if self.failed_test_paths:
+            if not self.ulimit_success:
+                logger.warning('failed to make the stack size unlimited')
+            logger.error('%d tests failed', len(self.failed_test_paths))
+            for path in self.failed_test_paths:
+                logger.error('failed: %s', str(path.relative_to(pathlib.Path.cwd())))
+        else:
+            logger.info('all tests succeeded')
 
 
 def exec_command(command: List[str]):
@@ -114,7 +109,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
     return True
 
 
-def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.VerificationMarker, timeout: float = math.inf, tle: float = 60, jobs: int = 1) -> None:
+def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.VerificationMarker, timeout: float = math.inf, tle: float = 60, jobs: int = 1) -> VerificationSummary:
     try:
         resource.setrlimit(resource.RLIMIT_STACK, (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
     except:
@@ -149,6 +144,4 @@ def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.Verific
         if timeout is not None and time.time() - start > timeout:
             break
 
-    # failするテストがあったらraiseする
-    if len(failed_test_paths) > 0:
-        raise VerificationFailure(failed_test_paths=failed_test_paths, ulimit_success=ulimit_success)
+    return VerificationSummary(failed_test_paths=failed_test_paths, ulimit_success=ulimit_success)

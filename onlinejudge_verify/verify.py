@@ -53,7 +53,9 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
         macros = language.list_attributes(path, basedir=pathlib.Path.cwd())
         if 'IGNORE' in macros:
             continue
-        assert 'PROBLEM' in macros
+        if 'PROBLEM' not in macros:
+            logger.error('PROBLEM is not specified')
+            return False
         url = macros['PROBLEM']
         problem = onlinejudge.dispatch.problem_from_url(url)
         logger.info('problem: %s', url)

@@ -69,7 +69,7 @@ $ oj-verify docs
 ## Tips
 
 -   ライブラリを verify するための問題が見つからないときは他の人のライブラリを参考にするとよいでしょう。`online-judge-verify-helper` のユーザの一覧は <https://github.com/search?q=online-judge-verify-helper+path%3A.github> から見ることができます
--   ライブラリを verify するための問題がそれでも見つからないときは [Library Checker](https://judge.yosupo.jp/) に問題を追加してください
+-   ライブラリを verify するための問題がそれでも見つからないときは [Library Checker](https://judge.yosupo.jp/) に問題を追加してください。[Hello World](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_A) などをダミーの問題として指定して、自前で書いたストレステストを実行することもできます。
 -   GitHub Actions から online-judge-verify-helper を呼び出すといった通常想定される利用法においては MIT License に関する著作権表示は要求されません ([詳細](https://github.com/kmyk/online-judge-verify-helper/issues/34))
 -   これはライブラリを効率良く verify するためのツールであり、コードの検査や整形をするためのツールではありません。必要なら [clang-format](https://clang.llvm.org/docs/ClangFormat.html) などの formatter や [cppcheck](http://cppcheck.sourceforge.net/) などの linter を利用してください
 

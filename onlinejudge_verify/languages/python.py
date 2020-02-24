@@ -17,7 +17,7 @@ logger = getLogger(__name__)
 
 
 @functools.lru_cache(maxsize=None)
-def _python_list_depending_files(path: pathlib.Path) -> List[pathlib.Path]:
+def _python_list_depending_files(path: pathlib.Path, basedir: pathlib.Path) -> List[pathlib.Path]:
     env = importlab.environment.Environment(
         importlab.fs.Path([importlab.fs.OSFileSystem(".")]),
         (sys.version_info.major, sys.version_info.minor),
@@ -26,9 +26,12 @@ def _python_list_depending_files(path: pathlib.Path) -> List[pathlib.Path]:
     res_deps = []
     for node, deps in res_graph.deps_list():
         if node == str(path.resolve()):
-            res_deps = deps
+            for dep in deps:
+                if not isinstance(dep, str):
+                    continue
+                if node.startswith(str(basedir)):
+                    res_deps.append(dep)
             break
-    res_deps = [dep for dep in res_deps if isinstance(dep, str)]
     return list(map(pathlib.Path, res_deps))
 
 
@@ -59,7 +62,7 @@ class PythonLanguage(Language):
     def list_dependencies(
         self, path: pathlib.Path, *, basedir: pathlib.Path
     ) -> List[pathlib.Path]:
-        return _python_list_depending_files(path.resolve())
+        return _python_list_depending_files(path.resolve(), basedir)
 
     def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bytes:
         raise NotImplementedError

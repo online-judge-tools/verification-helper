@@ -7,7 +7,9 @@ import sys
 from logging import getLogger
 from typing import Dict, List
 
-import importlab
+import importlab.environment
+import importlab.fs
+import importlab.graph
 
 from onlinejudge_verify.languages.base import Language
 

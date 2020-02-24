@@ -28,6 +28,7 @@ def _python_list_depending_files(path: pathlib.Path) -> List[pathlib.Path]:
         if node == str(path.resolve()):
             res_deps = deps
             break
+    res_deps = [dep for dep in res_deps if isinstance(dep, str)]
     return list(map(pathlib.Path, res_deps))
 
 

@@ -45,8 +45,8 @@ class PythonLanguage(Language):
     def list_attributes(
         self, path: pathlib.Path, *, basedir: pathlib.Path
     ) -> Dict[str, str]:
-        command_str = f"sed 's/^# verify-helper: // ; t ; d' {path}"
-        text = subprocess.check_output(shlex.split(command_str.split()))
+        command = [*shlex.split("sed 's/^# verify-helper: // ; t ; d'"), str(path)]
+        text = subprocess.check_output(command)
         attributes = {}
         for line in text.splitlines():
             key, _, value = line.decode().partition(" ")

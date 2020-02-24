@@ -6,12 +6,14 @@ from onlinejudge_verify.languages.base import Language
 from onlinejudge_verify.languages.cplusplus import CPlusPlusLanguage
 from onlinejudge_verify.languages.csharpscript import CSharpScriptLanguage
 from onlinejudge_verify.languages.other import OtherLanguage
+from onlinejudge_verify.languages.python import PythonLanguage
 
 _dict: Dict[str, Language] = {}
 
 _dict['.cpp'] = CPlusPlusLanguage()
 _dict['.hpp'] = _dict['.cpp']
 _dict['.csx'] = CSharpScriptLanguage()
+_dict['.py'] = PythonLanguage()
 
 config_path = pathlib.Path('.verify-helper/config.toml')
 if config_path.exists():

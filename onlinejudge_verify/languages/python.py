@@ -29,7 +29,7 @@ def _python_list_depending_files(path: pathlib.Path, basedir: pathlib.Path) -> L
             for dep in deps:
                 if not isinstance(dep, str):
                     continue
-                if node.startswith(str(basedir)):
+                if dep.startswith(str(basedir)):
                     res_deps.append(dep)
             break
     return list(map(pathlib.Path, res_deps))

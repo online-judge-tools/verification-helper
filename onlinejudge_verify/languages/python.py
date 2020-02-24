@@ -42,7 +42,7 @@ class PythonLanguage(Language):
     def get_execute_command(
         self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path
     ) -> List[str]:
-        return [f"PYTHONPATH={base_dir}", "python", str(path)]
+        return ["python", "-c", f"\"import sys, pathlib, subprocess;subprocess.run('PYTHONPATH={basedir} python {path}', shell=True)\""]
 
     def list_attributes(
         self, path: pathlib.Path, *, basedir: pathlib.Path

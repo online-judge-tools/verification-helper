@@ -7,6 +7,7 @@ import resource
 import shlex
 import subprocess
 import time
+import traceback
 from logging import getLogger
 from typing import *
 
@@ -87,13 +88,18 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
             try:
                 exec_command(command)
             except:
+                traceback.print_exc()
                 if isinstance(problem, onlinejudge.service.yukicoder.YukicoderProblem) and not os.environ.get('YUKICODER_TOKEN'):
                     logger.warning('the $YUKICODER_TOKEN environment variable is not set')
                 return False
 
         # compile the ./a.out
-        language.compile(path, basedir=pathlib.Path.cwd(), tempdir=directory)
-        execute = ' '.join(language.get_execute_command(path, basedir=pathlib.Path.cwd(), tempdir=directory))  # TODO: use shlex.join added in Python 3.8
+        try:
+            language.compile(path, basedir=pathlib.Path.cwd(), tempdir=directory)
+            execute = ' '.join(language.get_execute_command(path, basedir=pathlib.Path.cwd(), tempdir=directory))  # TODO: use shlex.join added in Python 3.8
+        except:
+            traceback.print_exc()
+            return False
 
         # run test using oj
         command = ['oj', 'test', '-c', execute, '-d', shlex.quote(str(directory / 'test')), '--tle', str(tle)]
@@ -106,6 +112,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
         try:
             exec_command(command)
         except:
+            traceback.print_exc()
             return False
 
     return True

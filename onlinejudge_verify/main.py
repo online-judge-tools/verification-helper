@@ -5,6 +5,7 @@ import math
 import os
 import pathlib
 import subprocess
+import sys
 import textwrap
 from logging import DEBUG, basicConfig, getLogger
 from typing import *
@@ -185,11 +186,15 @@ def main(args: Optional[List[str]] = None) -> None:
         summary = subcommand_run(paths=[], timeout=parsed.timeout, tle=parsed.tle, jobs=parsed.jobs)
         subcommand_docs()
         summary.show()
+        if not summary.succeeded():
+            sys.exit(1)
 
     elif parsed.subcommand == 'run':
         generate_gitignore()
         summary = subcommand_run(paths=parsed.path, timeout=parsed.timeout, tle=parsed.tle, jobs=parsed.jobs)
         summary.show()
+        if not summary.succeeded():
+            sys.exit(1)
 
     elif parsed.subcommand == 'docs':
         generate_gitignore()

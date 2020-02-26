@@ -33,6 +33,9 @@ class VerificationSummary(object):
         else:
             logger.info('all tests succeeded')
 
+    def succeeded(self) -> bool:
+        return not self.failed_test_paths
+
 
 def exec_command(command: List[str]):
     # NOTE: secrets like YUKICODER_TOKEN are masked

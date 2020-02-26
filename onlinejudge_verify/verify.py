@@ -126,6 +126,7 @@ def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.Verific
         resource.setrlimit(resource.RLIMIT_STACK, (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
     except:
         logger.warning('failed to make the stack size unlimited')
+        print(f'::warning ::failed to ulimit')
         ulimit_success = False
     else:
         ulimit_success = True
@@ -151,6 +152,8 @@ def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.Verific
         else:
             marker.mark_failed(path)
             failed_test_paths.append(path)
+            # Set an error message for GitHub Action. https://help.github.com/en/actions/reference/development-tools-for-github-actions
+            print(f'::error file={str(path.resolve().relative_to(pathlib.Path.cwd()))}::failed to verify {str(path.resolve().relative_to(pathlib.Path.cwd()))}')
 
         # to prevent taking too long; we may fail to use the results of verification due to expired tokens
         if timeout is not None and time.time() - start > timeout:

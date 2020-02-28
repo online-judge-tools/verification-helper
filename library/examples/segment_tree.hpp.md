@@ -31,12 +31,20 @@ layout: default
 
 * category: <a href="../../index.html#bfebe34154a0dfd9fc7b447fc9ed74e9">examples</a>
 * <a href="{{ site.github.repository_url }}/blob/master/examples/segment_tree.hpp">View this file on GitHub</a>
-    - Last commit date: 2019-12-15 05:47:31+09:00
+    - Last commit date: 2020-02-28 16:00:02+09:00
 
 
 * set $a_i$ as b in $O(\log n)$
 * compute $a_l \cdot a _ {l + 1} \cdot ... \cdot a _ {r - 1}$ in $O(\log n)$
 * see: <a href="https://en.wikipedia.org/wiki/Segment_tree">https://en.wikipedia.org/wiki/Segment_tree</a>
+
+
+## Operations
+
+For a monoid $M = (M, \cdot, 1)$ and a list $a = (a_0, a_1, \dots, a _ {n - 1}) \in M^N$ of elements $M$ with the length $N$, a segment tree can process following operations with $O(\log N)$:
+
+-   $\mathtt{point\unicode{95}set}(i, b)$: Update $a_i \gets b$
+-   $\mathtt{range\unicode{95}get}(l, r)$: Calculate the product $a_l \cdot a _ {l + 1} \cdot \dots \cdot a _ {r - 1}$
 
 
 ## Verified with
@@ -57,6 +65,7 @@ layout: default
 
 /**
  * @brief a Segment Tree (generalized with monoids) 
+ * @docs examples/segment_tree.md
  * @tparam Monoid is a monoid; commutativity is not required
  * @see https://en.wikipedia.org/wiki/Segment_tree
  */
@@ -112,6 +121,7 @@ struct segment_tree {
 
 /**
  * @brief a Segment Tree (generalized with monoids) 
+ * @docs examples/segment_tree.md
  * @tparam Monoid is a monoid; commutativity is not required
  * @see https://en.wikipedia.org/wiki/Segment_tree
  */

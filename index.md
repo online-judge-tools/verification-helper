@@ -38,13 +38,19 @@ layout: default
 
 ### examples
 
-* :heavy_check_mark: <a href="library/examples/circle.awk.html">examples/circle.awk</a>
 * :warning: <a href="library/examples/failed_to_bundle.hpp.html">examples/failed_to_bundle.hpp</a>
 * :heavy_check_mark: <a href="library/examples/macros.hpp.html">examples/macros.hpp</a>
 * :heavy_check_mark: <a href="library/examples/monoids.hpp.html">examples/monoids.hpp</a>
 * :warning: <a href="library/examples/not_verified.hpp.html">examples/not_verified.hpp</a>
 * :heavy_check_mark: <a href="library/examples/segment_tree.hpp.html">a Segment Tree (generalized with monoids) <small>(examples/segment_tree.hpp)</small></a>
 * :heavy_check_mark: <a href="library/examples/union_find_tree.hpp.html">a Union-Find Tree <small>(examples/union_find_tree.hpp)</small></a>
+
+
+<div id="ba0b22d3df783bee6cc807c5fd004b03"></div>
+
+### examples/awk
+
+* :heavy_check_mark: <a href="library/examples/awk/circle.awk.html">examples/awk/circle.awk</a>
 
 
 <div id="441c1a781d23a6e65db56eaa313dbebd"></div>
@@ -58,13 +64,11 @@ layout: default
 ## Verify Files
 
 * :heavy_check_mark: <a href="verify/example.test.cpp.html">example.test.cpp</a>
-* :heavy_check_mark: <a href="verify/examples/3872.yukicoder.test.cpp.html">examples/3872.yukicoder.test.cpp</a>
-* :heavy_check_mark: <a href="verify/examples/circle.test.awk.html">examples/circle.test.awk</a>
+* :heavy_check_mark: <a href="verify/examples/awk/circle.test.awk.html">examples/awk/circle.test.awk</a>
 * :heavy_check_mark: <a href="verify/examples/csharpscript/helloworld.test.csx.html">examples/csharpscript/helloworld.test.csx</a>
 * :heavy_check_mark: <a href="verify/examples/csharpscript/segment_tree.point_set_range_composite.test.csx.html">examples/csharpscript/segment_tree.point_set_range_composite.test.csx</a>
 * :heavy_check_mark: <a href="verify/examples/csharpscript/segment_tree.range_minimum_query.test.csx.html">examples/csharpscript/segment_tree.range_minimum_query.test.csx</a>
 * :heavy_check_mark: <a href="verify/examples/csharpscript/segment_tree.range_sum_query.test.csx.html">examples/csharpscript/segment_tree.range_sum_query.test.csx</a>
-* :heavy_check_mark: <a href="verify/examples/develop.test.cpp.html">examples/develop.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/include_relative.test.cpp.html">examples/include_relative.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/precision.test.cpp.html">examples/precision.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/segment_tree.point_set_range_composite.test.cpp.html">examples/segment_tree.point_set_range_composite.test.cpp</a>
@@ -72,5 +76,6 @@ layout: default
 * :heavy_check_mark: <a href="verify/examples/segment_tree.range_sum_query.test.cpp.html">examples/segment_tree.range_sum_query.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/union_find_tree.aoj.test.cpp.html">examples/union_find_tree.aoj.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/union_find_tree.yosupo.test.cpp.html">examples/union_find_tree.yosupo.test.cpp</a>
+* :heavy_check_mark: <a href="verify/examples/yukicoder.test.cpp.html">examples/yukicoder.test.cpp</a>
 
 

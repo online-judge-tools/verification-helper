@@ -30,7 +30,7 @@ layout: default
 <a href="../../index.html">Back to top page</a>
 
 * <a href="{{ site.github.repository_url }}/blob/master/examples/segment_tree.point_set_range_composite.test.cpp">View this file on GitHub</a>
-    - Last commit date: 2019-12-15 05:47:31+09:00
+    - Last commit date: 2020-02-28 16:00:02+09:00
 
 
 * see: <a href="https://judge.yosupo.jp/problem/point_set_range_composite">https://judge.yosupo.jp/problem/point_set_range_composite</a>
@@ -107,6 +107,7 @@ int main() {
 
 /**
  * @brief a Segment Tree (generalized with monoids) 
+ * @docs examples/segment_tree.md
  * @tparam Monoid is a monoid; commutativity is not required
  * @see https://en.wikipedia.org/wiki/Segment_tree
  */

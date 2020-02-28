@@ -1,6 +1,6 @@
 #define PROBLEM "http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_A"
 #include <cstdio>
-#include "./macros.hpp"
+#include "../macros.hpp"
 
 int main() {
     REP (i, 1000) {

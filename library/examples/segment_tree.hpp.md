@@ -34,8 +34,6 @@ layout: default
     - Last commit date: 2020-02-28 16:00:02+09:00
 
 
-* set $a_i$ as b in $O(\log n)$
-* compute $a_l \cdot a _ {l + 1} \cdot ... \cdot a _ {r - 1}$ in $O(\log n)$
 * see: <a href="https://en.wikipedia.org/wiki/Segment_tree">https://en.wikipedia.org/wiki/Segment_tree</a>
 
 

@@ -261,9 +261,7 @@ class MarkdownArticle(MarkdownPage):
     def write_contents(self, file_object: IO, path_to_title: 'OrderedDict[pathlib.Path, str]', path_to_verification: Dict[pathlib.Path, VerificationStatus]) -> None:
         back_to_top_link = self.get_link(self.md_destination_path / 'index.html')
 
-        # brief, see, docs (絶対パス)
-        for brief in self.file_class.brief:
-            file_object.write('* {}\n'.format(brief).encode())
+        # see, docs (絶対パス)
         for see in self.file_class.see:
             file_object.write('* see: {}\n'.format(self.get_linktag(see, see)).encode())
         for docs in self.file_class.docs:

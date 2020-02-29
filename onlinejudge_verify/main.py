@@ -11,8 +11,8 @@ from logging import DEBUG, basicConfig, getLogger
 from typing import *
 
 import onlinejudge_verify.docs
-import onlinejudge_verify.languages
 import onlinejudge_verify.marker
+import onlinejudge_verify.utils
 import onlinejudge_verify.verify
 
 logger = getLogger(__name__)
@@ -56,10 +56,7 @@ def subcommand_run(paths: List[pathlib.Path], *, timeout: float = 600, tle: floa
         timeout = math.inf
 
     if not paths:
-        for path in pathlib.Path.cwd().glob('**/*.test.*'):
-            if onlinejudge_verify.languages.get(path):
-                paths.append(path)
-        paths = sorted(paths)
+        paths = sorted(list(onlinejudge_verify.utils.iterate_verification_files()))
     try:
         with onlinejudge_verify.marker.get_verification_marker() as marker:
             return onlinejudge_verify.verify.main(paths, marker=marker, timeout=timeout, tle=tle, jobs=jobs)

@@ -20,14 +20,11 @@ logger = getLogger(__name__)
 
 
 class VerificationSummary(object):
-    def __init__(self, *, failed_test_paths: List[pathlib.Path], ulimit_success: bool):
+    def __init__(self, *, failed_test_paths: List[pathlib.Path]):
         self.failed_test_paths = failed_test_paths
-        self.ulimit_success = ulimit_success
 
     def show(self) -> None:
         if self.failed_test_paths:
-            if not self.ulimit_success:
-                logger.warning('failed to make the stack size unlimited')
             logger.error('%d tests failed', len(self.failed_test_paths))
             for path in self.failed_test_paths:
                 logger.error('failed: %s', str(path.resolve().relative_to(pathlib.Path.cwd())))
@@ -131,9 +128,6 @@ def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.Verific
     except:
         logger.warning('failed to make the stack size unlimited')
         print(f'::warning ::failed to ulimit')
-        ulimit_success = False
-    else:
-        ulimit_success = True
 
     compilers = []
     if 'CXX' in os.environ:
@@ -163,4 +157,4 @@ def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.Verific
         if timeout is not None and time.time() - start > timeout:
             break
 
-    return VerificationSummary(failed_test_paths=failed_test_paths, ulimit_success=ulimit_success)
+    return VerificationSummary(failed_test_paths=failed_test_paths)

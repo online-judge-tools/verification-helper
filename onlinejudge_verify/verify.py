@@ -70,7 +70,11 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
         matrix = [language_]
     for language in matrix:
 
-        macros = language.list_attributes(path, basedir=pathlib.Path.cwd())
+        try:
+            macros = language.list_attributes(path, basedir=pathlib.Path.cwd())
+        except:
+            traceback.print_exc()
+            return False
         if 'IGNORE' in macros:
             continue
         if 'PROBLEM' not in macros:

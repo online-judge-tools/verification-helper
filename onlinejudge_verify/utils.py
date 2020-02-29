@@ -11,7 +11,8 @@ def is_local_execution() -> bool:
 
 
 def is_verification_file(path: pathlib.Path) -> bool:
-    return onlinejudge_verify.languages.get(path) is not None
+    language = onlinejudge_verify.languages.get(path)
+    return language is not None and language.is_verification_file(path, basedir=pathlib.Path.cwd())
 
 
 def iterate_verification_files() -> Iterator[pathlib.Path]:

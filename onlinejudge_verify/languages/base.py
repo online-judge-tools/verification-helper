@@ -24,3 +24,6 @@ class Language(object):
     @abc.abstractmethod
     def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bytes:
         raise NotImplementedError
+
+    def is_verification_file(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bool:
+        return '.test.' in path.name

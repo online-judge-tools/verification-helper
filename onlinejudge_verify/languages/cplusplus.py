@@ -2,6 +2,7 @@
 import functools
 import os
 import pathlib
+import platform
 import shlex
 import subprocess
 from logging import getLogger
@@ -38,8 +39,12 @@ class CPlusPlusLanguage(Language):
     CXX: str
     CXXFLAGS: str
 
-    def __init__(self, *, CXX: str = os.environ.get('CXX', 'g++'), CXXFLAGS: str = os.environ.get('CXXFLAGS', '--std=c++17 -O2 -Wall -g')):
+    def __init__(self, *, CXX: str = os.environ.get('CXX', 'g++'), CXXFLAGS: Optional[str] = os.environ.get('CXXFLAGS')):
         self.CXX = CXX
+        if CXXFLAGS is None:
+            CXXFLAGS = '--std=c++17 -O2 -Wall -g'
+            if platform.uname().system == 'Linux' and 'Microsoft' in platform.uname().release:
+                CXXFLAGS += ' -fsplit-stack'
         self.CXXFLAGS = CXXFLAGS
 
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:

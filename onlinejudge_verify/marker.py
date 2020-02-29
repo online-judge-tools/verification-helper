@@ -3,13 +3,13 @@ import concurrent.futures
 import datetime
 import functools
 import json
-import os
 import pathlib
 import shlex
 import subprocess
 from typing import *
 
 import onlinejudge_verify.languages
+import onlinejudge_verify.utils
 
 
 class VerificationMarker(object):
@@ -113,11 +113,11 @@ def get_verification_marker(*, jobs: Optional[int] = None) -> VerificationMarker
     global _verification_marker
     if _verification_marker is None:
         # use different files in local and in remote to avoid conflicts
-        if 'GITHUB_ACTION' in os.environ:
-            timestamps_json_path = pathlib.Path('.verify-helper/timestamps.remote.json')
-        else:
+        if onlinejudge_verify.utils.is_local_execution():
             timestamps_json_path = pathlib.Path('.verify-helper/timestamps.local.json')
-        use_git_timestamp = 'GITHUB_ACTION' in os.environ
+        else:
+            timestamps_json_path = pathlib.Path('.verify-helper/timestamps.remote.json')
+        use_git_timestamp = onlinejudge_verify.utils.is_local_execution()
         _verification_marker = VerificationMarker(json_path=timestamps_json_path, use_git_timestamp=use_git_timestamp, jobs=jobs)
     return _verification_marker
 

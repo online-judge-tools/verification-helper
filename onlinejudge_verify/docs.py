@@ -14,9 +14,10 @@ from typing import IO, Any, Dict, List, Tuple
 
 import markdown
 import onlinejudge_verify.languages
-import onlinejudge_verify.marker
 import pkg_resources
 import yaml
+from onlinejudge_verify.marker import get_verification_marker
+from onlinejudge_verify.utils import is_verification_file
 
 logger = getLogger(__name__)
 
@@ -149,8 +150,8 @@ class CppFile:
 
         self.required = []
         # 表示するverification statusを決める
-        is_verified = onlinejudge_verify.marker.get_verification_marker().is_verified(self.file_path.relative_to(self.source_path))
-        is_failed = onlinejudge_verify.marker.get_verification_marker().is_failed(self.file_path.relative_to(self.source_path))
+        is_verified = get_verification_marker().is_verified(self.file_path.relative_to(self.source_path))
+        is_failed = get_verification_marker().is_failed(self.file_path.relative_to(self.source_path))
         if is_verified:
             self.verification_status = VerificationStatus.VERIFIED
         elif is_failed:
@@ -255,7 +256,7 @@ class MarkdownArticle(MarkdownPage):
         top_page_category_link = back_to_top_link + '#' + hashlib.md5(category.encode()).hexdigest()
         if categorize: file_object.write('* category: {}\n'.format(self.get_linktag(category, top_page_category_link)).encode())
         github_link = '{{ site.github.repository_url }}' + '/blob/{}/{}'.format('master', str(self.file_class.file_path.relative_to(self.file_class.source_path)))
-        file_object.write('* {}\n    - Last commit date: {}\n'.format(self.get_linktag('View this file on GitHub', github_link), onlinejudge_verify.marker.get_verification_marker().get_current_timestamp(self.file_class.file_path)).encode())
+        file_object.write('* {}\n    - Last commit date: {}\n'.format(self.get_linktag('View this file on GitHub', github_link), get_verification_marker().get_current_timestamp(self.file_class.file_path)).encode())
         file_object.write(b'\n\n')
 
     def write_contents(self, file_object: IO, path_to_title: 'OrderedDict[pathlib.Path, str]', path_to_verification: Dict[pathlib.Path, VerificationStatus]) -> None:
@@ -283,16 +284,16 @@ class MarkdownArticle(MarkdownPage):
                     raise FileNotFoundError('{} seems not to exist in path_to_title'.format(depends))
                 title = path_to_title[depends]
 
-                file_type = 'verify' if '.test.' in str(depends) else 'library'
+                file_type = 'verify' if is_verification_file(depends) else 'library'
                 link = self.get_link(self.get_destination(depends, file_type)) + '.html'
                 file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
             file_object.write(b'\n\n')
 
-        required_file_list = [f for f in self.file_class.required if '.test.' not in str(f)]
-        verified_file_list = [f for f in self.file_class.required if '.test.' in str(f)]
+        required_file_list = [f for f in self.file_class.required if not is_verification_file(f)]
+        verified_file_list = [f for f in self.file_class.required if is_verification_file(f)]
 
         # ビルド対象ファイルが test.cpp の場合、それに依存している test.cpp ファイルは Verified ではなく Required に入れる
-        if '.test.' in str(self.file_class.file_path):
+        if is_verification_file(self.file_class.file_path):
             required_file_list.extend(verified_file_list)
             verified_file_list = []
 
@@ -311,7 +312,7 @@ class MarkdownArticle(MarkdownPage):
                     raise FileNotFoundError('{} seems not to exist in path_to_title'.format(required))
                 title = path_to_title[required]
 
-                file_type = 'verify' if '.test.' in str(required) else 'library'
+                file_type = 'verify' if is_verification_file(required) else 'library'
                 link = self.get_link(self.get_destination(required, file_type)) + '.html'
                 file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
             file_object.write(b'\n\n')
@@ -572,7 +573,7 @@ class PagesBuilder:
         files = {}
         for path in source_path.glob(r'**/*'):
             if onlinejudge_verify.languages.get(path):
-                if is_verify and '.test.' not in str(path):
+                if is_verify and not is_verification_file(path):
                     continue
                 if any([path.samefile(ignored_file) for ignored_file in ignored_files]):
                     continue
@@ -698,7 +699,7 @@ class PagesBuilder:
             # cpp_fileを必要としている .test.cpp のstatusのlist
             required_verification_statuses = []
             for verify in cpp_class.required:
-                if '.test.' in str(verify):
+                if is_verification_file(verify):
                     required_verification_statuses.append(result[verify])
             # verification statusを解決する
             if len(required_verification_statuses) == 0:

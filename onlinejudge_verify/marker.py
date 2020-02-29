@@ -117,7 +117,7 @@ def get_verification_marker(*, jobs: Optional[int] = None) -> VerificationMarker
             timestamps_json_path = pathlib.Path('.verify-helper/timestamps.local.json')
         else:
             timestamps_json_path = pathlib.Path('.verify-helper/timestamps.remote.json')
-        use_git_timestamp = onlinejudge_verify.utils.is_local_execution()
+        use_git_timestamp = not onlinejudge_verify.utils.is_local_execution()
         _verification_marker = VerificationMarker(json_path=timestamps_json_path, use_git_timestamp=use_git_timestamp, jobs=jobs)
     return _verification_marker
 

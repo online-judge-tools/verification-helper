@@ -180,9 +180,6 @@ class MarkdownPage:
         self.md_destination_path = pathlib.Path()
         self.destination = pathlib.Path()
 
-    def get_mark(self, verification_status: VerificationStatus) -> str:
-        return verification_status.value
-
     # file_path の markdown 生成先はどのような絶対パスになるべきか
     # prefix は [cpp_source_path までのパス] でなければならない
     # [markdown 生成先ディレクトリまでのパス] + [file_type] + [cpp_source_path より深いパス] を返す？
@@ -225,14 +222,14 @@ class MarkdownArticle(MarkdownPage):
     cpp_source_path: pathlib.Path
     md_destination_path: pathlib.Path
     destination: pathlib.Path
-    mark: str
+    mark: VerificationStatus
 
     def __init__(self, file_class: CppFile, file_type: str, cpp_source_path: pathlib.Path, md_destination_path: pathlib.Path) -> None:
         self.file_class = file_class
         self.cpp_source_path = cpp_source_path.resolve()
         self.md_destination_path = md_destination_path.resolve()
         self.destination = self.get_destination(self.file_class.file_path, file_type)
-        self.mark = self.get_mark(self.file_class.verification_status)
+        self.mark = self.file_class.verification_status
 
     # include (mathjax, js, css)
     def write_header(self, file_object: IO) -> None:
@@ -274,7 +271,7 @@ class MarkdownArticle(MarkdownPage):
             for depends in self.file_class.depends:
                 if depends not in path_to_verification:
                     raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(depends))
-                mark = self.get_mark(path_to_verification[depends])
+                mark = path_to_verification[depends]
 
                 if depends not in path_to_title:
                     raise FileNotFoundError('{} seems not to exist in path_to_title'.format(depends))
@@ -282,7 +279,7 @@ class MarkdownArticle(MarkdownPage):
 
                 file_type = 'verify' if is_verification_file(depends) else 'library'
                 link = self.get_link(self.get_destination(depends, file_type)) + '.html'
-                file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
+                file_object.write('* {} {}\n'.format(mark.value, self.get_linktag(title, link)).encode())
             file_object.write(b'\n\n')
 
         required_file_list = [f for f in self.file_class.required if not is_verification_file(f)]
@@ -302,7 +299,7 @@ class MarkdownArticle(MarkdownPage):
             for required in required_file_list:
                 if required not in path_to_verification:
                     raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(required))
-                mark = self.get_mark(path_to_verification[required])
+                mark = path_to_verification[required]
 
                 if required not in path_to_title:
                     raise FileNotFoundError('{} seems not to exist in path_to_title'.format(required))
@@ -310,7 +307,7 @@ class MarkdownArticle(MarkdownPage):
 
                 file_type = 'verify' if is_verification_file(required) else 'library'
                 link = self.get_link(self.get_destination(required, file_type)) + '.html'
-                file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
+                file_object.write('* {} {}\n'.format(mark.value, self.get_linktag(title, link)).encode())
             file_object.write(b'\n\n')
 
         # cpp => test.cpp
@@ -319,14 +316,14 @@ class MarkdownArticle(MarkdownPage):
             for verified in verified_file_list:
                 if verified not in path_to_verification:
                     raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(verified))
-                mark = self.get_mark(path_to_verification[verified])
+                mark = path_to_verification[verified]
 
                 if verified not in path_to_title:
                     raise FileNotFoundError('{} seems not to exist in path_to_title'.format(verified))
                 title = path_to_title[verified]
 
                 link = self.get_link(self.get_destination(verified, 'verify')) + '.html'
-                file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
+                file_object.write('* {} {}\n'.format(mark.value, self.get_linktag(title, link)).encode())
             file_object.write(b'\n\n')
 
         # source code
@@ -404,14 +401,14 @@ class MarkdownTopPage(MarkdownPage):
                 for library_file in library_list:
                     if library_file not in path_to_verification:
                         raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(library_file))
-                    mark = self.get_mark(path_to_verification[library_file])
+                    mark = path_to_verification[library_file]
 
                     if library_file not in path_to_title:
                         raise FileNotFoundError('{} seems not to exist in path_to_title'.format(library_file))
                     title = path_to_title[library_file]
 
                     link = self.get_link(self.get_destination(library_file, 'library')) + '.html'
-                    file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
+                    file_object.write('* {} {}\n'.format(mark.value, self.get_linktag(title, link)).encode())
                 file_object.write(b'\n\n')
 
         if verify_files != {}:
@@ -419,14 +416,14 @@ class MarkdownTopPage(MarkdownPage):
             for verify_file in verify_files.keys():
                 if verify_file not in path_to_verification:
                     raise FileNotFoundError('{} seems not to exist in path_to_verification'.format(verify_file))
-                mark = self.get_mark(path_to_verification[verify_file])
+                mark = path_to_verification[verify_file]
 
                 if verify_file not in path_to_title:
                     raise FileNotFoundError('{} seems not to exist in path_to_title'.format(verify_file))
                 title = path_to_title[verify_file]
 
                 link = self.get_link(self.get_destination(verify_file, 'verify')) + '.html'
-                file_object.write('* {} {}\n'.format(mark, self.get_linktag(title, link)).encode())
+                file_object.write('* {} {}\n'.format(mark.value, self.get_linktag(title, link)).encode())
             file_object.write(b'\n\n')
 
     def build(

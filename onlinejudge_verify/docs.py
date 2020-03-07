@@ -240,7 +240,7 @@ class MarkdownArticle(MarkdownPage):
         file_object.write(b'\n\n')
 
     def write_title(self, file_object: IO, category: str) -> None:
-        file_object.write('# {} {}\n\n'.format(self.mark, self.file_class.title).encode())
+        file_object.write('# {} {}\n\n'.format(self.mark.value, self.file_class.title).encode())
 
         # back to top
         back_to_top_link = self.get_link(self.md_destination_path / 'index.html')

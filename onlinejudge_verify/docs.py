@@ -94,7 +94,6 @@ class CppFile:
         self.parser = FileParser(file_path)
 
         self.brief = self.parser.get_contents_by_tag(r'@brief')
-        self.brief.extend(self.parser.get_contents_by_tag(r'#define DESCRIPTION', l_pat=r'"', r_pat=r'"'))
 
         # file 指定が空なら、source_path から見た file_path へのパスをタイトルにする
         title_list = self.parser.get_contents_by_tag(r'@title')
@@ -111,30 +110,33 @@ class CppFile:
 
         # category 指定が空なら、source_path から見た file_path が属するディレクトリ名をカテゴリにする
         category_list = self.parser.get_contents_by_tag(r'@category')
-        category_list.extend(self.parser.get_contents_by_tag(r'#define CATEGORY', l_pat=r'"', r_pat=r'"'))
         if category_list == []:
             self.category = str(self.file_path.parent.relative_to(self.source_path))
         else:
             self.category = category_list[-1]
 
+        # language object を用意しておく
+        language = onlinejudge_verify.languages.get(self.file_path)
+        assert language is not None
+        try:
+            attributes = language.list_attributes(self.file_path, basedir=pathlib.Path.cwd())
+        except:
+            traceback.print_exc()
+            attributes = {}
+
         # see で指定されるのは URL: パス修正は不要
         self.see = self.parser.get_contents_by_tag(r'(?:@see|@sa)', re_escape=False)
-        self.see.extend(self.parser.get_contents_by_tag(r'#define PROBLEM', l_pat=r'"', r_pat=r'"'))
-        self.see.extend(self.parser.get_contents_by_tag(r'#define SEE', l_pat=r'"', r_pat=r'"'))
+        if 'PROBLEM' in attributes:
+            self.see.append(attributes['PROBLEM'])
 
         # pathlib 型に直し、相対パスである場合は絶対パスに直す
         docs_list = self.parser.get_contents_by_tag(r'@docs')
-        docs_list.extend(self.parser.get_contents_by_tag(r'#define DOCS', l_pat=r'"', r_pat=r'"'))
         self.docs = [pathlib.Path(path) for path in docs_list]
         self.docs = self.to_abspath(self.docs)
 
         # pathlib 型に直し、相対パスである場合は絶対パスに直す
-        language = onlinejudge_verify.languages.get(self.file_path)
-        assert language is not None
         depends_list = self.parser.get_contents_by_tag(r'@depends')
         depends_list.extend(map(str, language.list_dependencies(self.file_path, basedir=pathlib.Path.cwd())))
-        depends_list.extend(self.parser.get_contents_by_tag(r'#define REQUIRES', l_pat=r'"', r_pat=r'"'))
-        depends_list.extend(self.parser.get_contents_by_tag(r'#define DEPENDS', l_pat=r'"', r_pat=r'"'))
         self.depends = [pathlib.Path(path) for path in depends_list]
         self.depends = list(set(self.to_abspath(self.depends)))
         self.depends.sort()
@@ -330,7 +332,7 @@ class MarkdownArticle(MarkdownPage):
         language = onlinejudge_verify.languages.get(self.file_class.file_path)
         assert language is not None
         try:
-            bundled_code = language.bundle(self.file_class.file_path, basedir=self.cpp_source_path)
+            bundled_code = language.bundle(self.file_class.file_path, basedir=pathlib.Path.cwd())
         except Exception:
             logger.warning("failed to bundle: %s", str(self.file_class.file_path))
             bundled_code = traceback.format_exc().encode()
@@ -548,7 +550,6 @@ class PagesBuilder:
         parser = FileParser(file_path)
         ignore = []
         ignore.extend(parser.get_contents_by_tag(r'@ignore'))
-        ignore.extend(parser.get_contents_by_tag(r'#define IGNORE'))
         return bool(ignore)
 
     # source_path 内にあって拡張子末尾が extension であるファイル一覧

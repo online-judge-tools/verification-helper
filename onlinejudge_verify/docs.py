@@ -708,13 +708,12 @@ class PagesBuilder:
                 result[cpp_file] = VerificationStatus.DEFAULT
             elif all(status == VerificationStatus.FAILED for status in required_verification_statuses):
                 # cpp_fileを必要としている全てのtestでfailedならfailedとする
-                # 一つでもfailedならfailed、とすると自身のコードに問題ない場合も誤ってfailedとなる
-                # 可能性が高まるので避けた
                 result[cpp_file] = VerificationStatus.FAILED
             elif all(status == VerificationStatus.VERIFIED for status in required_verification_statuses):
                 # 上記以外でcpp_fileを必要としている .test.cpp が全てverifiedかfailedならverifiedとする
                 result[cpp_file] = VerificationStatus.VERIFIED
             else:
+                # 一つでもfailedならfailed、とすると自身のコードに問題ない場合も誤ってfailedとなる可能性が高まるので避けた
                 result[cpp_file] = VerificationStatus.QUESTION
             self.library_files[cpp_file].verification_status = result[cpp_file]
         return result

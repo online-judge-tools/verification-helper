@@ -11,7 +11,6 @@ setup(
     description='',
     python_requires='>=3.6',
     install_requires=[
-        'markdown',
         'pyyaml',
         'online-judge-tools >= 8.0.0',
         'setuptools',

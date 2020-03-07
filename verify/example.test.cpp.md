@@ -25,7 +25,7 @@ layout: default
 <link rel="stylesheet" href="../assets/css/copy-button.css" />
 
 
-# VerificationStatus.VERIFIED example.test.cpp
+# :heavy_check_mark: example.test.cpp
 
 <a href="../index.html">Back to top page</a>
 

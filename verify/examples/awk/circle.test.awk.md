@@ -25,7 +25,7 @@ layout: default
 <link rel="stylesheet" href="../../../assets/css/copy-button.css" />
 
 
-# VerificationStatus.VERIFIED examples/awk/circle.test.awk
+# :heavy_check_mark: examples/awk/circle.test.awk
 
 <a href="../../../index.html">Back to top page</a>
 

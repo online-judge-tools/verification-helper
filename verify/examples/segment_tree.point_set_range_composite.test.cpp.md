@@ -25,7 +25,7 @@ layout: default
 <link rel="stylesheet" href="../../assets/css/copy-button.css" />
 
 
-# VerificationStatus.VERIFIED examples/segment_tree.point_set_range_composite.test.cpp
+# :heavy_check_mark: examples/segment_tree.point_set_range_composite.test.cpp
 
 <a href="../../index.html">Back to top page</a>
 

@@ -25,7 +25,7 @@ layout: default
 <link rel="stylesheet" href="../../assets/css/copy-button.css" />
 
 
-# VerificationStatus.VERIFIED examples/union_find_tree.aoj.test.cpp
+# :heavy_check_mark: examples/union_find_tree.aoj.test.cpp
 
 <a href="../../index.html">Back to top page</a>
 

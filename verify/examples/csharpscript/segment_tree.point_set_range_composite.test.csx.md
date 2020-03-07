@@ -25,7 +25,7 @@ layout: default
 <link rel="stylesheet" href="../../../assets/css/copy-button.css" />
 
 
-# VerificationStatus.VERIFIED examples/csharpscript/segment_tree.point_set_range_composite.test.csx
+# :heavy_check_mark: examples/csharpscript/segment_tree.point_set_range_composite.test.csx
 
 <a href="../../../index.html">Back to top page</a>
 

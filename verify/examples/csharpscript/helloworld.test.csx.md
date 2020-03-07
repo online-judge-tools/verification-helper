@@ -25,7 +25,7 @@ layout: default
 <link rel="stylesheet" href="../../../assets/css/copy-button.css" />
 
 
-# VerificationStatus.VERIFIED examples/csharpscript/helloworld.test.csx
+# :heavy_check_mark: examples/csharpscript/helloworld.test.csx
 
 <a href="../../../index.html">Back to top page</a>
 

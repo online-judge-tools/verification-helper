@@ -25,7 +25,7 @@ layout: default
 <link rel="stylesheet" href="../../../assets/css/copy-button.css" />
 
 
-# VerificationStatus.DEFAULT examples/debug/not_verified.hpp
+# :warning: examples/debug/not_verified.hpp
 
 <a href="../../../index.html">Back to top page</a>
 

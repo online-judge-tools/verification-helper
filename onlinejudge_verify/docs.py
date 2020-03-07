@@ -10,7 +10,7 @@ import traceback
 from collections import OrderedDict
 from enum import Enum
 from logging import getLogger
-from typing import IO, Any, Dict, List, Tuple
+from typing import IO, Any, Dict, List
 
 import onlinejudge_verify.languages
 import pkg_resources
@@ -160,19 +160,21 @@ class CppFile:
             # とりあえず連結して存在するなら相対パス扱い
             if abspath_cand.exists():
                 abspath_cand = abspath_cand.resolve()
-                if abspath_cand != self.file_path: result.append(abspath_cand)
+                if abspath_cand != self.file_path:
+                    result.append(abspath_cand)
             # 絶対パス扱いにしたものを読んで存在しないなら捨てる
             elif item.exists():
                 item = item.resolve()
-                if item != self.file_path: result.append(item)
+                if item != self.file_path:
+                    result.append(item)
         return result
-
-    def set_required(self, required_list: List[pathlib.Path]) -> None:
-        self.required = required_list
-        self.required.sort()
 
 
 class MarkdownPage:
+    cpp_source_path: pathlib.Path
+    md_destination_path: pathlib.Path
+    destination: pathlib.Path
+
     def __init__(self) -> None:
         self.cpp_source_path = pathlib.Path()
         self.md_destination_path = pathlib.Path()
@@ -219,6 +221,12 @@ class MarkdownPage:
 
 
 class MarkdownArticle(MarkdownPage):
+    file_class: CppFile
+    cpp_source_path: pathlib.Path
+    md_destination_path: pathlib.Path
+    destination: pathlib.Path
+    mark: str
+
     def __init__(self, file_class: CppFile, file_type: str, cpp_source_path: pathlib.Path, md_destination_path: pathlib.Path) -> None:
         self.file_class = file_class
         self.cpp_source_path = cpp_source_path.resolve()
@@ -353,6 +361,11 @@ class MarkdownArticle(MarkdownPage):
 
 
 class MarkdownTopPage(MarkdownPage):
+    cpp_source_path: pathlib.Path
+    md_destination_path: pathlib.Path
+    destination: pathlib.Path
+    config: Dict[str, Any]
+
     def __init__(self, cpp_source_path: pathlib.Path, md_destination_path: pathlib.Path, config: Dict[str, Any]) -> None:
         self.cpp_source_path = cpp_source_path.resolve()
         self.md_destination_path = md_destination_path.resolve()
@@ -453,23 +466,24 @@ class PagesBuilder:
         self.library_files = self.get_files(cpp_source_path, ignored_files=self.verify_files)
 
         # ファイルまでの絶対パス <-> タイトル
-        self.title_to_path = self.map_title2path()
-        self.path_to_title = self.map_path2title()
+        self.title_to_path = self.get_title_to_path()
+        self.path_to_title = self.get_path_to_title()
 
         # カテゴリ -> ファイルまでの絶対パスのリスト
-        self.verify_category_to_path, self.library_category_to_path = self.map_category2path()
+        self.verify_category_to_path = self.get_verify_category_to_path()
+        self.library_category_to_path = self.get_library_category_to_path()
 
         # 設定項目
         self.config = config
 
         # 依存関係を調べる
-        self.get_required()
+        self.analyze_required()
 
         # 各ファイルについて depends, required の対象であって @ignore されているファイルの除外
         self.remove_ignored_file_relation()
 
         # ファイルまでの絶対パス -> Verification Status
-        self.path_to_verification = self.map_path2verification()
+        self.path_to_verification = self.get_path_to_verification()
 
         # ページをビルド
         self.build_verify_files(cpp_source_path, md_destination_path)
@@ -518,7 +532,7 @@ class PagesBuilder:
         return OrderedDict(sorted(files.items(), key=lambda x: x[0]))
 
     # title の重複があったらナンバリング付与
-    def map_title2path(self) -> 'OrderedDict[str, pathlib.Path]':
+    def get_title_to_path(self) -> 'OrderedDict[str, pathlib.Path]':
         title_cnt, title_num, result = {}, {}, {}  # type: Dict[str, int], Dict[str, int], Dict[str, pathlib.Path]
         for cpp_class in self.library_files.values():
             title_cnt.setdefault(cpp_class.title, 0)
@@ -545,7 +559,7 @@ class PagesBuilder:
             cpp_class.title = title
         return OrderedDict(sorted(result.items(), key=lambda x: x[0]))
 
-    def map_path2title(self) -> 'OrderedDict[pathlib.Path, str]':
+    def get_path_to_title(self) -> 'OrderedDict[pathlib.Path, str]':
         result = {}
         for cpp_class in self.library_files.values():
             result[cpp_class.file_path] = cpp_class.title
@@ -561,24 +575,25 @@ class PagesBuilder:
 
         return result
 
-    def map_category2path(self) -> Tuple['OrderedDict[str, List[pathlib.Path]]', 'OrderedDict[str, List[pathlib.Path]]']:
-        verify_result, library_result = {}, {}  # type: Dict[str, List[pathlib.Path]], Dict[str, List[pathlib.Path]]
+    def get_verify_category_to_path(self) -> 'OrderedDict[str, List[pathlib.Path]]':
+        verify_result = {}  # type: Dict[str, List[pathlib.Path]]
         for cpp_class in self.verify_files.values():
             verify_result.setdefault(cpp_class.category, [])
             verify_result[cpp_class.category].append(cpp_class.file_path)
         for file_path_list in verify_result.values():
             file_path_list.sort()
-        verify_result_ordered = OrderedDict(sorted(verify_result.items(), key=lambda x: x[0]))
+        return OrderedDict(sorted(verify_result.items(), key=lambda x: x[0]))
 
+    def get_library_category_to_path(self) -> 'OrderedDict[str, List[pathlib.Path]]':
+        library_result = {}  # type: Dict[str, List[pathlib.Path]]
         for cpp_class in self.library_files.values():
             library_result.setdefault(cpp_class.category, [])
             library_result[cpp_class.category].append(cpp_class.file_path)
         for file_path_list in library_result.values():
             file_path_list.sort()
-        library_result_ordered = OrderedDict(sorted(library_result.items(), key=lambda x: x[0]))
-        return verify_result_ordered, library_result_ordered
+        return OrderedDict(sorted(library_result.items(), key=lambda x: x[0]))
 
-    def get_required(self) -> None:
+    def analyze_required(self) -> None:
         map_required = {}  # type: Dict[pathlib.Path, List[pathlib.Path]]
         for cpp_class in self.library_files.values():
             for depends in cpp_class.depends:
@@ -594,11 +609,11 @@ class PagesBuilder:
 
         for cpp_file in self.library_files.keys():
             map_required.setdefault(cpp_file, [])
-            self.library_files[cpp_file].set_required(map_required[cpp_file])
+            self.library_files[cpp_file].required = sorted(map_required[cpp_file])
 
         for cpp_file in self.verify_files.keys():
             map_required.setdefault(cpp_file, [])
-            self.verify_files[cpp_file].set_required(map_required[cpp_file])
+            self.verify_files[cpp_file].required = sorted(map_required[cpp_file])
 
     # @ignore されていないファイルのみを depends, required に残す
     # 本来あるべきファイルが存在しない場合もここで怒られるはず？？
@@ -606,22 +621,26 @@ class PagesBuilder:
         for cpp_file, cpp_class in self.verify_files.items():
             depends_list_verify, required_list_verify = [], []  # type: List[pathlib.Path], List[pathlib.Path]
             for depends in cpp_class.depends:
-                if not self.is_ignored(depends): depends_list_verify.append(depends)
+                if not self.is_ignored(depends):
+                    depends_list_verify.append(depends)
             for required in cpp_class.required:
-                if not self.is_ignored(required): required_list_verify.append(required)
+                if not self.is_ignored(required):
+                    required_list_verify.append(required)
             self.verify_files[cpp_file].depends = depends_list_verify
             self.verify_files[cpp_file].required = required_list_verify
 
         for cpp_file, cpp_class in self.library_files.items():
             depends_list_library, required_list_library = [], []  # type: List[pathlib.Path], List[pathlib.Path]
             for depends in cpp_class.depends:
-                if not self.is_ignored(depends): depends_list_library.append(depends)
+                if not self.is_ignored(depends):
+                    depends_list_library.append(depends)
             for required in cpp_class.required:
-                if not self.is_ignored(required): required_list_library.append(required)
+                if not self.is_ignored(required):
+                    required_list_library.append(required)
             self.library_files[cpp_file].depends = depends_list_library
             self.library_files[cpp_file].required = required_list_library
 
-    def map_path2verification(self) -> Dict[pathlib.Path, VerificationStatus]:
+    def get_path_to_verification(self) -> Dict[pathlib.Path, VerificationStatus]:
         result = {}  # type: Dict[pathlib.Path, VerificationStatus]
         # .test.cpp の verify 状況確認
         for cpp_file, cpp_class in self.verify_files.items():

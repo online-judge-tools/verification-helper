@@ -96,7 +96,9 @@ class Bundler(object):
             # include guard のまわりの変数
             # NOTE: include guard に使われたマクロがそれ以外の用途にも使われたり #undef されたりすると壊れるけど、無視します
             non_guard_line_found = False
+            pragma_once_found = False
             include_guard_macro = None  # type: Optional[str]
+            include_guard_define_found = False
             include_guard_endif_found = False
             preprocess_if_nest = 0
 
@@ -107,20 +109,34 @@ class Bundler(object):
             self._line(1, path)
             for i, (line, uncommented_line) in enumerate(zip(lines, uncommented_lines)):
 
+                # nest の処理
+                if re.match(rb'\s*#\s*(if|ifdef|ifndef)\s.*', uncommented_line):
+                    preprocess_if_nest += 1
+                if re.match(rb'\s*#\s*(else\s*|elif\s.*)', uncommented_line):
+                    if preprocess_if_nest == 0:
+                        raise BundleError(path, i + 1, "unmatched #else / #elif")
+                if re.match(rb'\s*#\s*endif\s*', uncommented_line):
+                    preprocess_if_nest -= 1
+                    if preprocess_if_nest < 0:
+                        raise BundleError(path, i + 1, "unmatched #endif")
+
                 # #pragma once
                 if re.match(rb'\s*#\s*pragma\s+once\s*', line):  # #pragma once は comment 扱いで消されてしまう
                     logger.info('%s: line %s: #pragma once', str(path), i + 1)
-                    if i != 0:
+                    if non_guard_line_found:
                         # 先頭以外で #pragma once されてた場合は諦める
                         raise BundleError(path, i + 1, "#pragma once found in a non-first line")
+                    if include_guard_macro is not None:
+                        raise BundleError(path, i + 1, "#pragma once found in an include guard with #ifndef")
                     if path.resolve() in self.pragma_once:
                         return
+                    pragma_once_found = True
                     self.pragma_once.add(path.resolve())
                     self._line(i + 2, path)
                     continue
 
                 # #ifndef HOGE_H as guard
-                if not non_guard_line_found and include_guard_macro is None:
+                if not pragma_once_found and not non_guard_line_found and include_guard_macro is None:
                     matched = re.match(rb'\s*#\s*ifndef\s+(\w+)\s*', uncommented_line)
                     if matched:
                         include_guard_macro = matched.group(1).decode()
@@ -129,47 +145,30 @@ class Bundler(object):
                         continue
 
                 # #define HOGE_H as guard
-                if not non_guard_line_found and include_guard_macro is not None:
+                if include_guard_macro is not None and not include_guard_define_found:
                     matched = re.match(rb'\s*#\s*define\s+(\w+)\s*', uncommented_line)
                     if matched and matched.group(1).decode() == include_guard_macro:
                         self.pragma_once.add(path.resolve())
                         logger.info('%s: line %s: #define %s', str(path), i + 1, include_guard_macro)
+                        include_guard_define_found = True
                         self.result_lines.append(b"\n")
                         continue
 
                 # #endif as guard
-                if include_guard_macro is not None and preprocess_if_nest == 0 and not include_guard_endif_found:
+                if include_guard_define_found and preprocess_if_nest == 0 and not include_guard_endif_found:
                     if re.match(rb'\s*#\s*endif\s*', uncommented_line):
                         include_guard_endif_found = True
                         self.result_lines.append(b"\n")
                         continue
 
                 if uncommented_line:
-                    # include guard の外側にコードが書かれているとまずいので検出する
                     non_guard_line_found = True
+                    if include_guard_macro is not None and not include_guard_define_found:
+                        # 先頭に #ifndef が見付かっても #define が続かないならそれは include guard ではない
+                        include_guard_macro = None
                     if include_guard_endif_found:
+                        # include guard の外側にコードが書かれているとまずいので検出する
                         raise BundleError(path, i + 1, "found codes out of include guard")
-
-                # #if #ifdef #ifndef
-                if re.match(rb'\s*#\s*(if|ifdef|ifndef)\s.*', uncommented_line):
-                    preprocess_if_nest += 1
-                    self.result_lines.append(line)
-                    continue
-
-                # #else #elif
-                if re.match(rb'\s*#\s*(else\s*|elif\s.*)', uncommented_line):
-                    if preprocess_if_nest == 0:
-                        raise BundleError(path, i + 1, "unmatched #else / #elif")
-                    self.result_lines.append(line)
-                    continue
-
-                # #endif
-                if re.match(rb'\s*#\s*endif\s*', uncommented_line):
-                    preprocess_if_nest -= 1
-                    if preprocess_if_nest < 0:
-                        raise BundleError(path, i + 1, "unmatched #endif")
-                    self.result_lines.append(line)
-                    continue
 
                 # #include "..."
                 matched = re.match(rb'\s*#\s*include\s*"(.*)"\s*', uncommented_line)

@@ -142,14 +142,14 @@ def subcommand_docs() -> None:
     if 'GITHUB_ACTION' in os.environ and 'GITHUB_TOKEN' in os.environ:
         if os.environ['GITHUB_REF'] == 'refs/heads/master':
             logger.info('generate documents...')
-            onlinejudge_verify.docs.main(html=False, force=True)
+            onlinejudge_verify.docs.main()
 
             logger.info('upload documents...')
             push_documents_to_gh_pages(src_dir=pathlib.Path('.verify-helper/markdown'))
 
     else:
         logger.info('generate documents...')
-        onlinejudge_verify.docs.main(html=False, force=True)
+        onlinejudge_verify.docs.main()
 
 
 def generate_gitignore() -> None:

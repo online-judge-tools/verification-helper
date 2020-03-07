@@ -10,6 +10,89 @@ from typing import *
 
 logger = getLogger(__name__)
 
+bits_stdcxx_h = 'bits/stdc++.h'
+cxx_standard_libraries = [
+    'algorithm',
+    'array',
+    'bitset',
+    'chrono',
+    'codecvt',
+    'complex',
+    'condition_variable',
+    'deque',
+    'exception',
+    'forward_list',
+    'fstream',
+    'functional',
+    'future',
+    'iomanip',
+    'ios',
+    'iosfwd',
+    'iostream',
+    'istream',
+    'iterator',
+    'limits',
+    'list',
+    'locale',
+    'map',
+    'memory',
+    'mutex',
+    'new',
+    'numeric',
+    'ostream',
+    'queue',
+    'random',
+    'regex',
+    'set',
+    'sstream',
+    'stack',
+    'stdexcept',
+    'streambuf',
+    'string',
+    'thread',
+    'tuple',
+    'typeinfo',
+    'unordered_map',
+    'unordered_set',
+    'utility',
+    'valarray',
+    'vector',
+]
+
+c_standard_libraries = [
+    'assert.h',
+    'complex.h',
+    'ctype.h',
+    'errno.h',
+    'fenv.h',
+    'float.h',
+    'inttypes.h',
+    'iso646.h',
+    'limits.h',
+    'locale.h',
+    'math.h',
+    'setjmp.h',
+    'signal.h',
+    'stdalign.h',
+    'stdarg.h',
+    'stdatomic.h',
+    'stdbool.h',
+    'stddef.h',
+    'stdint.h',
+    'stdio.h',
+    'stdlib.h',
+    'stdnoreturn.h',
+    'string.h',
+    'tgmath.h',
+    'threads.h',
+    'time.h',
+    'uchar.h',
+    'wchar.h',
+    'wctype.h',
+]
+
+standard_libraries = set([bits_stdcxx_h] + cxx_standard_libraries + c_standard_libraries + ['c' + name[:-len('.h')] for name in c_standard_libraries])
+
 
 @functools.lru_cache(maxsize=None)
 def _get_uncommented_code(path: pathlib.Path, *, iquotes_options: str, compiler: str) -> bytes:
@@ -45,6 +128,7 @@ class BundleError(Exception):
 class Bundler(object):
     iquotes: List[pathlib.Path]
     pragma_once: Set[pathlib.Path]
+    pragma_once_system: Set[str]
     result_lines: List[bytes]
     path_stack: Set[pathlib.Path]
     compiler: str
@@ -52,6 +136,7 @@ class Bundler(object):
     def __init__(self, *, iquotes: List[pathlib.Path] = []) -> None:
         self.iquotes = iquotes
         self.pragma_once = set()
+        self.pragma_once_system = set()
         self.result_lines = []
         self.path_stack = set()
         self.compiler = os.environ.get('CXX', 'g++')
@@ -119,6 +204,7 @@ class Bundler(object):
                     preprocess_if_nest -= 1
                     if preprocess_if_nest < 0:
                         raise BundleError(path, i + 1, "unmatched #endif")
+                is_toplevel = preprocess_if_nest == 0 or (preprocess_if_nest == 1 and include_guard_macro is not None)
 
                 # #pragma once
                 if re.match(rb'\s*#\s*pragma\s+once\s*', line):  # #pragma once は comment 扱いで消されてしまう
@@ -170,16 +256,33 @@ class Bundler(object):
                         # include guard の外側にコードが書かれているとまずいので検出する
                         raise BundleError(path, i + 1, "found codes out of include guard")
 
+                # #include <...>
+                matched = re.match(rb'\s*#\s*include\s*<(.*)>\s*', uncommented_line)
+                if matched:
+                    included = matched.group(1).decode()
+                    logger.info('%s: line %s: #include <%s>', str(path), i + 1, str(included))
+                    if included in self.pragma_once_system or bits_stdcxx_h in self.pragma_once_system:
+                        self._line(i + 2, path)
+                    elif is_toplevel and included in standard_libraries:
+                        self.pragma_once_system.add(included)
+                        self.result_lines.append(line)
+                    else:
+                        # #pragma once 系の判断ができない場合はそっとしておく
+                        self.result_lines.append(line)
+                    continue
+
                 # #include "..."
                 matched = re.match(rb'\s*#\s*include\s*"(.*)"\s*', uncommented_line)
                 if matched:
-                    included = pathlib.Path(matched.group(1).decode())
-                    logger.info('%s: line %s: include %s', str(path), i + 1, str(included))
-                    if preprocess_if_nest:
+                    included = matched.group(1).decode()
+                    logger.info('%s: line %s: #include "%s"', str(path), i + 1, included)
+                    if not is_toplevel:
                         # #if の中から #include されると #pragma once 系の判断が不可能になるので諦める
                         raise BundleError(path, i + 1, "unable to process #include in #if / #ifdef / #ifndef other than include guards")
-                    self.update(self._resolve(included, included_from=path))
+                    self.update(self._resolve(pathlib.Path(included), included_from=path))
                     self._line(i + 2, path)
+                    # TODO: #include "iostream" みたいに書いたときの挙動をはっきりさせる
+                    # TODO: #include <iostream> /* とかをやられた場合を落とす
                     continue
 
                 # otherwise

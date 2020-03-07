@@ -25,7 +25,7 @@ layout: default
 <link rel="stylesheet" href="../../assets/css/copy-button.css" />
 
 
-# :heavy_check_mark: a Segment Tree (generalized with monoids) <small>(examples/segment_tree.hpp)</small>
+# VerificationStatus.VERIFIED a Segment Tree (generalized with monoids) <small>(examples/segment_tree.hpp)</small>
 
 <a href="../../index.html">Back to top page</a>
 

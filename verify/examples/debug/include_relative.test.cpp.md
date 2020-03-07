@@ -25,10 +25,11 @@ layout: default
 <link rel="stylesheet" href="../../../assets/css/copy-button.css" />
 
 
-# :heavy_check_mark: examples/debug/include_relative.test.cpp
+# VerificationStatus.VERIFIED examples/debug/include_relative.test.cpp
 
 <a href="../../../index.html">Back to top page</a>
 
+* category: <a href="../../../index.html#6ffb1fe84ae4530240b8799246bff2fd">examples/debug</a>
 * <a href="{{ site.github.repository_url }}/blob/master/examples/debug/include_relative.test.cpp">View this file on GitHub</a>
     - Last commit date: 2020-02-28 16:21:27+09:00
 

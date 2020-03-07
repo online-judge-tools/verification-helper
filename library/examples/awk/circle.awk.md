@@ -25,7 +25,7 @@ layout: default
 <link rel="stylesheet" href="../../../assets/css/copy-button.css" />
 
 
-# :heavy_check_mark: examples/awk/circle.awk
+# VerificationStatus.VERIFIED examples/awk/circle.awk
 
 <a href="../../../index.html">Back to top page</a>
 
@@ -61,8 +61,8 @@ function get_circumference(r) {
 {% raw %}
 ```cpp
 Traceback (most recent call last):
-  File "/opt/hostedtoolcache/Python/3.8.2/x64/lib/python3.8/site-packages/onlinejudge_verify/docs.py", line 348, in write_contents
-    bundled_code = language.bundle(self.file_class.file_path, basedir=self.cpp_source_path)
+  File "/opt/hostedtoolcache/Python/3.8.2/x64/lib/python3.8/site-packages/onlinejudge_verify/docs.py", line 340, in write_contents
+    bundled_code = language.bundle(self.file_class.file_path, basedir=pathlib.Path.cwd())
   File "/opt/hostedtoolcache/Python/3.8.2/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/other.py", line 48, in bundle
     return subprocess.check_output(shlex.split(command))
   File "/opt/hostedtoolcache/Python/3.8.2/x64/lib/python3.8/subprocess.py", line 411, in check_output

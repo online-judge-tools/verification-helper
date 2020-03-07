@@ -25,14 +25,16 @@ layout: default
 <link rel="stylesheet" href="../../../assets/css/copy-button.css" />
 
 
-# :heavy_check_mark: examples/csharpscript/segment_tree.range_minimum_query.test.csx
+# VerificationStatus.VERIFIED examples/csharpscript/segment_tree.range_minimum_query.test.csx
 
 <a href="../../../index.html">Back to top page</a>
 
+* category: <a href="../../../index.html#441c1a781d23a6e65db56eaa313dbebd">examples/csharpscript</a>
 * <a href="{{ site.github.repository_url }}/blob/master/examples/csharpscript/segment_tree.range_minimum_query.test.csx">View this file on GitHub</a>
     - Last commit date: 2020-02-16 04:32:52+09:00
 
 
+* see: <a href="https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_A">https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_A</a>
 
 
 ## Depends on
@@ -75,8 +77,8 @@ for (int i = 0; i < q; i++)
 {% raw %}
 ```cpp
 Traceback (most recent call last):
-  File "/opt/hostedtoolcache/Python/3.8.2/x64/lib/python3.8/site-packages/onlinejudge_verify/docs.py", line 348, in write_contents
-    bundled_code = language.bundle(self.file_class.file_path, basedir=self.cpp_source_path)
+  File "/opt/hostedtoolcache/Python/3.8.2/x64/lib/python3.8/site-packages/onlinejudge_verify/docs.py", line 340, in write_contents
+    bundled_code = language.bundle(self.file_class.file_path, basedir=pathlib.Path.cwd())
   File "/opt/hostedtoolcache/Python/3.8.2/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/csharpscript.py", line 108, in bundle
     raise NotImplementedError
 NotImplementedError

@@ -25,7 +25,7 @@ layout: default
 <link rel="stylesheet" href="../../assets/css/copy-button.css" />
 
 
-# :heavy_check_mark: a Union-Find Tree <small>(examples/union_find_tree.hpp)</small>
+# VerificationStatus.VERIFIED a Union-Find Tree <small>(examples/union_find_tree.hpp)</small>
 
 <a href="../../index.html">Back to top page</a>
 

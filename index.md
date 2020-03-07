@@ -75,6 +75,7 @@ layout: default
 * :heavy_check_mark: <a href="verify/examples/csharpscript/segment_tree.point_set_range_composite.test.csx.html">examples/csharpscript/segment_tree.point_set_range_composite.test.csx</a>
 * :heavy_check_mark: <a href="verify/examples/csharpscript/segment_tree.range_minimum_query.test.csx.html">examples/csharpscript/segment_tree.range_minimum_query.test.csx</a>
 * :heavy_check_mark: <a href="verify/examples/csharpscript/segment_tree.range_sum_query.test.csx.html">examples/csharpscript/segment_tree.range_sum_query.test.csx</a>
+* :heavy_check_mark: <a href="verify/examples/debug/gcc_only.test.cpp.html">examples/debug/gcc_only.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/debug/include_relative.test.cpp.html">examples/debug/include_relative.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/debug/precision.test.cpp.html">examples/debug/precision.test.cpp</a>
 * :heavy_check_mark: <a href="verify/examples/debug/yukicoder.test.cpp.html">examples/debug/yukicoder.test.cpp</a>

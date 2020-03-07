@@ -25,14 +25,16 @@ layout: default
 <link rel="stylesheet" href="../../../assets/css/copy-button.css" />
 
 
-# :heavy_check_mark: examples/awk/circle.test.awk
+# VerificationStatus.VERIFIED examples/awk/circle.test.awk
 
 <a href="../../../index.html">Back to top page</a>
 
+* category: <a href="../../../index.html#ba0b22d3df783bee6cc807c5fd004b03">examples/awk</a>
 * <a href="{{ site.github.repository_url }}/blob/master/examples/awk/circle.test.awk">View this file on GitHub</a>
     - Last commit date: 2020-02-28 16:10:41+09:00
 
 
+* see: <a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_4_B">http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_4_B</a>
 
 
 ## Depends on
@@ -59,8 +61,8 @@ layout: default
 {% raw %}
 ```cpp
 Traceback (most recent call last):
-  File "/opt/hostedtoolcache/Python/3.8.2/x64/lib/python3.8/site-packages/onlinejudge_verify/docs.py", line 348, in write_contents
-    bundled_code = language.bundle(self.file_class.file_path, basedir=self.cpp_source_path)
+  File "/opt/hostedtoolcache/Python/3.8.2/x64/lib/python3.8/site-packages/onlinejudge_verify/docs.py", line 340, in write_contents
+    bundled_code = language.bundle(self.file_class.file_path, basedir=pathlib.Path.cwd())
   File "/opt/hostedtoolcache/Python/3.8.2/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/other.py", line 48, in bundle
     return subprocess.check_output(shlex.split(command))
   File "/opt/hostedtoolcache/Python/3.8.2/x64/lib/python3.8/subprocess.py", line 411, in check_output

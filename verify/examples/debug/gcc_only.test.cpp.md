@@ -25,20 +25,16 @@ layout: default
 <link rel="stylesheet" href="../../../assets/css/copy-button.css" />
 
 
-# VerificationStatus.VERIFIED examples/csharpscript/helloworld.csx
+# VerificationStatus.VERIFIED examples/debug/gcc_only.test.cpp
 
 <a href="../../../index.html">Back to top page</a>
 
-* category: <a href="../../../index.html#441c1a781d23a6e65db56eaa313dbebd">examples/csharpscript</a>
-* <a href="{{ site.github.repository_url }}/blob/master/examples/csharpscript/helloworld.csx">View this file on GitHub</a>
-    - Last commit date: 2020-02-16 04:29:07+09:00
+* category: <a href="../../../index.html#6ffb1fe84ae4530240b8799246bff2fd">examples/debug</a>
+* <a href="{{ site.github.repository_url }}/blob/master/examples/debug/gcc_only.test.cpp">View this file on GitHub</a>
+    - Last commit date: 2020-02-28 16:21:27+09:00
 
 
-
-
-## Verified with
-
-* :heavy_check_mark: <a href="../../../verify/examples/csharpscript/helloworld.test.csx.html">examples/csharpscript/helloworld.test.csx</a>
+* see: <a href="https://onlinejudge.u-aizu.ac.jp/courses/lesson/2/ITP1/1/ITP1_1_A">https://onlinejudge.u-aizu.ac.jp/courses/lesson/2/ITP1/1/ITP1_1_A</a>
 
 
 ## Code
@@ -46,19 +42,40 @@ layout: default
 <a id="unbundled"></a>
 {% raw %}
 ```cpp
-Console.WriteLine("Hello World");
+#ifdef __clang__
+#define IGNORE
+#else
+
+#define PROBLEM "https://onlinejudge.u-aizu.ac.jp/courses/lesson/2/ITP1/1/ITP1_1_A"
+#include <cstdio>
+
+// clang++ says "error: C++ requires a type specifier for all declarations", but g++ doesn't
+main() {
+    printf("Hello World\n");
+}
+
+#endif
+
 ```
 {% endraw %}
 
 <a id="bundled"></a>
 {% raw %}
 ```cpp
-Traceback (most recent call last):
-  File "/opt/hostedtoolcache/Python/3.8.2/x64/lib/python3.8/site-packages/onlinejudge_verify/docs.py", line 340, in write_contents
-    bundled_code = language.bundle(self.file_class.file_path, basedir=pathlib.Path.cwd())
-  File "/opt/hostedtoolcache/Python/3.8.2/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/csharpscript.py", line 108, in bundle
-    raise NotImplementedError
-NotImplementedError
+#line 1 "examples/debug/gcc_only.test.cpp"
+#ifdef __clang__
+#define IGNORE
+#else
+
+#define PROBLEM "https://onlinejudge.u-aizu.ac.jp/courses/lesson/2/ITP1/1/ITP1_1_A"
+#include <cstdio>
+
+// clang++ says "error: C++ requires a type specifier for all declarations", but g++ doesn't
+main() {
+    printf("Hello World\n");
+}
+
+#endif
 
 ```
 {% endraw %}

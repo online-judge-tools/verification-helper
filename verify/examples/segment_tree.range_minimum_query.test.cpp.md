@@ -25,10 +25,11 @@ layout: default
 <link rel="stylesheet" href="../../assets/css/copy-button.css" />
 
 
-# :heavy_check_mark: examples/segment_tree.range_minimum_query.test.cpp
+# VerificationStatus.VERIFIED examples/segment_tree.range_minimum_query.test.cpp
 
 <a href="../../index.html">Back to top page</a>
 
+* category: <a href="../../index.html#bfebe34154a0dfd9fc7b447fc9ed74e9">examples</a>
 * <a href="{{ site.github.repository_url }}/blob/master/examples/segment_tree.range_minimum_query.test.cpp">View this file on GitHub</a>
     - Last commit date: 2020-02-28 16:00:02+09:00
 

@@ -163,7 +163,7 @@ class Bundler(object):
 
     def update(self, path: pathlib.Path) -> None:
         if path in self.pragma_once:
-            logger.info('%s: skipped since this file is included once with include guard', str(path))
+            logger.debug('%s: skipped since this file is included once with include guard', str(path))
             return
 
         # 再帰的に自分自身を #include してたら諦める
@@ -208,7 +208,7 @@ class Bundler(object):
 
                 # #pragma once
                 if re.match(rb'\s*#\s*pragma\s+once\s*', line):  # #pragma once は comment 扱いで消されてしまう
-                    logger.info('%s: line %s: #pragma once', str(path), i + 1)
+                    logger.debug('%s: line %s: #pragma once', str(path), i + 1)
                     if non_guard_line_found:
                         # 先頭以外で #pragma once されてた場合は諦める
                         raise BundleError(path, i + 1, "#pragma once found in a non-first line")
@@ -226,7 +226,7 @@ class Bundler(object):
                     matched = re.match(rb'\s*#\s*ifndef\s+(\w+)\s*', uncommented_line)
                     if matched:
                         include_guard_macro = matched.group(1).decode()
-                        logger.info('%s: line %s: #ifndef %s', str(path), i + 1, include_guard_macro)
+                        logger.debug('%s: line %s: #ifndef %s', str(path), i + 1, include_guard_macro)
                         self.result_lines.append(b"\n")
                         continue
 
@@ -235,7 +235,7 @@ class Bundler(object):
                     matched = re.match(rb'\s*#\s*define\s+(\w+)\s*', uncommented_line)
                     if matched and matched.group(1).decode() == include_guard_macro:
                         self.pragma_once.add(path.resolve())
-                        logger.info('%s: line %s: #define %s', str(path), i + 1, include_guard_macro)
+                        logger.debug('%s: line %s: #define %s', str(path), i + 1, include_guard_macro)
                         include_guard_define_found = True
                         self.result_lines.append(b"\n")
                         continue
@@ -260,7 +260,7 @@ class Bundler(object):
                 matched = re.match(rb'\s*#\s*include\s*<(.*)>\s*', uncommented_line)
                 if matched:
                     included = matched.group(1).decode()
-                    logger.info('%s: line %s: #include <%s>', str(path), i + 1, str(included))
+                    logger.debug('%s: line %s: #include <%s>', str(path), i + 1, str(included))
                     if included in self.pragma_once_system or bits_stdcxx_h in self.pragma_once_system:
                         self._line(i + 2, path)
                     elif is_toplevel and included in standard_libraries:
@@ -275,7 +275,7 @@ class Bundler(object):
                 matched = re.match(rb'\s*#\s*include\s*"(.*)"\s*', uncommented_line)
                 if matched:
                     included = matched.group(1).decode()
-                    logger.info('%s: line %s: #include "%s"', str(path), i + 1, included)
+                    logger.debug('%s: line %s: #include "%s"', str(path), i + 1, included)
                     if not is_toplevel:
                         # #if の中から #include されると #pragma once 系の判断が不可能になるので諦める
                         raise BundleError(path, i + 1, "unable to process #include in #if / #ifdef / #ifndef other than include guards")

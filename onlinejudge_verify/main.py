@@ -7,7 +7,7 @@ import pathlib
 import subprocess
 import sys
 import textwrap
-from logging import DEBUG, basicConfig, getLogger
+from logging import INFO, basicConfig, getLogger
 from typing import *
 
 import onlinejudge_verify.docs
@@ -170,7 +170,7 @@ def generate_gitignore() -> None:
 
 
 def main(args: Optional[List[str]] = None) -> None:
-    basicConfig(level=DEBUG)
+    basicConfig(level=INFO)
     parser = get_parser()
     parsed = parser.parse_args(args)
 

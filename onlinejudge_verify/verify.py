@@ -85,7 +85,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
         if not (directory / 'test').exists() or not len(list((directory / 'test').iterdir())):
             directory.mkdir(parents=True, exist_ok=True)
             exec_command(['sleep', '2'])
-            command = ['oj', 'download', '--system', '-d', shlex.quote(str(directory / 'test')), url]
+            command = ['oj', 'download', '--system', '-d', shlex.quote(str(directory / 'test')), '--silent', url]
 
             if os.environ.get('YUKICODER_TOKEN'):
                 command += ['--yukicoder-token', os.environ['YUKICODER_TOKEN']]
@@ -106,7 +106,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
             return False
 
         # run test using oj
-        command = ['oj', 'test', '-c', execute, '-d', shlex.quote(str(directory / 'test')), '--tle', str(tle)]
+        command = ['oj', 'test', '-c', execute, '-d', shlex.quote(str(directory / 'test')), '--print-input', '--tle', str(tle)]
         if isinstance(problem, onlinejudge.service.library_checker.LibraryCheckerProblem):
             command += ['--judge-command', str(problem.download_checker_binary())]
         if 'ERROR' in macros:

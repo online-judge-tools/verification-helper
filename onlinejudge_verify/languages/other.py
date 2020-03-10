@@ -5,12 +5,12 @@ import subprocess
 from logging import getLogger
 from typing import *
 
-from onlinejudge_verify.languages.base import Language
+from onlinejudge_verify.languages.models import Language, LanguageEnvironment
 
 logger = getLogger(__name__)
 
 
-class OtherLanguage(Language):
+class OtherLanguageEnvironment(LanguageEnvironment):
     config: Dict[str, str]
 
     def __init__(self, *, config: Dict[str, str]):
@@ -24,6 +24,13 @@ class OtherLanguage(Language):
     def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
         command = self.config['execute'].format(path=str(path), basedir=str(basedir), tempdir=str(tempdir))
         return shlex.split(command)
+
+
+class OtherLanguage(Language):
+    config: Dict[str, str]
+
+    def __init__(self, *, config: Dict[str, str]):
+        self.config = config
 
     def list_attributes(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Dict[str, str]:
         command = self.config['list_attributes'].format(path=str(path), basedir=str(basedir))
@@ -52,3 +59,6 @@ class OtherLanguage(Language):
         if suffix is not None:
             return path.name.endswith(suffix)
         return super().is_verification_file(path, basedir=basedir)
+
+    def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Sequence[OtherLanguageEnvironment]:
+        return [OtherLanguageEnvironment(config=self.config)]

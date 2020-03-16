@@ -4,13 +4,44 @@
 
 ## 対応している言語
 
-| 言語 | コンパイラ | 属性指定方法 | 対応機能 (verify / bundle / doc) | 例 |
+一覧表:
+
+| 言語 | コンパイラ | 対応機能 (verify / bundle / doc) | 例 |
 |---|---|---|---|---|
-| C++ | GCC / Clang | `#define [KEY] [VALUE]` | :heavy_check_mark: / :heavy_check_mark: / :heavy_check_mark: | [examples/segment_tree.range_sum_query.test.cpp](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/segment_tree.range_sum_query.test.cpp) |
-| C# script | .NET Core | `#pragma [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [examples/csharpscript/segment_tree.range_sum_query.test.csx](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/csharpscript/segment_tree.range_sum_query.test.csx) |
+| C++ | GCC / Clang | :heavy_check_mark: / :heavy_check_mark: / :heavy_check_mark: | [examples/segment_tree.range_sum_query.test.cpp](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/segment_tree.range_sum_query.test.cpp) |
+| C# script | .NET Core | :heavy_check_mark: / :x: / :warning: | [examples/csharpscript/segment_tree.range_sum_query.test.csx](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/csharpscript/segment_tree.range_sum_query.test.csx) |
 
-上記以外の言語でも実行可能です (例: [examples/awk/circle.test.awk](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/awk/circle.test.awk))。 `.verify-helper/config.toml` というファイルを作って、コンパイルや実行のためのコマンドを書いてください。 (例: [.verify-helper/config.toml](https://github.com/kmyk/online-judge-verify-helper/blob/master/.verify-helper/config.toml))
+### C++ の設定
 
+`.verify-helper/config.toml` というファイルを作って以下のように設定を設定を書くと、コンパイラやそのオプションを指定できます。
+設定がない場合は、自動でコンパイラ (`g++` と `clang++`) を検出し、おすすめのオプションを用いて実行されます。
+
+``` toml
+[[languages.cpp.environments]]
+CXX = "g++"
+
+[[languages.cpp.environments]]
+CXX = "clang++"
+CXXFLAGS = ["-std=c++17", "-Wall", "-g", "-fsanitize=undefined", "-D_GLIBCXX_DEBUG"]
+```
+
+### C# script の設定
+
+設定項目はありません。
+
+### その他の言語の設定
+
+上記以外の言語でも実行可能です (例: [examples/awk/circle.test.awk](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/awk/circle.test.awk))。
+`.verify-helper/config.toml` というファイルを作って、以下のようにコンパイルや実行のためのコマンドを書いてください (例: [.verify-helper/config.toml](https://github.com/kmyk/online-judge-verify-helper/blob/master/.verify-helper/config.toml))。
+
+``` toml
+[languages.awk]
+compile = "bash -c 'echo hello > {tempdir}/hello'"
+execute = "env AWKPATH={basedir} awk -f {path}"
+bundle = "false"
+list_attributes = "sed 's/^# verify-helper: // ; t ; d' {path}"
+list_dependencies = "sed 's/^@include \"\\(.*\\)\"$/\\1/ ; t ; d' {path}"
+```
 
 ## verify 自動実行
 
@@ -25,7 +56,7 @@
 
 これらの他サービスはテストケースを利用できる形で公開してくれていないため利用できません。
 
-### 利用可能なマクロ定義
+### 利用可能な属性
 
 |変数名|説明|備考|
 |---|---|---|

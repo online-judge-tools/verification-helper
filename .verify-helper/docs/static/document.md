@@ -46,6 +46,18 @@ Other judging platforms do not currently publish the test cases in usable forms,
 | `@depends` | You can this tag when you want to write dependencies explicitly. | This application supports the automatic recognization of dependencies for some languages such as C++, so there are some cases you need not to write this. |
 | `@ignore` | This application does not generate the documentation of the library file which this tag is specified. |  |
 
+### Local execution
+
+Executing following commands, you can see generated documents locally at <http://localhost:4000/>.
+
+``` console
+$ bundle install --path .vendor/bundle
+$ bundle exec jekyll serve
+```
+
+To do this, Ruby's [Bundler](https://bundler.io/) is required.
+If you are using Ubuntu, you can install this with `sudo apt install ruby-bundler`.
+
 
 ### Others
 

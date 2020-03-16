@@ -4,26 +4,54 @@ import os
 import pathlib
 import platform
 import shlex
+import shutil
 import subprocess
 from logging import getLogger
 from typing import *
 
-from onlinejudge_verify.languages.base import Language
+from onlinejudge_verify.config import get_config
 from onlinejudge_verify.languages.cplusplus_bundle import Bundler
+from onlinejudge_verify.languages.models import Language, LanguageEnvironment
+from onlinejudge_verify.languages.special_comments import list_special_comments
 
 logger = getLogger(__name__)
 
 
-@functools.lru_cache(maxsize=None)
-def _cplusplus_list_depending_files(path: pathlib.Path, *, compiler: str) -> List[pathlib.Path]:
-    code = r"""{} -MD -MF /dev/stdout -MM {} | sed '1s/[^:].*: // ; s/\\$//' | xargs -n 1""".format(compiler, shlex.quote(str(path)))
-    data = subprocess.check_output(code, shell=True)
-    return list(map(pathlib.Path, data.decode().splitlines()))
+class CPlusPlusLanguageEnvironment(LanguageEnvironment):
+    CXX: pathlib.Path
+    CXXFLAGS: List[str]
+
+    def __init__(self, *, CXX: pathlib.Path, CXXFLAGS: List[str]):
+        self.CXX = CXX
+        self.CXXFLAGS = CXXFLAGS
+
+    def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
+        command = [str(self.CXX), *self.CXXFLAGS, '-I', str(basedir), '-o', str(tempdir / 'a.out'), str(path)]
+        logger.info('$ %s', ' '.join(command))
+        subprocess.check_call(command)
+
+    def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
+        return [str(tempdir / 'a.out')]
+
+    def _is_clang(self) -> bool:
+        return 'clang++' in self.CXX.name
+
+    def _is_gcc(self) -> bool:
+        return not self._is_clang() and 'g++' in self.CXX.name
 
 
 @functools.lru_cache(maxsize=None)
-def _cplusplus_list_defined_macros(path: pathlib.Path, *, compiler: str) -> Dict[str, str]:
-    command = [*shlex.split(compiler), '-dM', '-E', str(path)]
+def _cplusplus_list_depending_files(path: pathlib.Path, *, CXX: pathlib.Path, joined_CXXFLAGS: str) -> List[pathlib.Path]:
+    # Using /dev/stdout is acceptable because Library Chcker doesn't work on Windows.
+    command = [str(CXX), *shlex.split(joined_CXXFLAGS), '-MD', '-MF', '/dev/stdout', '-MM', str(path)]
+    data = subprocess.check_output(command)
+    makefile_rule = shlex.split(data.decode().replace('\\\n', ''))
+    return [pathlib.Path(path).resolve() for path in makefile_rule[1:]]
+
+
+@functools.lru_cache(maxsize=None)
+def _cplusplus_list_defined_macros(path: pathlib.Path, *, CXX: pathlib.Path, joined_CXXFLAGS: str) -> Dict[str, str]:
+    command = [str(CXX), *shlex.split(joined_CXXFLAGS), '-dM', '-E', str(path)]
     data = subprocess.check_output(command)
     define = {}
     for line in data.decode().splitlines():
@@ -35,35 +63,118 @@ def _cplusplus_list_defined_macros(path: pathlib.Path, *, compiler: str) -> Dict
     return define
 
 
+_NOT_SPECIAL_COMMENTS = '*NOT_SPECIAL_COMMENTS*'
+_PROBLEM = 'PROBLEM'
+_IGNORE = 'IGNORE'
+_IGNORE_IF_CLANG = 'IGNORE_IF_CLANG'
+_IGNORE_IF_GCC = 'IGNORE_IF_GCC'
+_ERROR = 'ERROR'
+
+
+# config.toml example:
+#     [[languages.cpp.environments]]
+#     CXX = "g++"
+#     CXXFALGS = ["-std=c++17", "-Wall"]
 class CPlusPlusLanguage(Language):
-    CXX: str
-    CXXFLAGS: str
+    config: Dict[str, Any]
 
-    def __init__(self, *, CXX: str = os.environ.get('CXX', 'g++'), CXXFLAGS: Optional[str] = os.environ.get('CXXFLAGS')):
-        self.CXX = CXX
-        if CXXFLAGS is None:
-            CXXFLAGS = '--std=c++17 -O2 -Wall -g'
-            if platform.uname().system == 'Linux' and 'Microsoft' in platform.uname().release:
-                CXXFLAGS += ' -fsplit-stack'
-        self.CXXFLAGS = CXXFLAGS
+    def __init__(self, *, config: Optional[Dict[str, Any]] = None):
+        if config is None:
+            self.config = get_config().get('languages', {}).get('cpp', {})
+        else:
+            self.config = config
 
-    def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
-        command = [self.CXX, *shlex.split(self.CXXFLAGS), '-I', str(basedir), '-o', str(tempdir / 'a.out'), str(path)]
-        logger.info('$ %s', ' '.join(command))
-        subprocess.check_call(command)
+    def _list_environments(self) -> List[CPlusPlusLanguageEnvironment]:
+        default_CXXFLAGS = ['--std=c++17', '-O2', '-Wall', '-g']
+        if platform.uname().system == 'Linux' and 'Microsoft' in platform.uname().release:
+            default_CXXFLAGS.append('-fsplit-stack')
 
-    def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
-        return [str(tempdir / 'a.out')]
+        if 'CXXFLAGS' in os.environ and 'environments' not in self.config:
+            logger.warning('Usage of $CXXFLAGS envvar to specify options is deprecated and will be removed soon')
+            print('::warning::Usage of $CXXFLAGS envvar to specify options is deprecated and will be removed soon')
+            default_CXXFLAGS = shlex.split(os.environ['CXXFLAGS'])
+
+        envs = []
+        if 'environments' in self.config:
+            # configured: use specified CXX & CXXFLAGS
+            for env in self.config['environments']:
+                CXX: str = env.get('CXX')
+                if CXX is None:
+                    raise RuntimeError('CXX is not specified')
+                CXXFLAGS: List[str] = env.get('CXXFLAGS', default_CXXFLAGS)
+                if not isinstance(CXXFLAGS, list):
+                    raise RuntimeError('CXXFLAGS must ba a list')
+                envs.append(CPlusPlusLanguageEnvironment(CXX=pathlib.Path(CXX), CXXFLAGS=CXXFLAGS))
+
+        elif 'CXX' in os.environ:
+            # old-style: 以前は $CXX を使ってたけど設定ファイルに移行したい
+            logger.warning('Usage of $CXX envvar to restrict compilers is deprecated and will be removed soon')
+            print('::warning::Usage of $CXX envvar to restrict compilers is deprecated and will be removed soon')
+            envs.append(CPlusPlusLanguageEnvironment(CXX=pathlib.Path(os.environ['CXX']), CXXFLAGS=default_CXXFLAGS))
+
+        else:
+            # default: use found compilers
+            for name in ('g++', 'clang++'):
+                path = shutil.which(name)
+                if path is not None:
+                    envs.append(CPlusPlusLanguageEnvironment(CXX=pathlib.Path(path), CXXFLAGS=default_CXXFLAGS))
+
+        if not envs:
+            raise RuntimeError('No C++ compilers found')
+        return envs
 
     def list_attributes(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Dict[str, str]:
-        compiler = ' '.join([self.CXX, self.CXXFLAGS, '-I', str(basedir)])
-        return _cplusplus_list_defined_macros(path.resolve(), compiler=compiler)
+        special_comments = list_special_comments(path.resolve())
+        if special_comments:
+            return special_comments
+
+        else:
+            # use old-style if special comments not found
+            # #define PROBLEM "https://..." の形式は複数 environments との相性がよくない。あと遅い
+            attributes: Dict[str, str] = {
+                _NOT_SPECIAL_COMMENTS: '',
+            }
+            all_ignored = True
+            for env in self._list_environments():
+                joined_CXXFLAGS = ' '.join(map(shlex.quote, [*env.CXXFLAGS, '-I', str(basedir)]))
+                macros = _cplusplus_list_defined_macros(path.resolve(), CXX=env.CXX, joined_CXXFLAGS=joined_CXXFLAGS)
+
+                # convert macros to attributes
+                if _IGNORE not in macros:
+                    for key in [_PROBLEM, _ERROR]:
+                        if all_ignored:
+                            # the first non-ignored environment
+                            if key in macros:
+                                attributes[key] = macros[key]
+                        else:
+                            assert attributes.get(key) == macros.get(key)
+                    all_ignored = False
+                else:
+                    if env._is_gcc():
+                        attributes[_IGNORE_IF_GCC] = ''
+                    if env._is_clang():
+                        attributes[_IGNORE_IF_CLANG] = ''
+            if all_ignored:
+                attributes[_IGNORE] = ''
+            return attributes
 
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
-        compiler = ' '.join([self.CXX, self.CXXFLAGS, '-I', str(basedir)])
-        return _cplusplus_list_depending_files(path.resolve(), compiler=compiler)
+        env = self._list_environments()[0]
+        joined_CXXFLAGS = ' '.join(map(shlex.quote, [*env.CXXFLAGS, '-I', str(basedir)]))
+        return _cplusplus_list_depending_files(path.resolve(), CXX=env.CXX, joined_CXXFLAGS=joined_CXXFLAGS)
 
     def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bytes:
         bundler = Bundler(iquotes=[basedir])
         bundler.update(path)
         return bundler.get()
+
+    def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[CPlusPlusLanguageEnvironment]:
+        attributes = self.list_attributes(path, basedir=basedir)
+        envs = []
+        for env in self._list_environments():
+            if env._is_gcc() and _IGNORE_IF_GCC in attributes:
+                continue
+            if env._is_clang() and _IGNORE_IF_CLANG in attributes:
+                continue
+            envs.append(env)
+        return envs

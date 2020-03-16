@@ -53,54 +53,50 @@ def exec_command(command: List[str]):
 def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: int) -> bool:
     logger.info('verify: %s', path)
 
-    language_ = onlinejudge_verify.languages.get(path)
-    if language_ is None:
+    language = onlinejudge_verify.languages.get(path)
+    if language is None:
         logger.error('unsupported language')
         return False
 
-    if isinstance(language_, onlinejudge_verify.languages.CPlusPlusLanguage) and 'CXX' not in os.environ:
-        matrix: List[onlinejudge_verify.languages.Language] = [
-            onlinejudge_verify.languages.CPlusPlusLanguage(CXX='g++'),
-            onlinejudge_verify.languages.CPlusPlusLanguage(CXX='clang++'),
-        ]
-    else:
-        matrix = [language_]
-    for language in matrix:
+    # analyze attributes
+    try:
+        attributes = language.list_attributes(path, basedir=pathlib.Path.cwd())
+    except:
+        traceback.print_exc()
+        return False
+    if 'IGNORE' in attributes:
+        return False
 
+    # recognize PROBLEM
+    if 'PROBLEM' not in attributes:
+        logger.error('PROBLEM is not specified')
+        return False
+    url = attributes['PROBLEM']
+    problem = onlinejudge.dispatch.problem_from_url(url)
+    logger.info('problem: %s', url)
+
+    # download test cases
+    directory = pathlib.Path('.verify-helper/cache') / hashlib.md5(url.encode()).hexdigest()
+    if not (directory / 'test').exists() or not len(list((directory / 'test').iterdir())):
+        directory.mkdir(parents=True, exist_ok=True)
+        exec_command(['sleep', '2'])
+        command = ['oj', 'download', '--system', '-d', shlex.quote(str(directory / 'test')), '--silent', url]
+
+        if os.environ.get('YUKICODER_TOKEN'):
+            command += ['--yukicoder-token', os.environ['YUKICODER_TOKEN']]
         try:
-            macros = language.list_attributes(path, basedir=pathlib.Path.cwd())
+            exec_command(command)
         except:
             traceback.print_exc()
+            if isinstance(problem, onlinejudge.service.yukicoder.YukicoderProblem) and not os.environ.get('YUKICODER_TOKEN'):
+                logger.warning('the $YUKICODER_TOKEN environment variable is not set')
             return False
-        if 'IGNORE' in macros:
-            continue
-        if 'PROBLEM' not in macros:
-            logger.error('PROBLEM is not specified')
-            return False
-        url = macros['PROBLEM']
-        problem = onlinejudge.dispatch.problem_from_url(url)
-        logger.info('problem: %s', url)
 
-        directory = pathlib.Path('.verify-helper/cache') / hashlib.md5(url.encode()).hexdigest()
-        if not (directory / 'test').exists() or not len(list((directory / 'test').iterdir())):
-            directory.mkdir(parents=True, exist_ok=True)
-            exec_command(['sleep', '2'])
-            command = ['oj', 'download', '--system', '-d', shlex.quote(str(directory / 'test')), '--silent', url]
-
-            if os.environ.get('YUKICODER_TOKEN'):
-                command += ['--yukicoder-token', os.environ['YUKICODER_TOKEN']]
-            try:
-                exec_command(command)
-            except:
-                traceback.print_exc()
-                if isinstance(problem, onlinejudge.service.yukicoder.YukicoderProblem) and not os.environ.get('YUKICODER_TOKEN'):
-                    logger.warning('the $YUKICODER_TOKEN environment variable is not set')
-                return False
-
+    for environment in language.list_environments(path, basedir=pathlib.Path.cwd()):
         # compile the ./a.out
         try:
-            language.compile(path, basedir=pathlib.Path.cwd(), tempdir=directory)
-            execute = ' '.join(language.get_execute_command(path, basedir=pathlib.Path.cwd(), tempdir=directory))  # TODO: use shlex.join added in Python 3.8
+            environment.compile(path, basedir=pathlib.Path.cwd(), tempdir=directory)
+            execute = ' '.join(environment.get_execute_command(path, basedir=pathlib.Path.cwd(), tempdir=directory))  # TODO: use shlex.join added in Python 3.8
         except:
             traceback.print_exc()
             return False
@@ -109,8 +105,8 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
         command = ['oj', 'test', '-c', execute, '-d', shlex.quote(str(directory / 'test')), '--print-input', '--tle', str(tle)]
         if isinstance(problem, onlinejudge.service.library_checker.LibraryCheckerProblem):
             command += ['--judge-command', str(problem.download_checker_binary())]
-        if 'ERROR' in macros:
-            command += ['-e', macros['ERROR']]
+        if 'ERROR' in attributes:
+            command += ['-e', attributes['ERROR']]
         if jobs != 1:
             command += ['-j', str(jobs)]
         try:

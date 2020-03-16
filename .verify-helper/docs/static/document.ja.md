@@ -47,6 +47,18 @@
 | `@depends` | そのライブラリが依存している他のファイルをタグで明示的に記載したい場合に使用します。 | C++ など一部の言語ではソフトウェア側で依存関係を自動で判定するため、記載する必要がない場合があります。 |
 | `@ignore` | ドキュメント生成の対象から除外します。 |  |
 
+### ローカル実行
+
+`.verify-helper/markdown/` ディレクトリ内で以下のようにコマンドを実行すると、生成されたドキュメントが <http://localhost:4000/> から確認できます。
+
+``` console
+$ bundle install --path .vendor/bundle
+$ bundle exec jekyll serve
+```
+
+ただし Ruby の [Bundler](https://bundler.io/) が必要です。
+これは Ubuntu であれば `sudo apt install ruby-bundler` などでインストールできます。
+
 ### その他の仕様
 
 -   ファイル `.verify-helper/docs/_config.yml` を作成しておくと、いくつかの修正をした上で出力先ディレクトリにコピーされます。

@@ -4,12 +4,43 @@
 
 ## Supported languages
 
+Summary:
+
 | Language | Compilers | How to specify attributes | Features (verify / bundle / doc) | Examples |
 |---|---|---|---|---|
 | C++ | GCC / Clang | `#define [KEY] [VALUE]` | :heavy_check_mark: / :heavy_check_mark: / :heavy_check_mark: | [examples/segment_tree.range_sum_query.test.cpp](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/segment_tree.range_sum_query.test.cpp) |
 | C# script | .NET Core | `#pragma [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [examples/csharpscript/segment_tree.range_sum_query.test.csx](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/csharpscript/segment_tree.range_sum_query.test.csx) |
 
+### Settings for C++
+
+You can specify compilers and options with writing `.verify-helper/config.toml` as below.
+If there is no settings, online-judge-verify-helper automatically detects compilers (`g++` and `clang++` if exists) and use recommended options.
+
+``` toml
+[[languages.cpp.environments]]
+CXX = "g++"
+
+[[languages.cpp.environments]]
+CXX = "clang++"
+CXXFLAGS = ["-std=c++17", "-Wall", "-g", "-fsanitize=undefined", "-D_GLIBCXX_DEBUG"]
+```
+
+### Settings for C#
+
+No config
+
+### Settings for other languages
+
 You can use languages other than above (e.g. AWK [examples/awk/circle.test.awk](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/awk/circle.test.awk)). Please write commands to compile and execute in the config file `.verify-helper/config.toml` (e.g. [.verify-helper/config.toml](https://github.com/kmyk/online-judge-verify-helper/blob/master/.verify-helper/config.toml)).
+
+``` toml
+[languages.awk]
+compile = "bash -c 'echo hello > {tempdir}/hello'"
+execute = "env AWKPATH={basedir} awk -f {path}"
+bundle = "false"
+list_attributes = "sed 's/^# verify-helper: // ; t ; d' {path}"
+list_dependencies = "sed 's/^@include \"\\(.*\\)\"$/\\1/ ; t ; d' {path}"
+```
 
 ## Automating the verification
 

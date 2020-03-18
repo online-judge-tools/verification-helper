@@ -177,7 +177,7 @@ def main(args: Optional[List[str]] = None) -> None:
     parser = get_parser()
     parsed = parser.parse_args(args)
 
-    # load the config file as a global variable    
+    # load the config file as a global variable
     onlinejudge_verify.config.set_config_path(pathlib.Path(parsed.config_file))
 
     if getattr(parsed, 'jobs', None) is not None:

@@ -50,7 +50,7 @@ def exec_command(command: List[str]):
             os.chdir(str(cwd))
 
 
-def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: int) -> bool:
+def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: int) -> Optional[bool]:
     logger.info('verify: %s', path)
 
     language = onlinejudge_verify.languages.get(path)
@@ -65,7 +65,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
         traceback.print_exc()
         return False
     if 'IGNORE' in attributes:
-        return False
+        return None
 
     # recognize PROBLEM
     if 'PROBLEM' not in attributes:
@@ -141,7 +141,9 @@ def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.Verific
 
         verified = verify_file(path, compilers=compilers, tle=tle, jobs=jobs)
 
-        if verified:
+        if verified is None:
+            logger.info('ignored')
+        elif verified:
             marker.mark_verified(path)
         else:
             marker.mark_failed(path)

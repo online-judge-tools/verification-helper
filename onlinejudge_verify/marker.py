@@ -4,7 +4,6 @@ import datetime
 import functools
 import json
 import pathlib
-import shlex
 import subprocess
 from typing import *
 
@@ -127,7 +126,7 @@ def _get_last_commit_time_to_verify(path: pathlib.Path) -> datetime.datetime:
     language = onlinejudge_verify.languages.get(path)
     assert language is not None
     depending_files = language.list_dependencies(path, basedir=pathlib.Path.cwd())
-    code = ['git', 'log', '-1', '--date=iso', '--pretty=%ad', '--'] + list(map(lambda x: shlex.quote(str(x)), depending_files))
+    code = ['git', 'log', '-1', '--date=iso', '--pretty=%ad', '--'] + list(map(str, depending_files))
     timestamp = subprocess.check_output(code).decode().strip()
     if not timestamp:
         return datetime.datetime.fromtimestamp(0, tz=datetime.timezone(datetime.timedelta()))

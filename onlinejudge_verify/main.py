@@ -10,6 +10,7 @@ import textwrap
 from logging import INFO, basicConfig, getLogger
 from typing import *
 
+import onlinejudge_verify.config
 import onlinejudge_verify.docs
 import onlinejudge_verify.marker
 import onlinejudge_verify.utils
@@ -20,6 +21,8 @@ logger = getLogger(__name__)
 
 def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
+    parser.add_argument('--config-file', default=onlinejudge_verify.config.default_config_path, help='default: ".verify-helper/config.toml"')
+
     subparsers = parser.add_subparsers(dest='subcommand')
 
     subparser = subparsers.add_parser('all')
@@ -173,6 +176,9 @@ def main(args: Optional[List[str]] = None) -> None:
     basicConfig(level=INFO)
     parser = get_parser()
     parsed = parser.parse_args(args)
+
+    # load the config file as a global variable
+    onlinejudge_verify.config.set_config_path(parsed.config_file)
 
     if getattr(parsed, 'jobs', None) is not None:
         # 先に並列で読み込みしておく

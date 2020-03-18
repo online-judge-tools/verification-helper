@@ -152,8 +152,10 @@ class CPlusPlusLanguage(Language):
                 else:
                     if env._is_gcc():
                         attributes[_IGNORE_IF_GCC] = ''
-                    if env._is_clang():
+                    elif env._is_clang():
                         attributes[_IGNORE_IF_CLANG] = ''
+                    else:
+                        attributes[_IGNORE] = ''
             if all_ignored:
                 attributes[_IGNORE] = ''
             return attributes

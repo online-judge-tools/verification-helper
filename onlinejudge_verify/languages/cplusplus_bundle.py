@@ -155,14 +155,14 @@ class Bundler(object):
     # see: https://gcc.gnu.org/onlinedocs/gcc/Directory-Options.html#Directory-Options
     def _resolve(self, path: pathlib.Path, *, included_from: pathlib.Path) -> pathlib.Path:
         if (included_from.parent / path).exists():
-            return included_from.parent / path
+            return (included_from.parent / path).resolve()
         for dir_ in self.iquotes:
             if (dir_ / path).exists():
-                return dir_ / path
+                return (dir_ / path).resolve()
         raise BundleError(path, -1, "no such header")
 
     def update(self, path: pathlib.Path) -> None:
-        if path in self.pragma_once:
+        if path.resolve() in self.pragma_once:
             logger.debug('%s: skipped since this file is included once with include guard', str(path))
             return
 

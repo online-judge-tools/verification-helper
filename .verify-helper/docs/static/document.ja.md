@@ -39,7 +39,6 @@ CXXFLAGS = ["-std=c++17", "-Wall", "-g", "-fsanitize=undefined", "-D_GLIBCXX_DEB
 compile = "bash -c 'echo hello > {tempdir}/hello'"
 execute = "env AWKPATH={basedir} awk -f {path}"
 bundle = "false"
-list_attributes = "sed 's/^# verify-helper: // ; t ; d' {path}"
 list_dependencies = "sed 's/^@include \"\\(.*\\)\"$/\\1/ ; t ; d' {path}"
 ```
 

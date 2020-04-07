@@ -38,6 +38,7 @@ class OtherLanguage(Language):
     def list_attributes(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Dict[str, str]:
         if 'list_attributes' not in self.config:
             return list_special_comments(path)
+        logger.warning('"languages.*.list_attributes" field in .verify-helper/config.toml is now obsoleted')
 
         command = self.config['list_attributes'].format(path=str(path), basedir=str(basedir))
         text = subprocess.check_output(shlex.split(command))

@@ -6,8 +6,8 @@ import toml
 from onlinejudge_verify.config import get_config
 from onlinejudge_verify.languages.cplusplus import CPlusPlusLanguage
 from onlinejudge_verify.languages.csharpscript import CSharpScriptLanguage
-from onlinejudge_verify.languages.nim import NimLanguage
 from onlinejudge_verify.languages.models import Language, LanguageEnvironment
+from onlinejudge_verify.languages.nim import NimLanguage
 from onlinejudge_verify.languages.other import OtherLanguage
 
 logger = getLogger(__name__)

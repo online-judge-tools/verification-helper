@@ -7,7 +7,6 @@ from typing import *
 
 from onlinejudge_verify.config import get_config
 from onlinejudge_verify.languages.models import Language, LanguageEnvironment
-from onlinejudge_verify.languages.special_comments import list_special_comments
 
 logger = getLogger(__name__)
 

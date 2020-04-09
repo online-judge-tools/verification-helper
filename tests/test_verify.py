@@ -30,16 +30,24 @@ int main() {
 }
 """
 
+timestamp_format = '%Y-%m-%d %H:%M:%S %z'
+
 
 def get_timestamp_string(path: pathlib.Path) -> str:
     system_local_timezone = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
     epoch = path.stat().st_mtime
     timestamp = datetime.datetime.fromtimestamp(epoch, tz=system_local_timezone).replace(microsecond=0)
-    return timestamp.strftime('%Y-%m-%d %H:%M:%S %z')
+    return timestamp.strftime(timestamp_format)
+
+
+def get_timestamp_string_of_past() -> str:
+    system_local_timezone = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
+    timestamp = datetime.datetime(year=2000, month=1, day=1, tzinfo=system_local_timezone)
+    return timestamp.strftime(timestamp_format)
 
 
 def set_timestamp_string(path: pathlib.Path, s: str) -> None:
-    timestamp = datetime.datetime.strptime(s, '%Y-%m-%d %H:%M:%S %z')
+    timestamp = datetime.datetime.strptime(s, timestamp_format)
     os.utime(path, times=(path.stat().st_atime, timestamp.timestamp()))
 
 
@@ -78,9 +86,9 @@ class TestStringMethods(unittest.TestCase):
     def test_timestamps(self) -> None:
         files = {
             'timestamps.json': json.dumps({
-                'not-updated.test.cpp': '2000-01-01 00:00:00 +0900',
-                'updated-success.test.cpp': '2000-01-01 00:00:00 +0900',
-                'updated-failure.test.cpp': '2000-01-01 00:00:00 +0900',
+                'not-updated.test.cpp': get_timestamp_string_of_past(),
+                'updated-success.test.cpp': get_timestamp_string_of_past(),
+                'updated-failure.test.cpp': get_timestamp_string_of_past(),
             }).encode(),
             'not-updated.test.cpp': success_test_cpp,
             'updated-success.test.cpp': success_test_cpp,
@@ -90,15 +98,15 @@ class TestStringMethods(unittest.TestCase):
         }
         paths = [pathlib.Path(file) for file in files.keys() if file.endswith('.cpp')]
         with tests.utils.load_files(files) as tempdir:
-            set_timestamp_string(tempdir / 'not-updated.test.cpp', '2000-01-01 00:00:00 +0900')
+            set_timestamp_string(tempdir / 'not-updated.test.cpp', get_timestamp_string_of_past())
             expected_return = list(map(pathlib.Path, [
                 'updated-failure.test.cpp',
                 'new-failure.test.cpp',
             ]))
             expected_timestamps = {
-                'not-updated.test.cpp': '2000-01-01 00:00:00 +0900',
+                'not-updated.test.cpp': get_timestamp_string_of_past(),
                 'updated-success.test.cpp': get_timestamp_string(tempdir / 'updated-success.test.cpp'),
-                'updated-failure.test.cpp': '2000-01-01 00:00:00 +0900',  # this doesn't disappear but is recognized as failure
+                'updated-failure.test.cpp': get_timestamp_string_of_past(),  # this doesn't disappear but is recognized as failure
                 'new-success.test.cpp': get_timestamp_string(tempdir / 'new-success.test.cpp'),
             }
             with tests.utils.chdir(tempdir):

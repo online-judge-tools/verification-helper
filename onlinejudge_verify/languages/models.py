@@ -3,6 +3,8 @@ import abc
 import pathlib
 from typing import *
 
+from onlinejudge_verify.languages.special_comments import list_special_comments
+
 
 class LanguageEnvironment(object):
     @abc.abstractmethod
@@ -15,9 +17,8 @@ class LanguageEnvironment(object):
 
 
 class Language(object):
-    @abc.abstractmethod
     def list_attributes(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Dict[str, str]:
-        raise NotImplementedError
+        return list_special_comments(path)
 
     @abc.abstractmethod
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:

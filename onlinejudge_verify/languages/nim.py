@@ -21,7 +21,7 @@ class NimLanguageEnvironment(LanguageEnvironment):
         self.compile_to = compile_to
 
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
-        command = ["nim", self.compile_to, "-p:.", "-d:release", "-o:{tempdir}/a.out".format(tempdir=str(tempdir)), ' '.join(self.NIMFLAGS), "{path}".format(path=str(path))]
+        command = ["nim", self.compile_to, "-p:.", "-o:{tempdir}/a.out".format(tempdir=str(tempdir))] + self.NIMFLAGS + ["{path}".format(path=str(path))]
         logger.info('$ %s', ' '.join(command))
         subprocess.check_call(command)
 
@@ -41,13 +41,14 @@ class NimLanguage(Language):
 
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
         texts = []
-        with open("{basedir}/{path}".format(path=str(path), basedir=str(basedir)), 'r') as f:
+        p = pathlib.Path("{basedir}/{path}".format(path=str(path), basedir=str(basedir)))
+        with p.open(mode='r') as f:
             pattern = re.compile(r"include\s*\"(.*)\"")
             for line in f:
                 line = line.strip()
                 if line.startswith('include'):
                     texts += re.findall(pattern, line)
-        dependencies = []
+        dependencies = [path]
         for line in texts:
             dependencies.append(pathlib.Path(line))
         return dependencies
@@ -58,11 +59,18 @@ class NimLanguage(Language):
     def is_verification_file(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bool:
         return path.name.endswith("_test.nim")
 
-    def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Sequence[NimLanguageEnvironment]:
-        compile_to = "cpp"
-        if "compile_to" in self.config:
-            compile_to = self.config["compile_to"]
-        NIMFLAGS = ""
-        if "NIMFLAGS" in self.config:
-            NIMFLAGS = self.config["NIMFLAGS"].split()
-        return [NimLanguageEnvironment(NIMFLAGS=NIMFLAGS, compile_to=compile_to)]
+    def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[NimLanguageEnvironment]:
+        default_NIMFLAGS = ['--warning:on --opt:none']
+        envs = []
+        if 'environments' in self.config:
+            for env in self.config['environments']:
+                compile_to = "cpp"
+                if 'compile_to' in env:
+                    compile_to = env.get('compile_to')
+                if compile_to is None:
+                    raise RuntimeError('compile_to is not specified')
+                NIMFLAGS: List[str] = env.get('NIMFLAGS', default_NIMFLAGS)
+                if not isinstance(NIMFLAGS, list):
+                    raise RuntimeError('NIMFLAGS must ba a list')
+                envs.append(NimLanguageEnvironment(compile_to=compile_to, NIMFLAGS=NIMFLAGS))
+        return envs

@@ -54,7 +54,7 @@ class NimLanguage(Language):
         return dependencies
 
     def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bytes:
-        raise NotImplementedError 
+        raise NotImplementedError
 
     def is_verification_file(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bool:
         return path.name.endswith("_test.nim")

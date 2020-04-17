@@ -26,7 +26,7 @@ class NimLanguageEnvironment(LanguageEnvironment):
         subprocess.check_call(command)
 
     def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
-        command = execute = "{tempdir}/a.out".format(path=str(path), basedir=str(basedir), tempdir=str(tempdir))
+        command = "{tempdir}/a.out".format(tempdir=str(tempdir))
         return shlex.split(command)
 
 
@@ -40,7 +40,7 @@ class NimLanguage(Language):
             self.config = config
 
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
-        texts = []
+        texts: List[str] = []
         p = pathlib.Path("{basedir}/{path}".format(path=str(path), basedir=str(basedir)))
         with p.open(mode='r') as f:
             pattern = re.compile(r"include\s*\"(.*)\"")

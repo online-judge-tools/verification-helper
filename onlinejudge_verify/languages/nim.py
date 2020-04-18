@@ -41,7 +41,7 @@ class NimLanguage(Language):
 
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
         texts: List[str] = []
-        p = pathlib.Path("{basedir}/{path}".format(path=str(path), basedir=str(basedir)))
+        p = basedir.joinpath(path)
         with p.open(mode='r') as f:
             pattern = re.compile(r"include\s*\"(.*)\"")
             for line in f:
@@ -60,7 +60,7 @@ class NimLanguage(Language):
         return path.name.endswith("_test.nim")
 
     def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[NimLanguageEnvironment]:
-        default_NIMFLAGS = ['--warning:on --opt:none']
+        default_NIMFLAGS = ['--warnings:on']
         envs = []
         if 'environments' in self.config:
             for env in self.config['environments']:
@@ -73,4 +73,6 @@ class NimLanguage(Language):
                 if not isinstance(NIMFLAGS, list):
                     raise RuntimeError('NIMFLAGS must ba a list')
                 envs.append(NimLanguageEnvironment(compile_to=compile_to, NIMFLAGS=NIMFLAGS))
+        else:
+            envs.append(NimLanguageEnvironment(compile_to='cpp',NIMFLAGS=default_NIMFLAGS))
         return envs

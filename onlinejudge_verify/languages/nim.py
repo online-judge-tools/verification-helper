@@ -74,5 +74,5 @@ class NimLanguage(Language):
                     raise RuntimeError('NIMFLAGS must ba a list')
                 envs.append(NimLanguageEnvironment(compile_to=compile_to, NIMFLAGS=NIMFLAGS))
         else:
-            envs.append(NimLanguageEnvironment(compile_to='cpp',NIMFLAGS=default_NIMFLAGS))
+            envs.append(NimLanguageEnvironment(compile_to='cpp', NIMFLAGS=default_NIMFLAGS))
         return envs

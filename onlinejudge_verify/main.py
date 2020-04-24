@@ -153,6 +153,15 @@ def subcommand_docs() -> None:
     else:
         logger.info('generate documents...')
         onlinejudge_verify.docs.main()
+        logger.info('done.')
+        logger.info('%s', '\n'.join([
+            'To see the generated document, do the following steps:',
+            "    1. Install Ruby's Bundler (https://bundler.io/). In Ubuntu, $ sudo apt install ruby-bundler",
+            '    2. $ cd .verify-helper/markdown',
+            '    3. $ bundle install --path .vendor/bundle',
+            '    4. $ bundle exec jekyll serve --incremental',
+            '    5. Open http://127.0.0.1:4000 on your web browser',
+        ]))
 
 
 def generate_gitignore() -> None:

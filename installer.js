@@ -25,6 +25,7 @@ const output9 = document.getElementById("output9");
 const output10 = document.getElementById("output10");
 const output11 = document.getElementById("output11");
 const output12 = document.getElementById("output12");
+const output13 = document.getElementById("output13");
 
 function update() {
     const found = input.value.match(/\/github.com\/([^\/]+)\/([^\/]+)/);
@@ -60,6 +61,9 @@ function update() {
         output10.textContent = "[![GitHub Pages](https://img.shields.io/static/v1?label=GitHub+Pages&message=+&color=brightgreen&logo=github)](" + ghpages + ")";
         output9.src = "https://img.shields.io/static/v1?label=GitHub+Pages&message=+&color=brightgreen&logo=github";
         output12.src = "https://img.shields.io/static/v1?label=GitHub+Pages&message=+&color=brightgreen&logo=github";
+
+        // links to gh-pages branch
+        output13.href = url + "/commits/gh-pages";
     }
 }
 input.addEventListener('change', update);

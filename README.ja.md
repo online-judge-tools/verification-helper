@@ -1,9 +1,9 @@
 # Online Judge Verify Helper
 
-[![Actions Status](https://github.com/kmyk/online-judge-verify-helper/workflows/verify/badge.svg)](https://github.com/kmyk/online-judge-verify-helper/actions)
-[![GitHub Pages](https://img.shields.io/static/v1?label=GitHub+Pages&message=+&color=brightgreen&logo=github)](https://kmyk.github.io/online-judge-verify-helper/)
+[![Actions Status](https://github.com/online-judge-tools/verification-helper/workflows/verify/badge.svg)](https://github.com/kmyk/online-judge-verify-helper/actions)
+[![GitHub Pages](https://img.shields.io/static/v1?label=GitHub+Pages&message=+&color=brightgreen&logo=github)](https://online-judge-tools.github.io/verification-helper/)
 [![PyPI](https://img.shields.io/pypi/v/online-judge-verify-helper)](https://pypi.org/project/online-judge-verify-helper/)
-[![LICENSE](https://img.shields.io/pypi/l/online-judge-verify-helper.svg)](https://github.com/kmyk/online-judge-verify-helper/blob/master/LICENSE)
+[![LICENSE](https://img.shields.io/pypi/l/online-judge-verify-helper.svg)](https://github.com/online-judge-tools/verification-helper/blob/master/LICENSE)
 
 [README in English](README.md)
 
@@ -15,7 +15,7 @@
 
 ### 競プロライブラリのリポジトリに設定する
 
-これ読んで: <https://kmyk.github.io/online-judge-verify-helper/installer.ja.html>
+これ読んで: <https://online-judge-tools.github.io/verification-helper/installer.ja.html>
 
 ### 手元で実行する
 
@@ -29,7 +29,7 @@ Python のバージョンは 3.6 以上が必要です。
 
 #### verify 自動実行
 
-拡張子の前に `.test` をつけたファイルに、特定の方法で verify 用問題の URL を書いておきます。 (たとえば `C++` であれば、`example.test.cpp` のようなファイルに `#define PROBLEM "https://judge.yosupo.jp/problem/unionfind"` のような形で書きます。他の言語については[リファレンス](https://kmyk.github.io/online-judge-verify-helper/document.ja.html)を参照してください。)
+拡張子の前に `.test` をつけたファイルに、特定の方法で verify 用問題の URL を書いておきます。 (たとえば `C++` であれば、`example.test.cpp` のようなファイルに `#define PROBLEM "https://judge.yosupo.jp/problem/unionfind"` のような形で書きます。他の言語については[リファレンス](https://online-judge-tools.github.io/verification-helper/document.ja.html)を参照してください。)
 このとき、次のコマンドで verify できているかを確認してくれます。
 
 ``` console
@@ -38,7 +38,7 @@ $ oj-verify run
 
 利用できる問題は主に [Library Checker](https://judge.yosupo.jp/) の問題と [Aizu Online Judge](https://onlinejudge.u-aizu.ac.jp/home) の問題です。
 他にもいくつかのサービスの問題が利用可能です。
-より詳しい説明は[リファレンス](https://kmyk.github.io/online-judge-verify-helper/document.ja.html)にあります。
+より詳しい説明は[リファレンス](https://online-judge-tools.github.io/verification-helper/document.ja.html)にあります。
 
 #### `#include` の自動展開
 
@@ -56,7 +56,7 @@ $ oj-bundle main.cpp
 
 #### ドキュメント生成
 
-以下のコマンドを実行すると `.verify-helper/markdown/` にドキュメントが生成されます。例: [https://kmyk.github.io/online-judge-verify-helper/ ![GitHub Pages](https://img.shields.io/static/v1?label=GitHub+Pages&message=+&color=brightgreen&logo=github)](https://kmyk.github.io/online-judge-verify-helper/)
+以下のコマンドを実行すると `.verify-helper/markdown/` にドキュメントが生成されます。例: [https://online-judge-tools.github.io/verification-helper/ ![GitHub Pages](https://img.shields.io/static/v1?label=GitHub+Pages&message=+&color=brightgreen&logo=github)](https://online-judge-tools.github.io/verification-helper/)
 
 ``` console
 $ oj-verify docs
@@ -64,13 +64,13 @@ $ oj-verify docs
 
 ドキュメント生成時に [Doxygen](http://www.doxygen.jp/) 風のコメントが見つかれば、それらは自動で利用されます。
 また、TeX 記法の数式 (例: `$O(N \sum_i A_i)$`) の [MathJax](https://www.mathjax.org/) による表示にも対応しています。
-より詳しい説明は[リファレンス](https://kmyk.github.io/online-judge-verify-helper/document.ja.html)にあります。
+より詳しい説明は[リファレンス](https://online-judge-tools.github.io/verification-helper/document.ja.html)にあります。
 
 ## Tips
 
 -   ライブラリを verify するための問題が見つからないときは他の人のライブラリを参考にするとよいでしょう。`online-judge-verify-helper` のユーザの一覧は <https://github.com/search?q=online-judge-verify-helper+path%3A.github> から見ることができます
 -   ライブラリを verify するための問題がそれでも見つからないときは [Library Checker](https://judge.yosupo.jp/) に問題を追加してください。[Hello World](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_A) などをダミーの問題として指定して、自前で書いたストレステストを実行することもできます。
--   GitHub Actions から online-judge-verify-helper を呼び出すといった通常想定される利用法においては MIT License に関する著作権表示は要求されません ([詳細](https://github.com/kmyk/online-judge-verify-helper/issues/34))
+-   GitHub Actions から online-judge-verify-helper を呼び出すといった通常想定される利用法においては MIT License に関する著作権表示は要求されません ([詳細](https://github.com/online-judge-tools/verification-helper/issues/34))
 -   これはライブラリを効率良く verify するためのツールであり、コードの検査や整形をするためのツールではありません。必要なら [clang-format](https://clang.llvm.org/docs/ClangFormat.html) などの formatter や [cppcheck](http://cppcheck.sourceforge.net/) などの linter を利用してください
 
 ## Authors

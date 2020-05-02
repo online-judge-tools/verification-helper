@@ -12,7 +12,7 @@ Steps:
     </form>
 
 1.  Open <a id="output" target="_blank"></a> and click the green `Commit new file` button.
-1.  Add C++ source files ending with `.test.cpp` and `#define PROBLEM "https://..."` added like [example.test.cpp](https://github.com/kmyk/online-judge-verify-helper/blob/master/example.test.cpp) to the repository. (<a id="output2" target="_blank">A link to add the example file to your repository</a>)
+1.  Add C++ source files ending with `.test.cpp` and `#define PROBLEM "https://..."` added like [example.test.cpp](https://github.com/online-judge-tools/verification-helper/blob/master/example.test.cpp) to the repository. (<a id="output2" target="_blank">A link to add the example file to your repository</a>)
 1.  Confirm the result from the <a id="output3" target="_blank">GitHub Actions <img id="output7"></a> page.
 1.  (Additional) Add <code id="output4"></code> to `README.md` (The badge <a id="output5" target="_blank"><img id="output6"></a> will be added)
 

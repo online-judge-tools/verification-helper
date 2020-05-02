@@ -12,7 +12,7 @@
     </form>
 
 1.  ページ <a id="output" target="_blank"></a> を開き、下の方にある緑の `Commit new file` ボタンを押す
-1.  [example.test.cpp](https://github.com/kmyk/online-judge-verify-helper/blob/master/example.test.cpp) のように `#define PROBLEM "https://..."` が書かれている `hoge.test.cpp` のようなファイル名の C++ コードを追加する (<a id="output2" target="_blank">例を自動で追加するリンク</a>)
+1.  [example.test.cpp](https://github.com/online-judge-tools/verification-helper/blob/master/example.test.cpp) のように `#define PROBLEM "https://..."` が書かれている `hoge.test.cpp` のようなファイル名の C++ コードを追加する (<a id="output2" target="_blank">例を自動で追加するリンク</a>)
 1.  <a id="output3" target="_blank">GitHub Actions <img id="output7"></a> のページから結果を確認する
 1.  (おまけ) `README.md` に <code id="output4"></code> と書き足す (バッチ <a id="output5" target="_blank"><img id="output6"></a> が貼られる)
 

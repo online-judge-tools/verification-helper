@@ -61,7 +61,7 @@ class NimLanguage(Language):
         return path.name.endswith("_test.nim")
 
     def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[NimLanguageEnvironment]:
-        default_NIMFLAGS = ['--warnings:on']
+        default_NIMFLAGS = ['-d:release', '--opt:speed', '--multimethods:on', '--warning[SmallLshouldNotBeUsed]:off', '--hints:off']
         envs = []
         if 'environments' in self.config:
             for env in self.config['environments']:

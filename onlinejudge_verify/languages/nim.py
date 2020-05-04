@@ -21,13 +21,14 @@ class NimLanguageEnvironment(LanguageEnvironment):
         self.compile_to = compile_to
 
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
-        command = ["nim", self.compile_to, "-p:.", "-o:{tempdir}/a.out".format(tempdir=str(tempdir))] + self.NIMFLAGS + ["{path}".format(path=str(path))]
+        exe_path = str(tempdir.joinpath("a.out"))
+        command = ["nim", self.compile_to, "-p:.", "-o:{p}".format(p=exe_path)] + self.NIMFLAGS + [str(path)]
         logger.info('$ %s', ' '.join(command))
         subprocess.check_call(command)
 
     def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
-        command = "{tempdir}/a.out".format(tempdir=str(tempdir))
-        return shlex.split(command)
+        exe_path = str(tempdir.joinpath("a.out"))
+        return shlex.split(exe_path)
 
 
 class NimLanguage(Language):

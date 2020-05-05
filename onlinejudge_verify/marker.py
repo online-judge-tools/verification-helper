@@ -5,10 +5,13 @@ import functools
 import json
 import pathlib
 import subprocess
+import traceback
 from typing import *
 
 import onlinejudge_verify.languages
 import onlinejudge_verify.utils
+
+_error_timestamp = datetime.datetime.fromtimestamp(0, tz=datetime.timezone(datetime.timedelta()))
 
 
 class VerificationMarker(object):
@@ -30,9 +33,15 @@ class VerificationMarker(object):
         else:
             language = onlinejudge_verify.languages.get(path)
             assert language is not None
-            timestamp = max([x.stat().st_mtime for x in language.list_dependencies(path, basedir=pathlib.Path.cwd())])
-            system_local_timezone = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
-            return datetime.datetime.fromtimestamp(timestamp, tz=system_local_timezone).replace(microsecond=0)  # microsecond=0 is required because it's erased on timestamps.*.json
+            try:
+                depending_files = language.list_dependencies(path, basedir=pathlib.Path.cwd())
+            except Exception:
+                traceback.print_exc()
+                return _error_timestamp
+            else:
+                timestamp = max([x.stat().st_mtime for x in depending_files])
+                system_local_timezone = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
+                return datetime.datetime.fromtimestamp(timestamp, tz=system_local_timezone).replace(microsecond=0)  # microsecond=0 is required because it's erased on timestamps.*.json
 
     def is_verified(self, path: pathlib.Path) -> bool:
         path = path.resolve().relative_to(pathlib.Path.cwd())
@@ -70,7 +79,7 @@ class VerificationMarker(object):
         self.new_timestamps = {}
 
         def load(path, timestamp):
-            if path.exists() and self.get_current_timestamp(path) <= timestamp:
+            if path.exists() and _error_timestamp < self.get_current_timestamp(path) <= timestamp:
                 self.mark_verified(path)
                 return
             #「そもそもテストを実行していない」のか「実行した上で失敗した」のか区別できないが、verifyできてない事には変わりないので一旦はfailedとみなす
@@ -125,11 +134,15 @@ def get_verification_marker(*, jobs: Optional[int] = None) -> VerificationMarker
 def _get_last_commit_time_to_verify(path: pathlib.Path) -> datetime.datetime:
     language = onlinejudge_verify.languages.get(path)
     assert language is not None
-    depending_files = language.list_dependencies(path, basedir=pathlib.Path.cwd())
+    try:
+        depending_files = language.list_dependencies(path, basedir=pathlib.Path.cwd())
+    except Exception:
+        traceback.print_exc()
+        return _error_timestamp
     code = ['git', 'log', '-1', '--date=iso', '--pretty=%ad', '--'] + list(map(str, depending_files))
     timestamp = subprocess.check_output(code).decode().strip()
     if not timestamp:
-        return datetime.datetime.fromtimestamp(0, tz=datetime.timezone(datetime.timedelta()))
+        return _error_timestamp
     return datetime.datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S %z')
 
 

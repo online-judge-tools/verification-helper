@@ -33,8 +33,8 @@ CXXFLAGS = ["-std=c++17", "-Wall", "-g", "-fsanitize=undefined", "-D_GLIBCXX_DEB
 
 ### Nim の設定
 
-`.verify-helper/config.toml` というファイルを作って以下のように設定を書くと、コンパイルの際に変換する言語(c, cpp)やそのオプションを指定できます。
-設定がない場合は、atcoder準拠のものが指定されます。
+`.verify-helper/config.toml` というファイルを作って以下のように設定を書くと、コンパイルの際に変換する言語 (例: `c`, `cpp`) やそのオプションを指定できます。
+設定がない場合は AtCoder でのオプションに近いおすすめのオプションが指定されます。
 
 ``` toml
 [[languages.nim.environments]]
@@ -42,7 +42,7 @@ compile_to = "c"
 
 [[languages.nim.environments]]
 compile_to = "cpp"
-NIMFLAGS = ["--opt:speed", "--hints:off"]
+NIMFLAGS = ["--warning:on", "--opt:none"]
 ```
 
 

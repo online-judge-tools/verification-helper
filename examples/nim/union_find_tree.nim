@@ -30,3 +30,5 @@ when not declared(EXAMPLES_UNION_FIND_TREE_NIM):
     return i
   
   proc isSame*(self: var UnionFindTree, i, j:int):bool = self.find_root(i) == self.find_root(j)
+
+  proc hoge*() = echo "Hello World"

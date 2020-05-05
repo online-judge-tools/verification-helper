@@ -1,6 +1,6 @@
 # verify-helper: PROBLEM https://judge.yosupo.jp/problem/unionfind
 
-import "examples/nim/headers.nim"
+include "examples/nim/headers.nim"
 from examples/nim/union_find_tree import unite_trees, initUnionFindTree, is_same
 
 let 

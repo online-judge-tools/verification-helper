@@ -49,10 +49,14 @@ class NimLanguage(Language):
                 line = line.strip()
                 if line.startswith('include'):
                     a += line[7:].strip().split(',')
-                if line.startswith('import'):
-                    a += line[6:].strip().split(',')
-                if line.startswith('from'):
-                    i = line.find('import')
+                elif line.startswith('import'):
+                    line = line[6:]
+                    i = line.find(' except ')
+                    if i >= 0:
+                        line = line[:i]
+                    a += line.split(',')
+                elif line.startswith('from'):
+                    i = line.find(' import ')
                     if i >= 0:
                         a += line[4:i-1].strip()
         for p in set(a):

@@ -44,11 +44,14 @@ class NimLanguage(Language):
         texts: List[str] = []
         p = basedir.joinpath(path)
         with p.open(mode='r') as f:
-            pattern = re.compile(r"include\s*\"(.*)\"")
+            pattern_include = re.compile(r"include\s*\"(.*)\"")
+            pattern_import = re.compile(r"import\s*\"(.*)\"")
             for line in f:
                 line = line.strip()
                 if line.startswith('include'):
-                    texts += re.findall(pattern, line)
+                    texts += re.findall(pattern_include, line)
+                if line.startswith('import'):
+                    texts += re.findall(pattern_import, line)
         dependencies = [path]
         for line in texts:
             dependencies.append(pathlib.Path(line))

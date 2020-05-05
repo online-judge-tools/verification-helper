@@ -9,17 +9,17 @@ when not declared(EXAMPLES_UNION_FIND_TREE_NIM):
   type UnionFindTree = object
     data:seq[int]
   
-  proc initUnionFindTree(n:int):UnionFindTree = UnionFindTree(data:newSeqWith(n, -1))
+  proc initUnionFindTree*(n:int):UnionFindTree = UnionFindTree(data:newSeqWith(n, -1))
   
-  proc isRoot(self: UnionFindTree, i:int):bool = return self.data[i] < 0
-  proc findRoot(self: var UnionFindTree, i:int):int =
+  proc isRoot*(self: UnionFindTree, i:int):bool = return self.data[i] < 0
+  proc findRoot*(self: var UnionFindTree, i:int):int =
     if self.is_root(i):
       return i
     else:
       self.data[i] = self.findRoot(self.data[i])
       return self.data[i]
-  proc treeSize(self: var UnionFindTree, i:int):int = - self.data[self.findRoot(i)]
-  proc uniteTrees(self: var UnionFindTree, i, j:int):int {.discardable.} =
+  proc treeSize*(self: var UnionFindTree, i:int):int = - self.data[self.findRoot(i)]
+  proc uniteTrees*(self: var UnionFindTree, i, j:int):int {.discardable.} =
     var 
       i = self.findRoot(i)
       j = self.findRoot(j)
@@ -29,4 +29,4 @@ when not declared(EXAMPLES_UNION_FIND_TREE_NIM):
       self.data[j] = i
     return i
   
-  proc isSame(self: var UnionFindTree, i, j:int):bool = self.find_root(i) == self.find_root(j)
+  proc isSame*(self: var UnionFindTree, i, j:int):bool = self.find_root(i) == self.find_root(j)

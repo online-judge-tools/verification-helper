@@ -1,7 +1,7 @@
 # verify-helper: PROBLEM https://judge.yosupo.jp/problem/unionfind
 
 include "examples/nim/headers.nim"
-include "examples/nim/union_find_tree.nim"
+import "examples/nim/union_find_tree.nim"
 
 let 
   n,q = nextInt()

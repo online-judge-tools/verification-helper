@@ -92,6 +92,7 @@ class CppFile:
         self.file_path = file_path.resolve()
         self.source_path = source_path.resolve()
         self.parser = FileParser(file_path)
+        self.required = []
 
         self.brief = self.parser.get_contents_by_tag(r'@brief')
 
@@ -115,33 +116,41 @@ class CppFile:
         else:
             self.category = category_list[-1]
 
-        # language object を用意しておく
-        language = onlinejudge_verify.languages.get(self.file_path)
-        assert language is not None
-        try:
-            attributes = language.list_attributes(self.file_path, basedir=pathlib.Path.cwd())
-        except:
-            traceback.print_exc()
-            attributes = {}
-
-        # see で指定されるのは URL: パス修正は不要
-        self.see = self.parser.get_contents_by_tag(r'(?:@see|@sa)', re_escape=False)
-        if 'PROBLEM' in attributes:
-            self.see.append(attributes['PROBLEM'])
-
         # pathlib 型に直し、相対パスである場合は絶対パスに直す
         docs_list = self.parser.get_contents_by_tag(r'@docs')
         self.docs = [pathlib.Path(path) for path in docs_list]
         self.docs = self.to_abspath(self.docs)
 
-        # pathlib 型に直し、相対パスである場合は絶対パスに直す
-        depends_list = self.parser.get_contents_by_tag(r'@depends')
-        depends_list.extend(map(str, language.list_dependencies(self.file_path, basedir=pathlib.Path.cwd())))
-        self.depends = [pathlib.Path(path) for path in depends_list]
-        self.depends = list(set(self.to_abspath(self.depends)))
-        self.depends.sort()
+        # see で指定されるのは URL: パス修正は不要
+        self.see = self.parser.get_contents_by_tag(r'(?:@see|@sa)', re_escape=False)
 
-        self.required = []
+        # language object を用意しておく
+        language = onlinejudge_verify.languages.get(self.file_path)
+        assert language is not None
+
+        # language.list_dependencie() をもとに sself.depends を絶対パスの list として持つ
+        try:
+            self.depends = language.list_dependencies(self.file_path, basedir=pathlib.Path.cwd())
+        except:
+            # 失敗したら中断
+            traceback.print_exc()
+            self.depends = []
+            self.verification_status = VerificationStatus.FAILED
+            return
+        self.depends.extend(map(pathlib.Path, self.parser.get_contents_by_tag(r'@depends')))
+        self.depends = sorted(set(self.to_abspath(self.depends)))
+
+        # language.list_attributes() をもとに PROBLEM のデータを取得
+        try:
+            attributes = language.list_attributes(self.file_path, basedir=pathlib.Path.cwd())
+        except:
+            # 失敗したら中断
+            traceback.print_exc()
+            self.verification_status = VerificationStatus.FAILED
+            return
+        if 'PROBLEM' in attributes:
+            self.see.append(attributes['PROBLEM'])
+
         # 表示するverification statusを決める
         is_verified = get_verification_marker().is_verified(self.file_path.relative_to(self.source_path))
         is_failed = get_verification_marker().is_failed(self.file_path.relative_to(self.source_path))

@@ -1,6 +1,6 @@
 # Online Judge Verify Helper の細かい仕様
 
-[English Version](https://kmyk.github.io/online-judge-verify-helper/document.html)
+[English Version](https://online-judge-tools.github.io/verification-helper/document.html)
 
 ## 対応している言語
 
@@ -8,10 +8,9 @@
 
 | 言語 | コンパイラ | 対応機能 (verify / bundle / doc) | 例 |
 |---|---|---|---|---|
-| C++ | GCC / Clang | :heavy_check_mark: / :heavy_check_mark: / :heavy_check_mark: | [examples/segment_tree.range_sum_query.test.cpp](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/segment_tree.range_sum_query.test.cpp) |
-| C# script | .NET Core | :heavy_check_mark: / :x: / :warning: | [examples/csharpscript/segment_tree.range_sum_query.test.csx](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/csharpscript/segment_tree.range_sum_query.test.csx) |
-| Nim |  | :heavy_check_mark: / :x: / :warning: | [examples/nim/union_find_tree_yosupo_test.nim](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/nim/union_find_tree_yosupo_test.nim) |
-
+| C++ | GCC / Clang | :heavy_check_mark: / :heavy_check_mark: / :heavy_check_mark: | [examples/segment_tree.range_sum_query.test.cpp](https://github.com/online-judge-tools/verification-helper/blob/master/examples/segment_tree.range_sum_query.test.cpp) |
+| C# script | .NET Core | :heavy_check_mark: / :x: / :warning: | [examples/csharpscript/segment_tree.range_sum_query.test.csx](https://github.com/online-judge-tools/verification-helper/blob/master/examples/csharpscript/segment_tree.range_sum_query.test.csx) |
+| Nim |  | :heavy_check_mark: / :x: / :warning: | [examples/nim/union_find_tree_yosupo_test.nim](https://github.com/online-judge-tools/verification-helper/blob/master/examples/nim/union_find_tree_yosupo_test.nim) |
 
 ### C++ の設定
 
@@ -48,8 +47,8 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
 
 ### その他の言語の設定
 
-上記以外の言語でも実行可能です (例: [examples/awk/circle.test.awk](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/awk/circle.test.awk))。
-`.verify-helper/config.toml` というファイルを作って、以下のようにコンパイルや実行のためのコマンドを書いてください (例: [.verify-helper/config.toml](https://github.com/kmyk/online-judge-verify-helper/blob/master/.verify-helper/config.toml))。
+上記以外の言語でも実行可能です (例: [examples/awk/circle.test.awk](https://github.com/online-judge-tools/verification-helper/blob/master/examples/awk/circle.test.awk))。
+`.verify-helper/config.toml` というファイルを作って、以下のようにコンパイルや実行のためのコマンドを書いてください (例: [.verify-helper/config.toml](https://github.com/online-judge-tools/verification-helper/blob/master/.verify-helper/config.toml))。
 
 ``` toml
 [languages.awk]

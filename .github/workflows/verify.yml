@@ -13,7 +13,7 @@ jobs:
       uses: actions/setup-python@v1
 
     - name: Install dependencies
-      run: pip3 install -U git+https://github.com/kmyk/online-judge-verify-helper.git@master
+      run: pip3 install -U git+https://github.com/online-judge-tools/verification-helper.git@master
 
 
     # required only if you want to verify C# script files

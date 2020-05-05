@@ -1,6 +1,6 @@
 # The reference of Online Judge Verify Helper
 
-[日本語バージョン](https://kmyk.github.io/online-judge-verify-helper/document.ja.html)
+[日本語バージョン](https://online-judge-tools.github.io/verification-helper/document.ja.html)
 
 ## Supported languages
 
@@ -8,9 +8,10 @@ Summary:
 
 | Language | Compilers | How to specify attributes | Features (verify / bundle / doc) | Examples |
 |---|---|---|---|---|
-| C++ | GCC / Clang | `#define [KEY] [VALUE]` | :heavy_check_mark: / :heavy_check_mark: / :heavy_check_mark: | [examples/segment_tree.range_sum_query.test.cpp](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/segment_tree.range_sum_query.test.cpp) |
-| C# script | .NET Core | `#pragma [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [examples/csharpscript/segment_tree.range_sum_query.test.csx](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/csharpscript/segment_tree.range_sum_query.test.csx) |
-| Nim |  | :heavy_check_mark: / :x: / :warning: | [examples/nim/union_find_tree_yosupo_test.nim](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/nim/union_find_tree_yosupo_test.nim) |
+| C++ | GCC / Clang | `#define [KEY] [VALUE]` | :heavy_check_mark: / :heavy_check_mark: / :heavy_check_mark: | [examples/segment_tree.range_sum_query.test.cpp](https://github.com/online-judge-tools/verification-helper/blob/master/examples/segment_tree.range_sum_query.test.cpp) |
+| C# script | .NET Core | `#pragma [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [examples/csharpscript/segment_tree.range_sum_query.test.csx](https://github.com/online-judge-tools/verification-helper/blob/master/examples/csharpscript/segment_tree.range_sum_query.test.csx) |
+| Nim |  | :heavy_check_mark: / :x: / :warning: | [examples/nim/union_find_tree_yosupo_test.nim](https://github.com/kmyk/online-judge-tools/verification-helper/blob/master/examples/nim/union_find_tree_yosupo_test.nim) |
+>>>>>>> master
 
 ### Settings for C++
 
@@ -46,7 +47,7 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
 
 ### Settings for other languages
 
-You can use languages other than above (e.g. AWK [examples/awk/circle.test.awk](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/awk/circle.test.awk)). Please write commands to compile and execute in the config file `.verify-helper/config.toml` (e.g. [.verify-helper/config.toml](https://github.com/kmyk/online-judge-verify-helper/blob/master/.verify-helper/config.toml)).
+You can use languages other than above (e.g. AWK [examples/awk/circle.test.awk](https://github.com/online-judge-tools/verification-helper/blob/master/examples/awk/circle.test.awk)). Please write commands to compile and execute in the config file `.verify-helper/config.toml` (e.g. [.verify-helper/config.toml](https://github.com/kmyk/online-judge-verify-helper/blob/master/.verify-helper/config.toml)).
 
 ``` toml
 [languages.awk]

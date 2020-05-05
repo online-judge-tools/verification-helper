@@ -43,18 +43,30 @@ class NimLanguage(Language):
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
         texts: List[str] = []
         p = basedir.joinpath(path)
+        a: List[str] = []
         with p.open(mode='r') as f:
-            pattern_include = re.compile(r"include\s*\"(.*)\"")
-            pattern_import = re.compile(r"import\s*\"(.*)\"")
             for line in f:
                 line = line.strip()
                 if line.startswith('include'):
-                    texts += re.findall(pattern_include, line)
+                    a += line[7:].strip().split(',')
                 if line.startswith('import'):
-                    texts += re.findall(pattern_import, line)
+                    a += line[6:].strip().split(',')
+                if line.startswith('from'):
+                    i = line.find('import')
+                    if i >= 0:
+                        a += line[4:i-1].strip()
+        for p in set(a):
+            p = p.strip()
+            if p.startswith("\""):
+                p = p[1:len(p)-1]
+            else:
+                p += ".nim"
+            if pathlib.Path(p).exists():
+                texts.append(p)
         dependencies = [path]
         for line in texts:
             dependencies.append(pathlib.Path(line))
+        print(dependencies)
         return dependencies
 
     def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bytes:

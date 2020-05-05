@@ -1,7 +1,7 @@
 # verify-helper: PROBLEM https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_1_A
 
 include "examples/nim/headers.nim"
-include "examples/nim/union_find_tree.nim"
+import "examples/nim/union_find_tree.nim" except hoge
 include "examples/nim/union_find_tree.nim"
 include "examples/nim/union_find_tree.nim"
 include "examples/nim/union_find_tree.nim"

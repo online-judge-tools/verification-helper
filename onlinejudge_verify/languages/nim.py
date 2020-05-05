@@ -1,7 +1,6 @@
 # Python Version: 3.x
 import functools
 import pathlib
-import re
 import subprocess
 from logging import getLogger
 from typing import *
@@ -31,15 +30,33 @@ class NimLanguageEnvironment(LanguageEnvironment):
 
 @functools.lru_cache(maxsize=None)
 def _list_direct_dependencies(path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
-    dependencies = [path.resolve()]
+    items: List[str] = []
     with (basedir / path).open() as fh:
         for line in fh:
-            m = re.match(r'''^\s*include\s*"(.*)"''', line)
-            if m:
-                included = pathlib.Path(m.group(1))
-                if included.exists():
-                    dependencies.append(included.resolve())
-    return dependencies
+            line = line.strip()
+            if line.startswith('include'):
+                items += line[7:].strip().split(',')
+            elif line.startswith('import'):
+                line = line[6:]
+                i = line.find(' except ')
+                if i >= 0:
+                    line = line[:i]
+                items += line.split(',')
+            elif line.startswith('from'):
+                i = line.find(' import ')
+                if i >= 0:
+                    items += line[4:i - 1]
+    dependencies = [path.resolve()]
+    for item in items:
+        item = item.strip()
+        if item.startswith("\""):
+            item = item[1:len(item) - 1]
+        else:
+            item += ".nim"
+        item_ = pathlib.Path(path)
+        if item_.exists():
+            dependencies.append(item_)
+    return list(set(dependencies))
 
 
 class NimLanguage(Language):

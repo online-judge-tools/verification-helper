@@ -23,6 +23,10 @@ jobs:
     - name: Install dependencies (C#)
       run: dotnet tool install -g dotnet-script && echo ::add-path::$HOME/.dotnet/tools
 
+    # required only if you want to verify Nim code
+    - name: Install dependencies (Nim)
+      run: sudo apt install nim
+
 
     - name: Run tests
       env:

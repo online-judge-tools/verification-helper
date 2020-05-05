@@ -167,6 +167,7 @@ def subcommand_docs() -> None:
 def generate_gitignore() -> None:
     path = pathlib.Path('.verify-helper/.gitignore')
     data = textwrap.dedent("""\
+        .gitignore
         cache/
         include/
         markdown/

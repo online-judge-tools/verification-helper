@@ -84,7 +84,7 @@ when not declared(EXAMPLES_UNION_FIND_TREE_NIM):
 {% raw %}
 ```cpp
 Traceback (most recent call last):
-  File "/opt/hostedtoolcache/Python/3.8.2/x64/lib/python3.8/site-packages/onlinejudge_verify/docs.py", line 340, in write_contents
+  File "/opt/hostedtoolcache/Python/3.8.2/x64/lib/python3.8/site-packages/onlinejudge_verify/docs.py", line 349, in write_contents
     bundled_code = language.bundle(self.file_class.file_path, basedir=pathlib.Path.cwd())
   File "/opt/hostedtoolcache/Python/3.8.2/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/nim.py", line 86, in bundle
     raise NotImplementedError

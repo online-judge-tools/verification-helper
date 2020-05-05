@@ -1,6 +1,7 @@
 when not declared(EXAMPLES_UNION_FIND_TREE_NIM):
   const EXAMPLES_UNION_FIND_TREE_NIM = true
   import sequtils
+  import "examples/nim/hoge.nim"
   
   # @brief a Union-Find Tree
   # @note most operations in $O(\alpha(n))$ where $\alpha(n)$ is the inverse of Ackermann function

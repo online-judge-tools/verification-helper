@@ -41,37 +41,40 @@ class NimLanguage(Language):
             self.config = config
 
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
-        texts: List[str] = []
-        p = basedir.joinpath(path)
-        a: List[str] = []
-        with p.open(mode='r') as f:
-            for line in f:
-                line = line.strip()
-                if line.startswith('include'):
-                    a += line[7:].strip().split(',')
-                elif line.startswith('import'):
-                    line = line[6:]
-                    i = line.find(' except ')
-                    if i >= 0:
-                        line = line[:i]
-                    a += line.split(',')
-                elif line.startswith('from'):
-                    i = line.find(' import ')
-                    if i >= 0:
-                        a += line[4:i-1].strip()
-        for p in set(a):
-            p = p.strip()
-            if p.startswith("\""):
-                p = p[1:len(p)-1]
-            else:
-                p += ".nim"
-            if pathlib.Path(p).exists():
-                texts.append(p)
-        dependencies = [path]
-        for line in texts:
-            dependencies.append(pathlib.Path(line))
-        print(dependencies)
-        return dependencies
+        def _resolve_dependencies(path: pathlib.Path, deps: Set[pathlib.Path]) -> None:
+            if path in deps:
+                return
+            deps.add(path)
+            p = basedir.joinpath(path)
+            a: List[str] = []
+            with p.open(mode='r') as f:
+                for line in f:
+                    line = line.strip()
+                    if line.startswith('include'):
+                        a += line[7:].strip().split(',')
+                    elif line.startswith('import'):
+                        line = line[6:]
+                        i = line.find(' except ')
+                        if i >= 0:
+                            line = line[:i]
+                        a += line.split(',')
+                    elif line.startswith('from'):
+                        i = line.find(' import ')
+                        if i >= 0:
+                            a += line[4:i-1].strip()
+            for p in set(a):
+                p = p.strip()
+                if p.startswith("\""):
+                    p = p[1:len(p)-1]
+                else:
+                    p += ".nim"
+                p = pathlib.Path(p)
+                if p.exists():
+                    _resolve_dependencies(p, res)
+
+        res: Set[pathlib.Path] = set()
+        _resolve_dependencies(path, res)
+        return list(res)
 
     def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bytes:
         raise NotImplementedError

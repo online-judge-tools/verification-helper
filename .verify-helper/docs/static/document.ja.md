@@ -10,10 +10,12 @@
 |---|---|---|---|---|
 | C++ | GCC / Clang | :heavy_check_mark: / :heavy_check_mark: / :heavy_check_mark: | [examples/segment_tree.range_sum_query.test.cpp](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/segment_tree.range_sum_query.test.cpp) |
 | C# script | .NET Core | :heavy_check_mark: / :x: / :warning: | [examples/csharpscript/segment_tree.range_sum_query.test.csx](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/csharpscript/segment_tree.range_sum_query.test.csx) |
+| Nim |  | :heavy_check_mark: / :x: / :warning: | [examples/nim/union_find_tree_yosupo_test.nim](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/nim/union_find_tree_yosupo_test.nim) |
+
 
 ### C++ の設定
 
-`.verify-helper/config.toml` というファイルを作って以下のように設定を設定を書くと、コンパイラやそのオプションを指定できます。
+`.verify-helper/config.toml` というファイルを作って以下のように設定を書くと、コンパイラやそのオプションを指定できます。
 設定がない場合は、自動でコンパイラ (`g++` と `clang++`) を検出し、おすすめのオプションを用いて実行されます。
 
 ``` toml
@@ -28,6 +30,21 @@ CXXFLAGS = ["-std=c++17", "-Wall", "-g", "-fsanitize=undefined", "-D_GLIBCXX_DEB
 ### C# script の設定
 
 設定項目はありません。
+
+### Nim の設定
+
+`.verify-helper/config.toml` というファイルを作って以下のように設定を書くと、コンパイルの際に変換する言語(c, cpp)やそのオプションを指定できます。
+設定がない場合は、atcoder準拠のものが指定されます。
+
+``` toml
+[[languages.nim.environments]]
+compile_to = "c"
+
+[[languages.nim.environments]]
+compile_to = "cpp"
+NIMFLAGS = ["--opt:speed", "--hints:off"]
+```
+
 
 ### その他の言語の設定
 

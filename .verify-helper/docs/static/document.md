@@ -10,6 +10,7 @@ Summary:
 |---|---|---|---|---|
 | C++ | GCC / Clang | `#define [KEY] [VALUE]` | :heavy_check_mark: / :heavy_check_mark: / :heavy_check_mark: | [examples/segment_tree.range_sum_query.test.cpp](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/segment_tree.range_sum_query.test.cpp) |
 | C# script | .NET Core | `#pragma [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [examples/csharpscript/segment_tree.range_sum_query.test.csx](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/csharpscript/segment_tree.range_sum_query.test.csx) |
+| Nim |  | :heavy_check_mark: / :x: / :warning: | [examples/nim/union_find_tree_yosupo_test.nim](https://github.com/kmyk/online-judge-verify-helper/blob/master/examples/nim/union_find_tree_yosupo_test.nim) |
 
 ### Settings for C++
 
@@ -28,6 +29,20 @@ CXXFLAGS = ["-std=c++17", "-Wall", "-g", "-fsanitize=undefined", "-D_GLIBCXX_DEB
 ### Settings for C#
 
 No config
+
+### Settings for Nim
+
+You can specify options and targets (e.g. `c` `cpp`) with writing `.verify-helper/config.toml` as below.
+If there is no settings, online-judge-verify-helper automatically use recommended options similar to options on AtCoder.
+
+``` toml
+[[languages.nim.environments]]
+compile_to = "c"
+
+[[languages.nim.environments]]
+compile_to = "cpp"
+NIMFLAGS = ["--warning:on", "--opt:none"]
+```
 
 ### Settings for other languages
 

@@ -120,9 +120,10 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
 
 def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.VerificationMarker, timeout: float = math.inf, tle: float = 60, jobs: int = 1) -> VerificationSummary:
     try:
-        resource.setrlimit(resource.RLIMIT_STACK, (resource.RLIM_INFINITY, resource.RLIM_INFINITY))
+        _, hard = resource.getrlimit(resource.RLIMIT_STACK)
+        resource.setrlimit(resource.RLIMIT_STACK, (hard, hard))
     except:
-        logger.warning('failed to make the stack size unlimited')
+        logger.warning('failed to increase the stack size')
         print(f'::warning ::failed to ulimit')
 
     compilers = []

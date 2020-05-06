@@ -102,14 +102,12 @@ def push_timestamp_to_branch() -> None:
 
 def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-pages') -> None:
     # read config
-    if os.environ.get('GH_PAT', None):
-        logger.info('use GH_PAT')
-        # see https://github.com/marketplace/actions/github-pages-deploy#secrets and https://github.com/maxheld83/ghpages/issues/1
-        url = 'https://{}@github.com/{}.git'.format(os.environ['GH_PAT'], os.environ['GITHUB_REPOSITORY'])
-    else:
-        logger.info('use GITHUB_TOKEN')
-        url = 'https://{}:{}@github.com/{}.git'.format(os.environ['GITHUB_ACTOR'], os.environ['GITHUB_TOKEN'], os.environ['GITHUB_REPOSITORY'])
-    logger.info('GITHUB_ACTOR = %s', os.environ['GITHUB_ACTOR'])
+    if not os.environ.get('GH_PAT'):
+        # If we push commits using GITHUB_TOKEN, the build of GitHub Pages will not run. See https://github.com/marketplace/actions/github-pages-deploy#secrets and https://github.com/maxheld83/ghpages/issues/1
+        logger.error("GH_PAT is not available. You cannot upload the generated documents to GitHub Pages.")
+        return
+    logger.info('use GH_PAT')
+    url = 'https://{}@github.com/{}.git'.format(os.environ['GH_PAT'], os.environ['GITHUB_REPOSITORY'])
     logger.info('GITHUB_REPOSITORY = %s', os.environ['GITHUB_REPOSITORY'])
 
     # read files before checkout

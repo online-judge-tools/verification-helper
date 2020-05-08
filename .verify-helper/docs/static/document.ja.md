@@ -1,4 +1,4 @@
-# Online Judge Verify Helper の細かい仕様
+# Online Judge Verification Helper の細かい仕様
 
 [English Version](https://online-judge-tools.github.io/verification-helper/document.html)
 
@@ -6,11 +6,11 @@
 
 一覧表:
 
-| 言語 | コンパイラ | 対応機能 (verify / bundle / doc) | 例 |
-|---|---|---|---|---|
-| C++ | GCC / Clang | :heavy_check_mark: / :heavy_check_mark: / :heavy_check_mark: | [examples/segment_tree.range_sum_query.test.cpp](https://github.com/online-judge-tools/verification-helper/blob/master/examples/segment_tree.range_sum_query.test.cpp) |
-| C# script | .NET Core | :heavy_check_mark: / :x: / :warning: | [examples/csharpscript/segment_tree.range_sum_query.test.csx](https://github.com/online-judge-tools/verification-helper/blob/master/examples/csharpscript/segment_tree.range_sum_query.test.csx) |
-| Nim |  | :heavy_check_mark: / :x: / :warning: | [examples/nim/union_find_tree_yosupo_test.nim](https://github.com/online-judge-tools/verification-helper/blob/master/examples/nim/union_find_tree_yosupo_test.nim) |
+| 言語 | 認識される拡張子 | テストファイルだと認識されるパターン | 属性の指定方法 | 対応機能 (verify / bundle / doc) | ファイル例 |
+|---|---|---|---|---|---|
+| C++ | `.cpp` `.hpp` | `.test.cpp` | `#define [KEY] [VALUE]` | :heavy_check_mark: / :heavy_check_mark: / :heavy_check_mark: | [segment_tree.range_sum_query.test.cpp](https://github.com/online-judge-tools/verification-helper/blob/master/examples/segment_tree.range_sum_query.test.cpp) |
+| C# script | `.csx` | `.test.csx` |`#pragma [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [segment_tree.range_sum_query.test.csx](https://github.com/online-judge-tools/verification-helper/blob/master/examples/csharpscript/segment_tree.range_sum_query.test.csx) |
+| Nim | `.nim` | `_test.nim` | `# verify-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [union_find_tree_yosupo_test.nim](https://github.com/online-judge-tools/verification-helper/blob/master/examples/nim/union_find_tree_yosupo_test.nim) |
 
 ### C++ の設定
 
@@ -26,9 +26,15 @@ CXX = "clang++"
 CXXFLAGS = ["-std=c++17", "-Wall", "-g", "-fsanitize=undefined", "-D_GLIBCXX_DEBUG"]
 ```
 
+-   [`ulimit`](https://linux.die.net/man/3/ulimit) が動作しないような環境では、自分で `CXXFLAGS` を設定する場合はスタックサイズに注意してください。
+-   いまのところ `.c` や `.cc` や `.h++` のような拡張子が認識されないことに注意してください ([#248](https://github.com/online-judge-tools/verification-helper/issues/248))。
+
 ### C# script の設定
 
 設定項目はありません。
+コンパイラには .NET Core が使われます。
+
+-   いまのところ `.cs` という拡張子が認識されないことに注意してください ([#248](https://github.com/online-judge-tools/verification-helper/issues/248))。
 
 ### Nim の設定
 
@@ -90,7 +96,6 @@ list_dependencies = "sed 's/^@include \"\\(.*\\)\"$/\\1/ ; t ; d' {path}"
 | `@brief` | ライブラリの説明文として使用されます。 | `@title` が指定されていないときは、最初に登場する `@brief` は説明文ではなくタイトルとして使用されます。 |
 | `@see`, `@sa` | このタグの直後に記載された文字列に対してリンクを張ります。参考にした Web ページなどがあるときに活用するとよいでしょう。 | 例: `@see https://example.com/` |
 | `@docs` | 説明文が長く `@brief` タグで対応することが難しい場合、説明文が書かれた Markdown ファイルへのパスを記載すると、説明文がドキュメントに反映されます。 | 例: `@docs path/to/markdown.md` |
-| `@depends` | そのライブラリが依存している他のファイルをタグで明示的に記載したい場合に使用します。 | C++ など一部の言語ではソフトウェア側で依存関係を自動で判定するため、記載する必要がない場合があります。 |
 | `@ignore` | ドキュメント生成の対象から除外します。 |  |
 
 ### ローカル実行

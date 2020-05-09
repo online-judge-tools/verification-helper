@@ -3,7 +3,6 @@ import hashlib
 import math
 import os
 import pathlib
-import resource
 import shlex
 import subprocess
 import time
@@ -18,6 +17,10 @@ import onlinejudge
 
 logger = getLogger(__name__)
 
+try:
+    import resource
+except:
+    logger.warning('no module named resource (skipped)')
 
 class VerificationSummary(object):
     def __init__(self, *, failed_test_paths: List[pathlib.Path]):

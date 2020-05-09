@@ -22,6 +22,7 @@ try:
 except:
     logger.warning('no module named resource (skipped)')
 
+
 class VerificationSummary(object):
     def __init__(self, *, failed_test_paths: List[pathlib.Path]):
         self.failed_test_paths = failed_test_paths

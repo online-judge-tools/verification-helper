@@ -51,7 +51,7 @@ def _cplusplus_list_depending_files(path: pathlib.Path, *, CXX: pathlib.Path, jo
         subprocess.check_output(command)
         with open(temp_file, 'rb') as fp:
             data = fp.read()
-            makefile_rule = shlex.split(data.decode().replace('\\\n', ''), posix=not(is_windows))
+            makefile_rule = shlex.split(data.decode().replace('\\\n', ''), posix=not (is_windows))
             return [pathlib.Path(path).resolve() for path in makefile_rule[1:]]
 
 

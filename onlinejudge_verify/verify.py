@@ -17,11 +17,6 @@ import onlinejudge
 
 logger = getLogger(__name__)
 
-try:
-    import resource
-except:
-    logger.warning('no module named resource (skipped)')
-
 
 class VerificationSummary(object):
     def __init__(self, *, failed_test_paths: List[pathlib.Path]):
@@ -84,7 +79,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
     if not (directory / 'test').exists() or not len(list((directory / 'test').iterdir())):
         directory.mkdir(parents=True, exist_ok=True)
         exec_command(['sleep', '2'])
-        command = ['oj', 'download', '--system', '-d', shlex.quote(str(directory / 'test')), '--silent', url]
+        command = ['oj', 'download', '--system', '-d', str(directory / 'test'), '--silent', url]
 
         if os.environ.get('YUKICODER_TOKEN'):
             command += ['--yukicoder-token', os.environ['YUKICODER_TOKEN']]
@@ -124,6 +119,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
 
 def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.VerificationMarker, timeout: float = math.inf, tle: float = 60, jobs: int = 1) -> VerificationSummary:
     try:
+        import resource
         _, hard = resource.getrlimit(resource.RLIMIT_STACK)
         resource.setrlimit(resource.RLIMIT_STACK, (hard, hard))
     except:

@@ -6,6 +6,7 @@ import platform
 import shlex
 import shutil
 import subprocess
+import tempfile
 from logging import getLogger
 from typing import *
 
@@ -43,10 +44,15 @@ class CPlusPlusLanguageEnvironment(LanguageEnvironment):
 @functools.lru_cache(maxsize=None)
 def _cplusplus_list_depending_files(path: pathlib.Path, *, CXX: pathlib.Path, joined_CXXFLAGS: str) -> List[pathlib.Path]:
     # Using /dev/stdout is acceptable because Library Chcker doesn't work on Windows.
-    command = [str(CXX), *shlex.split(joined_CXXFLAGS), '-MD', '-MF', '/dev/stdout', '-MM', str(path)]
-    data = subprocess.check_output(command)
-    makefile_rule = shlex.split(data.decode().replace('\\\n', ''))
-    return [pathlib.Path(path).resolve() for path in makefile_rule[1:]]
+    is_windows = (platform.uname().system == 'Windows')
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_file = pathlib.Path(temp_dir) / 'dependencies.txt'
+        command = [str(CXX), *shlex.split(joined_CXXFLAGS), '-MD', '-MF', temp_file, '-MM', str(path)]
+        subprocess.check_output(command)
+        with open(temp_file, 'rb') as fp:
+            data = fp.read()
+            makefile_rule = shlex.split(data.decode().replace('\\\n', ''), posix=not(is_windows))
+            return [pathlib.Path(path).resolve() for path in makefile_rule[1:]]
 
 
 @functools.lru_cache(maxsize=None)

@@ -47,7 +47,7 @@ def _cplusplus_list_depending_files(path: pathlib.Path, *, CXX: pathlib.Path, jo
     is_windows = (platform.uname().system == 'Windows')
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_file = pathlib.Path(temp_dir) / 'dependencies.txt'
-        command = [str(CXX), *shlex.split(joined_CXXFLAGS), '-MD', '-MF', temp_file, '-MM', str(path)]
+        command = [str(CXX), *shlex.split(joined_CXXFLAGS), '-MD', '-MF', str(temp_file), '-MM', str(path)]
         subprocess.check_output(command)
         with open(temp_file, 'rb') as fp:
             data = fp.read()

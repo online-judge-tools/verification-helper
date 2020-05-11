@@ -70,7 +70,7 @@ class TestStringMethods(unittest.TestCase):
     def test_failure(self) -> None:
         files = {
             'timestamps.json': json.dumps({
-                str(pathlib.Path("example.test.cpp")): "2000-01-01 00:00:00 +0900",
+                str(pathlib.Path("data", "example.test.cpp")): "2000-01-01 00:00:00 +0900",
             }).encode(),
             'example.test.cpp': failure_test_cpp,
         }

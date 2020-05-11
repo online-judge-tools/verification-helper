@@ -3,7 +3,6 @@ import hashlib
 import math
 import os
 import pathlib
-import shlex
 import subprocess
 import time
 import traceback
@@ -101,7 +100,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
             return False
 
         # run test using oj
-        command = ['oj', 'test', '-c', execute, '-d', shlex.quote(str(directory / 'test')), '--print-input', '--tle', str(tle)]
+        command = ['oj', 'test', '-c', execute, '-d', str(directory / 'test'), '--print-input', '--tle', str(tle)]
         if isinstance(problem, onlinejudge.service.library_checker.LibraryCheckerProblem):
             command += ['--judge-command', str(problem.download_checker_binary())]
         if 'ERROR' in attributes:

@@ -96,7 +96,7 @@ standard_libraries = set([bits_stdcxx_h] + cxx_standard_libraries + c_standard_l
 
 @functools.lru_cache(maxsize=None)
 def _get_uncommented_code(path: pathlib.Path, *, iquotes_options: str, compiler: str) -> bytes:
-    command = """{} {} -fpreprocessed -dD -E {}""".format(compiler, iquotes_options, shlex.quote(str(path)))
+    command = """{} {} -fpreprocessed -dD -E {}""".format(compiler, iquotes_options, str(path))
     return subprocess.check_output(command, shell=True)
 
 

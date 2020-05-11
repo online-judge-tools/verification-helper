@@ -2,6 +2,7 @@ import datetime
 import json
 import os
 import pathlib
+import platform
 import unittest
 from typing import *
 
@@ -10,21 +11,21 @@ import onlinejudge_verify.verify as verify
 import tests.utils
 
 success_test_cpp = rb"""\
-#define PROBLEM "https://judge.yosupo.jp/problem/aplusb"
+#define PROBLEM "http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_B"
 #include <cstdio>
 int main() {
-    int a, b; scanf("%d%d", &a, &b);
-    printf("%d\n", a + b);
+    int x; scanf("%d", &x);
+    printf("%d\n", x * x * x);
     return 0;
 }
 """
 
 failure_test_cpp = rb"""\
-#define PROBLEM "https://judge.yosupo.jp/problem/aplusb"
+#define PROBLEM "http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_B"
 #include <cstdio>
 int main() {
-    int a, b; scanf("%d%d", &a, &b);
-    printf("%d\n", a * b);
+    int x; scanf("%d", &x);
+    printf("%d\n", x + x + x);
     return 0;
 }
 """
@@ -45,6 +46,7 @@ def get_timestamp_string_of_past() -> str:
     return timestamp.strftime(timestamp_format)
 
 
+@unittest.skipIf(platform.system() == 'Windows', "os.utime() fails on Windows")
 def set_timestamp_string(path: pathlib.Path, s: str) -> None:
     timestamp = datetime.datetime.strptime(s, timestamp_format)
     os.utime(path, times=(path.stat().st_atime, timestamp.timestamp()))
@@ -68,7 +70,7 @@ class TestStringMethods(unittest.TestCase):
     def test_failure(self) -> None:
         files = {
             'timestamps.json': json.dumps({
-                "data/example.test.cpp": "2000-01-01 00:00:00 +0900",
+                str(pathlib.Path("data", "example.test.cpp")): "2000-01-01 00:00:00 +0900",
             }).encode(),
             'example.test.cpp': failure_test_cpp,
         }

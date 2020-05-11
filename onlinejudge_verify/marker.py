@@ -61,8 +61,9 @@ class VerificationMarker(object):
         return self.verification_statuses[path] == 'failed'
 
     def mark_failed(self, path: pathlib.Path) -> None:
-        path = path.resolve().relative_to(pathlib.Path.cwd())
-        self.verification_statuses[path] = 'failed'
+        if path.exists():
+            path = path.resolve().relative_to(pathlib.Path.cwd())
+            self.verification_statuses[path] = 'failed'
 
     def load_timestamps(self, *, jobs: Optional[int] = None) -> None:
         # 古いものを読み込む

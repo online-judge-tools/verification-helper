@@ -70,7 +70,7 @@ class TestStringMethods(unittest.TestCase):
     def test_failure(self) -> None:
         files = {
             'timestamps.json': json.dumps({
-                str(pathlib.Path("data", "example.test.cpp")): "2000-01-01 00:00:00 +0900",
+                str(pathlib.Path("example.test.cpp")): "2000-01-01 00:00:00 +0900",
             }).encode(),
             'example.test.cpp': failure_test_cpp,
         }
@@ -82,7 +82,8 @@ class TestStringMethods(unittest.TestCase):
                     self.assertEqual(verify.main(paths, marker=marker).failed_test_paths, paths)
                 with open(str(timestamps_path)) as fh:
                     timestamps = json.load(fh)
-                self.assertEqual(timestamps, {})
+                if platform.system() != 'Windows':
+                    self.assertEqual(timestamps, {})
 
     def test_timestamps(self) -> None:
         files = {

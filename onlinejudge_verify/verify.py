@@ -3,8 +3,6 @@ import hashlib
 import math
 import os
 import pathlib
-import resource
-import shlex
 import subprocess
 import time
 import traceback
@@ -80,7 +78,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
     if not (directory / 'test').exists() or not len(list((directory / 'test').iterdir())):
         directory.mkdir(parents=True, exist_ok=True)
         exec_command(['sleep', '2'])
-        command = ['oj', 'download', '--system', '-d', shlex.quote(str(directory / 'test')), '--silent', url]
+        command = ['oj', 'download', '--system', '-d', str(directory / 'test'), '--silent', url]
 
         if os.environ.get('YUKICODER_TOKEN'):
             command += ['--yukicoder-token', os.environ['YUKICODER_TOKEN']]
@@ -102,7 +100,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
             return False
 
         # run test using oj
-        command = ['oj', 'test', '-c', execute, '-d', shlex.quote(str(directory / 'test')), '--print-input', '--tle', str(tle)]
+        command = ['oj', 'test', '-c', execute, '-d', str(directory / 'test'), '--print-input', '--tle', str(tle)]
         if isinstance(problem, onlinejudge.service.library_checker.LibraryCheckerProblem):
             command += ['--judge-command', str(problem.download_checker_binary())]
         if 'ERROR' in attributes:
@@ -120,6 +118,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
 
 def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.VerificationMarker, timeout: float = math.inf, tle: float = 60, jobs: int = 1) -> VerificationSummary:
     try:
+        import resource
         _, hard = resource.getrlimit(resource.RLIMIT_STACK)
         resource.setrlimit(resource.RLIMIT_STACK, (hard, hard))
     except:
@@ -150,7 +149,7 @@ def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.Verific
             marker.mark_failed(path)
             failed_test_paths.append(path)
             # Set an error message for GitHub Action. https://help.github.com/en/actions/reference/development-tools-for-github-actions
-            print(f'::error file={str(path.resolve().relative_to(pathlib.Path.cwd()))}::failed to verify {str(path.resolve().relative_to(pathlib.Path.cwd()))}')
+            print(f'::error file={str(path.resolve(strict=True).relative_to(pathlib.Path.cwd().resolve(strict=True)))}::failed to verify')
 
         # to prevent taking too long; we may fail to use the results of verification due to expired tokens
         if timeout is not None and time.time() - start > timeout:

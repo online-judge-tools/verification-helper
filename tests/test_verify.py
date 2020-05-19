@@ -1,6 +1,5 @@
 import datetime
 import json
-import os
 import pathlib
 import unittest
 from typing import *
@@ -10,21 +9,21 @@ import onlinejudge_verify.verify as verify
 import tests.utils
 
 success_test_cpp = rb"""\
-#define PROBLEM "https://judge.yosupo.jp/problem/aplusb"
+#define PROBLEM "http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_B"
 #include <cstdio>
 int main() {
-    int a, b; scanf("%d%d", &a, &b);
-    printf("%d\n", a + b);
+    int x; scanf("%d", &x);
+    printf("%d\n", x * x * x);
     return 0;
 }
 """
 
 failure_test_cpp = rb"""\
-#define PROBLEM "https://judge.yosupo.jp/problem/aplusb"
+#define PROBLEM "http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_B"
 #include <cstdio>
 int main() {
-    int a, b; scanf("%d%d", &a, &b);
-    printf("%d\n", a * b);
+    int x; scanf("%d", &x);
+    printf("%d\n", x + x + x);
     return 0;
 }
 """
@@ -45,13 +44,12 @@ def get_timestamp_string_of_past() -> str:
     return timestamp.strftime(timestamp_format)
 
 
-def set_timestamp_string(path: pathlib.Path, s: str) -> None:
-    timestamp = datetime.datetime.strptime(s, timestamp_format)
-    os.utime(path, times=(path.stat().st_atime, timestamp.timestamp()))
-
-
 class TestStringMethods(unittest.TestCase):
     def test_success(self) -> None:
+        """
+        `test_success` is a simple test for the case when the `.test.cpp` gets AC.
+        """
+
         files = {
             'example.test.cpp': success_test_cpp,
         }
@@ -61,14 +59,18 @@ class TestStringMethods(unittest.TestCase):
                 timestamps_path = tempdir / 'timestamps.json'
                 with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
                     self.assertEqual(verify.main(paths, marker=marker).failed_test_paths, [])
-                with open(str(timestamps_path)) as fh:
+                with open(timestamps_path) as fh:
                     timestamps = json.load(fh)
                 self.assertEqual(list(timestamps.keys()), ['example.test.cpp'])
 
     def test_failure(self) -> None:
+        """
+        `test_failure` is a simple test for the case when the `.test.cpp` gets WA.
+        """
+
         files = {
             'timestamps.json': json.dumps({
-                "data/example.test.cpp": "2000-01-01 00:00:00 +0900",
+                'example.test.cpp': get_timestamp_string_of_past(),
             }).encode(),
             'example.test.cpp': failure_test_cpp,
         }
@@ -78,38 +80,50 @@ class TestStringMethods(unittest.TestCase):
                 timestamps_path = tempdir / 'timestamps.json'
                 with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
                     self.assertEqual(verify.main(paths, marker=marker).failed_test_paths, paths)
-                with open(str(timestamps_path)) as fh:
+                with open(timestamps_path) as fh:
                     timestamps = json.load(fh)
                 self.assertEqual(timestamps, {})
 
     def test_timestamps(self) -> None:
+        """
+        `test_timestamps` checks whether `timestamps.json` is properly updated for all cases which files have no dependencies.
+        """
+
+        # prepare files
         files = {
-            'timestamps.json': json.dumps({
-                'not-updated.test.cpp': get_timestamp_string_of_past(),
-                'updated-success.test.cpp': get_timestamp_string_of_past(),
-                'updated-failure.test.cpp': get_timestamp_string_of_past(),
-            }).encode(),
             'not-updated.test.cpp': success_test_cpp,
             'updated-success.test.cpp': success_test_cpp,
             'updated-failure.test.cpp': failure_test_cpp,
             'new-success.test.cpp': success_test_cpp,
             'new-failure.test.cpp': failure_test_cpp,
         }
-        paths = [pathlib.Path(file) for file in files.keys() if file.endswith('.cpp')]
+        paths = list(map(pathlib.Path, files.keys()))
+
         with tests.utils.load_files(files) as tempdir:
-            set_timestamp_string(tempdir / 'not-updated.test.cpp', get_timestamp_string_of_past())
+            timestamps_path = tempdir / 'timestamps.json'
+            with open(timestamps_path, 'w') as fh:
+                json.dump(
+                    {
+                        'not-updated.test.cpp': get_timestamp_string(tempdir / 'not-updated.test.cpp'),  # NOTE: os.utime doesn't work as expected on Windows
+                        'updated-success.test.cpp': get_timestamp_string_of_past(),
+                        'updated-failure.test.cpp': get_timestamp_string_of_past(),
+                        'removed.test.cpp': get_timestamp_string_of_past(),
+                    },
+                    fh)
+
+            # prepare expected values
             expected_return = list(map(pathlib.Path, [
                 'updated-failure.test.cpp',
                 'new-failure.test.cpp',
             ]))
             expected_timestamps = {
-                'not-updated.test.cpp': get_timestamp_string_of_past(),
+                'not-updated.test.cpp': get_timestamp_string(tempdir / 'not-updated.test.cpp'),
                 'updated-success.test.cpp': get_timestamp_string(tempdir / 'updated-success.test.cpp'),
-                'updated-failure.test.cpp': get_timestamp_string_of_past(),  # this doesn't disappear but is recognized as failure
                 'new-success.test.cpp': get_timestamp_string(tempdir / 'new-success.test.cpp'),
             }
+
+            # check actual values
             with tests.utils.chdir(tempdir):
-                timestamps_path = tempdir / 'timestamps.json'
                 with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
                     self.assertEqual(sorted(verify.main(paths, marker=marker).failed_test_paths), sorted(expected_return))
                 with open(str(timestamps_path)) as fh:

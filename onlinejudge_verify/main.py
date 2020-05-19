@@ -165,11 +165,12 @@ def subcommand_docs() -> None:
         logger.info('done.')
         logger.info('%s', '\n'.join([
             'To see the generated document, do the following steps:',
-            "    1. Install Ruby's Bundler (https://bundler.io/). In Ubuntu, $ sudo apt install ruby-bundler",
-            '    2. $ cd .verify-helper/markdown',
-            '    3. $ bundle install --path .vendor/bundle',
-            '    4. $ bundle exec jekyll serve --incremental',
-            '    5. Open http://127.0.0.1:4000 on your web browser',
+            '    1. Install Ruby with the files to build native modules. In Ubuntu, $ sudo apt install ruby-all-dev',
+            "    2. Install Ruby's Bundler (https://bundler.io/). In Ubuntu, $ sudo apt install ruby-bundler",
+            '    3. $ cd .verify-helper/markdown',
+            '    4. $ bundle install --path .vendor/bundle',
+            '    5. $ bundle exec jekyll serve --incremental',
+            '    6. Open http://127.0.0.1:4000 on your web browser',
         ]))
 
 

@@ -2,8 +2,8 @@
 import functools
 import os
 import pathlib
+import platform
 import re
-import shlex
 import subprocess
 from logging import getLogger
 from typing import *
@@ -95,14 +95,39 @@ standard_libraries = set([bits_stdcxx_h] + cxx_standard_libraries + c_standard_l
 
 
 @functools.lru_cache(maxsize=None)
-def _get_uncommented_code(path: pathlib.Path, *, iquotes_options: str, compiler: str) -> bytes:
-    command = """{} {} -fpreprocessed -dD -E {}""".format(compiler, iquotes_options, str(path))
-    return subprocess.check_output(command, shell=True)
+def _check_compiler(compiler: str) -> str:
+    if compiler == 'g++':
+        if platform.system() != 'Darwin':
+            # macOS has the fake g++
+            return 'gcc'
+    if compiler == 'clang++':
+        return 'clang'
+
+    # use --version
+    version = subprocess.check_output([compiler, '--version']).decode()
+    if 'clang' in version.lower() or 'Apple LLVM'.lower() in version.lower():
+        return 'clang'
+    if 'g++' in version.lower():
+        return 'gcc'
+    return 'unknown'  # default
+
+
+@functools.lru_cache(maxsize=None)
+def _get_uncommented_code(path: pathlib.Path, *, iquotes_options: Tuple[str, ...], compiler: str) -> bytes:
+    # `iquotes_options` must be a tuple to use `lru_cache`
+
+    if _check_compiler(compiler) == 'clang':
+        command = [compiler, *iquotes_options, '-E', '-P', str(path)]
+    else:
+        command = [compiler, *iquotes_options, '-fpreprocessed', '-dD', '-E', str(path)]
+    return subprocess.check_output(command)
 
 
 def get_uncommented_code(path: pathlib.Path, *, iquotes: List[pathlib.Path], compiler: str) -> bytes:
-    iquotes_options = ' '.join(map(lambda iquote: '-I {}'.format(shlex.quote(str(iquote.resolve()))), iquotes))
-    code = _get_uncommented_code(path.resolve(), iquotes_options=iquotes_options, compiler=compiler)
+    iquotes_options = []
+    for iquote in iquotes:
+        iquotes_options.extend(['-I', str(iquote.resolve())])
+    code = _get_uncommented_code(path.resolve(), iquotes_options=tuple(iquotes_options), compiler=compiler)
     lines = []  # type: List[bytes]
     for line in code.splitlines(keepends=True):
         m = re.match(rb'# (\d+) ".*"', line.rstrip())

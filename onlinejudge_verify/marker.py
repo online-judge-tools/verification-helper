@@ -14,6 +14,11 @@ import onlinejudge_verify.utils
 _error_timestamp = datetime.datetime.fromtimestamp(0, tz=datetime.timezone(datetime.timedelta()))
 
 
+def _cwd() -> pathlib.Path:
+    # .resolve() is required for Windows on GitHub Actions because we need to expand 8.3 filenames like `C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\tmp_xxxxxxx` to `C:\\Users\\runneradmin\\AppData\\Local\\Temp\\tmp_xxxxxxx`
+    return pathlib.Path.cwd().resolve(strict=True)
+
+
 class VerificationMarker(object):
     json_path: pathlib.Path
     use_git_timestamp: bool
@@ -34,7 +39,7 @@ class VerificationMarker(object):
             language = onlinejudge_verify.languages.get(path)
             assert language is not None
             try:
-                depending_files = language.list_dependencies(path, basedir=pathlib.Path.cwd())
+                depending_files = language.list_dependencies(path, basedir=_cwd())
             except Exception:
                 traceback.print_exc()
                 return _error_timestamp
@@ -44,16 +49,24 @@ class VerificationMarker(object):
                 return datetime.datetime.fromtimestamp(timestamp, tz=system_local_timezone).replace(microsecond=0)  # microsecond=0 is required because it's erased on timestamps.*.json
 
     def is_verified(self, path: pathlib.Path) -> bool:
-        path = path.resolve().relative_to(pathlib.Path.cwd())
+        if not path.exists():
+            return False
+        path = path.resolve(strict=True).relative_to(_cwd())
         return self.verification_statuses.get(path) == 'verified'
 
     def mark_verified(self, path: pathlib.Path) -> None:
-        path = path.resolve().relative_to(pathlib.Path.cwd())
+        """
+        :param path: should exist
+        """
+
+        path = path.resolve(strict=True).relative_to(_cwd())
         self.new_timestamps[path] = self.get_current_timestamp(path)
         self.verification_statuses[path] = 'verified'
 
     def is_failed(self, path: pathlib.Path) -> bool:
-        path = path.resolve().relative_to(pathlib.Path.cwd())
+        if not path.exists():
+            return True
+        path = path.resolve(strict=True).relative_to(_cwd())
         if path not in self.verification_statuses:
             # verifiedの場合は必ずself.verification_status[path] == 'verified'となるのでこのifの中には入らない
             # それ以外の場合は「そもそもテストを実行していない」可能性もあるが一旦はfailedとみなす
@@ -61,9 +74,10 @@ class VerificationMarker(object):
         return self.verification_statuses[path] == 'failed'
 
     def mark_failed(self, path: pathlib.Path) -> None:
-        if path.exists():
-            path = path.resolve().relative_to(pathlib.Path.cwd())
-            self.verification_statuses[path] = 'failed'
+        if not path.exists():
+            return
+        path = path.resolve(strict=True).relative_to(_cwd())
+        self.verification_statuses[path] = 'failed'
 
     def load_timestamps(self, *, jobs: Optional[int] = None) -> None:
         # 古いものを読み込む
@@ -100,11 +114,10 @@ class VerificationMarker(object):
                     executor.submit(load, path, timestamp)
 
     def save_timestamps(self) -> None:
-        if self.old_timestamps == self.new_timestamps:
-            return
         data = {}
         for path, timestamp in self.new_timestamps.items():
-            data[str(path)] = timestamp.strftime('%Y-%m-%d %H:%M:%S %z')
+            if self.verification_statuses[path] == 'verified':
+                data[str(path)] = timestamp.strftime('%Y-%m-%d %H:%M:%S %z')
         with open(str(self.json_path), 'w') as fh:
             json.dump(data, fh, sort_keys=True, indent=0)
 
@@ -136,7 +149,7 @@ def _get_last_commit_time_to_verify(path: pathlib.Path) -> datetime.datetime:
     language = onlinejudge_verify.languages.get(path)
     assert language is not None
     try:
-        depending_files = language.list_dependencies(path, basedir=pathlib.Path.cwd())
+        depending_files = language.list_dependencies(path, basedir=_cwd())
     except Exception:
         traceback.print_exc()
         return _error_timestamp
@@ -148,4 +161,8 @@ def _get_last_commit_time_to_verify(path: pathlib.Path) -> datetime.datetime:
 
 
 def get_last_commit_time_to_verify(path: pathlib.Path) -> datetime.datetime:
-    return _get_last_commit_time_to_verify(path.resolve())
+    """
+    :param path: should exist
+    """
+
+    return _get_last_commit_time_to_verify(path.resolve(strict=True))

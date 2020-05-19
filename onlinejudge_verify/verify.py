@@ -149,7 +149,7 @@ def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.Verific
             marker.mark_failed(path)
             failed_test_paths.append(path)
             # Set an error message for GitHub Action. https://help.github.com/en/actions/reference/development-tools-for-github-actions
-            print(f'::error file={str(path.resolve().relative_to(pathlib.Path.cwd()))}::failed to verify {str(path.resolve().relative_to(pathlib.Path.cwd()))}')
+            print(f'::error file={str(path.resolve(strict=True).relative_to(pathlib.Path.cwd().resolve(strict=True)))}::failed to verify')
 
         # to prevent taking too long; we may fail to use the results of verification due to expired tokens
         if timeout is not None and time.time() - start > timeout:

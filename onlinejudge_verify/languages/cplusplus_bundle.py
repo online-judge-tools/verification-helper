@@ -2,8 +2,8 @@
 import functools
 import os
 import pathlib
-import platform
 import re
+import shutil
 import subprocess
 from logging import getLogger
 from typing import *
@@ -96,14 +96,7 @@ standard_libraries = set([bits_stdcxx_h] + cxx_standard_libraries + c_standard_l
 
 @functools.lru_cache(maxsize=None)
 def _check_compiler(compiler: str) -> str:
-    if compiler == 'g++':
-        if platform.system() != 'Darwin':
-            # macOS has the fake g++
-            return 'gcc'
-    if compiler == 'clang++':
-        return 'clang'
-
-    # use --version
+    # Executables named "g++" are not always g++, due to the fake g++ of macOS
     version = subprocess.check_output([compiler, '--version']).decode()
     if 'clang' in version.lower() or 'Apple LLVM'.lower() in version.lower():
         return 'clang'
@@ -116,10 +109,13 @@ def _check_compiler(compiler: str) -> str:
 def _get_uncommented_code(path: pathlib.Path, *, iquotes_options: Tuple[str, ...], compiler: str) -> bytes:
     # `iquotes_options` must be a tuple to use `lru_cache`
 
-    if _check_compiler(compiler) == 'clang':
-        command = [compiler, *iquotes_options, '-E', '-P', str(path)]
-    else:
-        command = [compiler, *iquotes_options, '-fpreprocessed', '-dD', '-E', str(path)]
+    if shutil.which(compiler) is None:
+        raise BundleError(f'command not found: {compiler}')
+    if _check_compiler(compiler) != 'gcc':
+        if compiler == 'g++':
+            raise BundleError(f'A fake g++ is detected. Please install the GNU C++ compiler.: {compiler}')
+        raise BundleError(f"It's not g++. Please specify g++ with $CXX envvar.: {compiler}")
+    command = [compiler, *iquotes_options, '-fpreprocessed', '-dD', '-E', str(path)]
     return subprocess.check_output(command)
 
 
@@ -141,6 +137,10 @@ def get_uncommented_code(path: pathlib.Path, *, iquotes: List[pathlib.Path], com
 
 
 class BundleError(Exception):
+    pass
+
+
+class BundleErrorAt(BundleError):
     def __init__(self, path: pathlib.Path, line: int, message: str, *args, **kwargs):
         try:
             path = path.resolve().relative_to(pathlib.Path.cwd())
@@ -158,13 +158,13 @@ class Bundler(object):
     path_stack: Set[pathlib.Path]
     compiler: str
 
-    def __init__(self, *, iquotes: List[pathlib.Path] = []) -> None:
+    def __init__(self, *, iquotes: List[pathlib.Path] = [], compiler: str = os.environ.get('CXX', 'g++')) -> None:
         self.iquotes = iquotes
         self.pragma_once = set()
         self.pragma_once_system = set()
         self.result_lines = []
         self.path_stack = set()
-        self.compiler = os.environ.get('CXX', 'g++')
+        self.compiler = compiler
 
     # これをしないと __FILE__ や __LINE__ が壊れる
     def _line(self, line: int, path: pathlib.Path) -> None:
@@ -184,7 +184,7 @@ class Bundler(object):
         for dir_ in self.iquotes:
             if (dir_ / path).exists():
                 return (dir_ / path).resolve()
-        raise BundleError(path, -1, "no such header")
+        raise BundleErrorAt(path, -1, "no such header")
 
     def update(self, path: pathlib.Path) -> None:
         if path.resolve() in self.pragma_once:
@@ -193,7 +193,7 @@ class Bundler(object):
 
         # 再帰的に自分自身を #include してたら諦める
         if path in self.path_stack:
-            raise BundleError(path, -1, "cycle found in inclusion relations")
+            raise BundleErrorAt(path, -1, "cycle found in inclusion relations")
         self.path_stack.add(path)
         try:
 
@@ -224,11 +224,11 @@ class Bundler(object):
                     preprocess_if_nest += 1
                 if re.match(rb'\s*#\s*(else\s*|elif\s.*)', uncommented_line):
                     if preprocess_if_nest == 0:
-                        raise BundleError(path, i + 1, "unmatched #else / #elif")
+                        raise BundleErrorAt(path, i + 1, "unmatched #else / #elif")
                 if re.match(rb'\s*#\s*endif\s*', uncommented_line):
                     preprocess_if_nest -= 1
                     if preprocess_if_nest < 0:
-                        raise BundleError(path, i + 1, "unmatched #endif")
+                        raise BundleErrorAt(path, i + 1, "unmatched #endif")
                 is_toplevel = preprocess_if_nest == 0 or (preprocess_if_nest == 1 and include_guard_macro is not None)
 
                 # #pragma once
@@ -236,9 +236,9 @@ class Bundler(object):
                     logger.debug('%s: line %s: #pragma once', str(path), i + 1)
                     if non_guard_line_found:
                         # 先頭以外で #pragma once されてた場合は諦める
-                        raise BundleError(path, i + 1, "#pragma once found in a non-first line")
+                        raise BundleErrorAt(path, i + 1, "#pragma once found in a non-first line")
                     if include_guard_macro is not None:
-                        raise BundleError(path, i + 1, "#pragma once found in an include guard with #ifndef")
+                        raise BundleErrorAt(path, i + 1, "#pragma once found in an include guard with #ifndef")
                     if path.resolve() in self.pragma_once:
                         return
                     pragma_once_found = True
@@ -279,7 +279,7 @@ class Bundler(object):
                         include_guard_macro = None
                     if include_guard_endif_found:
                         # include guard の外側にコードが書かれているとまずいので検出する
-                        raise BundleError(path, i + 1, "found codes out of include guard")
+                        raise BundleErrorAt(path, i + 1, "found codes out of include guard")
 
                 # #include <...>
                 matched = re.match(rb'\s*#\s*include\s*<(.*)>\s*', uncommented_line)
@@ -303,7 +303,7 @@ class Bundler(object):
                     logger.debug('%s: line %s: #include "%s"', str(path), i + 1, included)
                     if not is_toplevel:
                         # #if の中から #include されると #pragma once 系の判断が不可能になるので諦める
-                        raise BundleError(path, i + 1, "unable to process #include in #if / #ifdef / #ifndef other than include guards")
+                        raise BundleErrorAt(path, i + 1, "unable to process #include in #if / #ifdef / #ifndef other than include guards")
                     self.update(self._resolve(pathlib.Path(included), included_from=path))
                     self._line(i + 2, path)
                     # TODO: #include "iostream" みたいに書いたときの挙動をはっきりさせる
@@ -315,9 +315,9 @@ class Bundler(object):
 
             # #if #endif の対応が壊れてたら諦める
             if preprocess_if_nest != 0:
-                raise BundleError(path, i + 1, "unmatched #if / #ifdef / #ifndef")
+                raise BundleErrorAt(path, i + 1, "unmatched #if / #ifdef / #ifndef")
             if include_guard_macro is not None and not include_guard_endif_found:
-                raise BundleError(path, i + 1, "unmatched #ifndef")
+                raise BundleErrorAt(path, i + 1, "unmatched #ifndef")
 
         finally:
             # 中で return することがあるので finally 節に入れておく

@@ -3,7 +3,7 @@ name: test
 on: [push, pull_request]
 
 jobs:
-  build:
+  test:
     strategy:
       matrix:
         # os: [ubuntu-latest, windows-latest, macos-latest]  # now macos-latest doesn't work due to their bug, which g++ is not g++. see https://github.com/online-judge-tools/verification-helper/pull/255

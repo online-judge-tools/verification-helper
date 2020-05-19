@@ -20,10 +20,10 @@ jobs:
         python-version: 3.6
 
     - name: Install dependencies
-      run: pip3 install .[dev]
+      run: pip install .[dev]
 
     - name: Run tests
       run: |
         oj-verify -h
-        python3 setup.py test
+        python setup.py test
       shell: bash

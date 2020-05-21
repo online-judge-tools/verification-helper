@@ -10,6 +10,7 @@ def load_files(files: Dict[str, bytes]) -> Iterator[pathlib.Path]:
     with tempfile.TemporaryDirectory() as tempdir_:
         tempdir = pathlib.Path(tempdir_)
         for relpath, data in files.items():
+            assert '/' not in relpath and '\\' not in relpath  # we should use pathlib
             path = tempdir / relpath
             path.parent.mkdir(parents=True, exist_ok=True)
             with open(str(path), "wb") as fh:

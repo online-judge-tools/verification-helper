@@ -57,8 +57,9 @@ def _cplusplus_list_depending_files(path: pathlib.Path, *, CXX: pathlib.Path, jo
             raise
         with open(temp_file, 'rb') as fp:
             data = fp.read()
-            makefile_rule = shlex.split(data.decode().replace('\\\n', ''), posix=not (is_windows))
-            return [pathlib.Path(path).resolve() for path in makefile_rule[1:]]
+        logger.debug('dependencies of %s: %s', str(path), repr(data))
+        makefile_rule = shlex.split(data.decode().strip().replace('\\\n', '').replace('\\\r\n', ''), posix=not is_windows)
+        return [pathlib.Path(path).resolve() for path in makefile_rule[1:]]
 
 
 @functools.lru_cache(maxsize=None)

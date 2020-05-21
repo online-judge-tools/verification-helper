@@ -28,7 +28,7 @@ class TestCPlusPlusListDependencies(unittest.TestCase):
     def test_failure_with_backslash(self) -> None:
         files = {
             'main.cpp': textwrap.dedent("""\
-                #include ".\included.hpp"
+                #include ".\\included.hpp"
                 """).encode(),
             'included.hpp': textwrap.dedent("""\
                 int main() {}

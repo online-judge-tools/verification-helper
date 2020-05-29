@@ -53,7 +53,7 @@ def _list_direct_dependencies(path: pathlib.Path, *, basedir: pathlib.Path) -> L
             item = item[1:len(item) - 1]
         else:
             item += ".nim"
-        item_ = pathlib.Path(path)
+        item_ = pathlib.Path(item)
         if item_.exists():
             dependencies.append(item_)
     return list(set(dependencies))

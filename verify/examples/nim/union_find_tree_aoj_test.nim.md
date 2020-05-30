@@ -31,10 +31,17 @@ layout: default
 
 * category: <a href="../../../index.html#26e849903ad505103514429c8edaff70">examples/nim</a>
 * <a href="{{ site.github.repository_url }}/blob/master/examples/nim/union_find_tree_aoj_test.nim">View this file on GitHub</a>
-    - Last commit date: 2020-05-05 19:19:11+09:00
+    - Last commit date: 2020-05-05 19:43:22+09:00
 
 
 * see: <a href="https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_1_A">https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_1_A</a>
+
+
+## Depends on
+
+* :heavy_check_mark: <a href="../../../library/examples/nim/headers.nim.html">examples/nim/headers.nim</a>
+* :heavy_check_mark: <a href="../../../library/examples/nim/hoge.nim.html">examples/nim/hoge.nim</a>
+* :heavy_check_mark: <a href="../../../library/examples/nim/union_find_tree.nim.html">a Union-Find Tree <small>(examples/nim/union_find_tree.nim)</small></a>
 
 
 ## Code

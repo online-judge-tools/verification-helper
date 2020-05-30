@@ -25,15 +25,25 @@ layout: default
 <link rel="stylesheet" href="../../../assets/css/copy-button.css" />
 
 
-# :warning: a Union-Find Tree <small>(examples/nim/union_find_tree.nim)</small>
+# :heavy_check_mark: a Union-Find Tree <small>(examples/nim/union_find_tree.nim)</small>
 
 <a href="../../../index.html">Back to top page</a>
 
 * category: <a href="../../../index.html#26e849903ad505103514429c8edaff70">examples/nim</a>
 * <a href="{{ site.github.repository_url }}/blob/master/examples/nim/union_find_tree.nim">View this file on GitHub</a>
-    - Last commit date: 2020-05-05 19:42:40+09:00
+    - Last commit date: 2020-05-05 19:43:22+09:00
 
 
+
+
+## Depends on
+
+* :heavy_check_mark: <a href="hoge.nim.html">examples/nim/hoge.nim</a>
+
+
+## Verified with
+
+* :heavy_check_mark: <a href="../../../verify/examples/nim/union_find_tree_aoj_test.nim.html">examples/nim/union_find_tree_aoj_test.nim</a>
 
 
 ## Code

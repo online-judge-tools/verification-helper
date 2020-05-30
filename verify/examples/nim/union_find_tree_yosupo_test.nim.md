@@ -37,6 +37,11 @@ layout: default
 * see: <a href="https://judge.yosupo.jp/problem/unionfind">https://judge.yosupo.jp/problem/unionfind</a>
 
 
+## Depends on
+
+* :heavy_check_mark: <a href="../../../library/examples/nim/headers.nim.html">examples/nim/headers.nim</a>
+
+
 ## Code
 
 <a id="unbundled"></a>

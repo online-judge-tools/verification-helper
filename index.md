@@ -93,9 +93,9 @@ layout: default
 
 ### examples/nim
 
-* :warning: <a href="library/examples/nim/headers.nim.html">examples/nim/headers.nim</a>
-* :warning: <a href="library/examples/nim/hoge.nim.html">examples/nim/hoge.nim</a>
-* :warning: <a href="library/examples/nim/union_find_tree.nim.html">a Union-Find Tree <small>(examples/nim/union_find_tree.nim)</small></a>
+* :heavy_check_mark: <a href="library/examples/nim/headers.nim.html">examples/nim/headers.nim</a>
+* :heavy_check_mark: <a href="library/examples/nim/hoge.nim.html">examples/nim/hoge.nim</a>
+* :heavy_check_mark: <a href="library/examples/nim/union_find_tree.nim.html">a Union-Find Tree <small>(examples/nim/union_find_tree.nim)</small></a>
 
 
 ## Verify Files

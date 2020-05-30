@@ -25,7 +25,7 @@ layout: default
 <link rel="stylesheet" href="../../../assets/css/copy-button.css" />
 
 
-# :warning: examples/nim/hoge.nim
+# :heavy_check_mark: examples/nim/hoge.nim
 
 <a href="../../../index.html">Back to top page</a>
 
@@ -34,6 +34,16 @@ layout: default
     - Last commit date: 2020-05-05 19:43:22+09:00
 
 
+
+
+## Required by
+
+* :heavy_check_mark: <a href="union_find_tree.nim.html">a Union-Find Tree <small>(examples/nim/union_find_tree.nim)</small></a>
+
+
+## Verified with
+
+* :heavy_check_mark: <a href="../../../verify/examples/nim/union_find_tree_aoj_test.nim.html">examples/nim/union_find_tree_aoj_test.nim</a>
 
 
 ## Code

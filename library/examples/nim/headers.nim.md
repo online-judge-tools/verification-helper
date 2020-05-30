@@ -25,7 +25,7 @@ layout: default
 <link rel="stylesheet" href="../../../assets/css/copy-button.css" />
 
 
-# :warning: examples/nim/headers.nim
+# :heavy_check_mark: examples/nim/headers.nim
 
 <a href="../../../index.html">Back to top page</a>
 
@@ -34,6 +34,12 @@ layout: default
     - Last commit date: 2020-05-04 17:35:34+09:00
 
 
+
+
+## Verified with
+
+* :heavy_check_mark: <a href="../../../verify/examples/nim/union_find_tree_aoj_test.nim.html">examples/nim/union_find_tree_aoj_test.nim</a>
+* :heavy_check_mark: <a href="../../../verify/examples/nim/union_find_tree_yosupo_test.nim.html">examples/nim/union_find_tree_yosupo_test.nim</a>
 
 
 ## Code

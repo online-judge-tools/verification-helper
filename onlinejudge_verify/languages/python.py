@@ -9,6 +9,7 @@ from typing import List, Sequence
 import importlab.environment
 import importlab.fs
 import importlab.graph
+import networkx as nx
 from onlinejudge_verify.languages.models import Language, LanguageEnvironment
 
 logger = getLogger(__name__)
@@ -32,12 +33,17 @@ class PythonLanguageEnvironment(LanguageEnvironment):
 @functools.lru_cache(maxsize=None)
 def _python_list_depending_files(path: pathlib.Path, basedir: pathlib.Path) -> List[pathlib.Path]:
     env = importlab.environment.Environment(
-        importlab.fs.Path([importlab.fs.OSFileSystem(".")]),
+        importlab.fs.Path([importlab.fs.OSFileSystem(str(basedir.resolve()))]),
         (sys.version_info.major, sys.version_info.minor),
     )
     res_graph = importlab.graph.ImportGraph.create(env, [str(path)])
     res_deps = []
-    for node, deps in res_graph.deps_list():
+    try:
+        node_deps_pairs = res_graph.deps_list()
+    except nx.NetworkXUnfeasible as ex:
+        raise ImportError(f"Detect circular imports in {path}") from ex
+
+    for node, deps in node_deps_pairs:
         if node == str(path.resolve()):
             for dep in deps:
                 if not isinstance(dep, str):

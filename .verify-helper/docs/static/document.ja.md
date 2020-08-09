@@ -11,6 +11,7 @@
 | C++ | `.cpp` `.hpp` | `.test.cpp` | `#define [KEY] [VALUE]` | :heavy_check_mark: / :heavy_check_mark: / :heavy_check_mark: | [segment_tree.range_sum_query.test.cpp](https://github.com/online-judge-tools/verification-helper/blob/master/examples/segment_tree.range_sum_query.test.cpp) |
 | C# script | `.csx` | `.test.csx` |`#pragma [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [segment_tree.range_sum_query.test.csx](https://github.com/online-judge-tools/verification-helper/blob/master/examples/csharpscript/segment_tree.range_sum_query.test.csx) |
 | Nim | `.nim` | `_test.nim` | `# verify-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [union_find_tree_yosupo_test.nim](https://github.com/online-judge-tools/verification-helper/blob/master/examples/nim/union_find_tree_yosupo_test.nim) |
+| Python 3 | `.py` | `.test.py` | `# verify-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [union_find_yosupo.test.py](https://github.com/online-judge-tools/verification-helper/blob/master/examples/python/union_find_yosupo.test.py) |
 
 ### C++ の設定
 
@@ -50,6 +51,9 @@ compile_to = "cpp"
 NIMFLAGS = ["--warning:on", "--opt:none"]
 ```
 
+### Python 3 の設定
+
+設定項目は特にありません。
 
 ### その他の言語の設定
 

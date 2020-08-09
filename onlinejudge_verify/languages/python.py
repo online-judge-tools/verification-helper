@@ -1,19 +1,32 @@
 # Python Version: 3.x
 import functools
 import pathlib
-import shlex
 import subprocess
 import sys
 from logging import getLogger
-from typing import Dict, List
+from typing import List, Sequence
 
 import importlab.environment
 import importlab.fs
 import importlab.graph
-
-from onlinejudge_verify.languages.base import Language
+from onlinejudge_verify.languages.models import Language, LanguageEnvironment
 
 logger = getLogger(__name__)
+
+
+class PythonLanguageEnvironment(LanguageEnvironment):
+    def compile(
+        self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path
+    ) -> None:
+        command = ["echo"]
+        logger.info("$ %s", " ".join(command))
+        subprocess.check_call(command)
+
+    def get_execute_command(
+        self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path
+    ) -> List[str]:
+        # Adding basedir to PYTHONPATH for importing library files
+        return ["python", "-c", f"\"import sys, pathlib, subprocess;subprocess.run('PYTHONPATH={basedir} python {path}', shell=True)\""]
 
 
 @functools.lru_cache(maxsize=None)
@@ -36,33 +49,20 @@ def _python_list_depending_files(path: pathlib.Path, basedir: pathlib.Path) -> L
 
 
 class PythonLanguage(Language):
-    def compile(
-        self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path
-    ) -> None:
-        command = ["echo"]
-        logger.info("$ %s", " ".join(command))
-        subprocess.check_call(command)
-
-    def get_execute_command(
-        self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path
-    ) -> List[str]:
-        return ["python", "-c", f"\"import sys, pathlib, subprocess;subprocess.run('PYTHONPATH={basedir} python {path}', shell=True)\""]
-
-    def list_attributes(
-        self, path: pathlib.Path, *, basedir: pathlib.Path
-    ) -> Dict[str, str]:
-        command = [*shlex.split("sed 's/^# verify-helper: // ; t ; d'"), str(path)]
-        text = subprocess.check_output(command)
-        attributes = {}
-        for line in text.splitlines():
-            key, _, value = line.decode().partition(" ")
-            attributes[key] = value
-        return attributes
-
     def list_dependencies(
         self, path: pathlib.Path, *, basedir: pathlib.Path
     ) -> List[pathlib.Path]:
         return _python_list_depending_files(path.resolve(), basedir)
 
     def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bytes:
+        """
+        :throws NotImplementedError:
+        """
         raise NotImplementedError
+
+    def is_verification_file(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bool:
+        return '.test.py' in path.name
+
+    def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Sequence[PythonLanguageEnvironment]:
+        # TODO add another environment (e.g. pypy)
+        return [PythonLanguageEnvironment()]

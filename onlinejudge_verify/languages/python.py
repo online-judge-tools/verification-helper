@@ -16,16 +16,12 @@ logger = getLogger(__name__)
 
 
 class PythonLanguageEnvironment(LanguageEnvironment):
-    def compile(
-        self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path
-    ) -> None:
+    def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
         command = ["echo"]
         logger.info("$ %s", " ".join(command))
         subprocess.check_call(command)
 
-    def get_execute_command(
-        self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path
-    ) -> List[str]:
+    def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
         # Adding basedir to PYTHONPATH for importing library files
         return ["python", "-c", f"\"import sys, pathlib, subprocess;subprocess.run('PYTHONPATH={basedir} python {path}', shell=True)\""]
 
@@ -55,9 +51,7 @@ def _python_list_depending_files(path: pathlib.Path, basedir: pathlib.Path) -> L
 
 
 class PythonLanguage(Language):
-    def list_dependencies(
-        self, path: pathlib.Path, *, basedir: pathlib.Path
-    ) -> List[pathlib.Path]:
+    def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
         return _python_list_depending_files(path.resolve(), basedir)
 
     def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bytes:

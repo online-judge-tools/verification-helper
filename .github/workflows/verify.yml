@@ -3,7 +3,7 @@ name: verify
 on: push
 
 jobs:
-  build:
+  verify:
     runs-on: ubuntu-latest
 
     steps:
@@ -13,7 +13,7 @@ jobs:
       uses: actions/setup-python@v1
 
     - name: Install dependencies
-      run: pip3 install -U git+https://github.com/kmyk/online-judge-verify-helper.git@master
+      run: pip3 install -U git+https://github.com/online-judge-tools/verification-helper.git@master
 
 
     # required only if you want to verify C# script files
@@ -22,6 +22,10 @@ jobs:
         dotnet-version: '3.1.101'
     - name: Install dependencies (C#)
       run: dotnet tool install -g dotnet-script && echo ::add-path::$HOME/.dotnet/tools
+
+    # required only if you want to verify Nim code
+    - name: Install dependencies (Nim)
+      run: sudo apt install nim
 
 
     - name: Run tests

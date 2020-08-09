@@ -3,19 +3,26 @@ name: test
 on: [push, pull_request]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v1
 
     - name: Set up Python
       uses: actions/setup-python@v1
+      with:
+        python-version: 3.6
 
     - name: Install dependencies
-      run: pip3 install .[dev]
+      run: pip install .[dev]
 
     - name: Run tests
       run: |
         oj-verify -h
-        python3 setup.py test
+        python setup.py test
+      shell: bash

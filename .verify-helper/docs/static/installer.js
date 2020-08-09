@@ -1,13 +1,13 @@
 const data = {};
 data["verify.yml"] = (function () {
     const req = new XMLHttpRequest();
-    req.open("GET", "https://raw.githubusercontent.com/kmyk/online-judge-verify-helper/master/.github/workflows/verify.yml", false);
+    req.open("GET", "https://raw.githubusercontent.com/online-judge-tools/verification-helper/master/.github/workflows/verify.yml", false);
     req.send();
     return req.responseText;
 })();
 data["example.test.cpp"] = (function () {
     const req = new XMLHttpRequest();
-    req.open("GET", "https://raw.githubusercontent.com/kmyk/online-judge-verify-helper/master/example.test.cpp", false);
+    req.open("GET", "https://raw.githubusercontent.com/online-judge-tools/verification-helper/master/example.test.cpp", false);
     req.send();
     return req.responseText;
 })();
@@ -25,6 +25,7 @@ const output9 = document.getElementById("output9");
 const output10 = document.getElementById("output10");
 const output11 = document.getElementById("output11");
 const output12 = document.getElementById("output12");
+const output13 = document.getElementById("output13");
 
 function update() {
     const found = input.value.match(/\/github.com\/([^\/]+)\/([^\/]+)/);
@@ -34,7 +35,7 @@ function update() {
 
         // adding verify.yml
         const filename = ".github%2Fworkflows%2Fverify.yml"
-        const value = encodeURIComponent(data["verify.yml"].replace("git+https://github.com/kmyk/online-judge-verify-helper.git@master", "online-judge-verify-helper"));
+        const value = encodeURIComponent(data["verify.yml"].replace("git+https://github.com/online-judge-tools/verification-helper.git@master", "online-judge-verify-helper"));
         output.href = url + "/new/master?filename=" + filename + "&value=" + value;
         output.textContent = url + "&value=...";
 
@@ -60,6 +61,9 @@ function update() {
         output10.textContent = "[![GitHub Pages](https://img.shields.io/static/v1?label=GitHub+Pages&message=+&color=brightgreen&logo=github)](" + ghpages + ")";
         output9.src = "https://img.shields.io/static/v1?label=GitHub+Pages&message=+&color=brightgreen&logo=github";
         output12.src = "https://img.shields.io/static/v1?label=GitHub+Pages&message=+&color=brightgreen&logo=github";
+
+        // links to gh-pages branch
+        output13.href = url + "/commits/gh-pages";
     }
 }
 input.addEventListener('change', update);

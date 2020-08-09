@@ -8,7 +8,8 @@ import uuid
 from logging import getLogger
 from typing import *
 
-from onlinejudge_verify.languages.base import Language
+from onlinejudge_verify.languages.models import Language, LanguageEnvironment
+from onlinejudge_verify.languages.special_comments import list_special_comments
 
 logger = getLogger(__name__)
 
@@ -90,19 +91,23 @@ def _get_csx_pragmas(path: pathlib.Path) -> Dict[str, str]:
     return res
 
 
-class CSharpScriptLanguage(Language):
+class CSharpScriptLanguageEnvironment(LanguageEnvironment):
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
         _publish_csx(path)
-        pass
 
     def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
         return ['dotnet-script', 'exec', str(_publish_csx(path))]
 
+
+class CSharpScriptLanguage(Language):
     def list_attributes(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Dict[str, str]:
-        return _get_csx_pragmas(path.resolve())
+        return list_special_comments(path.resolve()) or _get_csx_pragmas(path.resolve())
 
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
         return list(_get_csx_dependencies(path.resolve()))
 
     def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bytes:
         raise NotImplementedError
+
+    def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Sequence[CSharpScriptLanguageEnvironment]:
+        return [CSharpScriptLanguageEnvironment()]

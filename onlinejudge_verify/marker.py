@@ -3,13 +3,20 @@ import concurrent.futures
 import datetime
 import functools
 import json
-import os
 import pathlib
-import shlex
 import subprocess
+import traceback
 from typing import *
 
 import onlinejudge_verify.languages
+import onlinejudge_verify.utils
+
+_error_timestamp = datetime.datetime.fromtimestamp(0, tz=datetime.timezone(datetime.timedelta()))
+
+
+def _cwd() -> pathlib.Path:
+    # .resolve() is required for Windows on GitHub Actions because we need to expand 8.3 filenames like `C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\tmp_xxxxxxx` to `C:\\Users\\runneradmin\\AppData\\Local\\Temp\\tmp_xxxxxxx`
+    return pathlib.Path.cwd().resolve(strict=True)
 
 
 class VerificationMarker(object):
@@ -31,21 +38,35 @@ class VerificationMarker(object):
         else:
             language = onlinejudge_verify.languages.get(path)
             assert language is not None
-            timestamp = max([x.stat().st_mtime for x in language.list_dependencies(path, basedir=pathlib.Path.cwd())])
-            system_local_timezone = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
-            return datetime.datetime.fromtimestamp(timestamp, tz=system_local_timezone).replace(microsecond=0)  # microsecond=0 is required because it's erased on timestamps.*.json
+            try:
+                depending_files = language.list_dependencies(path, basedir=_cwd())
+            except Exception:
+                traceback.print_exc()
+                return _error_timestamp
+            else:
+                timestamp = max([x.stat().st_mtime for x in depending_files])
+                system_local_timezone = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
+                return datetime.datetime.fromtimestamp(timestamp, tz=system_local_timezone).replace(microsecond=0)  # microsecond=0 is required because it's erased on timestamps.*.json
 
     def is_verified(self, path: pathlib.Path) -> bool:
-        path = path.resolve().relative_to(pathlib.Path.cwd())
+        if not path.exists():
+            return False
+        path = path.resolve(strict=True).relative_to(_cwd())
         return self.verification_statuses.get(path) == 'verified'
 
     def mark_verified(self, path: pathlib.Path) -> None:
-        path = path.resolve().relative_to(pathlib.Path.cwd())
+        """
+        :param path: should exist
+        """
+
+        path = path.resolve(strict=True).relative_to(_cwd())
         self.new_timestamps[path] = self.get_current_timestamp(path)
         self.verification_statuses[path] = 'verified'
 
     def is_failed(self, path: pathlib.Path) -> bool:
-        path = path.resolve().relative_to(pathlib.Path.cwd())
+        if not path.exists():
+            return True
+        path = path.resolve(strict=True).relative_to(_cwd())
         if path not in self.verification_statuses:
             # verifiedの場合は必ずself.verification_status[path] == 'verified'となるのでこのifの中には入らない
             # それ以外の場合は「そもそもテストを実行していない」可能性もあるが一旦はfailedとみなす
@@ -53,7 +74,9 @@ class VerificationMarker(object):
         return self.verification_statuses[path] == 'failed'
 
     def mark_failed(self, path: pathlib.Path) -> None:
-        path = path.resolve().relative_to(pathlib.Path.cwd())
+        if not path.exists():
+            return
+        path = path.resolve(strict=True).relative_to(_cwd())
         self.verification_statuses[path] = 'failed'
 
     def load_timestamps(self, *, jobs: Optional[int] = None) -> None:
@@ -71,7 +94,7 @@ class VerificationMarker(object):
         self.new_timestamps = {}
 
         def load(path, timestamp):
-            if path.exists() and self.get_current_timestamp(path) <= timestamp:
+            if path.exists() and _error_timestamp < self.get_current_timestamp(path) <= timestamp:
                 self.mark_verified(path)
                 return
             #「そもそもテストを実行していない」のか「実行した上で失敗した」のか区別できないが、verifyできてない事には変わりないので一旦はfailedとみなす
@@ -91,11 +114,10 @@ class VerificationMarker(object):
                     executor.submit(load, path, timestamp)
 
     def save_timestamps(self) -> None:
-        if self.old_timestamps == self.new_timestamps:
-            return
         data = {}
         for path, timestamp in self.new_timestamps.items():
-            data[str(path)] = timestamp.strftime('%Y-%m-%d %H:%M:%S %z')
+            if self.verification_statuses[path] == 'verified':
+                data[str(path)] = timestamp.strftime('%Y-%m-%d %H:%M:%S %z')
         with open(str(self.json_path), 'w') as fh:
             json.dump(data, fh, sort_keys=True, indent=0)
 
@@ -113,11 +135,11 @@ def get_verification_marker(*, jobs: Optional[int] = None) -> VerificationMarker
     global _verification_marker
     if _verification_marker is None:
         # use different files in local and in remote to avoid conflicts
-        if 'GITHUB_ACTION' in os.environ:
-            timestamps_json_path = pathlib.Path('.verify-helper/timestamps.remote.json')
-        else:
+        if onlinejudge_verify.utils.is_local_execution():
             timestamps_json_path = pathlib.Path('.verify-helper/timestamps.local.json')
-        use_git_timestamp = 'GITHUB_ACTION' in os.environ
+        else:
+            timestamps_json_path = pathlib.Path('.verify-helper/timestamps.remote.json')
+        use_git_timestamp = not onlinejudge_verify.utils.is_local_execution()
         _verification_marker = VerificationMarker(json_path=timestamps_json_path, use_git_timestamp=use_git_timestamp, jobs=jobs)
     return _verification_marker
 
@@ -126,13 +148,21 @@ def get_verification_marker(*, jobs: Optional[int] = None) -> VerificationMarker
 def _get_last_commit_time_to_verify(path: pathlib.Path) -> datetime.datetime:
     language = onlinejudge_verify.languages.get(path)
     assert language is not None
-    depending_files = language.list_dependencies(path, basedir=pathlib.Path.cwd())
-    code = ['git', 'log', '-1', '--date=iso', '--pretty=%ad', '--'] + list(map(lambda x: shlex.quote(str(x)), depending_files))
+    try:
+        depending_files = language.list_dependencies(path, basedir=_cwd())
+    except Exception:
+        traceback.print_exc()
+        return _error_timestamp
+    code = ['git', 'log', '-1', '--date=iso', '--pretty=%ad', '--'] + list(map(str, depending_files))
     timestamp = subprocess.check_output(code).decode().strip()
     if not timestamp:
-        return datetime.datetime.fromtimestamp(0)
+        return _error_timestamp
     return datetime.datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S %z')
 
 
 def get_last_commit_time_to_verify(path: pathlib.Path) -> datetime.datetime:
-    return _get_last_commit_time_to_verify(path.resolve())
+    """
+    :param path: should exist
+    """
+
+    return _get_last_commit_time_to_verify(path.resolve(strict=True))

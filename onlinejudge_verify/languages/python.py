@@ -1,10 +1,10 @@
 # Python Version: 3.x
+import base64
 import functools
 import pathlib
-import subprocess
 import sys
 from logging import getLogger
-from typing import List, Sequence
+from typing import List, Sequence, Tuple
 
 import importlab.environment
 import importlab.fs
@@ -16,37 +16,51 @@ logger = getLogger(__name__)
 
 class PythonLanguageEnvironment(LanguageEnvironment):
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
-        command = ["echo"]
-        logger.info("$ %s", " ".join(command))
-        subprocess.check_call(command)
+        pass
 
     def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
-        # Adding basedir to PYTHONPATH for importing library files
-        return ["python", "-c", f"\"import sys, pathlib, subprocess;subprocess.run('PYTHONPATH={basedir} python {path}', shell=True)\""]
+        # MEMO:
+        # -   We use `base64` to avoid problems about quoting. e.g. for a file whose path contains whitespace ' ', quote '\'', doublequote '"', etc.
+        # -   We use `os.execve` instead of `subprocess` because spawning subprocess sometimes cause troubles around signaling.
+        # -   We set PYTHONPATH to import library files in a separated directory, e.g. to import `library/imported.py` from `tests/main.py` as `import library.imported`. Please take care about the case PYTHONPATH is already set.
+        # -   We use `sys.executable` because `python` command may not exist or may not be Python 3.x.
+        script = '; '.join([
+            "'" + 'import base64, os, sys',
+            f'path = base64.b64decode(b"{base64.b64encode(str(path.resolve()).encode()).decode()}").decode()',
+            f'basedir = base64.b64decode(b"{base64.b64encode(str(basedir.resolve()).encode()).decode()}").decode()',
+            'env = dict(os.environ)',
+            'env["PYTHONPATH"] = (basedir + os.pathsep + env["PYTHONPATH"] if "PYTHONPATH" in env else basedir)',
+            'os.execve(sys.executable, [sys.executable, path], env=env)' + "'",
+        ])
+        return [sys.executable, '-c', script]
 
 
 @functools.lru_cache(maxsize=None)
 def _python_list_depending_files(path: pathlib.Path, basedir: pathlib.Path) -> List[pathlib.Path]:
+    # compute the dependency graph of the `path`
     env = importlab.environment.Environment(
         importlab.fs.Path([importlab.fs.OSFileSystem(str(basedir.resolve()))]),
         (sys.version_info.major, sys.version_info.minor),
     )
     res_graph = importlab.graph.ImportGraph.create(env, [str(path)])
-    res_deps = []
     try:
-        node_deps_pairs = res_graph.deps_list()
+        node_deps_pairs = res_graph.deps_list()  # type: List[Tuple[str, List[str]]]
     except Exception:
-        raise RuntimeError(f"Detect circular imports in {path}")
+        raise RuntimeError(f"Failed to analyze the dependency graph (circular imports?): {path}")
+    logger.debug('the dependency graph of %s: %s', str(path), node_deps_pairs)
 
-    for node, deps in node_deps_pairs:
-        if node == str(path.resolve()):
+    # collect Python files which are depended by the `path` and under `basedir`
+    res_deps = []  # type: List[pathlib.Path]
+    res_deps.append(path.resolve())
+    for node_, deps_ in node_deps_pairs:
+        node = pathlib.Path(node_)
+        deps = list(map(pathlib.Path, deps_))
+        if node.resolve() == path.resolve():
             for dep in deps:
-                if not isinstance(dep, str):
-                    continue
-                if dep.startswith(str(basedir)):
-                    res_deps.append(dep)
+                if basedir.resolve() in dep.resolve().parents:
+                    res_deps.append(dep.resolve())
             break
-    return list(map(pathlib.Path, res_deps))
+    return list(set(res_deps))
 
 
 class PythonLanguage(Language):

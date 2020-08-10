@@ -9,7 +9,6 @@ from typing import List, Sequence
 import importlab.environment
 import importlab.fs
 import importlab.graph
-import networkx as nx
 from onlinejudge_verify.languages.models import Language, LanguageEnvironment
 
 logger = getLogger(__name__)
@@ -36,8 +35,8 @@ def _python_list_depending_files(path: pathlib.Path, basedir: pathlib.Path) -> L
     res_deps = []
     try:
         node_deps_pairs = res_graph.deps_list()
-    except nx.NetworkXUnfeasible as ex:
-        raise ImportError(f"Detect circular imports in {path}") from ex
+    except Exception:
+        raise RuntimeError(f"Detect circular imports in {path}")
 
     for node, deps in node_deps_pairs:
         if node == str(path.resolve()):

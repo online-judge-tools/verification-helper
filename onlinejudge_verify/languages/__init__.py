@@ -9,6 +9,7 @@ from onlinejudge_verify.languages.csharpscript import CSharpScriptLanguage
 from onlinejudge_verify.languages.models import Language, LanguageEnvironment
 from onlinejudge_verify.languages.nim import NimLanguage
 from onlinejudge_verify.languages.other import OtherLanguage
+from onlinejudge_verify.languages.python import PythonLanguage
 
 logger = getLogger(__name__)
 
@@ -23,6 +24,7 @@ def _get_dict() -> Dict[str, Language]:
         _dict['.hpp'] = _dict['.cpp']
         _dict['.csx'] = CSharpScriptLanguage()
         _dict['.nim'] = NimLanguage()
+        _dict['.py'] = PythonLanguage()
 
         for ext, config in get_config().get('languages', {}).items():
             if '.' + ext in _dict:

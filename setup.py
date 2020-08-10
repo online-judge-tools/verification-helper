@@ -15,6 +15,7 @@ setup(
         'online-judge-tools >= 8.0.0',
         'setuptools',
         'toml',
+        'importlab',
     ],
     packages=find_packages(exclude=('tests', 'docs')),
     package_data={

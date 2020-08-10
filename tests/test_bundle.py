@@ -1,3 +1,6 @@
+"""This module has tests for the bundle feature.
+"""
+
 import pathlib
 import platform
 import shutil
@@ -10,7 +13,7 @@ from onlinejudge_verify.languages.cplusplus_bundle import BundleError
 
 
 @unittest.skipIf(platform.system() == 'Darwin', 'We cannot use the fake g++ of macOS.')
-class TestStringMethods(unittest.TestCase):
+class TestCPlusPlusBundling(unittest.TestCase):
     def test_no_newline(self) -> None:
         # 末尾に改行がないコードをincludeした時に改行が足されていることの確認
 

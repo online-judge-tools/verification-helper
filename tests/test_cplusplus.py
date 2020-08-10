@@ -8,6 +8,8 @@ import tests.utils
 
 
 class TestCPlusPlusListDependencies(unittest.TestCase):
+    """TestCPlusPlusListDependencies has unit tests for the feature to list dependencies of C++ files.
+    """
     def test_success(self) -> None:
         files = {
             'main.cpp': textwrap.dedent("""\

@@ -1,3 +1,8 @@
+"""This module has end-to-end tests to ensure that basic features of oj-verify command work.
+
+To test for each language, use other modules.
+"""
+
 import datetime
 import json
 import pathlib
@@ -44,7 +49,7 @@ def get_timestamp_string_of_past() -> str:
     return timestamp.strftime(timestamp_format)
 
 
-class TestStringMethods(unittest.TestCase):
+class TestVerification(unittest.TestCase):
     def test_success(self) -> None:
         """
         `test_success` is a simple test for the case when the `.test.cpp` gets AC.

@@ -1,8 +1,8 @@
 # Python Version: 3.x
-import base64
 import functools
 import pathlib
 import sys
+import textwrap
 from logging import getLogger
 from typing import List, Sequence, Tuple
 
@@ -16,23 +16,33 @@ logger = getLogger(__name__)
 
 class PythonLanguageEnvironment(LanguageEnvironment):
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
-        pass
+        code = textwrap.dedent(f"""\
+            #!{sys.executable}
+            \"\"\"This is a helper script to run the target Python code.
+
+            We need this script to set PYTHONPATH portably. The env command, quoting something, etc. are not portable or difficult to implement.
+            \"\"\"
+
+            import os
+            import sys
+
+            # arguments
+            path = {repr(str(path.resolve()))}
+            basedir = {repr(str(basedir.resolve()))}
+
+            # run {str(path)}
+            env = dict(os.environ)
+            if "PYTHONPATH" in env:
+                env["PYTHONPATH"] = basedir + os.pathsep + env["PYTHONPATH"] 
+            else:
+                env["PYTHONPATH"] = basedir  # set `PYTHONPATH` to import files relative to the root directory
+            os.execve(sys.executable, [sys.executable, path], env=env)  # use `os.execve` to avoid making an unnecessary parent process
+        """)
+        with open(str(tempdir / 'compiled.py'), 'w') as fh:
+            fh.write(code)
 
     def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
-        # MEMO:
-        # -   We use `base64` to avoid problems about quoting. e.g. for a file whose path contains whitespace ' ', quote '\'', doublequote '"', etc.
-        # -   We use `os.execve` instead of `subprocess` because spawning subprocess sometimes cause troubles around signaling.
-        # -   We set PYTHONPATH to import library files in a separated directory, e.g. to import `library/imported.py` from `tests/main.py` as `import library.imported`. Please take care about the case PYTHONPATH is already set.
-        # -   We use `sys.executable` because `python` command may not exist or may not be Python 3.x.
-        script = '; '.join([
-            "'" + 'import base64, os, sys',
-            f'path = base64.b64decode(b"{base64.b64encode(str(path.resolve()).encode()).decode()}").decode()',
-            f'basedir = base64.b64decode(b"{base64.b64encode(str(basedir.resolve()).encode()).decode()}").decode()',
-            'env = dict(os.environ)',
-            'env["PYTHONPATH"] = (basedir + os.pathsep + env["PYTHONPATH"] if "PYTHONPATH" in env else basedir)',
-            'os.execve(sys.executable, [sys.executable, path], env=env)' + "'",
-        ])
-        return [sys.executable, '-c', script]
+        return [sys.executable, str(tempdir / 'compiled.py')]
 
 
 @functools.lru_cache(maxsize=None)

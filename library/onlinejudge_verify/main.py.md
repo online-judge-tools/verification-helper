@@ -64,6 +64,7 @@ import textwrap
 from logging import INFO, basicConfig, getLogger
 from typing import *
 
+import colorlog
 import onlinejudge_verify.config
 import onlinejudge_verify.docs
 import onlinejudge_verify.marker
@@ -236,7 +237,13 @@ def generate_gitignore() -> None:
 
 
 def main(args: Optional[List[str]] = None) -> None:
-    basicConfig(level=INFO)
+    # configure logging
+    log_format = '%(log_color)s%(levelname)s%(reset)s:%(name)s:%(message)s'
+    handler = colorlog.StreamHandler()
+    handler.setFormatter(colorlog.ColoredFormatter(log_format))
+    basicConfig(level=INFO, handlers=[handler])
+
+    # parse command-line arguments
     parser = get_parser()
     parsed = parser.parse_args(args)
 

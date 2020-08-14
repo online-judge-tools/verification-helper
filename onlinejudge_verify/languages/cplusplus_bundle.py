@@ -125,7 +125,7 @@ ext_libs = [
     'ext/pb_ds/hash_policy.hpp',
     'ext/pb_ds/list_update_policy.hpp',
     'ext/pb_ds/tree_policy.hpp',
-    'ext/pb_ds/trie_policy.hpp'
+    'ext/pb_ds/trie_policy.hpp',
 ]
 
 standard_libraries = set(ext_libs + [bits_stdcxx_h] + cxx_standard_libraries + c_standard_libraries + ['c' + name[:-len('.h')] for name in c_standard_libraries])

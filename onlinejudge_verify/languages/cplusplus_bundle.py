@@ -174,7 +174,7 @@ class Bundler(object):
             path = path.relative_to(pathlib.Path.cwd())
         except ValueError:
             pass
-        self.result_lines.append('#line {} "{}"\n'.format(line, str(path).replace("\\", "/")).encode())
+        self.result_lines.append('#line {} {}\n'.format(line, json.dumps(str(path))).encode())
 
     # path を解決する
     # see: https://gcc.gnu.org/onlinedocs/gcc/Directory-Options.html#Directory-Options

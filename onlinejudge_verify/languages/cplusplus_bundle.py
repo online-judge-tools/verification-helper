@@ -91,7 +91,44 @@ c_standard_libraries = [
     'wctype.h',
 ]
 
-standard_libraries = set([bits_stdcxx_h] + cxx_standard_libraries + c_standard_libraries + ['c' + name[:-len('.h')] for name in c_standard_libraries])
+ext_libs = [
+    'ext/algorithm',
+    'ext/array_allocator.h',
+    'ext/atomicity.h',
+    'ext/bitmap_allocator.h',
+    'ext/cast.h',
+    'ext/concurrence.h',
+    'ext/debug_allocator.h',
+    'ext/extptr_allocator.h',
+    'ext/functional',
+    'ext/iterator',
+    'ext/malloc_allocator.h',
+    'ext/memory',
+    'ext/mt_allocator.h',
+    'ext/new_allocator.h',
+    'ext/numeric',
+    'ext/pod_char_traits.h',
+    'ext/pointer.h',
+    'ext/pool_allocator.h',
+    'ext/rb_tree',
+    'ext/rope',
+    'ext/slist',
+    'ext/stdio_filebuf.h',
+    'ext/stdio_sync_filebuf.h',
+    'ext/throw_allocator.h',
+    'ext/typelist.h',
+    'ext/type_traits.h',
+    'ext/vstring.h',
+    'ext/pb_ds/assoc_container.hpp',
+    'ext/pb_ds/priority_queue.hpp',
+    'ext/pb_ds/exception.hpp',
+    'ext/pb_ds/hash_policy.hpp',
+    'ext/pb_ds/list_update_policy.hpp',
+    'ext/pb_ds/tree_policy.hpp',
+    'ext/pb_ds/trie_policy.hpp'
+]
+
+standard_libraries = set(ext_libs + [bits_stdcxx_h] + cxx_standard_libraries + c_standard_libraries + ['c' + name[:-len('.h')] for name in c_standard_libraries])
 
 
 @functools.lru_cache(maxsize=None)
@@ -286,7 +323,7 @@ class Bundler(object):
                 if matched:
                     included = matched.group(1).decode()
                     logger.debug('%s: line %s: #include <%s>', str(path), i + 1, str(included))
-                    if included in self.pragma_once_system or bits_stdcxx_h in self.pragma_once_system:
+                    if included in self.pragma_once_system or (included not in ext_libs and bits_stdcxx_h in self.pragma_once_system):
                         self._line(i + 2, path)
                     elif is_toplevel and included in standard_libraries:
                         self.pragma_once_system.add(included)

@@ -2,6 +2,7 @@
 """
 
 import contextlib
+import os
 import pathlib
 import platform
 import shutil
@@ -112,7 +113,7 @@ class TestCPlusPlusBundlingEndToEnd(unittest.TestCase):
                 subprocess.check_call(['g++', 'main.bundled.cpp'], stderr=sys.stderr)
 
                 # run
-                self.assertEqual(subprocess.check_output(['./a.out']), b'Hello World\n')
+                self.assertEqual(subprocess.check_output(['./a.out']), ('Hello World' + os.linesep).encode())
 
     def test_complicated(self) -> None:
         library_files = {
@@ -172,6 +173,6 @@ class TestCPlusPlusBundlingEndToEnd(unittest.TestCase):
             subprocess.check_call(['g++', '-o', str(tempdir_dst / 'a.out'), str(tempdir_dst / 'main.bundled.cpp')], stderr=sys.stderr)
 
             # run
-            self.assertEqual(subprocess.check_output([str(tempdir_dst / 'a.out')], input=b'10\n'), b'55\n')
-            self.assertEqual(subprocess.check_output([str(tempdir_dst / 'a.out')], input=b'20\n'), b'6765\n')
-            self.assertEqual(subprocess.check_output([str(tempdir_dst / 'a.out')], input=b'30\n'), b'832040\n')
+            self.assertEqual(subprocess.check_output([str(tempdir_dst / 'a.out')], input=b'10\n'), ('55' + os.linesep).encode())
+            self.assertEqual(subprocess.check_output([str(tempdir_dst / 'a.out')], input=b'20\n'), ('6765' + os.linesep).encode())
+            self.assertEqual(subprocess.check_output([str(tempdir_dst / 'a.out')], input=b'30\n'), ('832040' + os.linesep).encode())

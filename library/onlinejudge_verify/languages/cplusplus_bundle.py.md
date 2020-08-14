@@ -43,6 +43,7 @@ layout: default
 ```cpp
 # Python Version: 3.x
 import functools
+import json
 import os
 import pathlib
 import re
@@ -217,7 +218,9 @@ class Bundler(object):
             path = path.relative_to(pathlib.Path.cwd())
         except ValueError:
             pass
-        self.result_lines.append('#line {} "{}"\n'.format(line, str(path)).encode())
+        # パス中の特殊文字を JSON style にエスケープしてから生成コードに記述
+        # quick solution to this: https://github.com/online-judge-tools/verification-helper/issues/280
+        self.result_lines.append('#line {} {}\n'.format(line, json.dumps(str(path))).encode())
 
     # path を解決する
     # see: https://gcc.gnu.org/onlinedocs/gcc/Directory-Options.html#Directory-Options

@@ -110,10 +110,10 @@ class TestCPlusPlusBundlingEndToEnd(unittest.TestCase):
                         onlinejudge_bundle.main.main(args=['main.cpp'])
 
                 # compile
-                subprocess.check_call(['g++', 'main.bundled.cpp'], stderr=sys.stderr)
+                subprocess.check_call(['g++', '-o', 'a.out', 'main.bundled.cpp'], stderr=sys.stderr)
 
                 # run
-                self.assertEqual(subprocess.check_output(['./a.out']), ('Hello World' + os.linesep).encode())
+                self.assertEqual(subprocess.check_output([str(pathlib.Path('a.out').resolve())]), ('Hello World' + os.linesep).encode())
 
     def test_complicated(self) -> None:
         library_files = {

@@ -11,7 +11,8 @@ from typing import *
 logger = getLogger(__name__)
 
 bits_stdcxx_h = 'bits/stdc++.h'
-cxx_standard_libraries = [
+
+cxx_standard_libs = {
     'algorithm',
     'array',
     'bitset',
@@ -57,9 +58,9 @@ cxx_standard_libraries = [
     'utility',
     'valarray',
     'vector',
-]
+}
 
-c_standard_libraries = [
+c_standard_libs = {
     'assert.h',
     'complex.h',
     'ctype.h',
@@ -89,9 +90,13 @@ c_standard_libraries = [
     'uchar.h',
     'wchar.h',
     'wctype.h',
-]
+}
 
-ext_libs = [
+cxx_c_origin_libs = {'c' + name[:-len('.h')] for name in c_standard_libs}
+
+bits_extcxx_h = 'bits/extc++.h'
+
+ext_libs = {
     'ext/algorithm',
     'ext/array_allocator.h',
     'ext/atomicity.h',
@@ -126,10 +131,37 @@ ext_libs = [
     'ext/pb_ds/list_update_policy.hpp',
     'ext/pb_ds/tree_policy.hpp',
     'ext/pb_ds/trie_policy.hpp',
-]
+}
 
-standard_libraries = set(ext_libs + [bits_stdcxx_h] + cxx_standard_libraries + c_standard_libraries + ['c' + name[:-len('.h')] for name in c_standard_libraries])
+bits_stdtr1cxx_h = 'bits/stdtr1c++.h'
 
+tr1_libs = {
+    'tr1/array',
+    'tr1/cctype',
+    'tr1/cfenv',
+    'tr1/cfloat',
+    'tr1/cinttypes',
+    'tr1/climits',
+    'tr1/cmath',
+    'tr1/complex',
+    'tr1/cstdarg',
+    'tr1/cstdbool',
+    'tr1/cstdint',
+    'tr1/cstdio',
+    'tr1/cstdlib',
+    'tr1/ctgmath',
+    'tr1/ctime',
+    'tr1/cwchar',
+    'tr1/cwctype',
+    'tr1/functional',
+    'tr1/random',
+    'tr1/tuple',
+    'tr1/unordered_map',
+    'tr1/unordered_set',
+    'tr1/utility',
+}
+
+standard_libs = set({bits_stdcxx_h, bits_extcxx_h, bits_stdtr1cxx_h} | cxx_standard_libs | c_standard_libs | cxx_c_origin_libs | ext_libs | tr1_libs)
 
 @functools.lru_cache(maxsize=None)
 def _check_compiler(compiler: str) -> str:
@@ -323,14 +355,35 @@ class Bundler(object):
                 if matched:
                     included = matched.group(1).decode()
                     logger.debug('%s: line %s: #include <%s>', str(path), i + 1, str(included))
-                    if included in self.pragma_once_system or (included not in ext_libs and bits_stdcxx_h in self.pragma_once_system):
+                    if included in self.pragma_once_system:
                         self._line(i + 2, path)
-                    elif is_toplevel and included in standard_libraries:
-                        self.pragma_once_system.add(included)
-                        self.result_lines.append(line)
-                    else:
+                    elif not is_toplevel:
                         # #pragma once 系の判断ができない場合はそっとしておく
                         self.result_lines.append(line)
+                    elif included in c_standard_libs or included in cxx_standard_libs or included in cxx_c_origin_libs:
+                        if bits_stdcxx_h in self.pragma_once_system:
+                            self._line(i + 2, path)
+                        else:
+                            self.pragma_once_system.add(included)
+                            self.result_lines.append(line)
+                    elif included in ext_libs:
+                        if bits_extcxx_h in self.pragma_once_system:
+                            self._line(i + 2, path)
+                        else:
+                            self.pragma_once_system.add(included)
+                            self.result_lines.append(line)
+                    elif included in tr1_libs:
+                        if bits_stdtr1cxx_h in self.pragma_once_system:
+                            self._line(i + 2, path)
+                        else:
+                            self.pragma_once_system.add(included)
+                            self.result_lines.append(line)
+                    else:
+                        # possibly: bits_*, boost, c-posix library
+                        self.pragma_once_system.add(included)
+                        self.result_lines.append(line)
+                        if included in [bits_extcxx_h, bits_stdtr1cxx_h]:
+                            self.pragma_once_system.add(bits_stdcxx_h)
                     continue
 
                 # #include "..."

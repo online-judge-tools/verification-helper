@@ -1,12 +1,17 @@
 """This module has tests for the bundle feature.
 """
 
+import contextlib
 import pathlib
 import platform
 import shutil
+import subprocess
+import sys
+import tempfile
 import textwrap
 import unittest
 
+import onlinejudge_bundle.main
 import onlinejudge_verify.languages.cplusplus_bundle as cplusplus_bundle
 import tests.utils
 from onlinejudge_verify.languages.cplusplus_bundle import BundleError
@@ -70,12 +75,11 @@ class TestCPlusPlusBundling(unittest.TestCase):
                 bundler = cplusplus_bundle.Bundler(iquotes=[tempdir], compiler='clang++')
                 self.assertRaises(BundleError, lambda: bundler.update(path))
 
-         
+
 @unittest.skipIf(platform.system() == 'Darwin', 'We cannot use the fake g++ of macOS.')
 class TestCPlusPlusBundlingEndToEnd(unittest.TestCase):
     def test_standard_headers(self) -> None:
-        test_files = {
-            pathlib.Path('test', 'main.cpp'): textwrap.dedent("""\
+        test_files = {pathlib.Path('test', 'main.cpp'): textwrap.dedent("""\
             #include <iostream>
             #include <bits/stdc++.h>
             #include <cassert>
@@ -94,8 +98,7 @@ class TestCPlusPlusBundlingEndToEnd(unittest.TestCase):
                 using mulint = boost::multiprecision::cpp_int;
                 return 0;
             }
-            """).encode()
-        }
+            """).encode()}
 
         with tempfile.TemporaryDirectory() as tempdir_dst_:
             tempdir_dst = pathlib.Path(tempdir_dst_)

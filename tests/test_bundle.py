@@ -80,22 +80,21 @@ class TestCPlusPlusBundling(unittest.TestCase):
 class TestCPlusPlusBundlingEndToEnd(unittest.TestCase):
     def test_standard_headers(self) -> None:
         test_files = {pathlib.Path('test', 'main.cpp'): textwrap.dedent("""\
-            #include <iostream>
-            #include <bits/stdc++.h>
-            #include <cassert>
             #include <bits/stdtr1c++.h>
-            #include <tr1/utility>
-            #include <algorithm>
             #include <tr2/dynamic_bitset>
             #include <bits/extc++.h>
             #include <ext/rope>
             #include <boost/multiprecision/cpp_int.hpp>
+            #include <bits/stdc++.h>
+            #include <cassert>
 
             int main() {
                 __gnu_cxx::rope<int> a;
-                auto b = std::__detail::__sph_neumann(1, 1.23);
-                std::tr2::dynamic_bitset<unsigned> c;
+                using namespace std::tr1::__detail;
+                std::tr2::dynamic_bitset<unsigned> b;
                 using mulint = boost::multiprecision::cpp_int;
+                using std::vector;
+                assert(1);
                 return 0;
             }
             """).encode()}

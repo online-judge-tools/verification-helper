@@ -182,14 +182,14 @@ class TestCPlusPlusBundlingEndToEnd(unittest.TestCase):
             #include <tr2/dynamic_bitset>
             #include <bits/extc++.h>
             #include <ext/rope>
-            #include <boost/multiprecision/cpp_int.hpp>
+            // #include <boost/multiprecision/cpp_int.hpp>
             #include <bits/stdc++.h>
             #include <cassert>
             int main() {
                 __gnu_cxx::rope<int> a;
                 using namespace std::tr1::__detail;
                 std::tr2::dynamic_bitset<unsigned> b;
-                using mulint = boost::multiprecision::cpp_int;
+                // using mulint = boost::multiprecision::cpp_int;
                 using std::vector;
                 assert(1);
                 return 0;

@@ -23,7 +23,7 @@ jobs:
     
     - name: Install boost
       run: sudo apt-get install libboost-all-dev
-      if: matrix.os == 'ubuntu_latest'
+      if: matrix.os == 'ubuntu-latest'
 
     - name: Run tests
       run: |

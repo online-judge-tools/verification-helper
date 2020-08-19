@@ -160,7 +160,7 @@ class TestCPlusPlusBundlingEndToEnd(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as tempdir_dst_:
             tempdir_dst = pathlib.Path(tempdir_dst_)
-           
+
             with tests.utils.load_files_pathlib(library_files) as tempdir_src_library:
                 with tests.utils.load_files_pathlib(test_files) as tempdir_src_test:
                     with open(tempdir_dst / 'main.bundled.cpp', 'w') as fh:

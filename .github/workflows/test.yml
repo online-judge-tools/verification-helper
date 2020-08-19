@@ -20,6 +20,10 @@ jobs:
 
     - name: Install dependencies
       run: pip install .[dev]
+    
+    - name: Install boost
+      run: sudo apt-get install libboost-all-dev
+      if: matrix.os == 'ubuntu_latest'
 
     - name: Run tests
       run: |

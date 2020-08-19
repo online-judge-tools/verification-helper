@@ -27,7 +27,7 @@ jobs:
     
     - name: Install boost(windows)
       run: |
-        git clone --recursive git@github.com:boostorg/boost.git
+        git clone --recursive https://github.com/boostorg/boost.git
         cd boost
         ./bootstrap.bat
         ./b2.exe install -j2

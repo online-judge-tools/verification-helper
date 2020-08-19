@@ -70,10 +70,10 @@ class TestCPlusPlusBundling(unittest.TestCase):
                 bundler = cplusplus_bundle.Bundler(iquotes=[tempdir], compiler='clang++')
                 self.assertRaises(BundleError, lambda: bundler.update(path))
 
-                
+         
 @unittest.skipIf(platform.system() == 'Darwin', 'We cannot use the fake g++ of macOS.')
 class TestCPlusPlusBundlingEndToEnd(unittest.TestCase):
-    def test_standard_headers(self)->None:
+    def test_standard_headers(self) -> None:
         test_files = {
             pathlib.Path('test', 'main.cpp'): textwrap.dedent("""\
             #include <iostream>

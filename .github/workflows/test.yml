@@ -21,9 +21,18 @@ jobs:
     - name: Install dependencies
       run: pip install .[dev]
     
-    - name: Install boost
+    - name: Install boost(ubuntu)
       run: sudo apt-get install libboost-all-dev
       if: matrix.os == 'ubuntu-latest'
+    
+    - name: Install boost(windows)
+      run: |
+        git clone --recursive git@github.com:boostorg/boost.git
+        cd boost
+        ./bootstrap.bat
+        ./b2.exe install -j2
+      shell: bash
+      if: matrix.os == 'windows-latest'
 
     - name: Run tests
       run: |

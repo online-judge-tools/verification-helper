@@ -165,6 +165,7 @@ tr1_libs = {
 #     {bits_stdcxx_h, bits_extcxx_h, bits_stdtr1cxx_h}
 #     | cxx_standard_libs | c_standard_libs | cxx_c_origin_libs | ext_libs | tr1_libs
 
+
 @functools.lru_cache(maxsize=None)
 def _check_compiler(compiler: str) -> str:
     # Executables named "g++" are not always g++, due to the fake g++ of macOS

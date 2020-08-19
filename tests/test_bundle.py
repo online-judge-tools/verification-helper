@@ -69,3 +69,43 @@ class TestCPlusPlusBundling(unittest.TestCase):
             with tests.utils.chdir(tempdir):
                 bundler = cplusplus_bundle.Bundler(iquotes=[tempdir], compiler='clang++')
                 self.assertRaises(BundleError, lambda: bundler.update(path))
+
+                
+@unittest.skipIf(platform.system() == 'Darwin', 'We cannot use the fake g++ of macOS.')
+class TestCPlusPlusBundlingEndToEnd(unittest.TestCase):
+    def test_standard_headers(self)->None:
+        test_files = {
+            pathlib.Path('test', 'main.cpp'): textwrap.dedent("""\
+            #include <iostream>
+            #include <bits/stdc++.h>
+            #include <cassert>
+            #include <bits/stdtr1c++.h>
+            #include <tr1/utility>
+            #include <algorithm>
+            #include <tr2/dynamic_bitset>
+            #include <bits/extc++.h>
+            #include <ext/rope>
+            #include <boost/multiprecision/cpp_int.hpp>
+
+            int main() {
+                __gnu_cxx::rope<int> a;
+                auto b = std::__detail::__sph_neumann(1, 1.23);
+                std::tr2::dynamic_bitset<unsigned> c;
+                using mulint = boost::multiprecision::cpp_int;
+                return 0;
+            }
+            """).encode()
+        }
+
+        with tempfile.TemporaryDirectory() as tempdir_dst_:
+            tempdir_dst = pathlib.Path(tempdir_dst_)
+
+            # bundle
+            with tests.utils.load_files_pathlib(test_files) as tempdir_src_test:
+                with open(tempdir_dst / 'main.bundled.cpp', 'w') as fh:
+                    with contextlib.redirect_stdout(fh):
+                        args = [str(tempdir_src_test / 'test' / 'main.cpp')]
+                        onlinejudge_bundle.main.main(args=args)
+
+            # compile
+            subprocess.check_call(['g++', str(tempdir_dst / 'main.bundled.cpp')], stderr=sys.stderr)

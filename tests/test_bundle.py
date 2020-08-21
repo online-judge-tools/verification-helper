@@ -161,7 +161,6 @@ class TestCPlusPlusBundlingEndToEnd(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tempdir_dst_:
             tempdir_dst = pathlib.Path(tempdir_dst_)
 
-            # bundle
             with tests.utils.load_files_pathlib(library_files) as tempdir_src_library:
                 with tests.utils.load_files_pathlib(test_files) as tempdir_src_test:
                     with open(tempdir_dst / 'main.bundled.cpp', 'w') as fh:
@@ -176,3 +175,36 @@ class TestCPlusPlusBundlingEndToEnd(unittest.TestCase):
             self.assertEqual(subprocess.check_output([str(tempdir_dst / 'a.out')], input=b'10\n'), ('55' + os.linesep).encode())
             self.assertEqual(subprocess.check_output([str(tempdir_dst / 'a.out')], input=b'20\n'), ('6765' + os.linesep).encode())
             self.assertEqual(subprocess.check_output([str(tempdir_dst / 'a.out')], input=b'30\n'), ('832040' + os.linesep).encode())
+
+    def test_standard_headers(self) -> None:
+        test_files = {pathlib.Path('test', 'main.cpp'): textwrap.dedent("""\
+            #include <bits/stdtr1c++.h>
+            #include <tr2/dynamic_bitset>
+            #include <bits/extc++.h>
+            #include <ext/rope>
+            // #include <boost/multiprecision/cpp_int.hpp>
+            #include <bits/stdc++.h>
+            #include <cassert>
+            int main() {
+                __gnu_cxx::rope<int> a;
+                using namespace std::tr1::__detail;
+                std::tr2::dynamic_bitset<unsigned> b;
+                // using mulint = boost::multiprecision::cpp_int;
+                using std::vector;
+                assert(1);
+                return 0;
+            }
+            """).encode()}
+
+        with tempfile.TemporaryDirectory() as tempdir_dst_:
+            tempdir_dst = pathlib.Path(tempdir_dst_)
+
+            # bundle
+            with tests.utils.load_files_pathlib(test_files) as tempdir_src_test:
+                with open(tempdir_dst / 'main.bundled.cpp', 'w') as fh:
+                    with contextlib.redirect_stdout(fh):
+                        args = [str(tempdir_src_test / 'test' / 'main.cpp')]
+                        onlinejudge_bundle.main.main(args=args)
+
+            # compile
+            subprocess.check_call(['g++', str(tempdir_dst / 'main.bundled.cpp')], stderr=sys.stderr)

@@ -23,7 +23,7 @@ from typing import *
 
 import colorlog
 import onlinejudge_verify.config
-import onlinejudge_verify.docs
+import onlinejudge_verify.documentation.main
 import onlinejudge_verify.marker
 import onlinejudge_verify.utils
 import onlinejudge_verify.verify
@@ -49,6 +49,10 @@ def get_parser() -> argparse.ArgumentParser:
     subparser.add_argument('--tle', type=float, default=60)
 
     subparser = subparsers.add_parser('docs')
+    subparser.add_argument('-j', '--jobs', type=int, default=1)
+
+    subparser = subparsers.add_parser('stats')
+    subparser.add_argument('-j', '--jobs', type=int, default=1)
 
     return parser
 
@@ -151,18 +155,18 @@ def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-p
         subprocess.check_call(['git', 'push', url, 'HEAD'])
 
 
-def subcommand_docs() -> None:
+def subcommand_docs(*, jobs: int = 1) -> None:
     if 'GITHUB_ACTION' in os.environ and 'GITHUB_TOKEN' in os.environ:
         if os.environ['GITHUB_REF'] == 'refs/heads/master':
             logger.info('generate documents...')
-            onlinejudge_verify.docs.main()
+            onlinejudge_verify.documentation.main.main(jobs=jobs)
 
             logger.info('upload documents...')
             push_documents_to_gh_pages(src_dir=pathlib.Path('.verify-helper/markdown'))
 
     else:
         logger.info('generate documents...')
-        onlinejudge_verify.docs.main()
+        onlinejudge_verify.documentation.main.main(jobs=jobs)
         logger.info('done.')
         logger.info('%s', '\n'.join([
             'To see the generated document, do the following steps:',
@@ -173,6 +177,10 @@ def subcommand_docs() -> None:
             '    5. $ bundle exec jekyll serve --incremental',
             '    6. Open http://127.0.0.1:4000 on your web browser',
         ]))
+
+
+def subcommand_stats(*, jobs: int = 1) -> None:
+    onlinejudge_verify.documentation.main.print_stats_json(jobs=jobs)
 
 
 def generate_gitignore() -> None:
@@ -214,7 +222,7 @@ def main(args: Optional[List[str]] = None) -> None:
     if parsed.subcommand == 'all':
         generate_gitignore()
         summary = subcommand_run(paths=[], timeout=parsed.timeout, tle=parsed.tle, jobs=parsed.jobs)
-        subcommand_docs()
+        subcommand_docs(jobs=parsed.jobs)
         summary.show()
         if not summary.succeeded():
             sys.exit(1)
@@ -228,7 +236,10 @@ def main(args: Optional[List[str]] = None) -> None:
 
     elif parsed.subcommand == 'docs':
         generate_gitignore()
-        subcommand_docs()
+        subcommand_docs(jobs=parsed.jobs)
+
+    elif parsed.subcommand == 'stats':
+        subcommand_stats(jobs=parsed.jobs)
 
     else:
         parser.print_help()

@@ -90,16 +90,24 @@ Other judging platforms do not currently publish the test cases in usable forms,
 
 ## Generating Documentation
 
-### Available tags
+### Embedding Markdown
 
-|Tag name|Description|Remarks|
-|---|---|---|
-| `@title` | Library file title | If a title was not specified, the `@brief` element which appears first is used as a title. If there was no `@brief` elements, a filename is used as a title. |
-| `@category` | Category | If a category was not specified, a directory name is used as a category. |
-| `@brief` | Description of library file | If a title was not specified, the `@brief` element which appears first is not used as a description, but it is used as a title. |
-| `@see`, `@sa` | Create a hyperlink to an URL which is written right after this tag. We recommend to use this tag when you have some reference web pages. | Usage: `@see https://example.com/` |
-| `@docs` | When a description of your library is too long to handle by using `@brief` tags, you can add a description which is written in Markdown file. | Usage: `@docs path/to/markdown.md` |
-| `@ignore` | This application does not generate the documentation of the library file which this tag is specified. |  |
+Markdown files in the repository are automatically recognized.
+When the `documentation_of` field in [Front Matter](http://jekyllrb-ja.github.io/docs/front-matter/) specifies a source code file, the content of Markdown file is inserted into the generated document page of specified code.
+
+For example, to add description to a document of a file `path/to/segment_tree.hpp`, make a Markdown file like `foo/bar.md` and write as the following in the file.
+
+```
+---
+title: Segment Tree
+documentation_of: path/to/segment_tree.hpp
+---
+
+## Description
+
+In this file, ...
+```
+
 
 ### Local execution
 

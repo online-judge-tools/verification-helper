@@ -33,6 +33,7 @@ class FrontMatterItem(enum.Enum):
     layout = 'layout'
     documentation_of = 'documentation_of'
     data = 'data'
+    redirect_from = 'redirect_from'  # for jekyll-redirect-from plugin
 
 
 class PageRenderJob(NamedTuple):

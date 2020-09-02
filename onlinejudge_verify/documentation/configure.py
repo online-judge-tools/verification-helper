@@ -181,6 +181,14 @@ def convert_to_page_render_jobs(*, source_code_stats: List[SourceCodeStat], mark
         front_matter: Dict[str, Any] = {}
         front_matter[FrontMatterItem.title.value] = str(stat.path)
         front_matter[FrontMatterItem.documentation_of.value] = str(stat.path)
+
+        # add redirects from old URLs
+        old_directory = 'verify' if stat.is_verification_file else 'library'
+        front_matter[FrontMatterItem.redirect_from.value] = [
+            '/' + str(pathlib.Path(old_directory) / stat.path),
+            '/' + str(pathlib.Path(old_directory) / stat.path.parent / (stat.path.name + '.html')),
+        ]
+
         job = PageRenderJob(
             path=path,
             front_matter=front_matter,

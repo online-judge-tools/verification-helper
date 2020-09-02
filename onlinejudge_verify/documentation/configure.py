@@ -189,10 +189,24 @@ def convert_to_page_render_jobs(*, source_code_stats: List[SourceCodeStat], mark
             '/' + str(pathlib.Path(old_directory) / stat.path.parent / (stat.path.name + '.html')),
         ]
 
+        # add title specified as a attributes like @title or @brief
+        if 'document_title' in stat.attributes:
+            front_matter[FrontMatterItem.title.value] = stat.attributes['document_title']
+
+        # treat @docs path/to.md directives
+        content = b''
+        if '_deprecated_at_docs' in stat.attributes:
+            at_docs_path = pathlib.Path(stat.attributes['_deprecated_at_docs'])
+            try:
+                with open(at_docs_path, 'rb') as fh:
+                    content = fh.read()
+            except FileNotFoundError as e:
+                logger.exception('failed to read markdown file specified by @docs in %s: %s', str(stat.path), e)
+
         job = PageRenderJob(
             path=path,
             front_matter=front_matter,
-            content=b'',
+            content=content,
         )
         page_render_jobs.append(job)
 

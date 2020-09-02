@@ -24,8 +24,8 @@ layout: default
 {% if page.data.dependsOn.size != 0 %}
     <h2>Depends on</h2>
     <ul>
-    {% for item in page.data.dependsOnWithIcon %}
-        <li><a href="/{{ item.path }}">{{ item.icon }} {{ item.path }}</a></li>
+    {% for item in page.data.extendedDependsOn %}
+        <li><a href="/{{ item.path }}">{{ item.icon }} {{ item.title }}</a></li>
     {% endfor %}
     </ul>
 {% endif %}
@@ -34,8 +34,8 @@ layout: default
 {% if page.data.requiredBy.size != 0 %}
     <h2>Required by</h2>
     <ul>
-    {% for item in page.data.requiredByWithIcon %}
-        <li><a href="/{{ item.path }}">{{ item.icon }} {{ item.path }}</a></li>
+    {% for item in page.data.extendedRequiredBy %}
+        <li><a href="/{{ item.path }}">{{ item.icon }} {{ item.title }}</a></li>
     {% endfor %}
     </ul>
 {% endif %}
@@ -44,8 +44,8 @@ layout: default
 {% if page.data.verifiedWith.size != 0 %}
     <h2>Verified with</h2>
     <ul>
-    {% for item in page.data.verifiedWithWithIcon %}
-        <li><a href="/{{ item.path }}">{{ item.icon }} {{ item.path }}</a></li>
+    {% for item in page.data.extendedVerifiedWith %}
+        <li><a href="/{{ item.path }}">{{ item.icon }} {{ item.title }}</a></li>
     {% endfor %}
     </ul>
 {% endif %}

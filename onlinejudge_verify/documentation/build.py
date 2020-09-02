@@ -83,16 +83,17 @@ def _render_source_code_stat_for_page(path: pathlib.Path, *, source_code_stats_d
     data = _render_source_code_stat(stat, basedir=basedir)
     data['verificationStatusIcon'] = _get_verification_status_icon(stat.verification_status)
 
-    def put_icon(path: pathlib.Path) -> Dict[str, Any]:
+    def ext(path: pathlib.Path) -> Dict[str, Any]:
         stat = source_code_stats_dict[(basedir / path).resolve()]
         return {
             'path': str(path),
+            'title': stat.attributes.get('document_title', str(stat.path)),
             'icon': _get_verification_status_icon(stat.verification_status),
         }
 
-    data['dependsOnWithIcon'] = [put_icon(path) for path in stat.depends_on]
-    data['requiredByWithIcon'] = [put_icon(path) for path in stat.required_by]
-    data['verifiedWithWithIcon'] = [put_icon(path) for path in stat.verified_with]
+    data['extendedDependsOn'] = [ext(path) for path in stat.depends_on]
+    data['extendedRequiredBy'] = [ext(path) for path in stat.required_by]
+    data['extendedVerifiedWith'] = [ext(path) for path in stat.verified_with]
 
     return data
 
@@ -110,7 +111,7 @@ def _render_source_code_stats_for_top_page(*, source_code_stats: List[SourceCode
             categories[category] = []
         categories[category].append({
             'path': str(stat.path),
-            'title': str(stat.path),
+            'title': stat.attributes.get('document_title', str(stat.path)),
             'icon': _get_verification_status_icon(stat.verification_status),
         })
 

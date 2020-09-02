@@ -179,7 +179,6 @@ def convert_to_page_render_jobs(*, source_code_stats: List[SourceCodeStat], mark
     for stat in source_code_stats:
         path = stat.path.parent / (stat.path.name + '.md')
         front_matter: Dict[str, Any] = {}
-        front_matter[FrontMatterItem.title.value] = str(stat.path)
         front_matter[FrontMatterItem.documentation_of.value] = str(stat.path)
 
         # add redirects from old URLs
@@ -190,6 +189,7 @@ def convert_to_page_render_jobs(*, source_code_stats: List[SourceCodeStat], mark
         ]
 
         # add title specified as a attributes like @title or @brief
+        front_matter[FrontMatterItem.title.value] = str(stat.path)
         if 'document_title' in stat.attributes:
             front_matter[FrontMatterItem.title.value] = stat.attributes['document_title']
 
@@ -213,11 +213,20 @@ def convert_to_page_render_jobs(*, source_code_stats: List[SourceCodeStat], mark
     for markdown_path in markdown_paths:
         markdown_absolute_path = (basedir / markdown_path).resolve()
         markdown_relative_path = markdown_absolute_path.relative_to(basedir)
+
         with open(markdown_path, 'rb') as fh:
             content = fh.read()
         front_matter, content = onlinejudge_verify.documentation.front_matter.split_front_matter(content)
+
+        # overwrite if documentation_of field exists
+        path = markdown_relative_path
+        documentation_of = front_matter.get(FrontMatterItem.documentation_of.value)
+        if documentation_of is not None:
+            documentation_of_path = (basedir / pathlib.Path(documentation_of)).resolve().relative_to(basedir)
+            path = documentation_of_path.parent / (documentation_of_path.name + '.md')
+
         job = PageRenderJob(
-            path=markdown_path,
+            path=path,
             front_matter=front_matter,
             content=content,
         )

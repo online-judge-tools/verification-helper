@@ -17,6 +17,22 @@ layout: default
   });
 </script>
 
+{% if site.theme == "jekyll-theme-minimal" %}
+<style type="text/css">
+@media screen and (min-width: 900px) {
+    div.wrapper {
+        width: 100%;
+    }
+    div.wrapper > header {
+        width: 280px;
+    }
+    div.wrapper > section {
+        width: calc(100% - 300px);
+    }
+}
+</style>
+{% endif %}
+
 
 <h1>{{ site.title }}</h1>
 <a href="{{ site.github.repository_url }}/actions"><img src="{{ site.github.repository_url }}/workflows/verify/badge.svg" /></a>

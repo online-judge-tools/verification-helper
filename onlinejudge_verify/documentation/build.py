@@ -7,36 +7,19 @@ from typing import *
 import onlinejudge_verify.documentation.front_matter
 import onlinejudge_verify.utils as utils
 import pkg_resources
+import yaml
 from onlinejudge_verify.documentation.type import *
 
 logger = getLogger(__name__)
 
-package = 'onlinejudge_verify_resources'
-_static_files: List[Dict[str, Any]] = [
-    {
-        'path': pathlib.Path('_config.yml'),
-        'data': pkg_resources.resource_string(package, '_config.yml'),
-    },
-    {
-        'path': pathlib.Path('_layouts/document.html'),
-        'data': pkg_resources.resource_string(package, '_layouts/document.html'),
-    },
-    {
-        'path': pathlib.Path('_layouts/toppage.html'),
-        'data': pkg_resources.resource_string(package, '_layouts/toppage.html'),
-    },
-    {
-        'path': pathlib.Path('assets/css/copy-button.css'),
-        'data': pkg_resources.resource_string(package, 'assets/css/copy-button.css'),
-    },
-    {
-        'path': pathlib.Path('assets/js/copy-button.js'),
-        'data': pkg_resources.resource_string(package, 'assets/js/copy-button.js'),
-    },
-    {
-        'path': pathlib.Path('Gemfile'),
-        'data': pkg_resources.resource_string(package, 'Gemfile'),
-    },
+_resource_package = 'onlinejudge_verify_resources'
+_config_yml_path: str = '_config.yml'
+_copied_static_file_paths: List[str] = [
+    '_layouts/document.html',
+    '_layouts/toppage.html',
+    'assets/css/copy-button.css',
+    'assets/js/copy-button.js',
+    'Gemfile',
 ]
 
 
@@ -191,12 +174,32 @@ def render_source_code_stats(*, source_code_stats: List[SourceCodeStat], basedir
     return data
 
 
-def list_static_files(*, site_render_config: SiteRenderConfig) -> Dict[pathlib.Path, bytes]:
+def load_static_files(*, site_render_config: SiteRenderConfig) -> Dict[pathlib.Path, bytes]:
     files: Dict[pathlib.Path, bytes] = {}
-    for asset in _static_files:
-        files[site_render_config.destination_dir / asset['path']] = asset['data']
+
+    # load default's and user's _config.yml and merge them
+    default_config_yml = yaml.safe_load(pkg_resources.resource_string(_resource_package, _config_yml_path))
+    assert default_config_yml is not None
+    config_yml = default_config_yml
+    if site_render_config.config_yml.exists():
+        try:
+            with open(site_render_config.config_yml, 'rb') as fh:
+                user_config_yml = yaml.safe_load(fh.read())
+            assert user_config_yml is not None
+        except Exception as e:
+            logger.exception('failed to parse .verify-helper/docs/_config.yml: %s', e)
+            user_config_yml = {}
+        config_yml.update(user_config_yml)
+    files[site_render_config.destination_dir / pathlib.Path(_config_yml_path)] = yaml.safe_dump(config_yml).encode()
+
+    # load files in onlinejudge_verify_resources/
+    for path in _copied_static_file_paths:
+        files[site_render_config.destination_dir / pathlib.Path(path)] = pkg_resources.resource_string(_resource_package, path)
+
+    # overwrite with docs/static
     for src in site_render_config.static_dir.glob('**/*'):
-        dst = site_render_config.destination_dir / src.relative_to(site_render_config.static_dir)
-        with open(src, 'rb') as fh:
-            files[dst] = fh.read()
+        if src.is_file():
+            dst = site_render_config.destination_dir / src.relative_to(site_render_config.static_dir)
+            with open(src, 'rb') as fh:
+                files[dst] = fh.read()
     return files

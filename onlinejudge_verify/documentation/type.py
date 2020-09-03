@@ -44,5 +44,6 @@ class PageRenderJob(NamedTuple):
 
 class SiteRenderConfig(NamedTuple):
     basedir: pathlib.Path  # an absolute path
+    config_yml: pathlib.Path  # an absolute path
     static_dir: pathlib.Path  # an absolute path
     destination_dir: pathlib.Path  # an absolute path

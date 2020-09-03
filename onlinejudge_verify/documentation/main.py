@@ -27,6 +27,7 @@ def load_render_config(*, basedir: pathlib.Path) -> SiteRenderConfig:
     return SiteRenderConfig(
         basedir=basedir,
         static_dir=pathlib.Path('.verify-helper', 'docs', 'static').resolve(),
+        config_yml=pathlib.Path('.verify-helper', 'docs', '_config.yml').resolve(),
         destination_dir=pathlib.Path('.verify-helper', 'markdown').resolve(),
     )
 
@@ -49,7 +50,7 @@ def main(*, jobs: int = 1) -> None:
     logger.info('render %s files...', len(render_jobs))
     rendered_pages = build.render_pages(page_render_jobs=render_jobs, source_code_stats=source_code_stats, site_render_config=config)
     logger.info('list static files...')
-    static_files = build.list_static_files(site_render_config=config)
+    static_files = build.load_static_files(site_render_config=config)
 
     # make install
     logger.info('writing %s files...', len(rendered_pages))

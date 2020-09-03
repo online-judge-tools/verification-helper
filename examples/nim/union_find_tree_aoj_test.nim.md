@@ -14,16 +14,19 @@ data:
     \  let com, x, y = nextInt()\n  if com == 0:\n    uft.unite_trees(x, y)\n  elif\
     \ com == 1:\n    echo if uft.is_same(x, y): 1 else: 0\n"
   dependsOn:
-  - examples/nim/headers.nim
-  - examples/nim/headers.nim
-  - examples/nim/hoge.nim
   - examples/nim/hoge.nim
   - examples/nim/union_find_tree.nim
+  - examples/nim/headers.nim
+  - examples/nim/hoge.nim
   - examples/nim/union_find_tree.nim
+  - examples/nim/headers.nim
   extendedDependsOn:
   - icon: ':warning:'
-    path: examples/nim/headers.nim
-    title: examples/nim/headers.nim
+    path: examples/nim/hoge.nim
+    title: examples/nim/hoge.nim
+  - icon: ':warning:'
+    path: examples/nim/union_find_tree.nim
+    title: examples/nim/union_find_tree.nim
   - icon: ':warning:'
     path: examples/nim/headers.nim
     title: examples/nim/headers.nim
@@ -31,14 +34,11 @@ data:
     path: examples/nim/hoge.nim
     title: examples/nim/hoge.nim
   - icon: ':warning:'
-    path: examples/nim/hoge.nim
-    title: examples/nim/hoge.nim
-  - icon: ':warning:'
     path: examples/nim/union_find_tree.nim
     title: examples/nim/union_find_tree.nim
   - icon: ':warning:'
-    path: examples/nim/union_find_tree.nim
-    title: examples/nim/union_find_tree.nim
+    path: examples/nim/headers.nim
+    title: examples/nim/headers.nim
   extendedRequiredBy: []
   extendedVerifiedWith: []
   isVerificationFile: true

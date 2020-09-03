@@ -16,23 +16,23 @@ data:
     \n    def is_same(self, x, y):\n        return self.find(x) == self.find(y)\n"
   dependsOn: []
   extendedDependsOn: []
-  extendedRequiredBy:
+  extendedRequiredBy: []
+  extendedVerifiedWith:
   - icon: ':heavy_check_mark:'
     path: examples/python/union_find_yosupo.test.py
     title: examples/python/union_find_yosupo.test.py
   - icon: ':heavy_check_mark:'
     path: examples/python/union_find_aoj.test.py
     title: examples/python/union_find_aoj.test.py
-  extendedVerifiedWith: []
   isVerificationFile: false
   path: examples/python/union_find.py
-  requiredBy:
+  requiredBy: []
+  timestamp: '2020-08-09 17:15:45+09:00'
+  verificationStatus: LIBRARY_ALL_AC
+  verificationStatusIcon: ':heavy_check_mark:'
+  verifiedWith:
   - examples/python/union_find_yosupo.test.py
   - examples/python/union_find_aoj.test.py
-  timestamp: '2020-08-09 17:15:45+09:00'
-  verificationStatus: LIBRARY_NO_TESTS
-  verificationStatusIcon: ':warning:'
-  verifiedWith: []
 documentation_of: examples/python/union_find.py
 layout: document
 redirect_from:

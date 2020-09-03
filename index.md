@@ -3,25 +3,25 @@ data:
   libraryCategories:
   - name: examples/awk
     pages:
-    - icon: ':warning:'
+    - icon: ':heavy_check_mark:'
       path: examples/awk/circle.awk
       title: examples/awk/circle.awk
   - name: examples/csharpscript
     pages:
-    - icon: ':warning:'
+    - icon: ':heavy_check_mark:'
       path: examples/csharpscript/helloworld.csx
       title: examples/csharpscript/helloworld.csx
-    - icon: ':warning:'
+    - icon: ':heavy_check_mark:'
       path: examples/csharpscript/segment_tree.csx
       title: examples/csharpscript/segment_tree.csx
   - name: examples/debug/a/b/c
     pages:
-    - icon: ':warning:'
+    - icon: ':heavy_check_mark:'
       path: examples/debug/a/b/c/foo.hpp
       title: examples/debug/a/b/c/foo.hpp
   - name: examples/debug/d/e/f/g
     pages:
-    - icon: ':warning:'
+    - icon: ':heavy_check_mark:'
       path: examples/debug/d/e/f/g/foo.hpp
       title: examples/debug/d/e/f/g/foo.hpp
   - name: examples/debug
@@ -32,45 +32,45 @@ data:
     - icon: ':warning:'
       path: examples/debug/not_verified.hpp
       title: examples/debug/not_verified.hpp
-    - icon: ':warning:'
+    - icon: ':heavy_check_mark:'
       path: examples/debug/relative_path.hpp
       title: examples/debug/relative_path.hpp
   - name: examples/debug/h/i/j/k/l
     pages:
-    - icon: ':warning:'
+    - icon: ':heavy_check_mark:'
       path: examples/debug/h/i/j/k/l/foo.hpp
       title: examples/debug/h/i/j/k/l/foo.hpp
   - name: examples
     pages:
-    - icon: ':warning:'
+    - icon: ':heavy_check_mark:'
       path: examples/macros.hpp
       title: examples/macros.hpp
-    - icon: ':warning:'
+    - icon: ':heavy_check_mark:'
       path: examples/monoids.hpp
       title: examples/monoids.hpp
-    - icon: ':warning:'
+    - icon: ':heavy_check_mark:'
       path: examples/segment_tree.hpp
       title: a Segment Tree (generalized with monoids)
-    - icon: ':warning:'
+    - icon: ':heavy_check_mark:'
       path: examples/union_find_tree.hpp
       title: a Union-Find Tree
   - name: examples/nim
     pages:
-    - icon: ':warning:'
+    - icon: ':heavy_check_mark:'
       path: examples/nim/headers.nim
       title: examples/nim/headers.nim
-    - icon: ':warning:'
+    - icon: ':heavy_check_mark:'
       path: examples/nim/hoge.nim
       title: examples/nim/hoge.nim
-    - icon: ':warning:'
+    - icon: ':heavy_check_mark:'
       path: examples/nim/union_find_tree.nim
       title: examples/nim/union_find_tree.nim
   - name: examples/python
     pages:
-    - icon: ':warning:'
+    - icon: ':heavy_check_mark:'
       path: examples/python/hello_world.py
       title: examples/python/hello_world.py
-    - icon: ':warning:'
+    - icon: ':heavy_check_mark:'
       path: examples/python/union_find.py
       title: examples/python/union_find.py
   - name: onlinejudge_bundle

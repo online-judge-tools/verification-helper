@@ -16,7 +16,7 @@ data:
   dependsOn:
   - examples/python/union_find.py
   extendedDependsOn:
-  - icon: ':warning:'
+  - icon: ':heavy_check_mark:'
     path: examples/python/union_find.py
     title: examples/python/union_find.py
   extendedRequiredBy: []

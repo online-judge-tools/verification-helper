@@ -16,7 +16,7 @@ data:
   dependsOn:
   - examples/csharpscript/segment_tree.csx
   extendedDependsOn:
-  - icon: ':warning:'
+  - icon: ':heavy_check_mark:'
     path: examples/csharpscript/segment_tree.csx
     title: examples/csharpscript/segment_tree.csx
   extendedRequiredBy: []

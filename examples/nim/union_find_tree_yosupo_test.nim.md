@@ -15,10 +15,10 @@ data:
   - examples/nim/headers.nim
   - examples/nim/headers.nim
   extendedDependsOn:
-  - icon: ':warning:'
+  - icon: ':heavy_check_mark:'
     path: examples/nim/headers.nim
     title: examples/nim/headers.nim
-  - icon: ':warning:'
+  - icon: ':heavy_check_mark:'
     path: examples/nim/headers.nim
     title: examples/nim/headers.nim
   extendedRequiredBy: []

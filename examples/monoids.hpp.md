@@ -21,23 +21,23 @@ data:
     \ mult(value_type a, value_type b) const { return std::min(a, b); }\n};\n"
   dependsOn: []
   extendedDependsOn: []
-  extendedRequiredBy:
+  extendedRequiredBy: []
+  extendedVerifiedWith:
   - icon: ':heavy_check_mark:'
     path: examples/segment_tree.range_minimum_query.test.cpp
     title: examples/segment_tree.range_minimum_query.test.cpp
   - icon: ':heavy_check_mark:'
     path: examples/segment_tree.range_sum_query.test.cpp
     title: examples/segment_tree.range_sum_query.test.cpp
-  extendedVerifiedWith: []
   isVerificationFile: false
   path: examples/monoids.hpp
-  requiredBy:
+  requiredBy: []
+  timestamp: '2019-11-29 11:28:05+09:00'
+  verificationStatus: LIBRARY_ALL_AC
+  verificationStatusIcon: ':heavy_check_mark:'
+  verifiedWith:
   - examples/segment_tree.range_minimum_query.test.cpp
   - examples/segment_tree.range_sum_query.test.cpp
-  timestamp: '2019-11-29 11:28:05+09:00'
-  verificationStatus: LIBRARY_NO_TESTS
-  verificationStatusIcon: ':warning:'
-  verifiedWith: []
 documentation_of: examples/monoids.hpp
 layout: document
 redirect_from:

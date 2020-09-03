@@ -18,7 +18,7 @@ data:
   dependsOn:
   - examples/awk/circle.awk
   extendedDependsOn:
-  - icon: ':warning:'
+  - icon: ':heavy_check_mark:'
     path: examples/awk/circle.awk
     title: examples/awk/circle.awk
   extendedRequiredBy: []

@@ -19,22 +19,22 @@ data:
   dependsOn:
   - examples/debug/relative_path.hpp
   extendedDependsOn:
-  - icon: ':warning:'
+  - icon: ':heavy_check_mark:'
     path: examples/debug/relative_path.hpp
     title: examples/debug/relative_path.hpp
-  extendedRequiredBy:
+  extendedRequiredBy: []
+  extendedVerifiedWith:
   - icon: ':heavy_check_mark:'
     path: examples/debug/relative_path.test.cpp
     title: examples/debug/relative_path.test.cpp
-  extendedVerifiedWith: []
   isVerificationFile: false
   path: examples/debug/h/i/j/k/l/foo.hpp
-  requiredBy:
-  - examples/debug/relative_path.test.cpp
+  requiredBy: []
   timestamp: '2020-03-19 16:25:51+09:00'
-  verificationStatus: LIBRARY_NO_TESTS
-  verificationStatusIcon: ':warning:'
-  verifiedWith: []
+  verificationStatus: LIBRARY_ALL_AC
+  verificationStatusIcon: ':heavy_check_mark:'
+  verifiedWith:
+  - examples/debug/relative_path.test.cpp
 documentation_of: examples/debug/h/i/j/k/l/foo.hpp
 layout: document
 redirect_from:

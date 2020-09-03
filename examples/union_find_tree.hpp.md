@@ -31,23 +31,23 @@ data:
     \ == find_root(j); }\n};\n\n#endif\n"
   dependsOn: []
   extendedDependsOn: []
-  extendedRequiredBy:
+  extendedRequiredBy: []
+  extendedVerifiedWith:
   - icon: ':heavy_check_mark:'
     path: examples/union_find_tree.aoj.test.cpp
     title: examples/union_find_tree.aoj.test.cpp
   - icon: ':heavy_check_mark:'
     path: examples/union_find_tree.yosupo.test.cpp
     title: examples/union_find_tree.yosupo.test.cpp
-  extendedVerifiedWith: []
   isVerificationFile: false
   path: examples/union_find_tree.hpp
-  requiredBy:
+  requiredBy: []
+  timestamp: '2019-12-16 05:18:36+09:00'
+  verificationStatus: LIBRARY_ALL_AC
+  verificationStatusIcon: ':heavy_check_mark:'
+  verifiedWith:
   - examples/union_find_tree.aoj.test.cpp
   - examples/union_find_tree.yosupo.test.cpp
-  timestamp: '2019-12-16 05:18:36+09:00'
-  verificationStatus: LIBRARY_NO_TESTS
-  verificationStatusIcon: ':warning:'
-  verifiedWith: []
 documentation_of: examples/union_find_tree.hpp
 layout: document
 redirect_from:

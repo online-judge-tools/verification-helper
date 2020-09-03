@@ -63,10 +63,10 @@ data:
   - examples/segment_tree.hpp
   - examples/macros.hpp
   extendedDependsOn:
-  - icon: ':warning:'
+  - icon: ':heavy_check_mark:'
     path: examples/segment_tree.hpp
     title: a Segment Tree (generalized with monoids)
-  - icon: ':warning:'
+  - icon: ':heavy_check_mark:'
     path: examples/macros.hpp
     title: examples/macros.hpp
   extendedRequiredBy: []

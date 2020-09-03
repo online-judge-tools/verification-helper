@@ -47,7 +47,8 @@ data:
     \ racc);\n    }\n};\n"
   dependsOn: []
   extendedDependsOn: []
-  extendedRequiredBy:
+  extendedRequiredBy: []
+  extendedVerifiedWith:
   - icon: ':heavy_check_mark:'
     path: examples/segment_tree.range_minimum_query.test.cpp
     title: examples/segment_tree.range_minimum_query.test.cpp
@@ -57,17 +58,16 @@ data:
   - icon: ':heavy_check_mark:'
     path: examples/segment_tree.range_sum_query.test.cpp
     title: examples/segment_tree.range_sum_query.test.cpp
-  extendedVerifiedWith: []
   isVerificationFile: false
   path: examples/segment_tree.hpp
-  requiredBy:
+  requiredBy: []
+  timestamp: '2020-02-28 16:00:02+09:00'
+  verificationStatus: LIBRARY_ALL_AC
+  verificationStatusIcon: ':heavy_check_mark:'
+  verifiedWith:
   - examples/segment_tree.range_minimum_query.test.cpp
   - examples/segment_tree.point_set_range_composite.test.cpp
   - examples/segment_tree.range_sum_query.test.cpp
-  timestamp: '2020-02-28 16:00:02+09:00'
-  verificationStatus: LIBRARY_NO_TESTS
-  verificationStatusIcon: ':warning:'
-  verifiedWith: []
 documentation_of: examples/segment_tree.hpp
 layout: document
 redirect_from:

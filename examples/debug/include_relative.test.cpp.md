@@ -18,7 +18,7 @@ data:
   dependsOn:
   - examples/macros.hpp
   extendedDependsOn:
-  - icon: ':warning:'
+  - icon: ':heavy_check_mark:'
     path: examples/macros.hpp
     title: examples/macros.hpp
   extendedRequiredBy: []

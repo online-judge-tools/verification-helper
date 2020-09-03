@@ -14,7 +14,7 @@ data:
   dependsOn:
   - examples/csharpscript/helloworld.csx
   extendedDependsOn:
-  - icon: ':warning:'
+  - icon: ':heavy_check_mark:'
     path: examples/csharpscript/helloworld.csx
     title: examples/csharpscript/helloworld.csx
   extendedRequiredBy: []

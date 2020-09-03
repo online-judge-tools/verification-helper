@@ -15,30 +15,30 @@ data:
   dependsOn: []
   extendedDependsOn: []
   extendedRequiredBy:
-  - icon: ':warning:'
+  - icon: ':heavy_check_mark:'
     path: examples/debug/a/b/c/foo.hpp
     title: examples/debug/a/b/c/foo.hpp
-  - icon: ':warning:'
+  - icon: ':heavy_check_mark:'
     path: examples/debug/d/e/f/g/foo.hpp
     title: examples/debug/d/e/f/g/foo.hpp
   - icon: ':heavy_check_mark:'
-    path: examples/debug/relative_path.test.cpp
-    title: examples/debug/relative_path.test.cpp
-  - icon: ':warning:'
     path: examples/debug/h/i/j/k/l/foo.hpp
     title: examples/debug/h/i/j/k/l/foo.hpp
-  extendedVerifiedWith: []
+  extendedVerifiedWith:
+  - icon: ':heavy_check_mark:'
+    path: examples/debug/relative_path.test.cpp
+    title: examples/debug/relative_path.test.cpp
   isVerificationFile: false
   path: examples/debug/relative_path.hpp
   requiredBy:
   - examples/debug/a/b/c/foo.hpp
   - examples/debug/d/e/f/g/foo.hpp
-  - examples/debug/relative_path.test.cpp
   - examples/debug/h/i/j/k/l/foo.hpp
   timestamp: '2020-03-19 16:25:51+09:00'
-  verificationStatus: LIBRARY_NO_TESTS
-  verificationStatusIcon: ':warning:'
-  verifiedWith: []
+  verificationStatus: LIBRARY_ALL_AC
+  verificationStatusIcon: ':heavy_check_mark:'
+  verifiedWith:
+  - examples/debug/relative_path.test.cpp
 documentation_of: examples/debug/relative_path.hpp
 layout: document
 redirect_from:

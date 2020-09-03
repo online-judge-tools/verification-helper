@@ -15,7 +15,8 @@ data:
     '
   dependsOn: []
   extendedDependsOn: []
-  extendedRequiredBy:
+  extendedRequiredBy: []
+  extendedVerifiedWith:
   - icon: ':heavy_check_mark:'
     path: examples/nim/union_find_tree_yosupo_test.nim
     title: examples/nim/union_find_tree_yosupo_test.nim
@@ -28,18 +29,17 @@ data:
   - icon: ':heavy_check_mark:'
     path: examples/nim/union_find_tree_aoj_test.nim
     title: examples/nim/union_find_tree_aoj_test.nim
-  extendedVerifiedWith: []
   isVerificationFile: false
   path: examples/nim/headers.nim
-  requiredBy:
-  - examples/nim/union_find_tree_yosupo_test.nim
-  - examples/nim/union_find_tree_yosupo_test.nim
-  - examples/nim/union_find_tree_aoj_test.nim
-  - examples/nim/union_find_tree_aoj_test.nim
+  requiredBy: []
   timestamp: '2020-05-04 17:35:34+09:00'
-  verificationStatus: LIBRARY_NO_TESTS
-  verificationStatusIcon: ':warning:'
-  verifiedWith: []
+  verificationStatus: LIBRARY_ALL_AC
+  verificationStatusIcon: ':heavy_check_mark:'
+  verifiedWith:
+  - examples/nim/union_find_tree_yosupo_test.nim
+  - examples/nim/union_find_tree_yosupo_test.nim
+  - examples/nim/union_find_tree_aoj_test.nim
+  - examples/nim/union_find_tree_aoj_test.nim
 documentation_of: examples/nim/headers.nim
 layout: document
 redirect_from:

@@ -38,10 +38,10 @@ data:
   - examples/union_find_tree.hpp
   - examples/macros.hpp
   extendedDependsOn:
-  - icon: ':warning:'
+  - icon: ':heavy_check_mark:'
     path: examples/union_find_tree.hpp
     title: a Union-Find Tree
-  - icon: ':warning:'
+  - icon: ':heavy_check_mark:'
     path: examples/macros.hpp
     title: examples/macros.hpp
   extendedRequiredBy: []

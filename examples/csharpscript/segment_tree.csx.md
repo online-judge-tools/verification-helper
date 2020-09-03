@@ -25,7 +25,8 @@ data:
     \ Merge(lRes, rRes);\n    }\n}\n"
   dependsOn: []
   extendedDependsOn: []
-  extendedRequiredBy:
+  extendedRequiredBy: []
+  extendedVerifiedWith:
   - icon: ':heavy_check_mark:'
     path: examples/csharpscript/segment_tree.point_set_range_composite.test.csx
     title: examples/csharpscript/segment_tree.point_set_range_composite.test.csx
@@ -35,17 +36,16 @@ data:
   - icon: ':heavy_check_mark:'
     path: examples/csharpscript/segment_tree.range_minimum_query.test.csx
     title: examples/csharpscript/segment_tree.range_minimum_query.test.csx
-  extendedVerifiedWith: []
   isVerificationFile: false
   path: examples/csharpscript/segment_tree.csx
-  requiredBy:
+  requiredBy: []
+  timestamp: '2020-02-16 04:32:52+09:00'
+  verificationStatus: LIBRARY_ALL_AC
+  verificationStatusIcon: ':heavy_check_mark:'
+  verifiedWith:
   - examples/csharpscript/segment_tree.point_set_range_composite.test.csx
   - examples/csharpscript/segment_tree.range_sum_query.test.csx
   - examples/csharpscript/segment_tree.range_minimum_query.test.csx
-  timestamp: '2020-02-16 04:32:52+09:00'
-  verificationStatus: LIBRARY_NO_TESTS
-  verificationStatusIcon: ':warning:'
-  verifiedWith: []
 documentation_of: examples/csharpscript/segment_tree.csx
 layout: document
 redirect_from:

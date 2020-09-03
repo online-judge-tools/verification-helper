@@ -30,7 +30,8 @@ data:
     '
   dependsOn: []
   extendedDependsOn: []
-  extendedRequiredBy:
+  extendedRequiredBy: []
+  extendedVerifiedWith:
   - icon: ':heavy_check_mark:'
     path: examples/segment_tree.range_minimum_query.test.cpp
     title: examples/segment_tree.range_minimum_query.test.cpp
@@ -49,20 +50,19 @@ data:
   - icon: ':heavy_check_mark:'
     path: examples/segment_tree.range_sum_query.test.cpp
     title: examples/segment_tree.range_sum_query.test.cpp
-  extendedVerifiedWith: []
   isVerificationFile: false
   path: examples/macros.hpp
-  requiredBy:
+  requiredBy: []
+  timestamp: '2019-11-29 11:28:05+09:00'
+  verificationStatus: LIBRARY_ALL_AC
+  verificationStatusIcon: ':heavy_check_mark:'
+  verifiedWith:
   - examples/segment_tree.range_minimum_query.test.cpp
   - examples/debug/include_relative.test.cpp
   - examples/union_find_tree.aoj.test.cpp
   - examples/union_find_tree.yosupo.test.cpp
   - examples/segment_tree.point_set_range_composite.test.cpp
   - examples/segment_tree.range_sum_query.test.cpp
-  timestamp: '2019-11-29 11:28:05+09:00'
-  verificationStatus: LIBRARY_NO_TESTS
-  verificationStatusIcon: ':warning:'
-  verifiedWith: []
 documentation_of: examples/macros.hpp
 layout: document
 redirect_from:

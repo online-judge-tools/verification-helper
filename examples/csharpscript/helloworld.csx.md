@@ -8,19 +8,19 @@ data:
   code: Console.WriteLine("Hello World");
   dependsOn: []
   extendedDependsOn: []
-  extendedRequiredBy:
+  extendedRequiredBy: []
+  extendedVerifiedWith:
   - icon: ':heavy_check_mark:'
     path: examples/csharpscript/helloworld.test.csx
     title: examples/csharpscript/helloworld.test.csx
-  extendedVerifiedWith: []
   isVerificationFile: false
   path: examples/csharpscript/helloworld.csx
-  requiredBy:
-  - examples/csharpscript/helloworld.test.csx
+  requiredBy: []
   timestamp: '2020-02-16 04:29:07+09:00'
-  verificationStatus: LIBRARY_NO_TESTS
-  verificationStatusIcon: ':warning:'
-  verifiedWith: []
+  verificationStatus: LIBRARY_ALL_AC
+  verificationStatusIcon: ':heavy_check_mark:'
+  verifiedWith:
+  - examples/csharpscript/helloworld.test.csx
 documentation_of: examples/csharpscript/helloworld.csx
 layout: document
 redirect_from:

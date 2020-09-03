@@ -14,19 +14,19 @@ data:
     \ {\n    return 2 * 3.1415926535 * r;\n}\n"
   dependsOn: []
   extendedDependsOn: []
-  extendedRequiredBy:
+  extendedRequiredBy: []
+  extendedVerifiedWith:
   - icon: ':heavy_check_mark:'
     path: examples/awk/circle.test.awk
     title: examples/awk/circle.test.awk
-  extendedVerifiedWith: []
   isVerificationFile: false
   path: examples/awk/circle.awk
-  requiredBy:
-  - examples/awk/circle.test.awk
+  requiredBy: []
   timestamp: '2020-02-28 16:01:42+09:00'
-  verificationStatus: LIBRARY_NO_TESTS
-  verificationStatusIcon: ':warning:'
-  verifiedWith: []
+  verificationStatus: LIBRARY_ALL_AC
+  verificationStatusIcon: ':heavy_check_mark:'
+  verifiedWith:
+  - examples/awk/circle.test.awk
 documentation_of: examples/awk/circle.awk
 layout: document
 redirect_from:

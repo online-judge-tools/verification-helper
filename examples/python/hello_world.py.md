@@ -8,19 +8,19 @@ data:
   code: print("Hello World")
   dependsOn: []
   extendedDependsOn: []
-  extendedRequiredBy:
+  extendedRequiredBy: []
+  extendedVerifiedWith:
   - icon: ':heavy_check_mark:'
     path: examples/python/hello_world.test.py
     title: examples/python/hello_world.test.py
-  extendedVerifiedWith: []
   isVerificationFile: false
   path: examples/python/hello_world.py
-  requiredBy:
-  - examples/python/hello_world.test.py
+  requiredBy: []
   timestamp: '2020-02-24 18:09:01+09:00'
-  verificationStatus: LIBRARY_NO_TESTS
-  verificationStatusIcon: ':warning:'
-  verifiedWith: []
+  verificationStatus: LIBRARY_ALL_AC
+  verificationStatusIcon: ':heavy_check_mark:'
+  verifiedWith:
+  - examples/python/hello_world.test.py
 documentation_of: examples/python/hello_world.py
 layout: document
 redirect_from:

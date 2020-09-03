@@ -4,7 +4,7 @@
     <h3>{{ category.name }}</h3>
     <ul>
         {% for item in category.pages %}
-        <li><a href="{{ site.github.url }}/{{ item.path }}">{{ item.icon }} {{ item.title }}
+        <li><a href="{{ item.path | absolute_url }}">{{ item.icon }} {{ item.title }}
             {% if item.title != item.path %}<small>({{ item.path }})</small>{% endif %}
         </a></li>
         {% endfor %}
@@ -17,7 +17,7 @@
     <h3>{{ category.name }}</h3>
     <ul>
         {% for item in category.pages %}
-        <li><a href="{{ site.github.url }}/{{ item.path }}">{{ item.icon }} {{ item.title }}
+        <li><a href="{{ item.path | absolute_url }}">{{ item.icon }} {{ item.title }}
             {% if item.title != item.path %}<small>({{ item.path }})</small>{% endif %}
         </a></li>
         {% endfor %}

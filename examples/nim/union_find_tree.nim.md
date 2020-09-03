@@ -25,29 +25,29 @@ data:
   - examples/nim/hoge.nim
   - examples/nim/hoge.nim
   extendedDependsOn:
-  - icon: ':warning:'
+  - icon: ':heavy_check_mark:'
     path: examples/nim/hoge.nim
     title: examples/nim/hoge.nim
-  - icon: ':warning:'
+  - icon: ':heavy_check_mark:'
     path: examples/nim/hoge.nim
     title: examples/nim/hoge.nim
-  extendedRequiredBy:
+  extendedRequiredBy: []
+  extendedVerifiedWith:
   - icon: ':heavy_check_mark:'
     path: examples/nim/union_find_tree_aoj_test.nim
     title: examples/nim/union_find_tree_aoj_test.nim
   - icon: ':heavy_check_mark:'
     path: examples/nim/union_find_tree_aoj_test.nim
     title: examples/nim/union_find_tree_aoj_test.nim
-  extendedVerifiedWith: []
   isVerificationFile: false
   path: examples/nim/union_find_tree.nim
-  requiredBy:
-  - examples/nim/union_find_tree_aoj_test.nim
-  - examples/nim/union_find_tree_aoj_test.nim
+  requiredBy: []
   timestamp: '2020-05-05 19:43:22+09:00'
-  verificationStatus: LIBRARY_NO_TESTS
-  verificationStatusIcon: ':warning:'
-  verifiedWith: []
+  verificationStatus: LIBRARY_ALL_AC
+  verificationStatusIcon: ':heavy_check_mark:'
+  verifiedWith:
+  - examples/nim/union_find_tree_aoj_test.nim
+  - examples/nim/union_find_tree_aoj_test.nim
 documentation_of: examples/nim/union_find_tree.nim
 layout: document
 redirect_from:

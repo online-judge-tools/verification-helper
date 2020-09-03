@@ -14,7 +14,7 @@ data:
   dependsOn:
   - examples/python/hello_world.py
   extendedDependsOn:
-  - icon: ':warning:'
+  - icon: ':heavy_check_mark:'
     path: examples/python/hello_world.py
     title: examples/python/hello_world.py
   extendedRequiredBy: []

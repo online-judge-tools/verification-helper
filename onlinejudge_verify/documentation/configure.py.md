@@ -39,14 +39,14 @@ data:
     \            absolute_dst = (basedir / dst).resolve()\n            relative_dst\
     \ = absolute_dst.relative_to(basedir)\n            if absolute_src == absolute_dst:\n\
     \                continue\n\n            depends_on[absolute_src].append(relative_dst)\n\
-    \            if utils.is_verification_file(absolute_dst, basedir=basedir):\n \
-    \               verified_with[absolute_dst].append(relative_src)\n           \
-    \ else:\n                required_by[absolute_dst].append(relative_src)\n\n  \
-    \  return depends_on, required_by, verified_with\n\n\ndef _build_verification_status(paths:\
-    \ List[pathlib.Path], *, depends_on: Dict[pathlib.Path, List[pathlib.Path]], basedir:\
-    \ pathlib.Path, marker: VerificationMarker) -> Dict[pathlib.Path, VerificationStatus]:\n\
-    \    \"\"\"\n    :returns: mapping from absolute paths to verification status\n\
-    \    \"\"\"\n    verification_status: Dict[pathlib.Path, VerificationStatus] =\
+    \            if utils.is_verification_file(src, basedir=basedir):\n          \
+    \      verified_with[absolute_dst].append(relative_src)\n            else:\n \
+    \               required_by[absolute_dst].append(relative_src)\n\n    return depends_on,\
+    \ required_by, verified_with\n\n\ndef _build_verification_status(paths: List[pathlib.Path],\
+    \ *, verified_with: Dict[pathlib.Path, List[pathlib.Path]], basedir: pathlib.Path,\
+    \ marker: VerificationMarker) -> Dict[pathlib.Path, VerificationStatus]:\n   \
+    \ \"\"\"\n    :returns: mapping from absolute paths to verification status\n \
+    \   \"\"\"\n    verification_status: Dict[pathlib.Path, VerificationStatus] =\
     \ {}\n\n    # list status for verification files\n    for path in paths:\n   \
     \     absolute_path = (basedir / path).resolve()\n        if utils.is_verification_file(path,\
     \ basedir=basedir):\n            if marker.is_verified(path):\n              \
@@ -56,8 +56,7 @@ data:
     \ = status\n\n    # list status for library files\n    for path in paths:\n  \
     \      absolute_path = (basedir / path).resolve()\n        if not utils.is_verification_file(path,\
     \ basedir=basedir):\n            status_list = []\n            for verification_path\
-    \ in depends_on[absolute_path]:\n                if utils.is_verification_file(verification_path,\
-    \ basedir=basedir):\n                    status_list.append(verification_status[(basedir\
+    \ in verified_with[absolute_path]:\n                status_list.append(verification_status[(basedir\
     \ / verification_path).resolve()])\n            if not status_list:\n        \
     \        status = VerificationStatus.LIBRARY_NO_TESTS\n            elif status_list.count(VerificationStatus.TEST_ACCEPTED)\
     \ == len(status_list):\n                status = VerificationStatus.LIBRARY_ALL_AC\n\
@@ -86,7 +85,7 @@ data:
     \ marker: VerificationMarker, basedir: pathlib.Path) -> List[SourceCodeStat]:\n\
     \    source_code_paths = _find_source_code_paths(basedir=basedir)\n    depends_on,\
     \ required_by, verified_with = _build_dependency_graph(source_code_paths, basedir=basedir)\n\
-    \    verification_status = _build_verification_status(source_code_paths, depends_on=depends_on,\
+    \    verification_status = _build_verification_status(source_code_paths, verified_with=verified_with,\
     \ basedir=basedir, marker=marker)\n    source_code_stats: List[SourceCodeStat]\
     \ = []\n    for path in source_code_paths:\n        stat = _get_source_code_stat(\n\
     \            path,\n            depends_on=depends_on,\n            required_by=required_by,\n\

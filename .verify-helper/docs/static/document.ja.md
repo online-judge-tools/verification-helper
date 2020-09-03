@@ -91,16 +91,24 @@ list_dependencies = "sed 's/^@include \"\\(.*\\)\"$/\\1/ ; t ; d' {path}"
 
 ## ドキュメント生成
 
-### Doxygen 風マークアップで利用可能なタグ
+### Markdown の埋め込み
 
-|タグ名|説明|備考|
-|---|---|---|
-| `@title` | タイトルとして使用されます。 | `@title` が指定されていないとき、`@brief` が存在するならば、最初に登場する `@brief` 要素がタイトルとして使用されます。`@brief` も存在しないならば、ファイル名がタイトルになります。 |
-| `@category` | そのライブラリが属するカテゴリとして使用されます。 | 指定されていない場合、ディレクトリ名がカテゴリになります。 |
-| `@brief` | ライブラリの説明文として使用されます。 | `@title` が指定されていないときは、最初に登場する `@brief` は説明文ではなくタイトルとして使用されます。 |
-| `@see`, `@sa` | このタグの直後に記載された文字列に対してリンクを張ります。参考にした Web ページなどがあるときに活用するとよいでしょう。 | 例: `@see https://example.com/` |
-| `@docs` | 説明文が長く `@brief` タグで対応することが難しい場合、説明文が書かれた Markdown ファイルへのパスを記載すると、説明文がドキュメントに反映されます。 | 例: `@docs path/to/markdown.md` |
-| `@ignore` | ドキュメント生成の対象から除外します。 |  |
+リポジトリ内に Markdown ファイルを置いておくと自動で認識されます。
+[Front Matter](http://jekyllrb-ja.github.io/docs/front-matter/) 形式で `documentation_of` という項目にファイルを指定しておくと、指定したファイルについての生成されたドキュメント中に、Markdown ファイルの中身が挿入されます。
+
+たとえば、`path/to/segment_tree.hpp` というファイルに説明を Markdown で追加したいときは `for/bar.md` などに次のように書きます。
+[Front Matter](https://jekyllrb.com/docs/front-matter/)
+
+```
+---
+title: Segment Tree
+documentation_of: path/to/segment_tree.hpp
+---
+
+## 説明
+
+このファイルでは、……
+```
 
 ### ローカル実行
 

@@ -14,7 +14,7 @@ from typing import *
 from onlinejudge_verify.config import get_config
 from onlinejudge_verify.languages.cplusplus_bundle import Bundler
 from onlinejudge_verify.languages.models import Language, LanguageEnvironment
-from onlinejudge_verify.languages.special_comments import list_special_comments
+from onlinejudge_verify.languages.special_comments import list_doxygen_annotations, list_special_comments
 
 logger = getLogger(__name__)
 
@@ -139,16 +139,17 @@ class CPlusPlusLanguage(Language):
         return envs
 
     def list_attributes(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Dict[str, str]:
+        attributes: Dict[str, str] = {}
+        attributes.update(list_doxygen_annotations(path.resolve()))
+
         special_comments = list_special_comments(path.resolve())
         if special_comments:
-            return special_comments
+            attributes.update(special_comments)
 
         else:
             # use old-style if special comments not found
             # #define PROBLEM "https://..." の形式は複数 environments との相性がよくない。あと遅い
-            attributes: Dict[str, str] = {
-                _NOT_SPECIAL_COMMENTS: '',
-            }
+            attributes[_NOT_SPECIAL_COMMENTS] = ''
             all_ignored = True
             for env in self._list_environments():
                 joined_CXXFLAGS = ' '.join(map(shlex.quote, [*env.CXXFLAGS, '-I', str(basedir)]))
@@ -173,7 +174,8 @@ class CPlusPlusLanguage(Language):
                         attributes[_IGNORE] = ''
             if all_ignored:
                 attributes[_IGNORE] = ''
-            return attributes
+
+        return attributes
 
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
         env = self._list_environments()[0]

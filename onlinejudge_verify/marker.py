@@ -83,7 +83,7 @@ class VerificationMarker(object):
         # 古いものを読み込む
         self.old_timestamps = {}
         if self.json_path.exists():
-            with open(str(self.json_path)) as fh:
+            with open(self.json_path) as fh:
                 data = json.load(fh)
             for path, timestamp in data.items():
                 if path == '~' and timestamp == 'dummy':  # for backward compatibility
@@ -118,7 +118,7 @@ class VerificationMarker(object):
         for path, timestamp in self.new_timestamps.items():
             if self.verification_statuses[path] == 'verified':
                 data[str(path)] = timestamp.strftime('%Y-%m-%d %H:%M:%S %z')
-        with open(str(self.json_path), 'w') as fh:
+        with open(self.json_path, 'w') as fh:
             json.dump(data, fh, sort_keys=True, indent=0)
 
     def __enter__(self) -> 'VerificationMarker':

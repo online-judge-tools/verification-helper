@@ -20,7 +20,7 @@ setup(
     ],
     packages=find_packages(exclude=('tests', 'docs')),
     package_data={
-        'onlinejudge_verify_resources': ['*', 'assets/*', 'assets/css/*', 'assets/js/*'],
+        'onlinejudge_verify_resources': ['*', '_layouts/*', 'assets/*', 'assets/css/*', 'assets/js/*'],
     },
     entry_points={
         'console_scripts': [

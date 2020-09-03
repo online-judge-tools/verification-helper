@@ -1,0 +1,36 @@
+---
+data:
+  attributes: {}
+  bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/documentation/build.py\"\
+    , line 58, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
+    \ basedir=basedir).decode()\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/other.py\"\
+    , line 64, in bundle\n    return subprocess.check_output(shlex.split(command))\n\
+    \  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/subprocess.py\"\
+    , line 411, in check_output\n    return run(*popenargs, stdout=PIPE, timeout=timeout,\
+    \ check=True,\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/subprocess.py\"\
+    , line 512, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError:\
+    \ Command '['false']' returned non-zero exit status 1.\n"
+  code: "function get_area(r) {\n    return 3.1415926535 * r * r;\n}\n\nfunction get_circumference(r)\
+    \ {\n    return 2 * 3.1415926535 * r;\n}\n"
+  dependsOn: []
+  extendedDependsOn: []
+  extendedRequiredBy:
+  - icon: ':heavy_check_mark:'
+    path: examples/awk/circle.test.awk
+    title: examples/awk/circle.test.awk
+  extendedVerifiedWith: []
+  isVerificationFile: false
+  path: examples/awk/circle.awk
+  requiredBy:
+  - examples/awk/circle.test.awk
+  timestamp: '2020-02-28 16:01:42+09:00'
+  verificationStatus: LIBRARY_NO_TESTS
+  verificationStatusIcon: ':warning:'
+  verifiedWith: []
+documentation_of: examples/awk/circle.awk
+layout: document
+redirect_from:
+- /library/examples/awk/circle.awk
+- /library/examples/awk/circle.awk.html
+title: examples/awk/circle.awk
+---

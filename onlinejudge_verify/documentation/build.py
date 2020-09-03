@@ -17,6 +17,12 @@ _config_yml_path: str = '_config.yml'
 _copied_static_file_paths: List[str] = [
     '_layouts/document.html',
     '_layouts/toppage.html',
+    '_includes/mathjax.html',
+    '_includes/document_header.html',
+    '_includes/document_body.html',
+    '_includes/document_footer.html',
+    '_includes/toppage_header.html',
+    '_includes/toppage_body.html',
     'assets/css/copy-button.css',
     'assets/js/copy-button.js',
     'Gemfile',

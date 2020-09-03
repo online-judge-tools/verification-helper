@@ -91,7 +91,7 @@ list_dependencies = "sed 's/^@include \"\\(.*\\)\"$/\\1/ ; t ; d' {path}"
 
 ## ドキュメント生成
 
-### Markdown の埋め込み
+### ソースコードのページへの Markdown の埋め込み
 
 リポジトリ内に Markdown ファイルを置いておくと自動で認識されます。
 [Front Matter](http://jekyllrb-ja.github.io/docs/front-matter/) 形式で `documentation_of` という項目にファイルを指定しておくと、指定したファイルについての生成されたドキュメント中に、Markdown ファイルの中身が挿入されます。
@@ -108,6 +108,18 @@ documentation_of: path/to/segment_tree.hpp
 ## 説明
 
 このファイルでは、……
+```
+
+### トップページへの Markdown の埋め込み
+
+リポジトリのルートに `index.md` というファイルを作って、次のように書きます。
+
+```
+---
+layout: toppage
+---
+
+ここに書いた文章がドキュメントのトップページへ追加されます。
 ```
 
 ### ローカル実行

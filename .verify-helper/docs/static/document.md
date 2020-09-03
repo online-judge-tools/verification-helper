@@ -90,7 +90,7 @@ Other judging platforms do not currently publish the test cases in usable forms,
 
 ## Generating Documentation
 
-### Embedding Markdown
+### Embedding Markdown to pages for source codes
 
 Markdown files in the repository are automatically recognized.
 When the `documentation_of` field in [Front Matter](http://jekyllrb-ja.github.io/docs/front-matter/) specifies a source code file, the content of Markdown file is inserted into the generated document page of specified code.
@@ -106,6 +106,19 @@ documentation_of: path/to/segment_tree.hpp
 ## Description
 
 In this file, ...
+```
+
+
+### Embedding Markdown to the top page
+
+Please make the file `index.md` at the root of the repository, and write as the following.
+
+```
+---
+layout: toppage
+---
+
+The text written here is inserted into the top page of the documents.
 ```
 
 

@@ -67,7 +67,13 @@ def build_dependency_graph(paths: List[pathlib.Path], *, basedir: pathlib.Path) 
         language = onlinejudge_verify.languages.get(src)
         assert language is not None
 
-        for dst in language.list_dependencies(src, basedir=basedir):
+        try:
+            dependencies = language.list_dependencies(src, basedir=basedir)
+        except Exception as e:
+            logger.exception('failed to list dependencies of %s: %s', str(relative_src), e)
+            continue
+
+        for dst in dependencies:
             absolute_dst = (basedir / dst).resolve()
             relative_dst = absolute_dst.relative_to(basedir)
             if absolute_src == absolute_dst:
@@ -140,7 +146,11 @@ def get_source_code_stat(
 
     is_verification_file = language.is_verification_file(path, basedir=basedir)
     timestamp = marker.get_current_timestamp(path)
-    attributes = language.list_attributes(path, basedir=basedir)
+    try:
+        attributes = language.list_attributes(path, basedir=basedir)
+    except Exception as e:
+        logger.exception('failed to list attributes of %s: %s', str(relative_path), e)
+        attributes = {}
 
     return SourceCodeStat(
         path=relative_path,

@@ -155,6 +155,11 @@ data:
     - icon: ':warning:'
       path: onlinejudge_verify_resources/__init__.py
       title: onlinejudge_verify_resources/__init__.py
+  - name: onlinejudge_verify_resources/_includes
+    pages:
+    - icon: ':warning:'
+      path: onlinejudge_verify_resources/_includes/__init__.py
+      title: onlinejudge_verify_resources/_includes/__init__.py
   - name: onlinejudge_verify_resources/_layouts
     pages:
     - icon: ':warning:'

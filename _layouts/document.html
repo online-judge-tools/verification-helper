@@ -2,20 +2,8 @@
 layout: default
 ---
 
-<script type="text/javascript" async="" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    TeX: { equationNumbers: { autoNumber: "AMS" }},
-    tex2jax: {
-      inlineMath: [ ['$','$'] ],
-      processEscapes: true
-    },
-    "HTML-CSS": { matchFontHeight: false },
-    displayAlign: "left",
-    displayIndent: "2em"
-  });
-</script>
+{% include mathjax.html %}
+
 
 {% if site.theme == "jekyll-theme-minimal" %}
 <style type="text/css">
@@ -34,73 +22,13 @@ layout: default
 {% endif %}
 
 
-<h1>{{ page.data.verificationStatusIcon }} {{ page.title }}
-    {% if page.title != page.data.path %}<br><small>({{ page.data.path }})</small>{% endif %}
-</h1>
-
-<ul>
-    <li><a href="{{ site.github.repository_url }}/blob/master/{{ page.data.path }}">View this file on GitHub</a></li>
-    <li>Last update: {{ page.data.timestamp }}</li>
-    {% if page.data.attributes.PROBLEM %}
-    <li>problem: <a href="{{ page.data.attributes.PROBLEM }}">{{ page.data.attributes.PROBLEM }}</a></li>
-    {% endif %}
-</ul>
+{% include document_header.html %}
 
 
 {{ content }}
 
 
-{% if page.data.dependsOn.size != 0 %}
-    <h2>Depends on</h2>
-    <ul>
-    {% for item in page.data.extendedDependsOn %}
-        <li><a href="/{{ item.path }}">{{ item.icon }} {{ item.title }}
-            {% if item.title != item.path %}<small>({{ item.path }})</small>{% endif %}
-        </a></li>
-    {% endfor %}
-    </ul>
-{% endif %}
+{% include document_body.html %}
 
 
-{% if page.data.requiredBy.size != 0 %}
-    <h2>Required by</h2>
-    <ul>
-    {% for item in page.data.extendedRequiredBy %}
-        <li><a href="/{{ item.path }}">{{ item.icon }} {{ item.title }}
-            {% if item.title != item.path %}<small>({{ item.path }})</small>{% endif %}
-        </a></li>
-    {% endfor %}
-    </ul>
-{% endif %}
-
-
-{% if page.data.verifiedWith.size != 0 %}
-    <h2>Verified with</h2>
-    <ul>
-    {% for item in page.data.extendedVerifiedWith %}
-        <li><a href="/{{ item.path }}">{{ item.icon }} {{ item.title }}
-            {% if item.title != item.path %}<small>({{ item.path }})</small>{% endif %}
-        </a></li>
-    {% endfor %}
-    </ul>
-{% endif %}
-
-
-<h2>Code</h2>
-
-<script defer type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/jquery-balloon-js@1.1.2/jquery.balloon.min.js" integrity="sha256-ZEYs9VrgAeNuPvs15E39OsyOJaIkXEEt10fzxJ20+2I=" crossorigin="anonymous"></script>
-<script defer type="text/javascript" src="../../assets/js/copy-button.js"></script>
-<link rel="stylesheet" href="../../assets/css/copy-button.css">
-
-<span><a id="unbundled"></a></span>
-{% highlight cpp %}
-{{ page.data.code }}
-{% endhighlight %}
-
-<span><a id="bundled"></a></span>
-{% highlight cpp %}
-{{ page.data.bundledCode }}
-{% endhighlight %}
-
-<a href="/">Back to top page</a>
+{% include document_footer.html %}

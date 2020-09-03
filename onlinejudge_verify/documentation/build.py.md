@@ -2,7 +2,7 @@
 data:
   attributes: {}
   bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/documentation/build.py\"\
-    , line 58, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
+    , line 64, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
     \ basedir=basedir).decode()\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/python.py\"\
     , line 84, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "import copy\nimport pathlib\nimport traceback\nfrom logging import getLogger\n\
@@ -11,11 +11,14 @@ data:
     from onlinejudge_verify.documentation.type import *\n\nlogger = getLogger(__name__)\n\
     \n_resource_package = 'onlinejudge_verify_resources'\n_config_yml_path: str =\
     \ '_config.yml'\n_copied_static_file_paths: List[str] = [\n    '_layouts/document.html',\n\
-    \    '_layouts/toppage.html',\n    'assets/css/copy-button.css',\n    'assets/js/copy-button.js',\n\
-    \    'Gemfile',\n]\n\n\ndef _build_page_title_dict(*, page_render_jobs: List[PageRenderJob])\
-    \ -> Dict[pathlib.Path, str]:\n    page_title_dict: Dict[pathlib.Path, str] =\
-    \ {}\n    for job in page_render_jobs:\n        assert job.path.suffix == '.md'\n\
-    \        title = job.front_matter.get(FrontMatterItem.title.value)\n        if\
+    \    '_layouts/toppage.html',\n    '_includes/mathjax.html',\n    '_includes/document_header.html',\n\
+    \    '_includes/document_body.html',\n    '_includes/document_footer.html',\n\
+    \    '_includes/toppage_header.html',\n    '_includes/toppage_body.html',\n  \
+    \  'assets/css/copy-button.css',\n    'assets/js/copy-button.js',\n    'Gemfile',\n\
+    ]\n\n\ndef _build_page_title_dict(*, page_render_jobs: List[PageRenderJob]) ->\
+    \ Dict[pathlib.Path, str]:\n    page_title_dict: Dict[pathlib.Path, str] = {}\n\
+    \    for job in page_render_jobs:\n        assert job.path.suffix == '.md'\n \
+    \       title = job.front_matter.get(FrontMatterItem.title.value)\n        if\
     \ title is None:\n            title = str(job.path.parent / job.path.stem)\n \
     \       page_title_dict[job.path] = title\n        page_title_dict[job.path.parent\
     \ / job.path.stem] = title\n    return page_title_dict\n\n\ndef _get_verification_status_icon(verification_status:\

@@ -1,0 +1,11 @@
+<h1>{{ page.data.verificationStatusIcon }} {{ page.title }}
+    {% if page.title != page.data.path %}<br><small>({{ page.data.path }})</small>{% endif %}
+</h1>
+
+<ul>
+    <li><a href="{{ site.github.repository_url }}/blob/master/{{ page.data.path }}">View this file on GitHub</a></li>
+    <li>Last update: {{ page.data.timestamp }}</li>
+    {% if page.data.attributes.PROBLEM %}
+    <li>problem: <a href="{{ page.data.attributes.PROBLEM }}">{{ page.data.attributes.PROBLEM }}</a></li>
+    {% endif %}
+</ul>

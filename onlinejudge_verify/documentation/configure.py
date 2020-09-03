@@ -77,7 +77,7 @@ def _build_dependency_graph(paths: List[pathlib.Path], *, basedir: pathlib.Path)
                 continue
 
             depends_on[absolute_src].append(relative_dst)
-            if utils.is_verification_file(absolute_dst, basedir=basedir):
+            if utils.is_verification_file(src, basedir=basedir):
                 verified_with[absolute_dst].append(relative_src)
             else:
                 required_by[absolute_dst].append(relative_src)
@@ -85,7 +85,7 @@ def _build_dependency_graph(paths: List[pathlib.Path], *, basedir: pathlib.Path)
     return depends_on, required_by, verified_with
 
 
-def _build_verification_status(paths: List[pathlib.Path], *, depends_on: Dict[pathlib.Path, List[pathlib.Path]], basedir: pathlib.Path, marker: VerificationMarker) -> Dict[pathlib.Path, VerificationStatus]:
+def _build_verification_status(paths: List[pathlib.Path], *, verified_with: Dict[pathlib.Path, List[pathlib.Path]], basedir: pathlib.Path, marker: VerificationMarker) -> Dict[pathlib.Path, VerificationStatus]:
     """
     :returns: mapping from absolute paths to verification status
     """
@@ -108,9 +108,8 @@ def _build_verification_status(paths: List[pathlib.Path], *, depends_on: Dict[pa
         absolute_path = (basedir / path).resolve()
         if not utils.is_verification_file(path, basedir=basedir):
             status_list = []
-            for verification_path in depends_on[absolute_path]:
-                if utils.is_verification_file(verification_path, basedir=basedir):
-                    status_list.append(verification_status[(basedir / verification_path).resolve()])
+            for verification_path in verified_with[absolute_path]:
+                status_list.append(verification_status[(basedir / verification_path).resolve()])
             if not status_list:
                 status = VerificationStatus.LIBRARY_NO_TESTS
             elif status_list.count(VerificationStatus.TEST_ACCEPTED) == len(status_list):
@@ -164,7 +163,7 @@ def _get_source_code_stat(
 def generate_source_code_stats(*, marker: VerificationMarker, basedir: pathlib.Path) -> List[SourceCodeStat]:
     source_code_paths = _find_source_code_paths(basedir=basedir)
     depends_on, required_by, verified_with = _build_dependency_graph(source_code_paths, basedir=basedir)
-    verification_status = _build_verification_status(source_code_paths, depends_on=depends_on, basedir=basedir, marker=marker)
+    verification_status = _build_verification_status(source_code_paths, verified_with=verified_with, basedir=basedir, marker=marker)
     source_code_stats: List[SourceCodeStat] = []
     for path in source_code_paths:
         stat = _get_source_code_stat(

@@ -55,8 +55,8 @@ def _get_verification_status_icon(verification_status: VerificationStatus) -> st
 
 
 def _render_source_code_stat(stat: SourceCodeStat, *, basedir: pathlib.Path) -> Dict[str, Any]:
-    with open(basedir / stat.path) as fh:
-        code = fh.read()
+    with open(basedir / stat.path, 'rb') as fh:
+        code = fh.read().decode()
     try:
         language = onlinejudge_verify.languages.get(stat.path)
         assert language is not None

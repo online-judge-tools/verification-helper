@@ -38,8 +38,8 @@ class PythonLanguageEnvironment(LanguageEnvironment):
                 env["PYTHONPATH"] = basedir  # set `PYTHONPATH` to import files relative to the root directory
             os.execve(sys.executable, [sys.executable, path], env=env)  # use `os.execve` to avoid making an unnecessary parent process
         """)
-        with open(str(tempdir / 'compiled.py'), 'w') as fh:
-            fh.write(code)
+        with open(tempdir / 'compiled.py', 'wb') as fh:
+            fh.write(code.encode())
 
     def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
         return [sys.executable, str(tempdir / 'compiled.py')]

@@ -14,8 +14,8 @@ def list_special_comments(path: pathlib.Path) -> Dict[str, str]:
     pattern = re.compile(r'\bverify-helper:\s*([0-9A-Z_]+)(?:\s(.*))?$')
     failure_pattern = re.compile(r'\bverify-helper:')
     attributes = {}
-    with open(path) as fh:
-        for line in fh.readlines():
+    with open(path, 'rb') as fh:
+        for line in fh.read().decode().splitlines():
             matched = pattern.search(line)
             if matched:
                 key = matched.group(1)
@@ -30,8 +30,8 @@ def list_special_comments(path: pathlib.Path) -> Dict[str, str]:
 def list_doxygen_annotations(path: pathlib.Path) -> Dict[str, str]:
     pattern = re.compile(r'@(title|category|brief|docs|see|sa|ignore) (.*)')
     attributes = {}
-    with open(path) as fh:
-        for line in fh.readlines():
+    with open(path, 'rb') as fh:
+        for line in fh.read().decode().splitlines():
             matched = pattern.search(line)
             if matched:
                 key = matched.group(1)

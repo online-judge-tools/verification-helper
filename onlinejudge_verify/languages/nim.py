@@ -31,8 +31,8 @@ class NimLanguageEnvironment(LanguageEnvironment):
 @functools.lru_cache(maxsize=None)
 def _list_direct_dependencies(path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
     items: List[str] = []
-    with (basedir / path).open() as fh:
-        for line in fh:
+    with open(basedir / path, 'rb') as fh:
+        for line in fh.read().decode().splitlines():
             line = line.strip()
             if line.startswith('include'):
                 items += line[7:].strip().split(',')

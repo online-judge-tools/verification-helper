@@ -28,7 +28,7 @@ def _find_matched_file_paths(pred: Callable[[pathlib.Path], bool], *, basedir: p
     return found
 
 
-def find_source_code_paths(*, basedir: pathlib.Path) -> List[pathlib.Path]:
+def _find_source_code_paths(*, basedir: pathlib.Path) -> List[pathlib.Path]:
     def pred(path: pathlib.Path) -> bool:
         return onlinejudge_verify.languages.get(path) is not None
 
@@ -36,16 +36,13 @@ def find_source_code_paths(*, basedir: pathlib.Path) -> List[pathlib.Path]:
 
 
 def find_markdown_paths(*, basedir: pathlib.Path) -> List[pathlib.Path]:
-    # This list is the same to GitHub. see https://github.com/github/markup/blob/b865add2e053f8cea3d7f4d9dcba001bdfd78994/lib/github/markups.rb#L1
-    markdown_suffixes = ('.md', '.mkd', '.mkdn', '.mdown', '.markdown')
-
     def pred(path: pathlib.Path) -> bool:
-        return path.suffix in markdown_suffixes
+        return path.suffix == '.md'
 
     return _find_matched_file_paths(pred, basedir=basedir)
 
 
-def build_dependency_graph(paths: List[pathlib.Path], *, basedir: pathlib.Path) -> Tuple[Dict[pathlib.Path, List[pathlib.Path]], Dict[pathlib.Path, List[pathlib.Path]], Dict[pathlib.Path, List[pathlib.Path]]]:
+def _build_dependency_graph(paths: List[pathlib.Path], *, basedir: pathlib.Path) -> Tuple[Dict[pathlib.Path, List[pathlib.Path]], Dict[pathlib.Path, List[pathlib.Path]], Dict[pathlib.Path, List[pathlib.Path]]]:
     """
     :returns: graphs from absolute paths to relative paths
     """
@@ -88,7 +85,7 @@ def build_dependency_graph(paths: List[pathlib.Path], *, basedir: pathlib.Path) 
     return depends_on, required_by, verified_with
 
 
-def build_verification_status(paths: List[pathlib.Path], *, depends_on: Dict[pathlib.Path, List[pathlib.Path]], basedir: pathlib.Path, marker: VerificationMarker) -> Dict[pathlib.Path, VerificationStatus]:
+def _build_verification_status(paths: List[pathlib.Path], *, depends_on: Dict[pathlib.Path, List[pathlib.Path]], basedir: pathlib.Path, marker: VerificationMarker) -> Dict[pathlib.Path, VerificationStatus]:
     """
     :returns: mapping from absolute paths to verification status
     """
@@ -129,7 +126,7 @@ def build_verification_status(paths: List[pathlib.Path], *, depends_on: Dict[pat
     return verification_status
 
 
-def get_source_code_stat(
+def _get_source_code_stat(
         path: pathlib.Path,
         *,
         depends_on: Dict[pathlib.Path, List[pathlib.Path]],
@@ -165,12 +162,12 @@ def get_source_code_stat(
 
 
 def generate_source_code_stats(*, marker: VerificationMarker, basedir: pathlib.Path) -> List[SourceCodeStat]:
-    source_code_paths = find_source_code_paths(basedir=basedir)
-    depends_on, required_by, verified_with = build_dependency_graph(source_code_paths, basedir=basedir)
-    verification_status = build_verification_status(source_code_paths, depends_on=depends_on, basedir=basedir, marker=marker)
+    source_code_paths = _find_source_code_paths(basedir=basedir)
+    depends_on, required_by, verified_with = _build_dependency_graph(source_code_paths, basedir=basedir)
+    verification_status = _build_verification_status(source_code_paths, depends_on=depends_on, basedir=basedir, marker=marker)
     source_code_stats: List[SourceCodeStat] = []
     for path in source_code_paths:
-        stat = get_source_code_stat(
+        stat = _get_source_code_stat(
             path,
             depends_on=depends_on,
             required_by=required_by,
@@ -184,11 +181,39 @@ def generate_source_code_stats(*, marker: VerificationMarker, basedir: pathlib.P
 
 
 def convert_to_page_render_jobs(*, source_code_stats: List[SourceCodeStat], markdown_paths: List[pathlib.Path], basedir: pathlib.Path) -> List[PageRenderJob]:
-    page_render_jobs: List[PageRenderJob] = []
+    page_render_jobs: Dict[pathlib.Path, PageRenderJob] = {}
+
+    for markdown_path in markdown_paths:
+        markdown_absolute_path = (basedir / markdown_path).resolve()
+        markdown_relative_path = markdown_absolute_path.relative_to(basedir)
+
+        with open(markdown_path, 'rb') as fh:
+            content = fh.read()
+        front_matter, content = onlinejudge_verify.documentation.front_matter.split_front_matter(content)
+
+        # move the location if documentation_of field exists
+        path = markdown_relative_path
+        documentation_of = front_matter.get(FrontMatterItem.documentation_of.value)
+        if documentation_of is not None:
+            if not (basedir / pathlib.Path(documentation_of)).exists():
+                logger.warning('the `documentation_of` path of %s is not found: %s', str(path), documentation_of)
+                continue
+            documentation_of_path = (basedir / pathlib.Path(documentation_of)).resolve().relative_to(basedir)
+            path = documentation_of_path.parent / (documentation_of_path.name + '.md')
+
+        job = PageRenderJob(
+            path=path,
+            front_matter=front_matter,
+            content=content,
+        )
+        page_render_jobs[job.path] = job
 
     for stat in source_code_stats:
         path = stat.path.parent / (stat.path.name + '.md')
-        front_matter: Dict[str, Any] = {}
+        if path in page_render_jobs:
+            continue
+
+        front_matter = {}
         front_matter[FrontMatterItem.documentation_of.value] = str(stat.path)
 
         # add redirects from old URLs
@@ -218,31 +243,9 @@ def convert_to_page_render_jobs(*, source_code_stats: List[SourceCodeStat], mark
             front_matter=front_matter,
             content=content,
         )
-        page_render_jobs.append(job)
+        page_render_jobs[job.path] = job
 
-    for markdown_path in markdown_paths:
-        markdown_absolute_path = (basedir / markdown_path).resolve()
-        markdown_relative_path = markdown_absolute_path.relative_to(basedir)
-
-        with open(markdown_path, 'rb') as fh:
-            content = fh.read()
-        front_matter, content = onlinejudge_verify.documentation.front_matter.split_front_matter(content)
-
-        # overwrite if documentation_of field exists
-        path = markdown_relative_path
-        documentation_of = front_matter.get(FrontMatterItem.documentation_of.value)
-        if documentation_of is not None:
-            documentation_of_path = (basedir / pathlib.Path(documentation_of)).resolve().relative_to(basedir)
-            path = documentation_of_path.parent / (documentation_of_path.name + '.md')
-
-        job = PageRenderJob(
-            path=path,
-            front_matter=front_matter,
-            content=content,
-        )
-        page_render_jobs.append(job)
-
-    if all([job.path != pathlib.Path('index.md') for job in page_render_jobs]):
+    if pathlib.Path('index.md') not in page_render_jobs:
         job = PageRenderJob(
             path=pathlib.Path('index.md'),
             front_matter={
@@ -250,6 +253,6 @@ def convert_to_page_render_jobs(*, source_code_stats: List[SourceCodeStat], mark
             },
             content=b'',
         )
-        page_render_jobs.append(job)
+        page_render_jobs[job.path] = job
 
-    return page_render_jobs
+    return list(page_render_jobs.values())

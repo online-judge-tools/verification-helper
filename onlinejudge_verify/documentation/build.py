@@ -40,6 +40,18 @@ _static_files: List[Dict[str, Any]] = [
 ]
 
 
+def _build_page_title_dict(*, page_render_jobs: List[PageRenderJob]) -> Dict[pathlib.Path, str]:
+    page_title_dict: Dict[pathlib.Path, str] = {}
+    for job in page_render_jobs:
+        assert job.path.suffix == '.md'
+        title = job.front_matter.get(FrontMatterItem.title.value)
+        if title is None:
+            title = str(job.path.parent / job.path.stem)
+        page_title_dict[job.path] = title
+        page_title_dict[job.path.parent / job.path.stem] = title
+    return page_title_dict
+
+
 def _get_verification_status_icon(verification_status: VerificationStatus) -> str:
     table = {
         VerificationStatus.LIBRARY_ALL_AC: ':heavy_check_mark:',
@@ -78,16 +90,23 @@ def _render_source_code_stat(stat: SourceCodeStat, *, basedir: pathlib.Path) -> 
     }
 
 
-def _render_source_code_stat_for_page(path: pathlib.Path, *, source_code_stats_dict: Dict[pathlib.Path, SourceCodeStat], basedir: pathlib.Path) -> Dict[str, Any]:
-    stat = source_code_stats_dict[(basedir / path).resolve()]
+def _render_source_code_stat_for_page(
+        path: pathlib.Path,
+        *,
+        source_code_stats_dict: Dict[pathlib.Path, SourceCodeStat],
+        page_title_dict: Dict[pathlib.Path, str],
+        basedir: pathlib.Path,
+) -> Dict[str, Any]:
+    relative_path = (basedir / path).resolve().relative_to(basedir)
+    stat = source_code_stats_dict[relative_path]
     data = _render_source_code_stat(stat, basedir=basedir)
     data['verificationStatusIcon'] = _get_verification_status_icon(stat.verification_status)
 
-    def ext(path: pathlib.Path) -> Dict[str, Any]:
-        stat = source_code_stats_dict[(basedir / path).resolve()]
+    def ext(relative_path: pathlib.Path) -> Dict[str, Any]:
+        stat = source_code_stats_dict[relative_path]
         return {
-            'path': str(path),
-            'title': stat.attributes.get('document_title', str(stat.path)),
+            'path': str(relative_path),
+            'title': page_title_dict[relative_path],
             'icon': _get_verification_status_icon(stat.verification_status),
         }
 
@@ -98,7 +117,12 @@ def _render_source_code_stat_for_page(path: pathlib.Path, *, source_code_stats_d
     return data
 
 
-def _render_source_code_stats_for_top_page(*, source_code_stats: List[SourceCodeStat], basedir: pathlib.Path) -> Dict[str, Any]:
+def _render_source_code_stats_for_top_page(
+        *,
+        source_code_stats: List[SourceCodeStat],
+        page_title_dict: Dict[pathlib.Path, str],
+        basedir: pathlib.Path,
+) -> Dict[str, Any]:
     libraryCategories: Dict[str, List[Dict[str, str]]] = {}
     verificationCategories: Dict[str, List[Dict[str, str]]] = {}
     for stat in source_code_stats:
@@ -111,7 +135,7 @@ def _render_source_code_stats_for_top_page(*, source_code_stats: List[SourceCode
             categories[category] = []
         categories[category].append({
             'path': str(stat.path),
-            'title': stat.attributes.get('document_title', str(stat.path)),
+            'title': page_title_dict[stat.path],
             'icon': _get_verification_status_icon(stat.verification_status),
         })
 
@@ -136,7 +160,8 @@ def render_pages(*, page_render_jobs: List[PageRenderJob], source_code_stats: Li
     :returns: mapping from absolute paths to file contents
     """
 
-    source_code_stats_dict = {(site_render_config.basedir / stat.path).resolve(): stat for stat in source_code_stats}
+    page_title_dict = _build_page_title_dict(page_render_jobs=page_render_jobs)
+    source_code_stats_dict = {stat.path: stat for stat in source_code_stats}
 
     rendered_pages: Dict[pathlib.Path, bytes] = {}
     for job in page_render_jobs:
@@ -144,12 +169,12 @@ def render_pages(*, page_render_jobs: List[PageRenderJob], source_code_stats: Li
 
         front_matter = copy.deepcopy(job.front_matter)
         if front_matter.get(FrontMatterItem.layout.value) == 'toppage':
-            data = _render_source_code_stats_for_top_page(source_code_stats=source_code_stats, basedir=site_render_config.basedir)
+            data = _render_source_code_stats_for_top_page(source_code_stats=source_code_stats, page_title_dict=page_title_dict, basedir=site_render_config.basedir)
             front_matter[FrontMatterItem.data.value] = data
 
         elif documentation_of is not None:
             front_matter.setdefault(FrontMatterItem.layout.value, 'document')
-            data = _render_source_code_stat_for_page(pathlib.Path(documentation_of), source_code_stats_dict=source_code_stats_dict, basedir=site_render_config.basedir)
+            data = _render_source_code_stat_for_page(pathlib.Path(documentation_of), source_code_stats_dict=source_code_stats_dict, page_title_dict=page_title_dict, basedir=site_render_config.basedir)
             front_matter.setdefault(FrontMatterItem.data.value, data)
 
         path = site_render_config.destination_dir / job.path

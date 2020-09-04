@@ -6,6 +6,26 @@
     <li><a href="{{ site.github.repository_url }}/blob/master/{{ page.data.path }}">View this file on GitHub</a></li>
     <li>Last update: {{ page.data.timestamp }}</li>
     {% if page.data.attributes.PROBLEM %}
-    <li>problem: <a href="{{ page.data.attributes.PROBLEM }}">{{ page.data.attributes.PROBLEM }}</a></li>
+    <li>Problem: <a href="{{ page.data.attributes.PROBLEM }}">{{ page.data.attributes.PROBLEM }}</a></li>
     {% endif %}
+    <li><a id="include-directive-anchor">Include: <code id="include-directive-code">#include "{{ page.data.path }}"</code></a></li>  <!-- TODO: support languages other than C++ too -->
 </ul>
+
+<script defer type="text/javascript">
+    // make the include directive clickable
+    (function() {
+        const anchor = document.getElementById('include-directive-anchor');
+        const code = document.getElementById('include-directive-code');
+        anchor.addEventListener('click', function() {
+            window.getSelection().selectAllChildren(code);
+            document.execCommand("copy");
+            window.getSelection().removeAllRanges();
+
+            const textContent = code.textContent;
+            code.textContent = "Copied!";
+            setTimeout(function() {
+                code.textContent = textContent;
+            }, 300);
+        });
+    })();
+</script>

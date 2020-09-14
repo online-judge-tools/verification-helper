@@ -28,6 +28,7 @@ def load_render_config(*, basedir: pathlib.Path) -> SiteRenderConfig:
         basedir=basedir,
         static_dir=pathlib.Path('.verify-helper', 'docs', 'static').resolve(),
         config_yml=pathlib.Path('.verify-helper', 'docs', '_config.yml').resolve(),
+        index_md=pathlib.Path('.verify-helper', 'docs', 'index.md').resolve(),
         destination_dir=pathlib.Path('.verify-helper', 'markdown').resolve(),
     )
 
@@ -44,7 +45,7 @@ def main(*, jobs: int = 1) -> None:
     logger.info('list markdown files...')
     markdown_paths = configure.find_markdown_paths(basedir=basedir)
     logger.info('list rendering jobs...')
-    render_jobs = configure.convert_to_page_render_jobs(source_code_stats=source_code_stats, markdown_paths=markdown_paths, basedir=basedir)
+    render_jobs = configure.convert_to_page_render_jobs(source_code_stats=source_code_stats, markdown_paths=markdown_paths, config=config)
 
     # make build
     logger.info('render %s files...', len(render_jobs))

@@ -179,7 +179,9 @@ def generate_source_code_stats(*, marker: VerificationMarker, basedir: pathlib.P
     return sorted(source_code_stats, key=lambda stat: stat.path)
 
 
-def convert_to_page_render_jobs(*, source_code_stats: List[SourceCodeStat], markdown_paths: List[pathlib.Path], basedir: pathlib.Path) -> List[PageRenderJob]:
+def convert_to_page_render_jobs(*, source_code_stats: List[SourceCodeStat], markdown_paths: List[pathlib.Path], config: SiteRenderConfig) -> List[PageRenderJob]:
+    basedir = config.basedir
+
     page_render_jobs: Dict[pathlib.Path, PageRenderJob] = {}
 
     for markdown_path in markdown_paths:
@@ -245,12 +247,16 @@ def convert_to_page_render_jobs(*, source_code_stats: List[SourceCodeStat], mark
         page_render_jobs[job.path] = job
 
     if pathlib.Path('index.md') not in page_render_jobs:
+        content = b''
+        if config.index_md.exists():
+            with config.index_md.open('rb') as fh:
+                content = fh.read()
         job = PageRenderJob(
             path=pathlib.Path('index.md'),
             front_matter={
                 'layout': 'toppage',
             },
-            content=b'',
+            content=content,
         )
         page_render_jobs[job.path] = job
 

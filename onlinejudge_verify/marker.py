@@ -8,7 +8,7 @@ import subprocess
 import traceback
 from typing import *
 
-import onlinejudge_verify.languages
+import onlinejudge_verify.languages.list
 import onlinejudge_verify.utils
 
 _error_timestamp = datetime.datetime.fromtimestamp(0, tz=datetime.timezone(datetime.timedelta()))
@@ -36,7 +36,7 @@ class VerificationMarker(object):
         if self.use_git_timestamp:
             return get_last_commit_time_to_verify(path)
         else:
-            language = onlinejudge_verify.languages.get(path)
+            language = onlinejudge_verify.languages.list.get(path)
             assert language is not None
             try:
                 depending_files = language.list_dependencies(path, basedir=_cwd())
@@ -146,7 +146,7 @@ def get_verification_marker(*, jobs: Optional[int] = None) -> VerificationMarker
 
 @functools.lru_cache(maxsize=None)
 def _get_last_commit_time_to_verify(path: pathlib.Path) -> datetime.datetime:
-    language = onlinejudge_verify.languages.get(path)
+    language = onlinejudge_verify.languages.list.get(path)
     assert language is not None
     try:
         depending_files = language.list_dependencies(path, basedir=_cwd())

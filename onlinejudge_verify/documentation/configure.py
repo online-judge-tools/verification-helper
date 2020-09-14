@@ -1,9 +1,12 @@
+"""This module collects metadata required to generate pages. This module doesn't generate actual pages.
+"""
+
 import pathlib
 from logging import getLogger
 from typing import *
 
 import onlinejudge_verify.documentation.front_matter
-import onlinejudge_verify.languages
+import onlinejudge_verify.languages.list
 import onlinejudge_verify.utils as utils
 from onlinejudge_verify.documentation.type import *
 from onlinejudge_verify.marker import VerificationMarker
@@ -30,7 +33,7 @@ def _find_matched_file_paths(pred: Callable[[pathlib.Path], bool], *, basedir: p
 
 def _find_source_code_paths(*, basedir: pathlib.Path) -> List[pathlib.Path]:
     def pred(path: pathlib.Path) -> bool:
-        return onlinejudge_verify.languages.get(path) is not None
+        return onlinejudge_verify.languages.list.get(path) is not None
 
     return _find_matched_file_paths(pred, basedir=basedir)
 
@@ -61,7 +64,7 @@ def _build_dependency_graph(paths: List[pathlib.Path], *, basedir: pathlib.Path)
     for src in paths:
         absolute_src = (basedir / src).resolve()
         relative_src = absolute_src.relative_to(basedir)  # all paths must be in the git repository
-        language = onlinejudge_verify.languages.get(src)
+        language = onlinejudge_verify.languages.list.get(src)
         assert language is not None
 
         try:
@@ -137,7 +140,7 @@ def _get_source_code_stat(
 ) -> SourceCodeStat:
     absolute_path = (basedir / path).resolve()
     relative_path = absolute_path.relative_to(basedir)
-    language = onlinejudge_verify.languages.get(path)
+    language = onlinejudge_verify.languages.list.get(path)
     assert language is not None
 
     is_verification_file = language.is_verification_file(path, basedir=basedir)
@@ -179,11 +182,42 @@ def generate_source_code_stats(*, marker: VerificationMarker, basedir: pathlib.P
     return sorted(source_code_stats, key=lambda stat: stat.path)
 
 
-def convert_to_page_render_jobs(*, source_code_stats: List[SourceCodeStat], markdown_paths: List[pathlib.Path], config: SiteRenderConfig) -> List[PageRenderJob]:
-    basedir = config.basedir
+def is_excluded(relative_path: pathlib.Path, *, excluded_paths: List[pathlib.Path]) -> bool:
+    for excluded in excluded_paths:
+        if relative_path == excluded or excluded in relative_path.parents:
+            return True
+    return False
+
+
+def apply_exclude_list_to_paths(paths: List[pathlib.Path], *, excluded_paths: List[pathlib.Path]) -> List[pathlib.Path]:
+    return [path for path in paths if not is_excluded(path, excluded_paths=excluded_paths)]
+
+
+def apply_exclude_list_to_stats(*, excluded_paths: List[pathlib.Path], source_code_stats: List[SourceCodeStat]) -> List[SourceCodeStat]:
+    result = []
+    for stat in source_code_stats:
+        if is_excluded(stat.path, excluded_paths=excluded_paths):
+            continue
+        stat = SourceCodeStat(
+            path=stat.path,
+            is_verification_file=stat.is_verification_file,
+            timestamp=stat.timestamp,
+            depends_on=apply_exclude_list_to_paths(stat.depends_on, excluded_paths=excluded_paths),
+            required_by=apply_exclude_list_to_paths(stat.required_by, excluded_paths=excluded_paths),
+            verified_with=apply_exclude_list_to_paths(stat.verified_with, excluded_paths=excluded_paths),
+            verification_status=stat.verification_status,
+            attributes=stat.attributes,
+        )
+        result.append(stat)
+    return result
+
+
+def convert_to_page_render_jobs(*, source_code_stats: List[SourceCodeStat], markdown_paths: List[pathlib.Path], site_render_config: SiteRenderConfig) -> List[PageRenderJob]:
+    basedir = site_render_config.basedir
 
     page_render_jobs: Dict[pathlib.Path, PageRenderJob] = {}
 
+    # Markdown pages
     for markdown_path in markdown_paths:
         markdown_absolute_path = (basedir / markdown_path).resolve()
         markdown_relative_path = markdown_absolute_path.relative_to(basedir)
@@ -209,6 +243,7 @@ def convert_to_page_render_jobs(*, source_code_stats: List[SourceCodeStat], mark
         )
         page_render_jobs[job.path] = job
 
+    # API pages
     for stat in source_code_stats:
         path = stat.path.parent / (stat.path.name + '.md')
         if path in page_render_jobs:
@@ -246,10 +281,11 @@ def convert_to_page_render_jobs(*, source_code_stats: List[SourceCodeStat], mark
         )
         page_render_jobs[job.path] = job
 
+    # top page
     if pathlib.Path('index.md') not in page_render_jobs:
         content = b''
-        if config.index_md.exists():
-            with config.index_md.open('rb') as fh:
+        if site_render_config.index_md.exists():
+            with site_render_config.index_md.open('rb') as fh:
                 content = fh.read()
         job = PageRenderJob(
             path=pathlib.Path('index.md'),

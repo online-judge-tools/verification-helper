@@ -11,10 +11,10 @@ import tempfile
 from logging import getLogger
 from typing import *
 
+import onlinejudge_verify.languages.special_comments as special_comments
 from onlinejudge_verify.config import get_config
 from onlinejudge_verify.languages.cplusplus_bundle import Bundler
 from onlinejudge_verify.languages.models import Language, LanguageEnvironment
-from onlinejudge_verify.languages.special_comments import list_doxygen_annotations, list_special_comments
 
 logger = getLogger(__name__)
 
@@ -138,13 +138,13 @@ class CPlusPlusLanguage(Language):
             raise RuntimeError('No C++ compilers found')
         return envs
 
-    def list_attributes(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Dict[str, str]:
-        attributes: Dict[str, str] = {}
-        attributes.update(list_doxygen_annotations(path.resolve()))
+    def list_attributes(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Dict[str, Any]:
+        attributes: Dict[str, Any] = {}
+        attributes.update(special_comments.list_doxygen_annotations(path.resolve()))
 
-        special_comments = list_special_comments(path.resolve())
-        if special_comments:
-            attributes.update(special_comments)
+        comments = special_comments.list_special_comments(path.resolve())
+        if comments:
+            attributes.update(comments)
 
         else:
             # use old-style if special comments not found
@@ -175,6 +175,8 @@ class CPlusPlusLanguage(Language):
             if all_ignored:
                 attributes[_IGNORE] = ''
 
+        attributes.setdefault('links', [])
+        attributes['links'].extend(special_comments.list_embedded_urls(path))
         return attributes
 
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:

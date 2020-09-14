@@ -8,8 +8,8 @@ import uuid
 from logging import getLogger
 from typing import *
 
+import onlinejudge_verify.languages.special_comments as special_comments
 from onlinejudge_verify.languages.models import Language, LanguageEnvironment
-from onlinejudge_verify.languages.special_comments import list_special_comments
 
 logger = getLogger(__name__)
 
@@ -100,8 +100,11 @@ class CSharpScriptLanguageEnvironment(LanguageEnvironment):
 
 
 class CSharpScriptLanguage(Language):
-    def list_attributes(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Dict[str, str]:
-        return list_special_comments(path.resolve()) or _get_csx_pragmas(path.resolve())
+    def list_attributes(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Dict[str, Any]:
+        attributes: Dict[str, Any] = special_comments.list_special_comments(path.resolve()) or _get_csx_pragmas(path.resolve())
+        attributes.setdefault('links', [])
+        attributes['links'].extend(special_comments.list_embedded_urls(path))
+        return attributes
 
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
         return list(_get_csx_dependencies(path.resolve()))

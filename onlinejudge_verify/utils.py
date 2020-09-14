@@ -4,7 +4,7 @@ import os
 import pathlib
 from typing import *
 
-import onlinejudge_verify.languages
+import onlinejudge_verify.languages.list
 
 
 def is_local_execution() -> bool:
@@ -16,7 +16,7 @@ def is_verification_file(path: pathlib.Path, *, basedir: Optional[pathlib.Path] 
     """
 
     basedir = basedir or pathlib.Path.cwd()  # TODO: remove this. make basedir argument always required
-    language = onlinejudge_verify.languages.get(path)
+    language = onlinejudge_verify.languages.list.get(path)
     return language is not None and language.is_verification_file(path, basedir=basedir)
 
 

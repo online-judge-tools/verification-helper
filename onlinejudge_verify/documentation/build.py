@@ -91,8 +91,8 @@ def _render_source_code_stat_for_page(
     relative_path = (basedir / path).resolve().relative_to(basedir)
     stat = source_code_stats_dict[relative_path]
     data = _render_source_code_stat(stat, basedir=basedir)
-    data['pathExtension'] = path.suffix.lstrip('.')
-    data['verificationStatusIcon'] = _get_verification_status_icon(stat.verification_status)
+    data['_pathExtension'] = path.suffix.lstrip('.')
+    data['_verificationStatusIcon'] = _get_verification_status_icon(stat.verification_status)
 
     def ext(relative_path: pathlib.Path) -> Dict[str, Any]:
         stat = source_code_stats_dict[relative_path]
@@ -102,9 +102,9 @@ def _render_source_code_stat_for_page(
             'icon': _get_verification_status_icon(stat.verification_status),
         }
 
-    data['extendedDependsOn'] = [ext(path) for path in stat.depends_on]
-    data['extendedRequiredBy'] = [ext(path) for path in stat.required_by]
-    data['extendedVerifiedWith'] = [ext(path) for path in stat.verified_with]
+    data['_extendedDependsOn'] = [ext(path) for path in stat.depends_on]
+    data['_extendedRequiredBy'] = [ext(path) for path in stat.required_by]
+    data['_extendedVerifiedWith'] = [ext(path) for path in stat.verified_with]
 
     return data
 

@@ -1,3 +1,6 @@
+"""This module generate actual pages for given metadata. This module doesn't collect metadata to generate pages.
+"""
+
 import copy
 import pathlib
 import traceback
@@ -14,7 +17,6 @@ from onlinejudge_verify.documentation.type import *
 logger = getLogger(__name__)
 
 _resource_package = 'onlinejudge_verify_resources'
-_config_yml_path: str = '_config.yml'
 _copied_static_file_paths: List[str] = [
     '_layouts/page.html',
     '_layouts/document.html',
@@ -188,20 +190,8 @@ def render_source_code_stats(*, source_code_stats: List[SourceCodeStat], basedir
 def load_static_files(*, site_render_config: SiteRenderConfig) -> Dict[pathlib.Path, bytes]:
     files: Dict[pathlib.Path, bytes] = {}
 
-    # load default's and user's _config.yml and merge them
-    default_config_yml = yaml.safe_load(pkg_resources.resource_string(_resource_package, _config_yml_path))
-    assert default_config_yml is not None
-    config_yml = default_config_yml
-    if site_render_config.config_yml.exists():
-        try:
-            with open(site_render_config.config_yml, 'rb') as fh:
-                user_config_yml = yaml.safe_load(fh.read())
-            assert user_config_yml is not None
-        except Exception as e:
-            logger.exception('failed to parse .verify-helper/docs/_config.yml: %s', e)
-            user_config_yml = {}
-        config_yml.update(user_config_yml)
-    files[site_render_config.destination_dir / pathlib.Path(_config_yml_path)] = yaml.safe_dump(config_yml).encode()
+    # write merged config.yml
+    files[site_render_config.destination_dir / '_config.yml'] = yaml.safe_dump(site_render_config.config_yml).encode()
 
     # load files in onlinejudge_verify_resources/
     for path in _copied_static_file_paths:

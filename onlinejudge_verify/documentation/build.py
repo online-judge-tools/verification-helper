@@ -15,6 +15,7 @@ logger = getLogger(__name__)
 _resource_package = 'onlinejudge_verify_resources'
 _config_yml_path: str = '_config.yml'
 _copied_static_file_paths: List[str] = [
+    '_layouts/page.html',
     '_layouts/document.html',
     '_layouts/toppage.html',
     '_includes/mathjax.html',

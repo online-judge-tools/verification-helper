@@ -1,34 +1,11 @@
 ---
-layout: default
+layout: page
 ---
-
-{% include mathjax.html %}
-
-
-{% if site.theme == "jekyll-theme-minimal" %}
-<style type="text/css">
-@media screen and (min-width: 900px) {
-    div.wrapper {
-        width: 100%;
-    }
-    div.wrapper > header {
-        width: 280px;
-    }
-    div.wrapper > section {
-        width: calc(100% - 300px);
-    }
-}
-</style>
-{% endif %}
-
 
 {% include document_header.html %}
 
-
 {{ content }}
 
-
 {% include document_body.html %}
-
 
 {% include document_footer.html %}

@@ -19,6 +19,7 @@ _copied_static_file_paths: List[str] = [
     '_layouts/toppage.html',
     '_includes/mathjax.html',
     '_includes/theme_fix.html',
+    '_includes/highlight.html',
     '_includes/document_header.html',
     '_includes/document_body.html',
     '_includes/document_footer.html',
@@ -90,6 +91,7 @@ def _render_source_code_stat_for_page(
     relative_path = (basedir / path).resolve().relative_to(basedir)
     stat = source_code_stats_dict[relative_path]
     data = _render_source_code_stat(stat, basedir=basedir)
+    data['pathExtension'] = path.suffix.lstrip('.')
     data['verificationStatusIcon'] = _get_verification_status_icon(stat.verification_status)
 
     def ext(relative_path: pathlib.Path) -> Dict[str, Any]:

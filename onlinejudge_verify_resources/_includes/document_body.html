@@ -42,11 +42,7 @@
 <link rel="stylesheet" href="{{ "/assets/css/copy-button.css" | absolute_url }}">
 
 <span><a id="unbundled"></a></span>
-{% highlight cpp %}
-{{ page.data.code }}
-{% endhighlight %}
+{% include highlight.html extension=page.data.pathExtension content=page.data.code %}
 
 <span><a id="bundled"></a></span>
-{% highlight cpp %}
-{{ page.data.bundledCode }}
-{% endhighlight %}
+{% include highlight.html extension=page.data.pathExtension content=page.data.bundledCode %}

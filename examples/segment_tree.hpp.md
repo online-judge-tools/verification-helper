@@ -18,6 +18,8 @@ data:
     '*NOT_SPECIAL_COMMENTS*': ''
     _deprecated_at_docs: examples/segment_tree.md
     document_title: a Segment Tree (generalized with monoids)
+    links:
+    - https://en.wikipedia.org/wiki/Segment_tree
   bundledCode: "#line 2 \"examples/segment_tree.hpp\"\n#include <cassert>\n#include\
     \ <vector>\n\n/**\n * @brief a Segment Tree (generalized with monoids) \n * @docs\
     \ examples/segment_tree.md\n * @tparam Monoid is a monoid; commutativity is not\

@@ -14,6 +14,8 @@ data:
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_1_A
+    links:
+    - https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_1_A
   bundledCode: "#line 1 \"examples/union_find_tree.aoj.test.cpp\"\n#define PROBLEM\
     \ \"https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_1_A\"\n#include\
     \ <iostream>\n#line 1 \"examples/union_find_tree.hpp\"\n\n\n#include <algorithm>\n\

@@ -13,6 +13,7 @@ data:
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
+    links: []
   bundledCode: '#line 2 "examples/debug/relative_path.hpp"
 
     char *hello = "Hello World";

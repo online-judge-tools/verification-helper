@@ -14,6 +14,8 @@ data:
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: https://judge.yosupo.jp/problem/unionfind
+    links:
+    - https://judge.yosupo.jp/problem/unionfind
   bundledCode: "#line 1 \"examples/union_find_tree.yosupo.test.cpp\"\n#define PROBLEM\
     \ \"https://judge.yosupo.jp/problem/unionfind\"\n#include <iostream>\n#line 1\
     \ \"examples/union_find_tree.hpp\"\n\n\n#include <algorithm>\n#include <vector>\n\

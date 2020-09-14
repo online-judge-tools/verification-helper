@@ -5,25 +5,27 @@ data:
   _extendedVerifiedWith: []
   _pathExtension: py
   _verificationStatusIcon: ':warning:'
-  attributes: {}
+  attributes:
+    links:
+    - https://...
   bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/documentation/build.py\"\
-    , line 67, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
+    , line 70, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
     \ basedir=basedir).decode()\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/python.py\"\
     , line 84, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "# Python Version: 3.x\nimport functools\nimport os\nimport pathlib\nimport\
     \ platform\nimport shlex\nimport shutil\nimport subprocess\nimport sys\nimport\
-    \ tempfile\nfrom logging import getLogger\nfrom typing import *\n\nfrom onlinejudge_verify.config\
-    \ import get_config\nfrom onlinejudge_verify.languages.cplusplus_bundle import\
-    \ Bundler\nfrom onlinejudge_verify.languages.models import Language, LanguageEnvironment\n\
-    from onlinejudge_verify.languages.special_comments import list_doxygen_annotations,\
-    \ list_special_comments\n\nlogger = getLogger(__name__)\n\n\nclass CPlusPlusLanguageEnvironment(LanguageEnvironment):\n\
-    \    CXX: pathlib.Path\n    CXXFLAGS: List[str]\n\n    def __init__(self, *, CXX:\
-    \ pathlib.Path, CXXFLAGS: List[str]):\n        self.CXX = CXX\n        self.CXXFLAGS\
-    \ = CXXFLAGS\n\n    def compile(self, path: pathlib.Path, *, basedir: pathlib.Path,\
-    \ tempdir: pathlib.Path) -> None:\n        command = [str(self.CXX), *self.CXXFLAGS,\
-    \ '-I', str(basedir), '-o', str(tempdir / 'a.out'), str(path)]\n        logger.info('$\
-    \ %s', ' '.join(command))\n        subprocess.check_call(command)\n\n    def get_execute_command(self,\
-    \ path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:\n\
+    \ tempfile\nfrom logging import getLogger\nfrom typing import *\n\nimport onlinejudge_verify.languages.special_comments\
+    \ as special_comments\nfrom onlinejudge_verify.config import get_config\nfrom\
+    \ onlinejudge_verify.languages.cplusplus_bundle import Bundler\nfrom onlinejudge_verify.languages.models\
+    \ import Language, LanguageEnvironment\n\nlogger = getLogger(__name__)\n\n\nclass\
+    \ CPlusPlusLanguageEnvironment(LanguageEnvironment):\n    CXX: pathlib.Path\n\
+    \    CXXFLAGS: List[str]\n\n    def __init__(self, *, CXX: pathlib.Path, CXXFLAGS:\
+    \ List[str]):\n        self.CXX = CXX\n        self.CXXFLAGS = CXXFLAGS\n\n  \
+    \  def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path)\
+    \ -> None:\n        command = [str(self.CXX), *self.CXXFLAGS, '-I', str(basedir),\
+    \ '-o', str(tempdir / 'a.out'), str(path)]\n        logger.info('$ %s', ' '.join(command))\n\
+    \        subprocess.check_call(command)\n\n    def get_execute_command(self, path:\
+    \ pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:\n\
     \        return [str(tempdir / 'a.out')]\n\n    def _is_clang(self) -> bool:\n\
     \        return 'clang++' in self.CXX.name\n\n    def _is_gcc(self) -> bool:\n\
     \        return not self._is_clang() and 'g++' in self.CXX.name\n\n\n@functools.lru_cache(maxsize=None)\n\
@@ -85,15 +87,15 @@ data:
     \     envs.append(CPlusPlusLanguageEnvironment(CXX=pathlib.Path(path), CXXFLAGS=default_CXXFLAGS))\n\
     \n        if not envs:\n            raise RuntimeError('No C++ compilers found')\n\
     \        return envs\n\n    def list_attributes(self, path: pathlib.Path, *, basedir:\
-    \ pathlib.Path) -> Dict[str, str]:\n        attributes: Dict[str, str] = {}\n\
-    \        attributes.update(list_doxygen_annotations(path.resolve()))\n\n     \
-    \   special_comments = list_special_comments(path.resolve())\n        if special_comments:\n\
-    \            attributes.update(special_comments)\n\n        else:\n          \
-    \  # use old-style if special comments not found\n            # #define PROBLEM\
-    \ \"https://...\" \u306E\u5F62\u5F0F\u306F\u8907\u6570 environments \u3068\u306E\
-    \u76F8\u6027\u304C\u3088\u304F\u306A\u3044\u3002\u3042\u3068\u9045\u3044\n   \
-    \         attributes[_NOT_SPECIAL_COMMENTS] = ''\n            all_ignored = True\n\
-    \            for env in self._list_environments():\n                joined_CXXFLAGS\
+    \ pathlib.Path) -> Dict[str, Any]:\n        attributes: Dict[str, Any] = {}\n\
+    \        attributes.update(special_comments.list_doxygen_annotations(path.resolve()))\n\
+    \n        comments = special_comments.list_special_comments(path.resolve())\n\
+    \        if comments:\n            attributes.update(comments)\n\n        else:\n\
+    \            # use old-style if special comments not found\n            # #define\
+    \ PROBLEM \"https://...\" \u306E\u5F62\u5F0F\u306F\u8907\u6570 environments \u3068\
+    \u306E\u76F8\u6027\u304C\u3088\u304F\u306A\u3044\u3002\u3042\u3068\u9045\u3044\
+    \n            attributes[_NOT_SPECIAL_COMMENTS] = ''\n            all_ignored\
+    \ = True\n            for env in self._list_environments():\n                joined_CXXFLAGS\
     \ = ' '.join(map(shlex.quote, [*env.CXXFLAGS, '-I', str(basedir)]))\n        \
     \        macros = _cplusplus_list_defined_macros(path.resolve(), CXX=env.CXX,\
     \ joined_CXXFLAGS=joined_CXXFLAGS)\n\n                # convert macros to attributes\n\
@@ -107,7 +109,8 @@ data:
     \ = ''\n                    elif env._is_clang():\n                        attributes[_IGNORE_IF_CLANG]\
     \ = ''\n                    else:\n                        attributes[_IGNORE]\
     \ = ''\n            if all_ignored:\n                attributes[_IGNORE] = ''\n\
-    \n        return attributes\n\n    def list_dependencies(self, path: pathlib.Path,\
+    \n        attributes.setdefault('links', [])\n        attributes['links'].extend(special_comments.list_embedded_urls(path))\n\
+    \        return attributes\n\n    def list_dependencies(self, path: pathlib.Path,\
     \ *, basedir: pathlib.Path) -> List[pathlib.Path]:\n        env = self._list_environments()[0]\n\
     \        joined_CXXFLAGS = ' '.join(map(shlex.quote, [*env.CXXFLAGS, '-I', str(basedir)]))\n\
     \        return _cplusplus_list_depending_files(path.resolve(), CXX=env.CXX, joined_CXXFLAGS=joined_CXXFLAGS)\n\

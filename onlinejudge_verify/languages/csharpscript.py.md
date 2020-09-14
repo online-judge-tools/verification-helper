@@ -5,15 +5,16 @@ data:
   _extendedVerifiedWith: []
   _pathExtension: py
   _verificationStatusIcon: ':warning:'
-  attributes: {}
+  attributes:
+    links: []
   bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/documentation/build.py\"\
-    , line 67, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
+    , line 70, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
     \ basedir=basedir).decode()\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/python.py\"\
     , line 84, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "# Python Version: 3.x\nimport functools\nimport os\nimport pathlib\nimport\
     \ re\nimport subprocess\nimport uuid\nfrom logging import getLogger\nfrom typing\
-    \ import *\n\nfrom onlinejudge_verify.languages.models import Language, LanguageEnvironment\n\
-    from onlinejudge_verify.languages.special_comments import list_special_comments\n\
+    \ import *\n\nimport onlinejudge_verify.languages.special_comments as special_comments\n\
+    from onlinejudge_verify.languages.models import Language, LanguageEnvironment\n\
     \nlogger = getLogger(__name__)\n\ndotnet_dll_caches_dir = pathlib.Path('.verify-helper/cache')\
     \ / 'dotnet-script'\n\npragma_line_caches: Dict[pathlib.Path, Set[int]] = {}\n\
     \n\n@functools.lru_cache(maxsize=None)\ndef _publish_csx(path: pathlib.Path) ->\
@@ -52,13 +53,15 @@ data:
     \ path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:\n\
     \        return ['dotnet-script', 'exec', str(_publish_csx(path))]\n\n\nclass\
     \ CSharpScriptLanguage(Language):\n    def list_attributes(self, path: pathlib.Path,\
-    \ *, basedir: pathlib.Path) -> Dict[str, str]:\n        return list_special_comments(path.resolve())\
-    \ or _get_csx_pragmas(path.resolve())\n\n    def list_dependencies(self, path:\
-    \ pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:\n        return\
-    \ list(_get_csx_dependencies(path.resolve()))\n\n    def bundle(self, path: pathlib.Path,\
-    \ *, basedir: pathlib.Path) -> bytes:\n        raise NotImplementedError\n\n \
-    \   def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path)\
-    \ -> Sequence[CSharpScriptLanguageEnvironment]:\n        return [CSharpScriptLanguageEnvironment()]\n"
+    \ *, basedir: pathlib.Path) -> Dict[str, Any]:\n        attributes: Dict[str,\
+    \ Any] = special_comments.list_special_comments(path.resolve()) or _get_csx_pragmas(path.resolve())\n\
+    \        attributes.setdefault('links', [])\n        attributes['links'].extend(special_comments.list_embedded_urls(path))\n\
+    \        return attributes\n\n    def list_dependencies(self, path: pathlib.Path,\
+    \ *, basedir: pathlib.Path) -> List[pathlib.Path]:\n        return list(_get_csx_dependencies(path.resolve()))\n\
+    \n    def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bytes:\n\
+    \        raise NotImplementedError\n\n    def list_environments(self, path: pathlib.Path,\
+    \ *, basedir: pathlib.Path) -> Sequence[CSharpScriptLanguageEnvironment]:\n  \
+    \      return [CSharpScriptLanguageEnvironment()]\n"
   dependsOn: []
   isVerificationFile: false
   path: onlinejudge_verify/languages/csharpscript.py

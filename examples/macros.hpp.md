@@ -25,6 +25,7 @@ data:
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
+    links: []
   bundledCode: '#line 2 "examples/macros.hpp"
 
     #define REP(i, n) for (int i = 0; (i) < (int)(n); ++ (i))

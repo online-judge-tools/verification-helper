@@ -5,9 +5,12 @@ data:
   _extendedVerifiedWith: []
   _pathExtension: py
   _verificationStatusIcon: ':warning:'
-  attributes: {}
+  attributes:
+    links:
+    - http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_A
+    - http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_B
   bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/documentation/build.py\"\
-    , line 67, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
+    , line 70, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
     \ basedir=basedir).decode()\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/python.py\"\
     , line 84, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "\"\"\"This module has tests for the bundle feature.\n\"\"\"\n\nimport contextlib\n\

@@ -5,9 +5,17 @@ data:
   _extendedVerifiedWith: []
   _pathExtension: py
   _verificationStatusIcon: ':warning:'
-  attributes: {}
+  attributes:
+    links:
+    - '''https://{}:{}@github.com/{}.git''.format(os.environ[''GITHUB_ACTOR''],'
+    - '''https://{}@github.com/{}.git''.format(os.environ[''GH_PAT''],'
+    - http://127.0.0.1:4000
+    - https://bundler.io/).
+    - https://github.com/marketplace/actions/github-pages-deploy#secrets
+    - https://github.com/maxheld83/ghpages/issues/1
+    - https://help.github.com/en/actions/automating-your-workflow-with-github-actions/authenticating-with-the-github_token#about-the-github_token-secret)
   bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/documentation/build.py\"\
-    , line 67, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
+    , line 70, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
     \ basedir=basedir).decode()\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/python.py\"\
     , line 84, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "\"\"\"\nisort: skip_file\n\"\"\"\n\n# pylint: disable=unused-import,ungrouped-imports\n\

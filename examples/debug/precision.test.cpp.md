@@ -9,6 +9,8 @@ data:
     '*NOT_SPECIAL_COMMENTS*': ''
     ERROR: 1e-6
     PROBLEM: http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_15_B
+    links:
+    - http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_15_B
   bundledCode: "#line 1 \"examples/debug/precision.test.cpp\"\n#define PROBLEM \"\
     http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ALDS1_15_B\"\n\n#include\
     \ <iostream>\n#include <iomanip>\n#include <vector>\n#include <algorithm>\n\n\

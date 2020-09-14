@@ -11,6 +11,8 @@ data:
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_A
+    links:
+    - http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_A
   bundledCode: "#line 1 \"examples/debug/include_relative.test.cpp\"\n#define PROBLEM\
     \ \"http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_A\"\n#include\
     \ <cstdio>\n#line 2 \"examples/macros.hpp\"\n#define REP(i, n) for (int i = 0;\

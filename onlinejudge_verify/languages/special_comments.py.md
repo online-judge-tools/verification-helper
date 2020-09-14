@@ -5,9 +5,12 @@ data:
   _extendedVerifiedWith: []
   _pathExtension: py
   _verificationStatusIcon: ':warning:'
-  attributes: {}
+  attributes:
+    links:
+    - '"https://atcoder.jp/"`.'
+    - https://www.python.org/dev/peps/pep-0263/
   bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/documentation/build.py\"\
-    , line 67, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
+    , line 70, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
     \ basedir=basedir).decode()\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/python.py\"\
     , line 84, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "# Python Version: 3.x\nimport functools\nimport pathlib\nimport re\nfrom\
@@ -34,8 +37,18 @@ data:
     \                continue\n                    attributes['document_title'] =\
     \ value\n                elif key in ('category', 'see', 'sa', 'ignore'):\n  \
     \                  logger.debug('ignored annotation: \"@%s %s\" in %s', key, value,\
-    \ str(path))\n                else:\n                    assert False\n    return\
-    \ attributes\n"
+    \ str(path))\n                    if key == 'ignore':\n                      \
+    \  logger.warning('Now `@ignore` has no effect. Please write as `exlucde: [\"\
+    %s\"]` at `.verify-helper/docs/_config.yml` instead.', value)\n              \
+    \  else:\n                    assert False\n    return attributes\n\n\n@functools.lru_cache(maxsize=None)\n\
+    def list_embedded_urls(path: pathlib.Path) -> List[str]:\n    pattern = re.compile(r\"\
+    \"\"['\"`]?https?://\\S*\"\"\")  # use a broad pattern. There are no needs to\
+    \ make match strict.\n    with open(path, 'rb') as fh:\n        content = fh.read().decode()\n\
+    \    urls = []\n    for url in pattern.findall(content):\n        # The URL may\
+    \ be written like `\"https://atcoder.jp/\"`. In this case, we need to remove `\"\
+    `s around the URL.\n        for quote in (\"'\", '\"', '`'):\n            if len(url)\
+    \ >= 2 and url.startswith(quote) and url.endswith(quote):\n                url\
+    \ = url[1:-1]\n                break\n        urls.append(url)\n    return sorted(set(urls))\n"
   dependsOn: []
   isVerificationFile: false
   path: onlinejudge_verify/languages/special_comments.py

@@ -8,6 +8,8 @@ data:
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: https://yukicoder.me/problems/3872
+    links:
+    - https://yukicoder.me/problems/3872
   bundledCode: "#line 1 \"examples/debug/yukicoder.test.cpp\"\n#define PROBLEM \"\
     https://yukicoder.me/problems/3872\"\n\n#include <bits/stdc++.h>\nusing namespace\
     \ std;\n\ntemplate<typename T> void drop(const T &x){cout<<x<<endl;exit(0);}\n\

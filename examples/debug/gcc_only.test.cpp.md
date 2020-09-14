@@ -9,6 +9,8 @@ data:
     '*NOT_SPECIAL_COMMENTS*': ''
     IGNORE_IF_CLANG: ''
     PROBLEM: https://onlinejudge.u-aizu.ac.jp/courses/lesson/2/ITP1/1/ITP1_1_A
+    links:
+    - https://onlinejudge.u-aizu.ac.jp/courses/lesson/2/ITP1/1/ITP1_1_A
   bundledCode: "#line 1 \"examples/debug/gcc_only.test.cpp\"\n#ifdef __clang__\n#define\
     \ IGNORE\n#else\n\n#define PROBLEM \"https://onlinejudge.u-aizu.ac.jp/courses/lesson/2/ITP1/1/ITP1_1_A\"\
     \n#include <cstdio>\n\n// clang++ says \"error: C++ requires a type specifier\

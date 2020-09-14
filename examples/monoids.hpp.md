@@ -13,6 +13,7 @@ data:
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
+    links: []
   bundledCode: "#line 2 \"examples/monoids.hpp\"\n#include <algorithm>\n#include <cstdint>\n\
     \nstruct plus_monoid {\n    typedef int64_t value_type;\n    value_type unit()\
     \ const { return 0; }\n    value_type mult(value_type a, value_type b) const {\

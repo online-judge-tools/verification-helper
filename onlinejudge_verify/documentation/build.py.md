@@ -5,26 +5,28 @@ data:
   _extendedVerifiedWith: []
   _pathExtension: py
   _verificationStatusIcon: ':warning:'
-  attributes: {}
+  attributes:
+    links: []
   bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/documentation/build.py\"\
-    , line 67, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
+    , line 70, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
     \ basedir=basedir).decode()\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/python.py\"\
     , line 84, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
-  code: "import copy\nimport pathlib\nimport traceback\nfrom logging import getLogger\n\
-    from typing import *\n\nimport onlinejudge_verify.documentation.front_matter\n\
+  code: "\"\"\"This module generate actual pages for given metadata. This module doesn't\
+    \ collect metadata to generate pages.\n\"\"\"\n\nimport copy\nimport pathlib\n\
+    import traceback\nfrom logging import getLogger\nfrom typing import *\n\nimport\
+    \ onlinejudge_verify.documentation.front_matter\nimport onlinejudge_verify.languages.list\n\
     import onlinejudge_verify.utils as utils\nimport pkg_resources\nimport yaml\n\
     from onlinejudge_verify.documentation.type import *\n\nlogger = getLogger(__name__)\n\
-    \n_resource_package = 'onlinejudge_verify_resources'\n_config_yml_path: str =\
-    \ '_config.yml'\n_copied_static_file_paths: List[str] = [\n    '_layouts/page.html',\n\
-    \    '_layouts/document.html',\n    '_layouts/toppage.html',\n    '_includes/mathjax.html',\n\
-    \    '_includes/theme_fix.html',\n    '_includes/highlight.html',\n    '_includes/document_header.html',\n\
-    \    '_includes/document_body.html',\n    '_includes/document_footer.html',\n\
-    \    '_includes/toppage_header.html',\n    '_includes/toppage_body.html',\n  \
-    \  'assets/css/copy-button.css',\n    'assets/js/copy-button.js',\n    'Gemfile',\n\
-    ]\n\n\ndef _build_page_title_dict(*, page_render_jobs: List[PageRenderJob]) ->\
-    \ Dict[pathlib.Path, str]:\n    page_title_dict: Dict[pathlib.Path, str] = {}\n\
-    \    for job in page_render_jobs:\n        assert job.path.suffix == '.md'\n \
-    \       title = job.front_matter.get(FrontMatterItem.title.value)\n        if\
+    \n_resource_package = 'onlinejudge_verify_resources'\n_copied_static_file_paths:\
+    \ List[str] = [\n    '_layouts/page.html',\n    '_layouts/document.html',\n  \
+    \  '_layouts/toppage.html',\n    '_includes/mathjax.html',\n    '_includes/theme_fix.html',\n\
+    \    '_includes/highlight.html',\n    '_includes/document_header.html',\n    '_includes/document_body.html',\n\
+    \    '_includes/document_footer.html',\n    '_includes/toppage_header.html',\n\
+    \    '_includes/toppage_body.html',\n    'assets/css/copy-button.css',\n    'assets/js/copy-button.js',\n\
+    \    'Gemfile',\n]\n\n\ndef _build_page_title_dict(*, page_render_jobs: List[PageRenderJob])\
+    \ -> Dict[pathlib.Path, str]:\n    page_title_dict: Dict[pathlib.Path, str] =\
+    \ {}\n    for job in page_render_jobs:\n        assert job.path.suffix == '.md'\n\
+    \        title = job.front_matter.get(FrontMatterItem.title.value)\n        if\
     \ title is None:\n            title = str(job.path.parent / job.path.stem)\n \
     \       page_title_dict[job.path] = title\n        page_title_dict[job.path.parent\
     \ / job.path.stem] = title\n    return page_title_dict\n\n\ndef _get_verification_status_icon(verification_status:\
@@ -37,8 +39,8 @@ data:
     \ table[verification_status]\n\n\ndef _render_source_code_stat(stat: SourceCodeStat,\
     \ *, basedir: pathlib.Path) -> Dict[str, Any]:\n    with open(basedir / stat.path,\
     \ 'rb') as fh:\n        code = fh.read().decode()\n    try:\n        language\
-    \ = onlinejudge_verify.languages.get(stat.path)\n        assert language is not\
-    \ None\n        bundled_code = language.bundle(stat.path, basedir=basedir).decode()\n\
+    \ = onlinejudge_verify.languages.list.get(stat.path)\n        assert language\
+    \ is not None\n        bundled_code = language.bundle(stat.path, basedir=basedir).decode()\n\
     \    except Exception:\n        logger.warning(\"failed to bundle: %s\", str(stat.path))\n\
     \        bundled_code = traceback.format_exc()\n    return {\n        'path':\
     \ str(stat.path),\n        'code': code,\n        'bundledCode': bundled_code,\n\
@@ -99,16 +101,8 @@ data:
     \    for stat in source_code_stats:\n        data.append(_render_source_code_stat(stat,\
     \ basedir=basedir))\n    return data\n\n\ndef load_static_files(*, site_render_config:\
     \ SiteRenderConfig) -> Dict[pathlib.Path, bytes]:\n    files: Dict[pathlib.Path,\
-    \ bytes] = {}\n\n    # load default's and user's _config.yml and merge them\n\
-    \    default_config_yml = yaml.safe_load(pkg_resources.resource_string(_resource_package,\
-    \ _config_yml_path))\n    assert default_config_yml is not None\n    config_yml\
-    \ = default_config_yml\n    if site_render_config.config_yml.exists():\n     \
-    \   try:\n            with open(site_render_config.config_yml, 'rb') as fh:\n\
-    \                user_config_yml = yaml.safe_load(fh.read())\n            assert\
-    \ user_config_yml is not None\n        except Exception as e:\n            logger.exception('failed\
-    \ to parse .verify-helper/docs/_config.yml: %s', e)\n            user_config_yml\
-    \ = {}\n        config_yml.update(user_config_yml)\n    files[site_render_config.destination_dir\
-    \ / pathlib.Path(_config_yml_path)] = yaml.safe_dump(config_yml).encode()\n\n\
+    \ bytes] = {}\n\n    # write merged config.yml\n    files[site_render_config.destination_dir\
+    \ / '_config.yml'] = yaml.safe_dump(site_render_config.config_yml).encode()\n\n\
     \    # load files in onlinejudge_verify_resources/\n    for path in _copied_static_file_paths:\n\
     \        files[site_render_config.destination_dir / pathlib.Path(path)] = pkg_resources.resource_string(_resource_package,\
     \ path)\n\n    # overwrite with docs/static\n    for src in site_render_config.static_dir.glob('**/*'):\n\

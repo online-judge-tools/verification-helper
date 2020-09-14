@@ -5,14 +5,15 @@ data:
   _extendedVerifiedWith: []
   _pathExtension: py
   _verificationStatusIcon: ':warning:'
-  attributes: {}
+  attributes:
+    links: []
   bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/documentation/build.py\"\
-    , line 67, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
+    , line 70, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
     \ basedir=basedir).decode()\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/python.py\"\
     , line 84, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "# Python Version: 3.x\nimport concurrent.futures\nimport datetime\nimport\
     \ functools\nimport json\nimport pathlib\nimport subprocess\nimport traceback\n\
-    from typing import *\n\nimport onlinejudge_verify.languages\nimport onlinejudge_verify.utils\n\
+    from typing import *\n\nimport onlinejudge_verify.languages.list\nimport onlinejudge_verify.utils\n\
     \n_error_timestamp = datetime.datetime.fromtimestamp(0, tz=datetime.timezone(datetime.timedelta()))\n\
     \n\ndef _cwd() -> pathlib.Path:\n    # .resolve() is required for Windows on GitHub\
     \ Actions because we need to expand 8.3 filenames like `C:\\\\Users\\\\RUNNER~1\\\
@@ -27,7 +28,7 @@ data:
     \ = {}\n        self.load_timestamps(jobs=jobs)\n\n    def get_current_timestamp(self,\
     \ path: pathlib.Path) -> datetime.datetime:\n        if self.use_git_timestamp:\n\
     \            return get_last_commit_time_to_verify(path)\n        else:\n    \
-    \        language = onlinejudge_verify.languages.get(path)\n            assert\
+    \        language = onlinejudge_verify.languages.list.get(path)\n            assert\
     \ language is not None\n            try:\n                depending_files = language.list_dependencies(path,\
     \ basedir=_cwd())\n            except Exception:\n                traceback.print_exc()\n\
     \                return _error_timestamp\n            else:\n                timestamp\
@@ -101,7 +102,7 @@ data:
     \        _verification_marker = VerificationMarker(json_path=timestamps_json_path,\
     \ use_git_timestamp=use_git_timestamp, jobs=jobs)\n    return _verification_marker\n\
     \n\n@functools.lru_cache(maxsize=None)\ndef _get_last_commit_time_to_verify(path:\
-    \ pathlib.Path) -> datetime.datetime:\n    language = onlinejudge_verify.languages.get(path)\n\
+    \ pathlib.Path) -> datetime.datetime:\n    language = onlinejudge_verify.languages.list.get(path)\n\
     \    assert language is not None\n    try:\n        depending_files = language.list_dependencies(path,\
     \ basedir=_cwd())\n    except Exception:\n        traceback.print_exc()\n    \
     \    return _error_timestamp\n    code = ['git', 'log', '-1', '--date=iso', '--pretty=%ad',\

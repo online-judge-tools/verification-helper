@@ -14,6 +14,7 @@ data:
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     document_title: a Union-Find Tree
+    links: []
   bundledCode: "#line 1 \"examples/union_find_tree.hpp\"\n\n\n#include <algorithm>\n\
     #include <vector>\n\n/**\n * @brief a Union-Find Tree\n * @note most operations\
     \ in $O(\\alpha(n))$ where $\\alpha(n)$ is the inverse of Ackermann function\n\

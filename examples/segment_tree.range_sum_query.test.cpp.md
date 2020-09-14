@@ -17,6 +17,8 @@ data:
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_B
+    links:
+    - https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_B
   bundledCode: "#line 1 \"examples/segment_tree.range_sum_query.test.cpp\"\n#define\
     \ PROBLEM \"https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_B\"\
     \n#include <iostream>\n#line 2 \"examples/segment_tree.hpp\"\n#include <cassert>\n\

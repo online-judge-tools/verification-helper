@@ -136,6 +136,9 @@ data:
       path: onlinejudge_verify/languages/csharpscript.py
       title: onlinejudge_verify/languages/csharpscript.py
     - icon: ':warning:'
+      path: onlinejudge_verify/languages/list.py
+      title: onlinejudge_verify/languages/list.py
+    - icon: ':warning:'
       path: onlinejudge_verify/languages/models.py
       title: onlinejudge_verify/languages/models.py
     - icon: ':warning:'

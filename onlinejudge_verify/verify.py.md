@@ -5,14 +5,16 @@ data:
   _extendedVerifiedWith: []
   _pathExtension: py
   _verificationStatusIcon: ':warning:'
-  attributes: {}
+  attributes:
+    links:
+    - https://help.github.com/en/actions/reference/development-tools-for-github-actions
   bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/documentation/build.py\"\
-    , line 67, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
+    , line 70, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
     \ basedir=basedir).decode()\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/python.py\"\
     , line 84, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "# Python Version: 3.x\nimport hashlib\nimport math\nimport os\nimport pathlib\n\
     import subprocess\nimport time\nimport traceback\nfrom logging import getLogger\n\
-    from typing import *\n\nimport onlinejudge_verify.languages\nimport onlinejudge_verify.marker\n\
+    from typing import *\n\nimport onlinejudge_verify.languages.list\nimport onlinejudge_verify.marker\n\
     \nimport onlinejudge\n\nlogger = getLogger(__name__)\n\n\nclass VerificationSummary(object):\n\
     \    def __init__(self, *, failed_test_paths: List[pathlib.Path]):\n        self.failed_test_paths\
     \ = failed_test_paths\n\n    def show(self) -> None:\n        if self.failed_test_paths:\n\
@@ -28,9 +30,9 @@ data:
     \u306E\u3053\u3068\u304C\u3042\u308B\u306E\u3067\u623B\u3059\n        if pathlib.Path.cwd()\
     \ != cwd:\n            os.chdir(str(cwd))\n\n\ndef verify_file(path: pathlib.Path,\
     \ *, compilers: List[str], tle: float, jobs: int) -> Optional[bool]:\n    logger.info('verify:\
-    \ %s', path)\n\n    language = onlinejudge_verify.languages.get(path)\n    if\
-    \ language is None:\n        logger.error('unsupported language')\n        return\
-    \ False\n\n    # analyze attributes\n    try:\n        attributes = language.list_attributes(path,\
+    \ %s', path)\n\n    language = onlinejudge_verify.languages.list.get(path)\n \
+    \   if language is None:\n        logger.error('unsupported language')\n     \
+    \   return False\n\n    # analyze attributes\n    try:\n        attributes = language.list_attributes(path,\
     \ basedir=pathlib.Path.cwd())\n    except:\n        traceback.print_exc()\n  \
     \      return False\n    if 'IGNORE' in attributes:\n        return None\n\n \
     \   # recognize PROBLEM\n    if 'PROBLEM' not in attributes:\n        logger.error('PROBLEM\

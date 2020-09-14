@@ -4,7 +4,6 @@
 
 /**
  * @brief a Segment Tree (generalized with monoids) 
- * @docs examples/segment_tree.md
  * @tparam Monoid is a monoid; commutativity is not required
  * @see https://en.wikipedia.org/wiki/Segment_tree
  */

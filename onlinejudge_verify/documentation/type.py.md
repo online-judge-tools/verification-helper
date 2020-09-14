@@ -1,8 +1,13 @@
 ---
 data:
+  _extendedDependsOn: []
+  _extendedRequiredBy: []
+  _extendedVerifiedWith: []
+  _pathExtension: py
+  _verificationStatusIcon: ':warning:'
   attributes: {}
   bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/documentation/build.py\"\
-    , line 64, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
+    , line 67, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
     \ basedir=basedir).decode()\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/python.py\"\
     , line 84, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "import datetime\nimport enum\nimport pathlib\nfrom typing import *\n\n\n\
@@ -23,17 +28,14 @@ data:
     \ path from basedir\n    front_matter: Dict[str, Any]\n    content: bytes\n\n\n\
     class SiteRenderConfig(NamedTuple):\n    basedir: pathlib.Path  # an absolute\
     \ path\n    config_yml: pathlib.Path  # an absolute path\n    static_dir: pathlib.Path\
-    \  # an absolute path\n    destination_dir: pathlib.Path  # an absolute path\n"
+    \  # an absolute path\n    index_md: pathlib.Path  # an absolute path\n    destination_dir:\
+    \ pathlib.Path  # an absolute path\n"
   dependsOn: []
-  extendedDependsOn: []
-  extendedRequiredBy: []
-  extendedVerifiedWith: []
   isVerificationFile: false
   path: onlinejudge_verify/documentation/type.py
   requiredBy: []
   timestamp: '1970-01-01 00:00:00+00:00'
   verificationStatus: LIBRARY_NO_TESTS
-  verificationStatusIcon: ':warning:'
   verifiedWith: []
 documentation_of: onlinejudge_verify/documentation/type.py
 layout: document

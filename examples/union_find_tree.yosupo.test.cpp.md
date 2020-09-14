@@ -1,5 +1,16 @@
 ---
 data:
+  _extendedDependsOn:
+  - icon: ':heavy_check_mark:'
+    path: examples/union_find_tree.hpp
+    title: a Union-Find Tree
+  - icon: ':heavy_check_mark:'
+    path: examples/macros.hpp
+    title: examples/macros.hpp
+  _extendedRequiredBy: []
+  _extendedVerifiedWith: []
+  _pathExtension: cpp
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: https://judge.yosupo.jp/problem/unionfind
@@ -37,21 +48,11 @@ data:
   dependsOn:
   - examples/union_find_tree.hpp
   - examples/macros.hpp
-  extendedDependsOn:
-  - icon: ':heavy_check_mark:'
-    path: examples/union_find_tree.hpp
-    title: a Union-Find Tree
-  - icon: ':heavy_check_mark:'
-    path: examples/macros.hpp
-    title: examples/macros.hpp
-  extendedRequiredBy: []
-  extendedVerifiedWith: []
   isVerificationFile: true
   path: examples/union_find_tree.yosupo.test.cpp
   requiredBy: []
   timestamp: '2019-12-16 05:18:36+09:00'
   verificationStatus: TEST_ACCEPTED
-  verificationStatusIcon: ':heavy_check_mark:'
   verifiedWith: []
 documentation_of: examples/union_find_tree.yosupo.test.cpp
 layout: document

@@ -1,5 +1,19 @@
 ---
 data:
+  _extendedDependsOn:
+  - icon: ':heavy_check_mark:'
+    path: examples/segment_tree.hpp
+    title: a Segment Tree (generalized with monoids)
+  - icon: ':heavy_check_mark:'
+    path: examples/monoids.hpp
+    title: examples/monoids.hpp
+  - icon: ':heavy_check_mark:'
+    path: examples/macros.hpp
+    title: examples/macros.hpp
+  _extendedRequiredBy: []
+  _extendedVerifiedWith: []
+  _pathExtension: cpp
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_A
@@ -57,24 +71,11 @@ data:
   - examples/segment_tree.hpp
   - examples/monoids.hpp
   - examples/macros.hpp
-  extendedDependsOn:
-  - icon: ':heavy_check_mark:'
-    path: examples/segment_tree.hpp
-    title: a Segment Tree (generalized with monoids)
-  - icon: ':heavy_check_mark:'
-    path: examples/monoids.hpp
-    title: examples/monoids.hpp
-  - icon: ':heavy_check_mark:'
-    path: examples/macros.hpp
-    title: examples/macros.hpp
-  extendedRequiredBy: []
-  extendedVerifiedWith: []
   isVerificationFile: true
   path: examples/segment_tree.range_minimum_query.test.cpp
   requiredBy: []
   timestamp: '2020-02-28 16:00:02+09:00'
   verificationStatus: TEST_ACCEPTED
-  verificationStatusIcon: ':heavy_check_mark:'
   verifiedWith: []
 documentation_of: examples/segment_tree.range_minimum_query.test.cpp
 layout: document

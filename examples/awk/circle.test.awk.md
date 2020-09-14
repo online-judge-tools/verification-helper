@@ -1,10 +1,18 @@
 ---
 data:
+  _extendedDependsOn:
+  - icon: ':heavy_check_mark:'
+    path: examples/awk/circle.awk
+    title: examples/awk/circle.awk
+  _extendedRequiredBy: []
+  _extendedVerifiedWith: []
+  _pathExtension: awk
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     ERROR: 1e-5
     PROBLEM: http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_4_B
   bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/documentation/build.py\"\
-    , line 64, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
+    , line 67, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
     \ basedir=basedir).decode()\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/other.py\"\
     , line 64, in bundle\n    return subprocess.check_output(shlex.split(command))\n\
     \  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/subprocess.py\"\
@@ -17,18 +25,11 @@ data:
     \ get_area($1), get_circumference($1);\n}\n"
   dependsOn:
   - examples/awk/circle.awk
-  extendedDependsOn:
-  - icon: ':heavy_check_mark:'
-    path: examples/awk/circle.awk
-    title: examples/awk/circle.awk
-  extendedRequiredBy: []
-  extendedVerifiedWith: []
   isVerificationFile: true
   path: examples/awk/circle.test.awk
   requiredBy: []
   timestamp: '2020-02-28 16:10:41+09:00'
   verificationStatus: TEST_ACCEPTED
-  verificationStatusIcon: ':heavy_check_mark:'
   verifiedWith: []
 documentation_of: examples/awk/circle.test.awk
 layout: document

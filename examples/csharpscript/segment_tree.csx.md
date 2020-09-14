@@ -1,8 +1,22 @@
 ---
 data:
+  _extendedDependsOn: []
+  _extendedRequiredBy: []
+  _extendedVerifiedWith:
+  - icon: ':heavy_check_mark:'
+    path: examples/csharpscript/segment_tree.range_minimum_query.test.csx
+    title: examples/csharpscript/segment_tree.range_minimum_query.test.csx
+  - icon: ':heavy_check_mark:'
+    path: examples/csharpscript/segment_tree.range_sum_query.test.csx
+    title: examples/csharpscript/segment_tree.range_sum_query.test.csx
+  - icon: ':heavy_check_mark:'
+    path: examples/csharpscript/segment_tree.point_set_range_composite.test.csx
+    title: examples/csharpscript/segment_tree.point_set_range_composite.test.csx
+  _pathExtension: csx
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes: {}
   bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/documentation/build.py\"\
-    , line 64, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
+    , line 67, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
     \ basedir=basedir).decode()\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/csharpscript.py\"\
     , line 110, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "class SegmentTree<T>\n{\n    public int Count { get; private set; }\n   \
@@ -24,28 +38,15 @@ data:
     \       if ((r & 1) == 0) rRes = Merge(Data[r], rRes);\n        }\n        return\
     \ Merge(lRes, rRes);\n    }\n}\n"
   dependsOn: []
-  extendedDependsOn: []
-  extendedRequiredBy: []
-  extendedVerifiedWith:
-  - icon: ':heavy_check_mark:'
-    path: examples/csharpscript/segment_tree.point_set_range_composite.test.csx
-    title: examples/csharpscript/segment_tree.point_set_range_composite.test.csx
-  - icon: ':heavy_check_mark:'
-    path: examples/csharpscript/segment_tree.range_sum_query.test.csx
-    title: examples/csharpscript/segment_tree.range_sum_query.test.csx
-  - icon: ':heavy_check_mark:'
-    path: examples/csharpscript/segment_tree.range_minimum_query.test.csx
-    title: examples/csharpscript/segment_tree.range_minimum_query.test.csx
   isVerificationFile: false
   path: examples/csharpscript/segment_tree.csx
   requiredBy: []
   timestamp: '2020-02-16 04:32:52+09:00'
   verificationStatus: LIBRARY_ALL_AC
-  verificationStatusIcon: ':heavy_check_mark:'
   verifiedWith:
-  - examples/csharpscript/segment_tree.point_set_range_composite.test.csx
-  - examples/csharpscript/segment_tree.range_sum_query.test.csx
   - examples/csharpscript/segment_tree.range_minimum_query.test.csx
+  - examples/csharpscript/segment_tree.range_sum_query.test.csx
+  - examples/csharpscript/segment_tree.point_set_range_composite.test.csx
 documentation_of: examples/csharpscript/segment_tree.csx
 layout: document
 redirect_from:

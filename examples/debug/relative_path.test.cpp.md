@@ -1,5 +1,22 @@
 ---
 data:
+  _extendedDependsOn:
+  - icon: ':heavy_check_mark:'
+    path: examples/debug/a/b/c/foo.hpp
+    title: examples/debug/a/b/c/foo.hpp
+  - icon: ':heavy_check_mark:'
+    path: examples/debug/relative_path.hpp
+    title: examples/debug/relative_path.hpp
+  - icon: ':heavy_check_mark:'
+    path: examples/debug/d/e/f/g/foo.hpp
+    title: examples/debug/d/e/f/g/foo.hpp
+  - icon: ':heavy_check_mark:'
+    path: examples/debug/h/i/j/k/l/foo.hpp
+    title: examples/debug/h/i/j/k/l/foo.hpp
+  _extendedRequiredBy: []
+  _extendedVerifiedWith: []
+  _pathExtension: cpp
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_A
@@ -17,27 +34,11 @@ data:
   - examples/debug/relative_path.hpp
   - examples/debug/d/e/f/g/foo.hpp
   - examples/debug/h/i/j/k/l/foo.hpp
-  extendedDependsOn:
-  - icon: ':heavy_check_mark:'
-    path: examples/debug/a/b/c/foo.hpp
-    title: examples/debug/a/b/c/foo.hpp
-  - icon: ':heavy_check_mark:'
-    path: examples/debug/relative_path.hpp
-    title: examples/debug/relative_path.hpp
-  - icon: ':heavy_check_mark:'
-    path: examples/debug/d/e/f/g/foo.hpp
-    title: examples/debug/d/e/f/g/foo.hpp
-  - icon: ':heavy_check_mark:'
-    path: examples/debug/h/i/j/k/l/foo.hpp
-    title: examples/debug/h/i/j/k/l/foo.hpp
-  extendedRequiredBy: []
-  extendedVerifiedWith: []
   isVerificationFile: true
   path: examples/debug/relative_path.test.cpp
   requiredBy: []
   timestamp: '2020-03-19 16:25:51+09:00'
   verificationStatus: TEST_ACCEPTED
-  verificationStatusIcon: ':heavy_check_mark:'
   verifiedWith: []
 documentation_of: examples/debug/relative_path.test.cpp
 layout: document

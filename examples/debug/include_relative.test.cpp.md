@@ -1,5 +1,13 @@
 ---
 data:
+  _extendedDependsOn:
+  - icon: ':heavy_check_mark:'
+    path: examples/macros.hpp
+    title: examples/macros.hpp
+  _extendedRequiredBy: []
+  _extendedVerifiedWith: []
+  _pathExtension: cpp
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_3_A
@@ -17,18 +25,11 @@ data:
     \ {\n        printf(\"Hello World\\n\");\n    }\n    return 0;\n}\n"
   dependsOn:
   - examples/macros.hpp
-  extendedDependsOn:
-  - icon: ':heavy_check_mark:'
-    path: examples/macros.hpp
-    title: examples/macros.hpp
-  extendedRequiredBy: []
-  extendedVerifiedWith: []
   isVerificationFile: true
   path: examples/debug/include_relative.test.cpp
   requiredBy: []
   timestamp: '2020-02-28 16:21:27+09:00'
   verificationStatus: TEST_ACCEPTED
-  verificationStatusIcon: ':heavy_check_mark:'
   verifiedWith: []
 documentation_of: examples/debug/include_relative.test.cpp
 layout: document

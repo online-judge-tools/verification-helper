@@ -1,5 +1,19 @@
 ---
 data:
+  _extendedDependsOn: []
+  _extendedRequiredBy: []
+  _extendedVerifiedWith:
+  - icon: ':heavy_check_mark:'
+    path: examples/segment_tree.range_sum_query.test.cpp
+    title: examples/segment_tree.range_sum_query.test.cpp
+  - icon: ':heavy_check_mark:'
+    path: examples/segment_tree.range_minimum_query.test.cpp
+    title: examples/segment_tree.range_minimum_query.test.cpp
+  - icon: ':heavy_check_mark:'
+    path: examples/segment_tree.point_set_range_composite.test.cpp
+    title: examples/segment_tree.point_set_range_composite.test.cpp
+  _pathExtension: hpp
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     _deprecated_at_docs: examples/segment_tree.md
@@ -46,28 +60,15 @@ data:
     \ racc = mon.mult(a[(-- r) - 1], racc);\n        }\n        return mon.mult(lacc,\
     \ racc);\n    }\n};\n"
   dependsOn: []
-  extendedDependsOn: []
-  extendedRequiredBy: []
-  extendedVerifiedWith:
-  - icon: ':heavy_check_mark:'
-    path: examples/segment_tree.range_minimum_query.test.cpp
-    title: examples/segment_tree.range_minimum_query.test.cpp
-  - icon: ':heavy_check_mark:'
-    path: examples/segment_tree.point_set_range_composite.test.cpp
-    title: examples/segment_tree.point_set_range_composite.test.cpp
-  - icon: ':heavy_check_mark:'
-    path: examples/segment_tree.range_sum_query.test.cpp
-    title: examples/segment_tree.range_sum_query.test.cpp
   isVerificationFile: false
   path: examples/segment_tree.hpp
   requiredBy: []
   timestamp: '2020-02-28 16:00:02+09:00'
   verificationStatus: LIBRARY_ALL_AC
-  verificationStatusIcon: ':heavy_check_mark:'
   verifiedWith:
+  - examples/segment_tree.range_sum_query.test.cpp
   - examples/segment_tree.range_minimum_query.test.cpp
   - examples/segment_tree.point_set_range_composite.test.cpp
-  - examples/segment_tree.range_sum_query.test.cpp
 documentation_of: examples/segment_tree.hpp
 layout: document
 redirect_from:

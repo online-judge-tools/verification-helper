@@ -1,9 +1,17 @@
 ---
 data:
+  _extendedDependsOn:
+  - icon: ':heavy_check_mark:'
+    path: examples/csharpscript/segment_tree.csx
+    title: examples/csharpscript/segment_tree.csx
+  _extendedRequiredBy: []
+  _extendedVerifiedWith: []
+  _pathExtension: csx
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     PROBLEM: https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_B
   bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/documentation/build.py\"\
-    , line 64, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
+    , line 67, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
     \ basedir=basedir).decode()\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/csharpscript.py\"\
     , line 110, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "#load \"./segment_tree.csx\"\n#pragma PROBLEM https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_B\n\
@@ -15,18 +23,11 @@ data:
     \    }\n}\n"
   dependsOn:
   - examples/csharpscript/segment_tree.csx
-  extendedDependsOn:
-  - icon: ':heavy_check_mark:'
-    path: examples/csharpscript/segment_tree.csx
-    title: examples/csharpscript/segment_tree.csx
-  extendedRequiredBy: []
-  extendedVerifiedWith: []
   isVerificationFile: true
   path: examples/csharpscript/segment_tree.range_sum_query.test.csx
   requiredBy: []
   timestamp: '2020-02-16 04:32:52+09:00'
   verificationStatus: TEST_ACCEPTED
-  verificationStatusIcon: ':heavy_check_mark:'
   verifiedWith: []
 documentation_of: examples/csharpscript/segment_tree.range_sum_query.test.csx
 layout: document

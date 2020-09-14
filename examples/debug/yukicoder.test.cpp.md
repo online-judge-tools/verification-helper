@@ -1,5 +1,10 @@
 ---
 data:
+  _extendedDependsOn: []
+  _extendedRequiredBy: []
+  _extendedVerifiedWith: []
+  _pathExtension: cpp
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     PROBLEM: https://yukicoder.me/problems/3872
@@ -21,15 +26,11 @@ data:
     \n  int ans=0;\n  for(int i=0;i<MAX;i++)\n    ans+=ok[i];\n  cout<<ans<<endl;\n\
     \  return 0;\n}\n"
   dependsOn: []
-  extendedDependsOn: []
-  extendedRequiredBy: []
-  extendedVerifiedWith: []
   isVerificationFile: true
   path: examples/debug/yukicoder.test.cpp
   requiredBy: []
   timestamp: '2020-02-28 16:21:27+09:00'
   verificationStatus: TEST_ACCEPTED
-  verificationStatusIcon: ':heavy_check_mark:'
   verifiedWith: []
 documentation_of: examples/debug/yukicoder.test.cpp
 layout: document

@@ -112,15 +112,7 @@ documentation_of: path/to/segment_tree.hpp
 
 ### トップページへの Markdown の埋め込み
 
-リポジトリのルートに `index.md` というファイルを作って、次のように書きます。
-
-```
----
-layout: toppage
----
-
-ここに書いた文章がドキュメントのトップページへ追加されます。
-```
+`.verify-helper/docs/index.md` というファイルを作って、そこに Markdown で書いてください。
 
 ### ローカル実行
 

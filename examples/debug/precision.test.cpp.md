@@ -1,5 +1,10 @@
 ---
 data:
+  _extendedDependsOn: []
+  _extendedRequiredBy: []
+  _extendedVerifiedWith: []
+  _pathExtension: cpp
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
     ERROR: 1e-6
@@ -23,15 +28,11 @@ data:
     \   res-=amount;\n    ans+=amount*p.first;\n  }\n\n  cout<<fixed<<setprecision(12)<<ans<<endl;\n\
     \  return 0;\n}\n"
   dependsOn: []
-  extendedDependsOn: []
-  extendedRequiredBy: []
-  extendedVerifiedWith: []
   isVerificationFile: true
   path: examples/debug/precision.test.cpp
   requiredBy: []
   timestamp: '2020-02-28 16:21:27+09:00'
   verificationStatus: TEST_ACCEPTED
-  verificationStatusIcon: ':heavy_check_mark:'
   verifiedWith: []
 documentation_of: examples/debug/precision.test.cpp
 layout: document

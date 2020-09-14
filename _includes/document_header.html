@@ -1,4 +1,4 @@
-<h1>{{ page.data.verificationStatusIcon }} {{ page.title }}
+<h1>{{ page.data._verificationStatusIcon }} {{ page.title }}
     {% if page.title != page.data.path %}<br><small>({{ page.data.path }})</small>{% endif %}
 </h1>
 
@@ -8,9 +8,10 @@
     {% if page.data.attributes.PROBLEM %}
     <li>Problem: <a href="{{ page.data.attributes.PROBLEM }}">{{ page.data.attributes.PROBLEM }}</a></li>
     {% endif %}
-    <li><a id="include-directive-anchor">Include: <code id="include-directive-code">#include "{{ page.data.path }}"</code></a></li>  <!-- TODO: support languages other than C++ too -->
+    {% if page.data._pathExtension == "hpp" %}<li><a id="include-directive-anchor">Include: <code id="include-directive-code">#include "{{ page.data.path }}"</code></a></li>{% endif %}
 </ul>
 
+{% if page.data._pathExtension == "hpp" %}
 <script defer type="text/javascript">
     // make the include directive clickable
     (function() {
@@ -29,3 +30,4 @@
         });
     })();
 </script>
+{% endif %}

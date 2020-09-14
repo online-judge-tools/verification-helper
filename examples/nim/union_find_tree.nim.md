@@ -1,8 +1,25 @@
 ---
 data:
+  _extendedDependsOn:
+  - icon: ':heavy_check_mark:'
+    path: examples/nim/hoge.nim
+    title: examples/nim/hoge.nim
+  - icon: ':heavy_check_mark:'
+    path: examples/nim/hoge.nim
+    title: examples/nim/hoge.nim
+  _extendedRequiredBy: []
+  _extendedVerifiedWith:
+  - icon: ':heavy_check_mark:'
+    path: examples/nim/union_find_tree_aoj_test.nim
+    title: examples/nim/union_find_tree_aoj_test.nim
+  - icon: ':heavy_check_mark:'
+    path: examples/nim/union_find_tree_aoj_test.nim
+    title: examples/nim/union_find_tree_aoj_test.nim
+  _pathExtension: nim
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes: {}
   bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/documentation/build.py\"\
-    , line 64, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
+    , line 67, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
     \ basedir=basedir).decode()\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/nim.py\"\
     , line 86, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "when not declared(EXAMPLES_UNION_FIND_TREE_NIM):\n  const EXAMPLES_UNION_FIND_TREE_NIM\
@@ -24,27 +41,11 @@ data:
   dependsOn:
   - examples/nim/hoge.nim
   - examples/nim/hoge.nim
-  extendedDependsOn:
-  - icon: ':heavy_check_mark:'
-    path: examples/nim/hoge.nim
-    title: examples/nim/hoge.nim
-  - icon: ':heavy_check_mark:'
-    path: examples/nim/hoge.nim
-    title: examples/nim/hoge.nim
-  extendedRequiredBy: []
-  extendedVerifiedWith:
-  - icon: ':heavy_check_mark:'
-    path: examples/nim/union_find_tree_aoj_test.nim
-    title: examples/nim/union_find_tree_aoj_test.nim
-  - icon: ':heavy_check_mark:'
-    path: examples/nim/union_find_tree_aoj_test.nim
-    title: examples/nim/union_find_tree_aoj_test.nim
   isVerificationFile: false
   path: examples/nim/union_find_tree.nim
   requiredBy: []
   timestamp: '2020-05-05 19:43:22+09:00'
   verificationStatus: LIBRARY_ALL_AC
-  verificationStatusIcon: ':heavy_check_mark:'
   verifiedWith:
   - examples/nim/union_find_tree_aoj_test.nim
   - examples/nim/union_find_tree_aoj_test.nim

@@ -1,8 +1,13 @@
 ---
 data:
+  _extendedDependsOn: []
+  _extendedRequiredBy: []
+  _extendedVerifiedWith: []
+  _pathExtension: py
+  _verificationStatusIcon: ':warning:'
   attributes: {}
   bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/documentation/build.py\"\
-    , line 64, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
+    , line 67, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
     \ basedir=basedir).decode()\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/python.py\"\
     , line 84, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "import pathlib\nfrom logging import getLogger\nfrom typing import *\n\nimport\
@@ -93,11 +98,12 @@ data:
     \            marker=marker,\n            basedir=basedir,\n        )\n       \
     \ source_code_stats.append(stat)\n    return sorted(source_code_stats, key=lambda\
     \ stat: stat.path)\n\n\ndef convert_to_page_render_jobs(*, source_code_stats:\
-    \ List[SourceCodeStat], markdown_paths: List[pathlib.Path], basedir: pathlib.Path)\
-    \ -> List[PageRenderJob]:\n    page_render_jobs: Dict[pathlib.Path, PageRenderJob]\
-    \ = {}\n\n    for markdown_path in markdown_paths:\n        markdown_absolute_path\
-    \ = (basedir / markdown_path).resolve()\n        markdown_relative_path = markdown_absolute_path.relative_to(basedir)\n\
-    \n        with open(markdown_path, 'rb') as fh:\n            content = fh.read()\n\
+    \ List[SourceCodeStat], markdown_paths: List[pathlib.Path], config: SiteRenderConfig)\
+    \ -> List[PageRenderJob]:\n    basedir = config.basedir\n\n    page_render_jobs:\
+    \ Dict[pathlib.Path, PageRenderJob] = {}\n\n    for markdown_path in markdown_paths:\n\
+    \        markdown_absolute_path = (basedir / markdown_path).resolve()\n      \
+    \  markdown_relative_path = markdown_absolute_path.relative_to(basedir)\n\n  \
+    \      with open(markdown_path, 'rb') as fh:\n            content = fh.read()\n\
     \        front_matter, content = onlinejudge_verify.documentation.front_matter.split_front_matter(content)\n\
     \n        # move the location if documentation_of field exists\n        path =\
     \ markdown_relative_path\n        documentation_of = front_matter.get(FrontMatterItem.documentation_of.value)\n\
@@ -128,20 +134,18 @@ data:
     \ by @docs in %s: %s', str(stat.path), e)\n\n        job = PageRenderJob(\n  \
     \          path=path,\n            front_matter=front_matter,\n            content=content,\n\
     \        )\n        page_render_jobs[job.path] = job\n\n    if pathlib.Path('index.md')\
-    \ not in page_render_jobs:\n        job = PageRenderJob(\n            path=pathlib.Path('index.md'),\n\
+    \ not in page_render_jobs:\n        content = b''\n        if config.index_md.exists():\n\
+    \            with config.index_md.open('rb') as fh:\n                content =\
+    \ fh.read()\n        job = PageRenderJob(\n            path=pathlib.Path('index.md'),\n\
     \            front_matter={\n                'layout': 'toppage',\n          \
-    \  },\n            content=b'',\n        )\n        page_render_jobs[job.path]\
+    \  },\n            content=content,\n        )\n        page_render_jobs[job.path]\
     \ = job\n\n    return list(page_render_jobs.values())\n"
   dependsOn: []
-  extendedDependsOn: []
-  extendedRequiredBy: []
-  extendedVerifiedWith: []
   isVerificationFile: false
   path: onlinejudge_verify/documentation/configure.py
   requiredBy: []
   timestamp: '1970-01-01 00:00:00+00:00'
   verificationStatus: LIBRARY_NO_TESTS
-  verificationStatusIcon: ':warning:'
   verifiedWith: []
 documentation_of: onlinejudge_verify/documentation/configure.py
 layout: document

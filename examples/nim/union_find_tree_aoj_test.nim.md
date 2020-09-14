@@ -1,9 +1,32 @@
 ---
 data:
+  _extendedDependsOn:
+  - icon: ':heavy_check_mark:'
+    path: examples/nim/union_find_tree.nim
+    title: examples/nim/union_find_tree.nim
+  - icon: ':heavy_check_mark:'
+    path: examples/nim/hoge.nim
+    title: examples/nim/hoge.nim
+  - icon: ':heavy_check_mark:'
+    path: examples/nim/hoge.nim
+    title: examples/nim/hoge.nim
+  - icon: ':heavy_check_mark:'
+    path: examples/nim/union_find_tree.nim
+    title: examples/nim/union_find_tree.nim
+  - icon: ':heavy_check_mark:'
+    path: examples/nim/headers.nim
+    title: examples/nim/headers.nim
+  - icon: ':heavy_check_mark:'
+    path: examples/nim/headers.nim
+    title: examples/nim/headers.nim
+  _extendedRequiredBy: []
+  _extendedVerifiedWith: []
+  _pathExtension: nim
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     PROBLEM: https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_1_A
   bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/documentation/build.py\"\
-    , line 64, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
+    , line 67, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
     \ basedir=basedir).decode()\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/nim.py\"\
     , line 86, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "# verify-helper: PROBLEM https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_1_A\n\
@@ -15,38 +38,16 @@ data:
     \ com == 1:\n    echo if uft.is_same(x, y): 1 else: 0\n"
   dependsOn:
   - examples/nim/union_find_tree.nim
-  - examples/nim/headers.nim
   - examples/nim/hoge.nim
   - examples/nim/hoge.nim
   - examples/nim/union_find_tree.nim
   - examples/nim/headers.nim
-  extendedDependsOn:
-  - icon: ':heavy_check_mark:'
-    path: examples/nim/union_find_tree.nim
-    title: examples/nim/union_find_tree.nim
-  - icon: ':heavy_check_mark:'
-    path: examples/nim/headers.nim
-    title: examples/nim/headers.nim
-  - icon: ':heavy_check_mark:'
-    path: examples/nim/hoge.nim
-    title: examples/nim/hoge.nim
-  - icon: ':heavy_check_mark:'
-    path: examples/nim/hoge.nim
-    title: examples/nim/hoge.nim
-  - icon: ':heavy_check_mark:'
-    path: examples/nim/union_find_tree.nim
-    title: examples/nim/union_find_tree.nim
-  - icon: ':heavy_check_mark:'
-    path: examples/nim/headers.nim
-    title: examples/nim/headers.nim
-  extendedRequiredBy: []
-  extendedVerifiedWith: []
+  - examples/nim/headers.nim
   isVerificationFile: true
   path: examples/nim/union_find_tree_aoj_test.nim
   requiredBy: []
   timestamp: '2020-05-05 19:43:22+09:00'
   verificationStatus: TEST_ACCEPTED
-  verificationStatusIcon: ':heavy_check_mark:'
   verifiedWith: []
 documentation_of: examples/nim/union_find_tree_aoj_test.nim
 layout: document

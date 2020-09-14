@@ -1,8 +1,13 @@
 ---
 data:
+  _extendedDependsOn: []
+  _extendedRequiredBy: []
+  _extendedVerifiedWith: []
+  _pathExtension: py
+  _verificationStatusIcon: ':warning:'
   attributes: {}
   bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/documentation/build.py\"\
-    , line 64, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
+    , line 67, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
     \ basedir=basedir).decode()\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/python.py\"\
     , line 84, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "import copy\nimport pathlib\nimport traceback\nfrom logging import getLogger\n\
@@ -10,8 +15,9 @@ data:
     import onlinejudge_verify.utils as utils\nimport pkg_resources\nimport yaml\n\
     from onlinejudge_verify.documentation.type import *\n\nlogger = getLogger(__name__)\n\
     \n_resource_package = 'onlinejudge_verify_resources'\n_config_yml_path: str =\
-    \ '_config.yml'\n_copied_static_file_paths: List[str] = [\n    '_layouts/document.html',\n\
-    \    '_layouts/toppage.html',\n    '_includes/mathjax.html',\n    '_includes/document_header.html',\n\
+    \ '_config.yml'\n_copied_static_file_paths: List[str] = [\n    '_layouts/page.html',\n\
+    \    '_layouts/document.html',\n    '_layouts/toppage.html',\n    '_includes/mathjax.html',\n\
+    \    '_includes/theme_fix.html',\n    '_includes/highlight.html',\n    '_includes/document_header.html',\n\
     \    '_includes/document_body.html',\n    '_includes/document_footer.html',\n\
     \    '_includes/toppage_header.html',\n    '_includes/toppage_body.html',\n  \
     \  'assets/css/copy-button.css',\n    'assets/js/copy-button.js',\n    'Gemfile',\n\
@@ -46,14 +52,15 @@ data:
     \        page_title_dict: Dict[pathlib.Path, str],\n        basedir: pathlib.Path,\n\
     ) -> Dict[str, Any]:\n    relative_path = (basedir / path).resolve().relative_to(basedir)\n\
     \    stat = source_code_stats_dict[relative_path]\n    data = _render_source_code_stat(stat,\
-    \ basedir=basedir)\n    data['verificationStatusIcon'] = _get_verification_status_icon(stat.verification_status)\n\
+    \ basedir=basedir)\n    data['_pathExtension'] = path.suffix.lstrip('.')\n   \
+    \ data['_verificationStatusIcon'] = _get_verification_status_icon(stat.verification_status)\n\
     \n    def ext(relative_path: pathlib.Path) -> Dict[str, Any]:\n        stat =\
     \ source_code_stats_dict[relative_path]\n        return {\n            'path':\
     \ str(relative_path),\n            'title': page_title_dict[relative_path],\n\
     \            'icon': _get_verification_status_icon(stat.verification_status),\n\
-    \        }\n\n    data['extendedDependsOn'] = [ext(path) for path in stat.depends_on]\n\
-    \    data['extendedRequiredBy'] = [ext(path) for path in stat.required_by]\n \
-    \   data['extendedVerifiedWith'] = [ext(path) for path in stat.verified_with]\n\
+    \        }\n\n    data['_extendedDependsOn'] = [ext(path) for path in stat.depends_on]\n\
+    \    data['_extendedRequiredBy'] = [ext(path) for path in stat.required_by]\n\
+    \    data['_extendedVerifiedWith'] = [ext(path) for path in stat.verified_with]\n\
     \n    return data\n\n\ndef _render_source_code_stats_for_top_page(\n        *,\n\
     \        source_code_stats: List[SourceCodeStat],\n        page_title_dict: Dict[pathlib.Path,\
     \ str],\n        basedir: pathlib.Path,\n) -> Dict[str, Any]:\n    libraryCategories:\
@@ -109,15 +116,11 @@ data:
     \ / src.relative_to(site_render_config.static_dir)\n            with open(src,\
     \ 'rb') as fh:\n                files[dst] = fh.read()\n    return files\n"
   dependsOn: []
-  extendedDependsOn: []
-  extendedRequiredBy: []
-  extendedVerifiedWith: []
   isVerificationFile: false
   path: onlinejudge_verify/documentation/build.py
   requiredBy: []
   timestamp: '1970-01-01 00:00:00+00:00'
   verificationStatus: LIBRARY_NO_TESTS
-  verificationStatusIcon: ':warning:'
   verifiedWith: []
 documentation_of: onlinejudge_verify/documentation/build.py
 layout: document

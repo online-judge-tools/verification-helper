@@ -1,8 +1,16 @@
 ---
 data:
+  _extendedDependsOn: []
+  _extendedRequiredBy: []
+  _extendedVerifiedWith:
+  - icon: ':heavy_check_mark:'
+    path: examples/awk/circle.test.awk
+    title: examples/awk/circle.test.awk
+  _pathExtension: awk
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes: {}
   bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/documentation/build.py\"\
-    , line 64, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
+    , line 67, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
     \ basedir=basedir).decode()\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/other.py\"\
     , line 64, in bundle\n    return subprocess.check_output(shlex.split(command))\n\
     \  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/subprocess.py\"\
@@ -13,18 +21,11 @@ data:
   code: "function get_area(r) {\n    return 3.1415926535 * r * r;\n}\n\nfunction get_circumference(r)\
     \ {\n    return 2 * 3.1415926535 * r;\n}\n"
   dependsOn: []
-  extendedDependsOn: []
-  extendedRequiredBy: []
-  extendedVerifiedWith:
-  - icon: ':heavy_check_mark:'
-    path: examples/awk/circle.test.awk
-    title: examples/awk/circle.test.awk
   isVerificationFile: false
   path: examples/awk/circle.awk
   requiredBy: []
   timestamp: '2020-02-28 16:01:42+09:00'
   verificationStatus: LIBRARY_ALL_AC
-  verificationStatusIcon: ':heavy_check_mark:'
   verifiedWith:
   - examples/awk/circle.test.awk
 documentation_of: examples/awk/circle.awk

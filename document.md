@@ -111,15 +111,7 @@ In this file, ...
 
 ### Embedding Markdown to the top page
 
-Please make the file `index.md` at the root of the repository, and write as the following.
-
-```
----
-layout: toppage
----
-
-The text written here is inserted into the top page of the documents.
-```
+Please make the file `.verify-helper/docs/index.md` and write Markdown there.
 
 
 ### Local execution

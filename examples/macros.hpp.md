@@ -1,5 +1,28 @@
 ---
 data:
+  _extendedDependsOn: []
+  _extendedRequiredBy: []
+  _extendedVerifiedWith:
+  - icon: ':heavy_check_mark:'
+    path: examples/segment_tree.range_sum_query.test.cpp
+    title: examples/segment_tree.range_sum_query.test.cpp
+  - icon: ':heavy_check_mark:'
+    path: examples/debug/include_relative.test.cpp
+    title: examples/debug/include_relative.test.cpp
+  - icon: ':heavy_check_mark:'
+    path: examples/segment_tree.range_minimum_query.test.cpp
+    title: examples/segment_tree.range_minimum_query.test.cpp
+  - icon: ':heavy_check_mark:'
+    path: examples/segment_tree.point_set_range_composite.test.cpp
+    title: examples/segment_tree.point_set_range_composite.test.cpp
+  - icon: ':heavy_check_mark:'
+    path: examples/union_find_tree.aoj.test.cpp
+    title: examples/union_find_tree.aoj.test.cpp
+  - icon: ':heavy_check_mark:'
+    path: examples/union_find_tree.yosupo.test.cpp
+    title: examples/union_find_tree.yosupo.test.cpp
+  _pathExtension: hpp
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
   bundledCode: '#line 2 "examples/macros.hpp"
@@ -29,40 +52,18 @@ data:
 
     '
   dependsOn: []
-  extendedDependsOn: []
-  extendedRequiredBy: []
-  extendedVerifiedWith:
-  - icon: ':heavy_check_mark:'
-    path: examples/segment_tree.range_minimum_query.test.cpp
-    title: examples/segment_tree.range_minimum_query.test.cpp
-  - icon: ':heavy_check_mark:'
-    path: examples/debug/include_relative.test.cpp
-    title: examples/debug/include_relative.test.cpp
-  - icon: ':heavy_check_mark:'
-    path: examples/union_find_tree.aoj.test.cpp
-    title: examples/union_find_tree.aoj.test.cpp
-  - icon: ':heavy_check_mark:'
-    path: examples/union_find_tree.yosupo.test.cpp
-    title: examples/union_find_tree.yosupo.test.cpp
-  - icon: ':heavy_check_mark:'
-    path: examples/segment_tree.point_set_range_composite.test.cpp
-    title: examples/segment_tree.point_set_range_composite.test.cpp
-  - icon: ':heavy_check_mark:'
-    path: examples/segment_tree.range_sum_query.test.cpp
-    title: examples/segment_tree.range_sum_query.test.cpp
   isVerificationFile: false
   path: examples/macros.hpp
   requiredBy: []
   timestamp: '2019-11-29 11:28:05+09:00'
   verificationStatus: LIBRARY_ALL_AC
-  verificationStatusIcon: ':heavy_check_mark:'
   verifiedWith:
-  - examples/segment_tree.range_minimum_query.test.cpp
+  - examples/segment_tree.range_sum_query.test.cpp
   - examples/debug/include_relative.test.cpp
+  - examples/segment_tree.range_minimum_query.test.cpp
+  - examples/segment_tree.point_set_range_composite.test.cpp
   - examples/union_find_tree.aoj.test.cpp
   - examples/union_find_tree.yosupo.test.cpp
-  - examples/segment_tree.point_set_range_composite.test.cpp
-  - examples/segment_tree.range_sum_query.test.cpp
 documentation_of: examples/macros.hpp
 layout: document
 redirect_from:

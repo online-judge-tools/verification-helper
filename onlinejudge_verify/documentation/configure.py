@@ -3,7 +3,7 @@ from logging import getLogger
 from typing import *
 
 import onlinejudge_verify.documentation.front_matter
-import onlinejudge_verify.languages
+import onlinejudge_verify.languages.list
 import onlinejudge_verify.utils as utils
 from onlinejudge_verify.documentation.type import *
 from onlinejudge_verify.marker import VerificationMarker
@@ -30,7 +30,7 @@ def _find_matched_file_paths(pred: Callable[[pathlib.Path], bool], *, basedir: p
 
 def _find_source_code_paths(*, basedir: pathlib.Path) -> List[pathlib.Path]:
     def pred(path: pathlib.Path) -> bool:
-        return onlinejudge_verify.languages.get(path) is not None
+        return onlinejudge_verify.languages.list.get(path) is not None
 
     return _find_matched_file_paths(pred, basedir=basedir)
 
@@ -61,7 +61,7 @@ def _build_dependency_graph(paths: List[pathlib.Path], *, basedir: pathlib.Path)
     for src in paths:
         absolute_src = (basedir / src).resolve()
         relative_src = absolute_src.relative_to(basedir)  # all paths must be in the git repository
-        language = onlinejudge_verify.languages.get(src)
+        language = onlinejudge_verify.languages.list.get(src)
         assert language is not None
 
         try:
@@ -137,7 +137,7 @@ def _get_source_code_stat(
 ) -> SourceCodeStat:
     absolute_path = (basedir / path).resolve()
     relative_path = absolute_path.relative_to(basedir)
-    language = onlinejudge_verify.languages.get(path)
+    language = onlinejudge_verify.languages.list.get(path)
     assert language is not None
 
     is_verification_file = language.is_verification_file(path, basedir=basedir)

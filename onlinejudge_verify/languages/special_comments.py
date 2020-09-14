@@ -48,3 +48,19 @@ def list_doxygen_annotations(path: pathlib.Path) -> Dict[str, str]:
                 else:
                     assert False
     return attributes
+
+
+@functools.lru_cache(maxsize=None)
+def list_embedded_urls(path: pathlib.Path) -> List[str]:
+    pattern = re.compile(r"""['"`]?https?://\S*""")  # use a broad pattern. There are no needs to make match strict.
+    with open(path, 'rb') as fh:
+        content = fh.read().decode()
+    urls = []
+    for url in pattern.findall(content):
+        # The URL may be written like `"https://atcoder.jp/"`. In this case, we need to remove `"`s around the URL.
+        for quote in ("'", '"', '`'):
+            if len(url) >= 2 and url.startswith(quote) and url.endswith(quote):
+                url = url[1:-1]
+                break
+        urls.append(url)
+    return sorted(set(urls))

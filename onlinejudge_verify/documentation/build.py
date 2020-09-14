@@ -5,6 +5,7 @@ from logging import getLogger
 from typing import *
 
 import onlinejudge_verify.documentation.front_matter
+import onlinejudge_verify.languages.list
 import onlinejudge_verify.utils as utils
 import pkg_resources
 import yaml
@@ -62,7 +63,7 @@ def _render_source_code_stat(stat: SourceCodeStat, *, basedir: pathlib.Path) -> 
     with open(basedir / stat.path, 'rb') as fh:
         code = fh.read().decode()
     try:
-        language = onlinejudge_verify.languages.get(stat.path)
+        language = onlinejudge_verify.languages.list.get(stat.path)
         assert language is not None
         bundled_code = language.bundle(stat.path, basedir=basedir).decode()
     except Exception:

@@ -9,7 +9,7 @@ import traceback
 from logging import getLogger
 from typing import *
 
-import onlinejudge_verify.languages
+import onlinejudge_verify.languages.list
 import onlinejudge_verify.marker
 
 import onlinejudge
@@ -51,7 +51,7 @@ def exec_command(command: List[str]):
 def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: int) -> Optional[bool]:
     logger.info('verify: %s', path)
 
-    language = onlinejudge_verify.languages.get(path)
+    language = onlinejudge_verify.languages.list.get(path)
     if language is None:
         logger.error('unsupported language')
         return False

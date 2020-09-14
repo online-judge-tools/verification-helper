@@ -3,7 +3,7 @@ import abc
 import pathlib
 from typing import *
 
-from onlinejudge_verify.languages.special_comments import list_special_comments
+import onlinejudge_verify.languages.special_comments as special_comments
 
 
 class LanguageEnvironment(object):
@@ -21,12 +21,15 @@ class LanguageEnvironment(object):
 
 
 class Language(object):
-    def list_attributes(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Dict[str, str]:
+    def list_attributes(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Dict[str, Any]:
         """
         :throws Exception:
         """
 
-        return list_special_comments(path)
+        attributes: Dict[str, Any] = special_comments.list_special_comments(path)
+        attributes.setdefault('links', [])
+        attributes['links'].extend(special_comments.list_embedded_urls(path))
+        return attributes
 
     @abc.abstractmethod
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:

@@ -16,15 +16,13 @@ data:
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     '*NOT_SPECIAL_COMMENTS*': ''
-    _deprecated_at_docs: examples/segment_tree.md
     document_title: a Segment Tree (generalized with monoids)
     links:
     - https://en.wikipedia.org/wiki/Segment_tree
   bundledCode: "#line 2 \"examples/segment_tree.hpp\"\n#include <cassert>\n#include\
-    \ <vector>\n\n/**\n * @brief a Segment Tree (generalized with monoids) \n * @docs\
-    \ examples/segment_tree.md\n * @tparam Monoid is a monoid; commutativity is not\
-    \ required\n * @see https://en.wikipedia.org/wiki/Segment_tree\n */\ntemplate\
-    \ <class Monoid>\nstruct segment_tree {\n    typedef typename Monoid::value_type\
+    \ <vector>\n\n/**\n * @brief a Segment Tree (generalized with monoids) \n * @tparam\
+    \ Monoid is a monoid; commutativity is not required\n * @see https://en.wikipedia.org/wiki/Segment_tree\n\
+    \ */\ntemplate <class Monoid>\nstruct segment_tree {\n    typedef typename Monoid::value_type\
     \ value_type;\n    const Monoid mon;\n    int n;\n    std::vector<value_type>\
     \ a;\n\n    segment_tree() = default;\n    segment_tree(int n_, const Monoid &\
     \ mon_ = Monoid()) : mon(mon_) {\n        n = 1; while (n < n_) n *= 2;\n    \
@@ -42,9 +40,9 @@ data:
     \ racc = mon.mult(a[(-- r) - 1], racc);\n        }\n        return mon.mult(lacc,\
     \ racc);\n    }\n};\n"
   code: "#pragma once\n#include <cassert>\n#include <vector>\n\n/**\n * @brief a Segment\
-    \ Tree (generalized with monoids) \n * @docs examples/segment_tree.md\n * @tparam\
-    \ Monoid is a monoid; commutativity is not required\n * @see https://en.wikipedia.org/wiki/Segment_tree\n\
-    \ */\ntemplate <class Monoid>\nstruct segment_tree {\n    typedef typename Monoid::value_type\
+    \ Tree (generalized with monoids) \n * @tparam Monoid is a monoid; commutativity\
+    \ is not required\n * @see https://en.wikipedia.org/wiki/Segment_tree\n */\ntemplate\
+    \ <class Monoid>\nstruct segment_tree {\n    typedef typename Monoid::value_type\
     \ value_type;\n    const Monoid mon;\n    int n;\n    std::vector<value_type>\
     \ a;\n\n    segment_tree() = default;\n    segment_tree(int n_, const Monoid &\
     \ mon_ = Monoid()) : mon(mon_) {\n        n = 1; while (n < n_) n *= 2;\n    \
@@ -65,7 +63,7 @@ data:
   isVerificationFile: false
   path: examples/segment_tree.hpp
   requiredBy: []
-  timestamp: '2020-02-28 16:00:02+09:00'
+  timestamp: '2020-09-14 23:28:24+09:00'
   verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
   - examples/segment_tree.range_sum_query.test.cpp
@@ -73,11 +71,9 @@ data:
   - examples/segment_tree.point_set_range_composite.test.cpp
 documentation_of: examples/segment_tree.hpp
 layout: document
-redirect_from:
-- /library/examples/segment_tree.hpp
-- /library/examples/segment_tree.hpp.html
-title: a Segment Tree (generalized with monoids)
+title: Segment Tree (generalized with monoids)
 ---
+
 ## Operations
 
 For a monoid $M = (M, \cdot, 1)$ and a list $a = (a_0, a_1, \dots, a _ {n - 1}) \in M^N$ of elements $M$ with the length $N$, a segment tree can process following operations with $O(\log N)$:

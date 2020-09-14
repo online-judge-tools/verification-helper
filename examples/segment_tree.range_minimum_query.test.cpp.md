@@ -3,7 +3,7 @@ data:
   _extendedDependsOn:
   - icon: ':heavy_check_mark:'
     path: examples/segment_tree.hpp
-    title: a Segment Tree (generalized with monoids)
+    title: Segment Tree (generalized with monoids)
   - icon: ':heavy_check_mark:'
     path: examples/monoids.hpp
     title: examples/monoids.hpp
@@ -23,9 +23,8 @@ data:
     \ PROBLEM \"https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_A\"\
     \n#include <iostream>\n#line 2 \"examples/segment_tree.hpp\"\n#include <cassert>\n\
     #include <vector>\n\n/**\n * @brief a Segment Tree (generalized with monoids)\
-    \ \n * @docs examples/segment_tree.md\n * @tparam Monoid is a monoid; commutativity\
-    \ is not required\n * @see https://en.wikipedia.org/wiki/Segment_tree\n */\ntemplate\
-    \ <class Monoid>\nstruct segment_tree {\n    typedef typename Monoid::value_type\
+    \ \n * @tparam Monoid is a monoid; commutativity is not required\n * @see https://en.wikipedia.org/wiki/Segment_tree\n\
+    \ */\ntemplate <class Monoid>\nstruct segment_tree {\n    typedef typename Monoid::value_type\
     \ value_type;\n    const Monoid mon;\n    int n;\n    std::vector<value_type>\
     \ a;\n\n    segment_tree() = default;\n    segment_tree(int n_, const Monoid &\
     \ mon_ = Monoid()) : mon(mon_) {\n        n = 1; while (n < n_) n *= 2;\n    \
@@ -76,7 +75,7 @@ data:
   isVerificationFile: true
   path: examples/segment_tree.range_minimum_query.test.cpp
   requiredBy: []
-  timestamp: '2020-02-28 16:00:02+09:00'
+  timestamp: '2020-09-14 23:28:24+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: examples/segment_tree.range_minimum_query.test.cpp

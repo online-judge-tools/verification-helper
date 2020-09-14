@@ -50,7 +50,7 @@ data:
       title: examples/monoids.hpp
     - icon: ':heavy_check_mark:'
       path: examples/segment_tree.hpp
-      title: a Segment Tree (generalized with monoids)
+      title: Segment Tree (generalized with monoids)
     - icon: ':heavy_check_mark:'
       path: examples/union_find_tree.hpp
       title: a Union-Find Tree
@@ -73,86 +73,6 @@ data:
     - icon: ':heavy_check_mark:'
       path: examples/python/union_find.py
       title: examples/python/union_find.py
-  - name: onlinejudge_bundle
-    pages:
-    - icon: ':warning:'
-      path: onlinejudge_bundle/__init__.py
-      title: onlinejudge_bundle/__init__.py
-    - icon: ':warning:'
-      path: onlinejudge_bundle/main.py
-      title: onlinejudge_bundle/main.py
-  - name: onlinejudge_verify
-    pages:
-    - icon: ':warning:'
-      path: onlinejudge_verify/__init__.py
-      title: onlinejudge_verify/__init__.py
-    - icon: ':warning:'
-      path: onlinejudge_verify/config.py
-      title: onlinejudge_verify/config.py
-    - icon: ':warning:'
-      path: onlinejudge_verify/main.py
-      title: onlinejudge_verify/main.py
-    - icon: ':warning:'
-      path: onlinejudge_verify/marker.py
-      title: onlinejudge_verify/marker.py
-    - icon: ':warning:'
-      path: onlinejudge_verify/utils.py
-      title: onlinejudge_verify/utils.py
-    - icon: ':warning:'
-      path: onlinejudge_verify/verify.py
-      title: onlinejudge_verify/verify.py
-  - name: onlinejudge_verify/documentation
-    pages:
-    - icon: ':warning:'
-      path: onlinejudge_verify/documentation/__init__.py
-      title: onlinejudge_verify/documentation/__init__.py
-    - icon: ':warning:'
-      path: onlinejudge_verify/documentation/build.py
-      title: onlinejudge_verify/documentation/build.py
-    - icon: ':warning:'
-      path: onlinejudge_verify/documentation/configure.py
-      title: onlinejudge_verify/documentation/configure.py
-    - icon: ':warning:'
-      path: onlinejudge_verify/documentation/front_matter.py
-      title: onlinejudge_verify/documentation/front_matter.py
-    - icon: ':warning:'
-      path: onlinejudge_verify/documentation/main.py
-      title: onlinejudge_verify/documentation/main.py
-    - icon: ':warning:'
-      path: onlinejudge_verify/documentation/type.py
-      title: onlinejudge_verify/documentation/type.py
-  - name: onlinejudge_verify/languages
-    pages:
-    - icon: ':warning:'
-      path: onlinejudge_verify/languages/__init__.py
-      title: onlinejudge_verify/languages/__init__.py
-    - icon: ':warning:'
-      path: onlinejudge_verify/languages/cplusplus.py
-      title: onlinejudge_verify/languages/cplusplus.py
-    - icon: ':warning:'
-      path: onlinejudge_verify/languages/cplusplus_bundle.py
-      title: onlinejudge_verify/languages/cplusplus_bundle.py
-    - icon: ':warning:'
-      path: onlinejudge_verify/languages/csharpscript.py
-      title: onlinejudge_verify/languages/csharpscript.py
-    - icon: ':warning:'
-      path: onlinejudge_verify/languages/list.py
-      title: onlinejudge_verify/languages/list.py
-    - icon: ':warning:'
-      path: onlinejudge_verify/languages/models.py
-      title: onlinejudge_verify/languages/models.py
-    - icon: ':warning:'
-      path: onlinejudge_verify/languages/nim.py
-      title: onlinejudge_verify/languages/nim.py
-    - icon: ':warning:'
-      path: onlinejudge_verify/languages/other.py
-      title: onlinejudge_verify/languages/other.py
-    - icon: ':warning:'
-      path: onlinejudge_verify/languages/python.py
-      title: onlinejudge_verify/languages/python.py
-    - icon: ':warning:'
-      path: onlinejudge_verify/languages/special_comments.py
-      title: onlinejudge_verify/languages/special_comments.py
   - name: onlinejudge_verify_resources
     pages:
     - icon: ':warning:'
@@ -173,32 +93,6 @@ data:
     - icon: ':warning:'
       path: setup.py
       title: setup.py
-  - name: tests
-    pages:
-    - icon: ':warning:'
-      path: tests/__init__.py
-      title: tests/__init__.py
-    - icon: ':warning:'
-      path: tests/test_bundle.py
-      title: tests/test_bundle.py
-    - icon: ':warning:'
-      path: tests/test_cplusplus.py
-      title: tests/test_cplusplus.py
-    - icon: ':warning:'
-      path: tests/test_docs.py
-      title: tests/test_docs.py
-    - icon: ':warning:'
-      path: tests/test_python.py
-      title: tests/test_python.py
-    - icon: ':warning:'
-      path: tests/test_stats.py
-      title: tests/test_stats.py
-    - icon: ':warning:'
-      path: tests/test_verify.py
-      title: tests/test_verify.py
-    - icon: ':warning:'
-      path: tests/utils.py
-      title: tests/utils.py
   verificationCategories:
   - name: .
     pages:

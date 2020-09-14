@@ -18,6 +18,7 @@ _copied_static_file_paths: List[str] = [
     '_layouts/document.html',
     '_layouts/toppage.html',
     '_includes/mathjax.html',
+    '_includes/theme_fix.html',
     '_includes/document_header.html',
     '_includes/document_body.html',
     '_includes/document_footer.html',

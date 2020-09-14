@@ -5,21 +5,7 @@ layout: default
 {% include mathjax.html %}
 
 
-{% if site.theme == "jekyll-theme-minimal" %}
-<style type="text/css">
-@media screen and (min-width: 900px) {
-    div.wrapper {
-        width: 100%;
-    }
-    div.wrapper > header {
-        width: 280px;
-    }
-    div.wrapper > section {
-        width: calc(100% - 300px);
-    }
-}
-</style>
-{% endif %}
+{% include theme_fix.html %}
 
 
 {% include document_header.html %}

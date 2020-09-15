@@ -46,7 +46,7 @@ def list_doxygen_annotations(path: pathlib.Path) -> Dict[str, str]:
                 elif key in ('category', 'see', 'sa', 'ignore'):
                     logger.debug('ignored annotation: "@%s %s" in %s', key, value, str(path))
                     if key == 'ignore':
-                        logger.warning('Now `@ignore` has no effect. Please write as `exlucde: ["%s"]` at `.verify-helper/docs/_config.yml` instead.', value)
+                        logger.warning('Now `@ignore` has no effect. Please write as `exclude: ["%s"]` at `.verify-helper/docs/_config.yml` instead.', value)
                 else:
                     assert False
     return attributes

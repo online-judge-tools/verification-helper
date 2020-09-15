@@ -13,7 +13,7 @@ data:
     \ basedir=basedir).decode()\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/languages/python.py\"\
     , line 84, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "#!/usr/bin/env python3\nfrom setuptools import find_packages, setup\n\nsetup(\n\
-    \    name='online-judge-verify-helper',\n    version='4.12.1',\n    author='Kimiyuki\
+    \    name='online-judge-verify-helper',\n    version='5.0.0',\n    author='Kimiyuki\
     \ Onaka',\n    author_email='kimiyuki95@gmail.com',\n    url='https://github.com/kmyk/online-judge-verify-helper',\n\
     \    license='MIT License',\n    description='',\n    python_requires='>=3.6',\n\
     \    install_requires=[\n        'colorlog',\n        'pyyaml',\n        'online-judge-tools\

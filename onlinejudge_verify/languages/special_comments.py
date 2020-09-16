@@ -60,9 +60,12 @@ def list_embedded_urls(path: pathlib.Path) -> List[str]:
     urls = []
     for url in pattern.findall(content):
         # The URL may be written like `"https://atcoder.jp/"`. In this case, we need to remove `"`s around the URL.
+        # We also need to remove trailing superfluous chars in a case like `{"url":"https://atcoder.jp/"}`.
         for quote in ("'", '"', '`'):
-            if len(url) >= 2 and url.startswith(quote) and url.endswith(quote):
-                url = url[1:-1]
+            if len(url) >= 2 and url.startswith(quote):
+                end_quote_pos = url.rfind(quote)
+                if end_quote_pos != 0:
+                    url = url[1:end_quote_pos]
                 break
         urls.append(url)
     return sorted(set(urls))

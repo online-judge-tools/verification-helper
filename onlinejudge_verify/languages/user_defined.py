@@ -75,5 +75,5 @@ class UserDefinedLanguage(Language):
             return path.name.endswith(suffix)
         return super().is_verification_file(path, basedir=basedir)
 
-    def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Sequence[UserDefinedLanguageEnvironment]:
+    def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Sequence[LanguageEnvironment]:
         return [UserDefinedLanguageEnvironment(config=self.config)]

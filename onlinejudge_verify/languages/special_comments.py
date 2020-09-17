@@ -64,7 +64,11 @@ def list_embedded_urls(path: pathlib.Path) -> List[str]:
         for quote in ("'", '"', '`'):
             if url.startswith(quote):
                 end_quote_pos = url.rfind(quote)
-                if end_quote_pos != 0:
+                if end_quote_pos == 0:
+                    # Remove opening quote from the URL like `"https://atcoder.jp/`
+                    url = url[1:]
+                else:
+                    # Remove quotes and trailing superfluous chars around the URL
                     url = url[1:end_quote_pos]
                 break
         urls.append(url)

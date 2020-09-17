@@ -23,6 +23,9 @@ class TestSpecialComments(unittest.TestCase):
                 // URL with quotes and extra characters
                 // {"url": "https://atcoder.jp/contests/abc003"}
                 // ('https://atcoder.jp/contests/abc004')
+                //
+                // URL with opening quote and without closing quote
+                // "https://atcoder.jp/contests/abc005
                 """).encode(),
         }
         expected = [
@@ -32,6 +35,7 @@ class TestSpecialComments(unittest.TestCase):
             'https://atcoder.jp/contests/abc002',
             'https://atcoder.jp/contests/abc003',
             'https://atcoder.jp/contests/abc004',
+            'https://atcoder.jp/contests/abc005',
         ]
 
         with tests.utils.load_files(files) as tempdir:

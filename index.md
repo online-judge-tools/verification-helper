@@ -45,6 +45,24 @@ data:
     - icon: ':heavy_check_mark:'
       path: examples/debug/h/i/j/k/l/foo.hpp
       title: examples/debug/h/i/j/k/l/foo.hpp
+  - name: examples/go/helloworld
+    pages:
+    - icon: ':heavy_check_mark:'
+      path: examples/go/helloworld/helloworld.go
+      title: examples/go/helloworld/helloworld.go
+  - name: examples/go
+    pages:
+    - icon: ':heavy_check_mark:'
+      path: examples/go/helloworld.go
+      title: examples/go/helloworld.go
+  - name: examples/java
+    pages:
+    - icon: ':warning:'
+      path: examples/java/HelloWorld.java
+      title: examples/java/HelloWorld.java
+    - icon: ':warning:'
+      path: examples/java/HelloWorld_test.java
+      title: examples/java/HelloWorld_test.java
   - name: examples
     pages:
     - icon: ':heavy_check_mark:'
@@ -145,6 +163,11 @@ data:
     - icon: ':heavy_check_mark:'
       path: examples/debug/yukicoder.test.cpp
       title: examples/debug/yukicoder.test.cpp
+  - name: examples/go
+    pages:
+    - icon: ':heavy_check_mark:'
+      path: examples/go/helloworld.test.go
+      title: examples/go/helloworld.test.go
   - name: examples/nim
     pages:
     - icon: ':heavy_check_mark:'

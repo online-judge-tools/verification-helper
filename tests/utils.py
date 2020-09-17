@@ -5,7 +5,7 @@ import tempfile
 from typing import *
 
 
-def load_files(files: Dict[str, bytes]) -> Iterator[pathlib.Path]:
+def load_files(files: Dict[str, bytes]) -> ContextManager[pathlib.Path]:
     files_ = {}
     for relpath, data in files.items():
         assert '/' not in relpath and '\\' not in relpath  # we should use pathlib

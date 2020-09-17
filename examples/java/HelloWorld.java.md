@@ -1,16 +1,16 @@
 ---
 data:
   _extendedDependsOn:
-  - icon: ':warning:'
+  - icon: ':heavy_check_mark:'
     path: examples/java/HelloWorld_test.java
     title: examples/java/HelloWorld_test.java
-  _extendedRequiredBy:
-  - icon: ':warning:'
+  _extendedRequiredBy: []
+  _extendedVerifiedWith:
+  - icon: ':heavy_check_mark:'
     path: examples/java/HelloWorld_test.java
     title: examples/java/HelloWorld_test.java
-  _extendedVerifiedWith: []
   _pathExtension: java
-  _verificationStatusIcon: ':warning:'
+  _verificationStatusIcon: ':heavy_check_mark:'
   attributes: {}
   bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.8.5/x64/lib/python3.8/site-packages/onlinejudge_verify/documentation/build.py\"\
     , line 70, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
@@ -22,11 +22,11 @@ data:
   - examples/java/HelloWorld_test.java
   isVerificationFile: false
   path: examples/java/HelloWorld.java
-  requiredBy:
-  - examples/java/HelloWorld_test.java
+  requiredBy: []
   timestamp: '2020-09-17 19:34:20+09:00'
-  verificationStatus: LIBRARY_NO_TESTS
-  verifiedWith: []
+  verificationStatus: LIBRARY_ALL_AC
+  verifiedWith:
+  - examples/java/HelloWorld_test.java
 documentation_of: examples/java/HelloWorld.java
 layout: document
 redirect_from:

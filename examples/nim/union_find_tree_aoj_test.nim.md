@@ -2,20 +2,20 @@
 data:
   _extendedDependsOn:
   - icon: ':heavy_check_mark:'
-    path: examples/nim/hoge.nim
-    title: examples/nim/hoge.nim
-  - icon: ':heavy_check_mark:'
-    path: examples/nim/hoge.nim
-    title: examples/nim/hoge.nim
-  - icon: ':heavy_check_mark:'
     path: examples/nim/union_find_tree.nim
     title: examples/nim/union_find_tree.nim
   - icon: ':heavy_check_mark:'
-    path: examples/nim/union_find_tree.nim
-    title: examples/nim/union_find_tree.nim
+    path: examples/nim/hoge.nim
+    title: examples/nim/hoge.nim
   - icon: ':heavy_check_mark:'
     path: examples/nim/headers.nim
     title: examples/nim/headers.nim
+  - icon: ':heavy_check_mark:'
+    path: examples/nim/union_find_tree.nim
+    title: examples/nim/union_find_tree.nim
+  - icon: ':heavy_check_mark:'
+    path: examples/nim/hoge.nim
+    title: examples/nim/hoge.nim
   - icon: ':heavy_check_mark:'
     path: examples/nim/headers.nim
     title: examples/nim/headers.nim
@@ -39,11 +39,11 @@ data:
     \  let com, x, y = nextInt()\n  if com == 0:\n    uft.unite_trees(x, y)\n  elif\
     \ com == 1:\n    echo if uft.is_same(x, y): 1 else: 0\n"
   dependsOn:
-  - examples/nim/hoge.nim
-  - examples/nim/hoge.nim
   - examples/nim/union_find_tree.nim
-  - examples/nim/union_find_tree.nim
+  - examples/nim/hoge.nim
   - examples/nim/headers.nim
+  - examples/nim/union_find_tree.nim
+  - examples/nim/hoge.nim
   - examples/nim/headers.nim
   isVerificationFile: true
   path: examples/nim/union_find_tree_aoj_test.nim

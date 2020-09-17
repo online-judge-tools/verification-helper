@@ -16,6 +16,10 @@ jobs:
       run: pip3 install -U git+https://github.com/online-judge-tools/verification-helper.git@master
 
 
+    # required only if you want to verify Haskell files
+    - name: Install dependencies (Haskell)
+      uses: actions/setup-haskell@v1
+
     # required only if you want to verify C# script files
     - uses: actions/setup-dotnet@v1
       with:

@@ -12,6 +12,7 @@ Summary:
 | C# script | `.csx` | `.test.csx` | `#pragma [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [segment_tree.range_sum_query.test.csx](https://github.com/online-judge-tools/verification-helper/blob/master/examples/csharpscript/segment_tree.range_sum_query.test.csx) |
 | Nim | `.nim` | `_test.nim` | `# verification-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [union_find_tree_yosupo_test.nim](https://github.com/kmyk/online-judge-tools/verification-helper/blob/master/examples/nim/union_find_tree_yosupo_test.nim) |
 | Python | `.py` | `.test.py` | `# verification-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [union_find_yosupo.test.py](https://github.com/online-judge-tools/verification-helper/blob/master/examples/python/union_find_yosupo.test.py) |
+| Haskell | `.hs` | `.test.hs` | `{- verification-helper: [KEY] [VALUE]` (newline) `-}` | :heavy_check_mark: / :x: / :warning: | [HelloWorld.test.py](https://github.com/online-judge-tools/verification-helper/blob/master/Examples2/Haskell/HelloWorld.test.hs) |
 
 ### Settings for C++
 

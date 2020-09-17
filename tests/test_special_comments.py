@@ -25,10 +25,17 @@ class TestSpecialComments(unittest.TestCase):
                 // ('https://atcoder.jp/contests/abc004')
                 """).encode(),
         }
+        expected = [
+            'http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_A',
+            'https://atcoder.jp/',
+            'https://atcoder.jp/contests/abc001',
+            'https://atcoder.jp/contests/abc002',
+            'https://atcoder.jp/contests/abc003',
+            'https://atcoder.jp/contests/abc004',
+        ]
 
         with tests.utils.load_files(files) as tempdir:
             with tests.utils.chdir(tempdir):
-                expected = ['http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_A', 'https://atcoder.jp/', 'https://atcoder.jp/contests/abc001', 'https://atcoder.jp/contests/abc002', 'https://atcoder.jp/contests/abc003', 'https://atcoder.jp/contests/abc004']
                 file_path = tempdir / 'main.cpp'
                 actual = sorted(special_comments.list_embedded_urls(file_path))
                 self.assertEqual(actual, expected)

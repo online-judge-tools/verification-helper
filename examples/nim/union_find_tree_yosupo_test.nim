@@ -1,4 +1,4 @@
-# verify-helper: PROBLEM https://judge.yosupo.jp/problem/unionfind
+# verification-helper: PROBLEM https://judge.yosupo.jp/problem/unionfind
 
 include "examples/nim/headers.nim"
 from examples/nim/union_find_tree import unite_trees, initUnionFindTree, is_same

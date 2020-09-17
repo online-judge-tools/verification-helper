@@ -5,6 +5,7 @@ from typing import *
 from onlinejudge_verify.config import get_config
 from onlinejudge_verify.languages.cplusplus import CPlusPlusLanguage
 from onlinejudge_verify.languages.csharpscript import CSharpScriptLanguage
+from onlinejudge_verify.languages.go import GoLanguage
 from onlinejudge_verify.languages.haskell import HaskellLanguage
 from onlinejudge_verify.languages.models import Language
 from onlinejudge_verify.languages.nim import NimLanguage
@@ -30,6 +31,7 @@ def _get_dict() -> Dict[str, Language]:
         _dict['.py'] = PythonLanguage()
         _dict['.hs'] = HaskellLanguage()
         _dict['.ruby'] = RubyLanguage()
+        _dict['.go'] = GoLanguage()
 
         for ext, config in get_config().get('languages', {}).items():
             if '.' + ext in _dict:

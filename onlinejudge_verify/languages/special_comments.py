@@ -11,8 +11,7 @@ logger = getLogger(__name__)
 # special comments like Vim and Python: see https://www.python.org/dev/peps/pep-0263/
 @functools.lru_cache(maxsize=None)
 def list_special_comments(path: pathlib.Path) -> Dict[str, str]:
-    pattern = re.compile(r'\bverify-helper:\s*([0-9A-Z_]+)(?:\s(.*))?$')
-    failure_pattern = re.compile(r'\bverify-helper:')
+    pattern = re.compile(r'\b(?:verify|verification)-helper:\s*([0-9A-Z_]+)(?:\s(.*))?$')
     attributes = {}
     with open(path, 'rb') as fh:
         for line in fh.read().decode().splitlines():
@@ -21,8 +20,8 @@ def list_special_comments(path: pathlib.Path) -> Dict[str, str]:
                 key = matched.group(1)
                 value = (matched.group(2) or '').strip()
                 attributes[key] = value
-            elif failure_pattern.search(line):
-                logger.warning('broken verify-helper special comment found: %s', line)
+                if 'verify-helper:' in matched.group(0):
+                    logger.warning('use "verification-helper:" instead of "verify-helper:": %s', str(path))
     return attributes
 
 

@@ -5,13 +5,14 @@ import subprocess
 from logging import getLogger
 from typing import *
 
+import onlinejudge_verify.utils as utils
 from onlinejudge_verify.languages.models import Language, LanguageEnvironment
 from onlinejudge_verify.languages.special_comments import list_special_comments
 
 logger = getLogger(__name__)
 
 
-class OtherLanguageEnvironment(LanguageEnvironment):
+class UserDefinedLanguageEnvironment(LanguageEnvironment):
     config: Dict[str, str]
 
     def __init__(self, *, config: Dict[str, str]):
@@ -29,10 +30,12 @@ class OtherLanguageEnvironment(LanguageEnvironment):
         return shlex.split(command)
 
 
-class OtherLanguage(Language):
+class UserDefinedLanguage(Language):
+    extension: str
     config: Dict[str, str]
 
-    def __init__(self, *, config: Dict[str, str]):
+    def __init__(self, *, extension: str, config: Dict[str, str]):
+        self.extension = extension
         self.config = config
 
     def list_attributes(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Dict[str, str]:
@@ -49,7 +52,10 @@ class OtherLanguage(Language):
         return attributes
 
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
-        assert 'list_dependencies' in self.config
+        if 'list_dependencies' not in self.config:
+            logger.warning('The functionality to list dependencies of .%s file is not implemented yet.', self.extension)
+            return list(utils.glob_with_predicate(lambda path: path.suffix == '.' + self.extension))
+
         command = self.config['list_dependencies'].format(path=str(path), basedir=str(basedir))
         text = subprocess.check_output(shlex.split(command))
         dependencies = [path]
@@ -69,5 +75,5 @@ class OtherLanguage(Language):
             return path.name.endswith(suffix)
         return super().is_verification_file(path, basedir=basedir)
 
-    def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Sequence[OtherLanguageEnvironment]:
-        return [OtherLanguageEnvironment(config=self.config)]
+    def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Sequence[UserDefinedLanguageEnvironment]:
+        return [UserDefinedLanguageEnvironment(config=self.config)]

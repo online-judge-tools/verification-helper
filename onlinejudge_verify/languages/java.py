@@ -38,3 +38,6 @@ class JavaLanguage(UserDefinedLanguage):
 
     def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Sequence[LanguageEnvironment]:
         return [JavaLanguageEnvironment()]
+
+    def is_verification_file(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bool:
+        return path.name.endswith("_test.java")

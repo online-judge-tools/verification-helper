@@ -21,6 +21,8 @@ def _get_dict() -> Dict[str, Language]:
         _dict = {}
         _dict['.cpp'] = CPlusPlusLanguage()
         _dict['.hpp'] = _dict['.cpp']
+        _dict['.cc'] = _dict['.cpp']
+        _dict['.h'] = _dict['.cpp']
         _dict['.csx'] = CSharpScriptLanguage()
         _dict['.nim'] = NimLanguage()
         _dict['.py'] = PythonLanguage()

@@ -7,11 +7,12 @@ import traceback
 from logging import getLogger
 from typing import *
 
+import pkg_resources
+import yaml
+
 import onlinejudge_verify.documentation.front_matter
 import onlinejudge_verify.languages.list
 import onlinejudge_verify.utils as utils
-import pkg_resources
-import yaml
 from onlinejudge_verify.documentation.type import *
 
 logger = getLogger(__name__)
@@ -86,11 +87,11 @@ def _render_source_code_stat(stat: SourceCodeStat, *, basedir: pathlib.Path) -> 
 
 
 def _render_source_code_stat_for_page(
-        path: pathlib.Path,
-        *,
-        source_code_stats_dict: Dict[pathlib.Path, SourceCodeStat],
-        page_title_dict: Dict[pathlib.Path, str],
-        basedir: pathlib.Path,
+    path: pathlib.Path,
+    *,
+    source_code_stats_dict: Dict[pathlib.Path, SourceCodeStat],
+    page_title_dict: Dict[pathlib.Path, str],
+    basedir: pathlib.Path,
 ) -> Dict[str, Any]:
     relative_path = (basedir / path).resolve().relative_to(basedir)
     stat = source_code_stats_dict[relative_path]
@@ -114,10 +115,10 @@ def _render_source_code_stat_for_page(
 
 
 def _render_source_code_stats_for_top_page(
-        *,
-        source_code_stats: List[SourceCodeStat],
-        page_title_dict: Dict[pathlib.Path, str],
-        basedir: pathlib.Path,
+    *,
+    source_code_stats: List[SourceCodeStat],
+    page_title_dict: Dict[pathlib.Path, str],
+    basedir: pathlib.Path,
 ) -> Dict[str, Any]:
     libraryCategories: Dict[str, List[Dict[str, str]]] = {}
     verificationCategories: Dict[str, List[Dict[str, str]]] = {}

@@ -6,6 +6,7 @@ from logging import DEBUG, basicConfig, getLogger
 from typing import *
 
 import colorlog
+
 import onlinejudge_verify.languages.list
 
 logger = getLogger(__name__)

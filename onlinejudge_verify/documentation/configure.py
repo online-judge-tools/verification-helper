@@ -129,14 +129,14 @@ def _build_verification_status(paths: List[pathlib.Path], *, verified_with: Dict
 
 
 def _get_source_code_stat(
-        path: pathlib.Path,
-        *,
-        depends_on: Dict[pathlib.Path, List[pathlib.Path]],
-        required_by: Dict[pathlib.Path, List[pathlib.Path]],
-        verified_with: Dict[pathlib.Path, List[pathlib.Path]],
-        verification_status: Dict[pathlib.Path, VerificationStatus],
-        marker: VerificationMarker,
-        basedir: pathlib.Path,
+    path: pathlib.Path,
+    *,
+    depends_on: Dict[pathlib.Path, List[pathlib.Path]],
+    required_by: Dict[pathlib.Path, List[pathlib.Path]],
+    verified_with: Dict[pathlib.Path, List[pathlib.Path]],
+    verification_status: Dict[pathlib.Path, VerificationStatus],
+    marker: VerificationMarker,
+    basedir: pathlib.Path,
 ) -> SourceCodeStat:
     absolute_path = (basedir / path).resolve()
     relative_path = absolute_path.relative_to(basedir)

@@ -3,11 +3,12 @@ import pathlib
 from logging import getLogger
 from typing import *
 
+import pkg_resources
+import yaml
+
 import onlinejudge_verify.documentation.build as build
 import onlinejudge_verify.documentation.configure as configure
 import onlinejudge_verify.marker
-import pkg_resources
-import yaml
 from onlinejudge_verify.documentation.type import *
 
 logger = getLogger(__name__)

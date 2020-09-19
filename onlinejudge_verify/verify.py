@@ -9,10 +9,9 @@ import traceback
 from logging import getLogger
 from typing import *
 
+import onlinejudge
 import onlinejudge_verify.languages.list
 import onlinejudge_verify.marker
-
-import onlinejudge
 
 logger = getLogger(__name__)
 

@@ -35,26 +35,32 @@ link: [DESIGN.md](https://github.com/online-judge-tools/.github/blob/master/DESI
 ライブラリを `#include` 文などの標準的な機能で呼び出すことはまったく不可能で、エディタのスニペット機能の利用しての丸ごと埋め込みが通例であった。
 
 
-### Coding styles
-
-TODO: もっと詳しく書く
-
-
-### End-to-end tests vs. unit tests
-
-競技プログラミングの文脈で end-to end tests や integration tests と unit tests の区別をするのは不適切である。
-
-TODO: もっと詳しく書く
-
-
 ## Overview
 
-TODO: 書く
+内部での処理は大きく分けて以下の 4 つの部分からなる。
+
+1.  テストの実行 (`oj-verify run`)
+    -   システムケースの取得
+    -   テストの実行
+    -   キャッシュ (`timestamps.*.json`) の管理
+1.  言語個別の処理
+    -   コンパイルと実行
+    -   ファイル間の依存関係解析
+    -   単一ファイル化 (`oj-bundle` などから使われる)
+1.  ドキュメントの生成 (`oj-verify docs`)
+    -   ドキュメント生成に必要なメタデータの収集
+    -   ドキュメントのための Markdown ファイルの書き出し
+    -   実際の HTML の生成 ([Jekyll](http://jekyllrb-ja.github.io/) による)
+1.  GitHub との通信
 
 
 ## Detailed Design
 
-TODO: 書く
+-   テストの結果はキャッシュされる。これは速度の改善のためである。大規模なライブラリになると数百ファイルに達するため、全ファイルについて毎回テストを再実行することは快適でない。
+-   ドキュメントを生成することは「ドキュメントを書くことをユーザに促す」および「カバレッジを可視化する」という働きをする。
+-   言語個別の処理は [models.py](https://github.com/online-judge-tools/verification-helper/blob/master/onlinejudge_verify/languages/models.py) にある `Language` class と `LanguageEnvironment` class の sub-class として実装される。`Language` class と `LanguageEnvironment` class の区別は、ひとつの言語 (例: C++) が複数の環境 (例: G++, Clang, MSVC++ など) と関連付けられることから来る区別である。
+-   競技プログラミングの文脈では end-to-end tests や integration tests と unit tests の区別が比較的曖昧である。
+    通常の文脈では end-to-end tests などは unit tests と比べて「実際と似た環境で動かせる」という利点と「遅い」「不安定」「失敗の原因が分かりにくい」という欠点がある ([参考](https://testing.googleblog.com/2015/04/just-say-no-to-more-end-to-end-tests.html))。しかしこれは通常の end-to-end tests が「GUI の操作」「ネットワーク通信」「ファイル書き込み」などの複雑で非純粋な要素を含むからである。競技プログラミングにおいてはそのような要素はないのでテストの結果は常に「安定」しており、またファイルの依存関係が疎であることを利用して最適に差分のみテストをすることで十分に「速い」テストが可能である。このため競技プログラミングにおいては end-to-end tests の欠点とされていた特徴の多くは隠れ、unit tests との差も曖昧となる。
 
 
 ## Security Considerations

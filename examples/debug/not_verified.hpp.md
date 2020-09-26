@@ -6,7 +6,6 @@ data:
   _pathExtension: hpp
   _verificationStatusIcon: ':warning:'
   attributes:
-    '*NOT_SPECIAL_COMMENTS*': ''
     links: []
   bundledCode: "#line 2 \"examples/debug/not_verified.hpp\"\n\ninline string get_the_proof_of_P_equal_NP()\
     \ {\n    while (true) {\n    }\n}\n"

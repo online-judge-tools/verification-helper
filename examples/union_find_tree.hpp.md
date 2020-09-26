@@ -12,7 +12,6 @@ data:
   _pathExtension: hpp
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
-    '*NOT_SPECIAL_COMMENTS*': ''
     document_title: a Union-Find Tree
     links: []
   bundledCode: "#line 1 \"examples/union_find_tree.hpp\"\n\n\n#include <algorithm>\n\

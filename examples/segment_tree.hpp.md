@@ -15,7 +15,6 @@ data:
   _pathExtension: hpp
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
-    '*NOT_SPECIAL_COMMENTS*': ''
     document_title: a Segment Tree (generalized with monoids)
     links:
     - https://en.wikipedia.org/wiki/Segment_tree

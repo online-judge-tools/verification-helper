@@ -212,6 +212,32 @@ def apply_exclude_list_to_stats(*, excluded_paths: List[pathlib.Path], source_co
     return result
 
 
+def resolve_documentation_of(documentation_of: str, *, markdown_path: pathlib.Path, basedir: pathlib.Path) -> Optional[pathlib.Path]:
+    if documentation_of.startswith('.'):
+        # a relative path
+        path = markdown_path.parent / pathlib.PosixPath(documentation_of)
+        if path.exists() and basedir in path.resolve().parents:
+            return path
+    elif documentation_of.startswith('//'):
+        # from the document root
+        path = basedir / pathlib.PosixPath(documentation_of[2:])
+        if path.exists() and basedir in path.resolve().parents:
+            return path
+
+    # guessing
+    logger.warning('No file at the expected path from the `documentation_of` path. The `documentation_of` path should use `/` for path separator, and start with `.` for a relative path from the path of the Markdown file, or start with `//` for a absolute path from the root of the repository.: %s', documentation_of)
+    candidate_paths = [
+        basedir / pathlib.PosixPath(documentation_of),
+        basedir / pathlib.Path(documentation_of),
+        markdown_path.parent / pathlib.PosixPath(documentation_of),
+        markdown_path.parent / pathlib.Path(documentation_of),
+    ]
+    for path in candidate_paths:
+        if path.exists() and basedir in path.resolve().parents:
+            return path
+    return None
+
+
 def convert_to_page_render_jobs(*, source_code_stats: List[SourceCodeStat], markdown_paths: List[pathlib.Path], site_render_config: SiteRenderConfig) -> List[PageRenderJob]:
     basedir = site_render_config.basedir
 
@@ -230,11 +256,14 @@ def convert_to_page_render_jobs(*, source_code_stats: List[SourceCodeStat], mark
         path = markdown_relative_path
         documentation_of = front_matter.get(FrontMatterItem.documentation_of.value)
         if documentation_of is not None:
-            if not (basedir / pathlib.Path(documentation_of)).exists():
+            documentation_of_path = resolve_documentation_of(documentation_of, markdown_path=path, basedir=basedir)
+            if documentation_of_path is None:
                 logger.warning('the `documentation_of` path of %s is not found: %s', str(path), documentation_of)
+                del front_matter[FrontMatterItem.documentation_of.value]
                 continue
-            documentation_of_path = (basedir / pathlib.Path(documentation_of)).resolve().relative_to(basedir)
-            path = documentation_of_path.parent / (documentation_of_path.name + '.md')
+            documentation_of_relative_path = documentation_of_path.resolve().relative_to(basedir)
+            front_matter[FrontMatterItem.documentation_of.value] = str(documentation_of_relative_path)
+            path = documentation_of_relative_path.parent / (documentation_of_path.name + '.md')
 
         job = PageRenderJob(
             path=path,

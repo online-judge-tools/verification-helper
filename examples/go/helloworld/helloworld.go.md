@@ -2,11 +2,11 @@
 data:
   _extendedDependsOn:
   - icon: ':heavy_check_mark:'
-    path: examples/go/helloworld.test.go
-    title: examples/go/helloworld.test.go
-  - icon: ':heavy_check_mark:'
     path: examples/go/helloworld.go
     title: examples/go/helloworld.go
+  - icon: ':heavy_check_mark:'
+    path: examples/go/helloworld.test.go
+    title: examples/go/helloworld.test.go
   _extendedRequiredBy:
   - icon: ':heavy_check_mark:'
     path: examples/go/helloworld.go

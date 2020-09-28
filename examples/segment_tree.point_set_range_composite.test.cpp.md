@@ -2,11 +2,11 @@
 data:
   _extendedDependsOn:
   - icon: ':heavy_check_mark:'
-    path: examples/segment_tree.hpp
-    title: Segment Tree (generalized with monoids)
-  - icon: ':heavy_check_mark:'
     path: examples/macros.hpp
     title: examples/macros.hpp
+  - icon: ':heavy_check_mark:'
+    path: examples/segment_tree.hpp
+    title: Segment Tree (generalized with monoids)
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
   _pathExtension: cpp

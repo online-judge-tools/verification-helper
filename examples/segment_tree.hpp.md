@@ -4,14 +4,14 @@ data:
   _extendedRequiredBy: []
   _extendedVerifiedWith:
   - icon: ':heavy_check_mark:'
-    path: examples/segment_tree.range_sum_query.test.cpp
-    title: examples/segment_tree.range_sum_query.test.cpp
+    path: examples/segment_tree.point_set_range_composite.test.cpp
+    title: examples/segment_tree.point_set_range_composite.test.cpp
   - icon: ':heavy_check_mark:'
     path: examples/segment_tree.range_minimum_query.test.cpp
     title: examples/segment_tree.range_minimum_query.test.cpp
   - icon: ':heavy_check_mark:'
-    path: examples/segment_tree.point_set_range_composite.test.cpp
-    title: examples/segment_tree.point_set_range_composite.test.cpp
+    path: examples/segment_tree.range_sum_query.test.cpp
+    title: examples/segment_tree.range_sum_query.test.cpp
   _pathExtension: hpp
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:

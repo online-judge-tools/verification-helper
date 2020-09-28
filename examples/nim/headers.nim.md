@@ -4,17 +4,17 @@ data:
   _extendedRequiredBy: []
   _extendedVerifiedWith:
   - icon: ':heavy_check_mark:'
-    path: examples/nim/union_find_tree_yosupo_test.nim
-    title: examples/nim/union_find_tree_yosupo_test.nim
-  - icon: ':heavy_check_mark:'
-    path: examples/nim/union_find_tree_yosupo_test.nim
-    title: examples/nim/union_find_tree_yosupo_test.nim
-  - icon: ':heavy_check_mark:'
     path: examples/nim/union_find_tree_aoj_test.nim
     title: examples/nim/union_find_tree_aoj_test.nim
   - icon: ':heavy_check_mark:'
     path: examples/nim/union_find_tree_aoj_test.nim
     title: examples/nim/union_find_tree_aoj_test.nim
+  - icon: ':heavy_check_mark:'
+    path: examples/nim/union_find_tree_yosupo_test.nim
+    title: examples/nim/union_find_tree_yosupo_test.nim
+  - icon: ':heavy_check_mark:'
+    path: examples/nim/union_find_tree_yosupo_test.nim
+    title: examples/nim/union_find_tree_yosupo_test.nim
   _pathExtension: nim
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:

@@ -2,11 +2,11 @@
 data:
   _extendedDependsOn:
   - icon: ':heavy_check_mark:'
-    path: examples/union_find_tree.hpp
-    title: a Union-Find Tree
-  - icon: ':heavy_check_mark:'
     path: examples/macros.hpp
     title: examples/macros.hpp
+  - icon: ':heavy_check_mark:'
+    path: examples/union_find_tree.hpp
+    title: a Union-Find Tree
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
   _pathExtension: cpp

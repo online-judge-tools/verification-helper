@@ -4,11 +4,11 @@ data:
   _extendedRequiredBy: []
   _extendedVerifiedWith:
   - icon: ':heavy_check_mark:'
-    path: examples/python/union_find_yosupo.test.py
-    title: examples/python/union_find_yosupo.test.py
-  - icon: ':heavy_check_mark:'
     path: examples/python/union_find_aoj.test.py
     title: examples/python/union_find_aoj.test.py
+  - icon: ':heavy_check_mark:'
+    path: examples/python/union_find_yosupo.test.py
+    title: examples/python/union_find_yosupo.test.py
   _pathExtension: py
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:

@@ -25,14 +25,17 @@ class TestDocsSubcommand(unittest.TestCase):
         get_random_string = lambda: ''.join([random.choice('0123456789abcdef') for _ in range(64)])
         random_relative_hpp = get_random_string()
         random_absolute_hpp = get_random_string()
+        random_unsupported_absolute_hpp = get_random_string()
         random_no_document_hpp = get_random_string()
         random_relative_md = get_random_string()
         random_absolute_md = get_random_string()
+        random_unsupported_absolute_md = get_random_string()
         random_standalone_page_md = get_random_string()
 
         files = {
             pathlib.Path('src', 'a', 'b', 'relative.hpp'): random_relative_hpp.encode(),
             pathlib.Path('src', 'a', 'b', 'absolute.hpp'): random_absolute_hpp.encode(),
+            pathlib.Path('src', 'a', 'b', 'unsupported-absolute.hpp'): random_unsupported_absolute_hpp.encode(),
             pathlib.Path('src', 'a', 'b', 'no-document.hpp'): random_no_document_hpp.encode(),
             pathlib.Path('docs', 'x', 'y', 'relative.md'): textwrap.dedent(f"""\
                 ---
@@ -41,6 +44,14 @@ class TestDocsSubcommand(unittest.TestCase):
                 ---
 
                 {random_relative_md}
+                """).encode(),
+            pathlib.Path('docs', 'x', 'y', 'unsupported-absolute.md'): textwrap.dedent(f"""\
+                ---
+                title: unsupported-absolute.md
+                documentation_of: src/a/b/unsupported-absolute.hpp
+                ---
+
+                {random_unsupported_absolute_md}
                 """).encode(),
             pathlib.Path('docs', 'x', 'y', 'absolute.md'): textwrap.dedent(f"""\
                 ---
@@ -63,6 +74,7 @@ class TestDocsSubcommand(unittest.TestCase):
         expected: Dict[pathlib.Path, List[str]] = {
             destination_dir / 'src' / 'a' / 'b' / 'relative.hpp.md': [random_relative_hpp, random_relative_md],
             destination_dir / 'src' / 'a' / 'b' / 'absolute.hpp.md': [random_absolute_hpp, random_absolute_md],
+            destination_dir / 'src' / 'a' / 'b' / 'unsupported-absolute.hpp.md': [random_unsupported_absolute_hpp, random_unsupported_absolute_md],
             destination_dir / 'src' / 'a' / 'b' / 'no-document.hpp.md': [random_no_document_hpp],
             destination_dir / 'docs' / 'x' / 'y' / 'standalone-page.md': [random_standalone_page_md],
         }

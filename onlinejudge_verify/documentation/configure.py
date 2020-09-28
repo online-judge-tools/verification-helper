@@ -78,6 +78,9 @@ def _build_dependency_graph(paths: List[pathlib.Path], *, basedir: pathlib.Path)
             relative_dst = absolute_dst.relative_to(basedir)
             if absolute_src == absolute_dst:
                 continue
+            if absolute_dst not in depends_on:
+                logger.debug("The file `%s` which is depended from `%s` is ignored because it's not listed as a source code file.", relative_dst, relative_src)
+                continue
 
             depends_on[absolute_src].append(relative_dst)
             if utils.is_verification_file(src, basedir=basedir):

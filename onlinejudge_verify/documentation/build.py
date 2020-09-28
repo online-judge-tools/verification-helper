@@ -107,9 +107,9 @@ def _render_source_code_stat_for_page(
             'icon': _get_verification_status_icon(stat.verification_status),
         }
 
-    data['_extendedDependsOn'] = [ext(path) for path in stat.depends_on]
-    data['_extendedRequiredBy'] = [ext(path) for path in stat.required_by]
-    data['_extendedVerifiedWith'] = [ext(path) for path in stat.verified_with]
+    data['_extendedDependsOn'] = sorted([ext(path) for path in stat.depends_on], key=lambda x: x['path'])
+    data['_extendedRequiredBy'] = sorted([ext(path) for path in stat.required_by], key=lambda x: x['path'])
+    data['_extendedVerifiedWith'] = sorted([ext(path) for path in stat.verified_with], key=lambda x: x['path'])
 
     return data
 

@@ -212,6 +212,11 @@ def _delete_gitignore() -> None:
         if not should_push:
             return
 
+        # checkout the target branch
+        branch = os.environ['GITHUB_REF'][len('refs/heads/'):]
+        logger.info('$ git checkout %s', branch)
+        subprocess.check_call(['git', 'checkout', branch])
+
         # check if .verify-helper/.gitignore exists
         gitignore_path = pathlib.Path('.verify-helper', '.gitignore')
         gitignore_checked_in = (subprocess.run(['git', 'ls-files', '--error-unmatch', str(gitignore_path)]).returncode == 0)

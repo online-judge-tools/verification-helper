@@ -43,8 +43,8 @@ data:
   - examples/nim/union_find_tree.nim
   - examples/nim/hoge.nim
   - examples/nim/headers.nim
-  - examples/nim/headers.nim
   - examples/nim/hoge.nim
+  - examples/nim/headers.nim
   isVerificationFile: true
   path: examples/nim/union_find_tree_aoj_test.nim
   requiredBy: []

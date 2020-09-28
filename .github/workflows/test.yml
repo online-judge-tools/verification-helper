@@ -23,6 +23,7 @@ jobs:
 
     - name: Run tests
       run: |
+        unset GITHUB_ACTION
         oj-verify -h
         python setup.py test
       shell: bash

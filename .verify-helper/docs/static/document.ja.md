@@ -101,18 +101,21 @@ list_dependencies = "sed 's/^@include \"\\(.*\\)\"$/\\1/ ; t ; d' {path}"
 [Front Matter](http://jekyllrb-ja.github.io/docs/front-matter/) 形式で `documentation_of` という項目にファイルを指定しておくと、指定したファイルについての生成されたドキュメント中に、Markdown ファイルの中身が挿入されます。
 
 たとえば、`path/to/segment_tree.hpp` というファイルに説明を Markdown で追加したいときは `for/bar.md` などに次のように書きます。
-[Front Matter](https://jekyllrb.com/docs/front-matter/)
 
 ```
 ---
 title: Segment Tree
-documentation_of: path/to/segment_tree.hpp
+documentation_of: ./path/to/segment_tree.hpp
 ---
 
 ## 説明
 
 このファイルでは、……
 ```
+
+`documentation_of` 文字列は、`./` あるいは `..` から始まる場合は Markdown ファイルのパスからの相対パスであると認識されます。また、`//` から初まる場合は `.verify-helper` ディレクトリがある場所をルートとする絶対パスであると認識されます。
+また、ディレクトリ区切り文字には `/` を使い、大文字小文字を正しく入力してください。
+
 
 ### トップページへの Markdown の埋め込み
 

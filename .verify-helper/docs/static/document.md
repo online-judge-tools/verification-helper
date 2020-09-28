@@ -104,13 +104,18 @@ For example, to add description to a document of a file `path/to/segment_tree.hp
 ```
 ---
 title: Segment Tree
-documentation_of: path/to/segment_tree.hpp
+documentation_of: ./path/to/segment_tree.hpp
 ---
 
 ## Description
 
 In this file, ...
 ```
+
+The `documentation_of` string is recognized as a relative path from the Markdown file when the string starts with `./` or `..`.
+The `documentation_of` string is recognized as a absolute path from the directory which has `.verify-helper` directory as the root when the string starts with `//`.
+The path should use `/` as directory separator be case-sensitive.
+
 
 
 ### Embedding Markdown to the top page

@@ -215,21 +215,21 @@ def apply_exclude_list_to_stats(*, excluded_paths: List[pathlib.Path], source_co
 def resolve_documentation_of(documentation_of: str, *, markdown_path: pathlib.Path, basedir: pathlib.Path) -> Optional[pathlib.Path]:
     if documentation_of.startswith('.'):
         # a relative path
-        path = markdown_path.parent / pathlib.PosixPath(documentation_of)
+        path = markdown_path.parent / pathlib.Path(pathlib.PurePosixPath(documentation_of))
         if path.exists() and basedir in path.resolve().parents:
             return path
     elif documentation_of.startswith('//'):
         # from the document root
-        path = basedir / pathlib.PosixPath(documentation_of[2:])
+        path = basedir / pathlib.Path(pathlib.PurePosixPath(documentation_of[2:]))
         if path.exists() and basedir in path.resolve().parents:
             return path
 
     # guessing
     logger.warning('No file at the expected path from the `documentation_of` path. The `documentation_of` path should use `/` for path separator, and start with `.` for a relative path from the path of the Markdown file, or start with `//` for a absolute path from the root of the repository.: %s', documentation_of)
     candidate_paths = [
-        basedir / pathlib.PosixPath(documentation_of),
+        basedir / pathlib.Path(pathlib.PurePosixPath(documentation_of)),
         basedir / pathlib.Path(documentation_of),
-        markdown_path.parent / pathlib.PosixPath(documentation_of),
+        markdown_path.parent / pathlib.Path(pathlib.PurePosixPath(documentation_of)),
         markdown_path.parent / pathlib.Path(documentation_of),
     ]
     for path in candidate_paths:

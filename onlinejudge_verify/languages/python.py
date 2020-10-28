@@ -4,7 +4,7 @@ import pathlib
 import sys
 import textwrap
 from logging import getLogger
-from typing import List, Sequence, Tuple, Dict, Any
+from typing import Any, Dict, List, Sequence, Tuple
 
 import importlab.environment
 import importlab.fs

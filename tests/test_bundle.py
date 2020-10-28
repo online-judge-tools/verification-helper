@@ -116,7 +116,7 @@ class TestCPlusPlusBundlingEndToEnd(unittest.TestCase):
                 self.assertEqual(subprocess.check_output([str(pathlib.Path('a.out').resolve())]), ('Hello World' + os.linesep).encode())
 
     def test_complicated(self) -> None:
-        library_files = {
+        library_files_1 = {
             pathlib.Path('library', 'macro.hpp'): textwrap.dedent("""\
                 #pragma once
                 #define REP(i, n) for (int i = 0; (i) < (int)(n); ++ (i))
@@ -125,6 +125,8 @@ class TestCPlusPlusBundlingEndToEnd(unittest.TestCase):
                 #define REP3R(i, m, n) for (int i = (int)(n) - 1; (i) >= (int)(m); -- (i))
                 #define ALL(x) std::begin(x), std::end(x)
                 """).encode(),
+        }
+        library_files_2 = {
             pathlib.Path('library', 'fibonacci.hpp'): textwrap.dedent("""\
                 #pragma once
                 #include <cstdint>
@@ -161,12 +163,13 @@ class TestCPlusPlusBundlingEndToEnd(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tempdir_dst_:
             tempdir_dst = pathlib.Path(tempdir_dst_)
 
-            with tests.utils.load_files_pathlib(library_files) as tempdir_src_library:
-                with tests.utils.load_files_pathlib(test_files) as tempdir_src_test:
-                    with open(tempdir_dst / 'main.bundled.cpp', 'w') as fh:
-                        with contextlib.redirect_stdout(fh):
-                            args = ['-I', str(tempdir_src_library), str(tempdir_src_test / 'test' / 'main.cpp')]
-                            onlinejudge_bundle.main.main(args=args)
+            with tests.utils.load_files_pathlib(library_files_1) as tempdir_src_library_1:
+                with tests.utils.load_files_pathlib(library_files_2) as tempdir_src_library_2:
+                    with tests.utils.load_files_pathlib(test_files) as tempdir_src_test:
+                        with open(tempdir_dst / 'main.bundled.cpp', 'w') as fh:
+                            with contextlib.redirect_stdout(fh):
+                                args = ['-I', str(tempdir_src_library_1), '-I', str(tempdir_src_library_2), str(tempdir_src_test / 'test' / 'main.cpp')]
+                                onlinejudge_bundle.main.main(args=args)
 
             # compile
             subprocess.check_call(['g++', '-o', str(tempdir_dst / 'a.out'), str(tempdir_dst / 'main.bundled.cpp')], stderr=sys.stderr)

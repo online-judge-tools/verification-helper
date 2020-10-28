@@ -15,10 +15,17 @@ jobs:
     - name: Install dependencies
       run: pip3 install .[dev]
 
-    - name: Run tests
-      run: |
-        oj-verify -h
-        pylint --disable=all --enable=unused-import onlinejudge_verify onlinejudge_bundle tests setup.py
-        isort --check-only --diff onlinejudge_verify onlinejudge_bundle tests setup.py
-        yapf --diff --recursive onlinejudge_verify onlinejudge_bundle tests setup.py | tee yapf.patch && test ! -s yapf.patch
-        mypy onlinejudge_verify onlinejudge_bundle setup.py
+    - name: Run --help
+      run: oj-verify -h
+
+    - name: Run pylint
+      run: pylint --disable=all --enable=unused-import onlinejudge_verify onlinejudge_bundle tests setup.py
+
+    - name: Run isort
+      run: isort --check-only --diff onlinejudge_verify onlinejudge_bundle tests setup.py
+
+    - name: Run yapf
+      run: yapf --diff --recursive onlinejudge_verify onlinejudge_bundle tests setup.py
+
+    - name: Run mypy
+      run: mypy onlinejudge_verify onlinejudge_bundle setup.py

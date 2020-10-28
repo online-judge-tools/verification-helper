@@ -68,7 +68,7 @@ def _render_source_code_stat(stat: SourceCodeStat, *, basedir: pathlib.Path) -> 
     try:
         language = onlinejudge_verify.languages.list.get(stat.path)
         assert language is not None
-        bundled_code = language.bundle(stat.path, basedir=basedir).decode()
+        bundled_code = language.bundle(stat.path, basedir=basedir, options={'include_paths': [basedir]}).decode()
     except Exception:
         logger.warning("failed to bundle: %s", str(stat.path))
         bundled_code = traceback.format_exc()

@@ -27,7 +27,7 @@ def main(args: Optional[List[str]] = None) -> None:
 
     language = onlinejudge_verify.languages.list.get(parsed.path)
     assert language is not None
-    sys.stdout.buffer.write(language.bundle(parsed.path, options={'include_paths': parsed.iquote}))
+    sys.stdout.buffer.write(language.bundle(parsed.path, basedir=parsed.iquote[0], options={'include_paths': parsed.iquote}))
 
 
 if __name__ == "__main__":

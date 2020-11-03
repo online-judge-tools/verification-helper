@@ -4,7 +4,7 @@ import pathlib
 import sys
 import textwrap
 from logging import getLogger
-from typing import List, Sequence, Tuple
+from typing import Any, Dict, List, Sequence, Tuple
 
 import importlab.environment
 import importlab.fs
@@ -78,7 +78,7 @@ class PythonLanguage(Language):
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
         return _python_list_depending_files(path.resolve(), basedir)
 
-    def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bytes:
+    def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path, options: Dict[str, Any]) -> bytes:
         """
         :throws NotImplementedError:
         """

@@ -186,8 +186,10 @@ class CPlusPlusLanguage(Language):
         joined_CXXFLAGS = ' '.join(map(shlex.quote, [*env.CXXFLAGS, '-I', str(basedir)]))
         return _cplusplus_list_depending_files(path.resolve(), CXX=env.CXX, joined_CXXFLAGS=joined_CXXFLAGS)
 
-    def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bytes:
-        bundler = Bundler(iquotes=[basedir])
+    def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path = pathlib.Path.cwd(), options: Dict[str, Any]) -> bytes:
+        include_paths: List[pathlib.Path] = options['include_paths']
+        assert isinstance(include_paths, list)
+        bundler = Bundler(iquotes=include_paths)
         bundler.update(path)
         return bundler.get()
 

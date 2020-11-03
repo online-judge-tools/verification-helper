@@ -17,3 +17,27 @@ Do the following steps:
 1.  Register your language at `onlinejudge_verify/languages/list.py`
 1.  Add tests to `tests/` dir if possible
 1.  Update documents `.verify-helper/docs/static/document.md` (or `.verify-helper/docs/static/document.ja.md`)
+
+
+## CI to check format
+
+[.github/workflows/format.yml](https://github.com/online-judge-tools/verification-helper/blob/master/.github/workflows/format.yml) defines the format checking.
+
+You can run the format checking with the following commands. You can automatically run this with copying this script into your `.git/hooks/pre-commit`.
+
+``` sh
+#!/bin/bash
+set -e
+
+mypy onlinejudge_verify onlinejudge_bundle tests setup.py
+pylint --disable=all --enable=unused-import onlinejudge_verify onlinejudge_bundle tests setup.py
+isort --check-only --diff onlinejudge_verify onlinejudge_bundle tests setup.py
+yapf --diff --recursive onlinejudge_verify onlinejudge_bundle tests setup.py
+```
+
+You can automatically fix some errors with the following commands.
+
+``` sh
+isort onlinejudge_verify onlinejudge_bundle tests setup.py
+yapf --in-place --recursive onlinejudge_verify onlinejudge_bundle tests setup.py
+```

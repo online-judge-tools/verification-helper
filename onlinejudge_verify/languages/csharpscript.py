@@ -109,7 +109,7 @@ class CSharpScriptLanguage(Language):
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
         return list(_get_csx_dependencies(path.resolve()))
 
-    def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bytes:
+    def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path, options: Dict[str, Any]) -> bytes:
         raise NotImplementedError
 
     def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Sequence[CSharpScriptLanguageEnvironment]:

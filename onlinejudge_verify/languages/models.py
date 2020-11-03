@@ -40,7 +40,7 @@ class Language(object):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bytes:
+    def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path, options: Dict[str, Any]) -> bytes:
         """
         :throws Exception:
         :throws NotImplementedError:

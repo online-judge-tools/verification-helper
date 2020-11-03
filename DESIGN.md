@@ -61,6 +61,8 @@ link: [DESIGN.md](https://github.com/online-judge-tools/.github/blob/master/DESI
 -   言語個別の処理は [models.py](https://github.com/online-judge-tools/verification-helper/blob/master/onlinejudge_verify/languages/models.py) にある `Language` class と `LanguageEnvironment` class の sub-class として実装される。`Language` class と `LanguageEnvironment` class の区別は、ひとつの言語 (例: C++) が複数の環境 (例: G++, Clang, MSVC++ など) と関連付けられることから来る区別である。
 -   競技プログラミングの文脈では end-to-end tests や integration tests と unit tests の区別が比較的曖昧である。
     通常の文脈では end-to-end tests などは unit tests と比べて「実際と似た環境で動かせる」という利点と「遅い」「不安定」「失敗の原因が分かりにくい」という欠点がある ([参考](https://testing.googleblog.com/2015/04/just-say-no-to-more-end-to-end-tests.html))。しかしこれは通常の end-to-end tests が「GUI の操作」「ネットワーク通信」「ファイル書き込み」などの複雑で非純粋な要素を含むからである。競技プログラミングにおいてはそのような要素はないのでテストの結果は常に「安定」しており、またファイルの依存関係が疎であることを利用して最適に差分のみテストをすることで十分に「速い」テストが可能である。このため競技プログラミングにおいては end-to-end tests の欠点とされていた特徴の多くは隠れ、unit tests との差も曖昧となる。
+-   `oj-bundle` コマンドは `#include "..."` の形の include のみを展開し `#include <...>` の形の include は展開しない。この仕様は、`#include <...>` が「システムの標準のヘッダ」に使われることが意図されており、また `#include "..."` が「カレントディレクトリなどにある自作のヘッダ」に使われことが意図されている、という事情による。参考として、プリプロセッサの挙動についての説明は <https://gcc.gnu.org/onlinedocs/cpp/Search-Path.html> にある。
+-   `oj-bundle` コマンドが [online-judge-tools/verification-helper](https://github.com/online-judge-tools/verification-helper) リポジトリにあるのは便宜上のものである。対応言語が増えるようなら他の新しいリポジトリに移されるだろう。
 
 
 ## Security Considerations

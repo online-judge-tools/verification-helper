@@ -63,7 +63,7 @@ class UserDefinedLanguage(Language):
             dependencies.append(pathlib.Path(line.decode()))
         return dependencies
 
-    def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path, options: Dict[str, Any] = None) -> bytes:
+    def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path, options: Dict[str, Any]) -> bytes:
         assert 'bundle' in self.config
         command = self.config['bundle'].format(path=str(path), basedir=str(basedir))
         logger.info('$ %s', command)

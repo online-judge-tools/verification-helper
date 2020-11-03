@@ -184,7 +184,7 @@ def _get_uncommented_code(path: pathlib.Path, *, iquotes_options: Tuple[str, ...
         if compiler == 'g++':
             raise BundleError(f'A fake g++ is detected. Please install the GNU C++ compiler.: {compiler}')
         raise BundleError(f"It's not g++. Please specify g++ with $CXX envvar.: {compiler}")
-    command = [compiler, *iquotes_options, '-fpreprocessed', '-dD', '-E', str(path)]
+    command = [compiler, '-x', 'c++', *iquotes_options, '-fpreprocessed', '-dD', '-E', str(path)]
     return subprocess.check_output(command)
 
 

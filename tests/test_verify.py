@@ -37,6 +37,14 @@ timestamp_format = '%Y-%m-%d %H:%M:%S %z'
 
 
 def get_timestamp_string(path: pathlib.Path) -> str:
+    """
+    Get the timestamp of the timestamp.
+
+    Args:
+        path: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     system_local_timezone = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
     epoch = path.stat().st_mtime
     timestamp = datetime.datetime.fromtimestamp(epoch, tz=system_local_timezone).replace(microsecond=0)
@@ -44,6 +52,11 @@ def get_timestamp_string(path: pathlib.Path) -> str:
 
 
 def get_timestamp_string_of_past() -> str:
+    """
+    Returns a string representation of the local datetime.
+
+    Args:
+    """
     system_local_timezone = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
     timestamp = datetime.datetime(year=2000, month=1, day=1, tzinfo=system_local_timezone)
     return timestamp.strftime(timestamp_format)

@@ -9,6 +9,17 @@ class HaskellLanguage(UserDefinedLanguage):
     config: Dict[str, Any]
 
     def __init__(self, *, config: Optional[Dict[str, Any]] = None):
+        """
+        Initialize the configuration.
+
+        Args:
+            self: (todo): write your description
+            config: (dict): write your description
+            Optional: (todo): write your description
+            Dict: (todo): write your description
+            str: (todo): write your description
+            Any: (float): write your description
+        """
         if config is None:
             config = get_config().get('languages', {}).get('haskell', {})
         config.setdefault('compile', 'echo')

@@ -10,6 +10,12 @@ class TestSpecialComments(unittest.TestCase):
     """Unit tests for languages/special_comments.py
     """
     def test_list_embedded_urls(self) -> None:
+        """
+        Generate list of embedding files.
+
+        Args:
+            self: (todo): write your description
+        """
         files = {
             'main.cpp': textwrap.dedent("""\
                 // URL with quotes

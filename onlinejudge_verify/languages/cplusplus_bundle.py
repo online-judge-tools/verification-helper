@@ -165,6 +165,12 @@ tr1_libs = {
 
 @functools.lru_cache(maxsize=None)
 def _check_compiler(compiler: str) -> str:
+    """
+    Check if the compiler is compatible with the compiler.
+
+    Args:
+        compiler: (str): write your description
+    """
     # Executables named "g++" are not always g++, due to the fake g++ of macOS
     version = subprocess.check_output([compiler, '--version']).decode()
     if 'clang' in version.lower() or 'Apple LLVM'.lower() in version.lower():
@@ -176,6 +182,16 @@ def _check_compiler(compiler: str) -> str:
 
 @functools.lru_cache(maxsize=None)
 def _get_uncommented_code(path: pathlib.Path, *, iquotes_options: Tuple[str, ...], compiler: str) -> bytes:
+    """
+    Retrieve the compiler code.
+
+    Args:
+        path: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        iquotes_options: (todo): write your description
+        compiler: (str): write your description
+    """
     # `iquotes_options` must be a tuple to use `lru_cache`
 
     if shutil.which(compiler) is None:
@@ -189,6 +205,19 @@ def _get_uncommented_code(path: pathlib.Path, *, iquotes_options: Tuple[str, ...
 
 
 def get_uncommented_code(path: pathlib.Path, *, iquotes: List[pathlib.Path], compiler: str) -> bytes:
+    """
+    Returns a list of uncommented code lines.
+
+    Args:
+        path: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        iquotes: (todo): write your description
+        List: (todo): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        compiler: (str): write your description
+    """
     iquotes_options = []
     for iquote in iquotes:
         iquotes_options.extend(['-I', str(iquote.resolve())])
@@ -211,6 +240,17 @@ class BundleError(Exception):
 
 class BundleErrorAt(BundleError):
     def __init__(self, path: pathlib.Path, line: int, message: str, *args, **kwargs):
+        """
+        Initialize a file.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            line: (str): write your description
+            message: (str): write your description
+        """
         try:
             path = path.resolve().relative_to(pathlib.Path.cwd())
         except ValueError:
@@ -228,6 +268,20 @@ class Bundler(object):
     compiler: str
 
     def __init__(self, *, iquotes: List[pathlib.Path] = [], compiler: str = os.environ.get('CXX', 'g++')) -> None:
+        """
+        Initialize the schema.
+
+        Args:
+            self: (todo): write your description
+            iquotes: (todo): write your description
+            List: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            compiler: (todo): write your description
+            os: (int): write your description
+            environ: (dict): write your description
+            get: (callable): write your description
+        """
         self.iquotes = iquotes
         self.pragma_once = set()
         self.pragma_once_system = set()
@@ -237,6 +291,16 @@ class Bundler(object):
 
     # これをしないと __FILE__ や __LINE__ が壊れる
     def _line(self, line: int, path: pathlib.Path) -> None:
+        """
+        Process a single line.
+
+        Args:
+            self: (todo): write your description
+            line: (str): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         while self.result_lines and self.result_lines[-1].startswith(b'#line '):
             self.result_lines.pop()
         try:
@@ -250,6 +314,18 @@ class Bundler(object):
     # path を解決する
     # see: https://gcc.gnu.org/onlinedocs/gcc/Directory-Options.html#Directory-Options
     def _resolve(self, path: pathlib.Path, *, included_from: pathlib.Path) -> pathlib.Path:
+        """
+        Resolve the given path.
+
+        Args:
+            self: (todo): write your description
+            path: (todo): write your description
+            pathlib: (todo): write your description
+            Path: (todo): write your description
+            included_from: (bool): write your description
+            pathlib: (todo): write your description
+            Path: (todo): write your description
+        """
         if (included_from.parent / path).exists():
             return (included_from.parent / path).resolve()
         for dir_ in self.iquotes:
@@ -258,6 +334,15 @@ class Bundler(object):
         raise BundleErrorAt(path, -1, "no such header")
 
     def update(self, path: pathlib.Path) -> None:
+        """
+        Updates the given by path
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         if path.resolve() in self.pragma_once:
             logger.debug('%s: skipped since this file is included once with include guard', str(path))
             return
@@ -416,4 +501,10 @@ class Bundler(object):
             self.path_stack.remove(path)
 
     def get(self) -> bytes:
+        """
+        Returns the result of the string.
+
+        Args:
+            self: (todo): write your description
+        """
         return b''.join(self.result_lines)

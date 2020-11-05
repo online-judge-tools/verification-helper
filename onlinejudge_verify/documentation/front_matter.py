@@ -6,6 +6,12 @@ _separator: bytes = b'---'
 
 
 def _split_front_matter_without_parsing_yaml(content: bytes) -> Tuple[bytes, bytes]:
+    """
+    Split the front - end of the front - front front - end of the content.
+
+    Args:
+        content: (str): write your description
+    """
     lines = content.splitlines(keepends=True)
     if lines[0].rstrip() != _separator:
         return (b'', content)
@@ -23,11 +29,24 @@ def _split_front_matter_without_parsing_yaml(content: bytes) -> Tuple[bytes, byt
 
 
 def split_front_matter(content: bytes) -> Tuple[Dict[str, Any], bytes]:
+    """
+    Split a dict of - end of - end - end - end tuple.
+
+    Args:
+        content: (str): write your description
+    """
     front_matter, content = _split_front_matter_without_parsing_yaml(content)
     return yaml.safe_load(front_matter) or {}, content
 
 
 def merge_front_matter(front_matter: Dict[str, Any], content: bytes) -> bytes:
+    """
+    Merge the front front front front front front - end.
+
+    Args:
+        front_matter: (todo): write your description
+        content: (str): write your description
+    """
     if not front_matter:
         return content
     return b'\n'.join([

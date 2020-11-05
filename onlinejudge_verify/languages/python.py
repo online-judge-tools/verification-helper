@@ -17,6 +17,21 @@ logger = getLogger(__name__)
 
 class PythonLanguageEnvironment(LanguageEnvironment):
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
+        """
+        Compile the code into a file.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            basedir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            tempdir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         code = textwrap.dedent(f"""\
             #!{sys.executable}
             \"\"\"This is a helper script to run the target Python code.
@@ -43,11 +58,37 @@ class PythonLanguageEnvironment(LanguageEnvironment):
             fh.write(code.encode())
 
     def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
+        """
+        Execute a command on the server.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            basedir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            tempdir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         return [sys.executable, str(tempdir / 'compiled.py')]
 
 
 @functools.lru_cache(maxsize=None)
 def _python_list_depending_files(path: pathlib.Path, basedir: pathlib.Path) -> List[pathlib.Path]:
+    """
+    Return a list of all python files in the pathlib.
+
+    Args:
+        path: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        basedir: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     # compute the dependency graph of the `path`
     env = importlab.environment.Environment(
         importlab.fs.Path([importlab.fs.OSFileSystem(str(basedir.resolve()))]),
@@ -76,6 +117,18 @@ def _python_list_depending_files(path: pathlib.Path, basedir: pathlib.Path) -> L
 
 class PythonLanguage(Language):
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
+        """
+        Return a list of files.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            basedir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         return _python_list_depending_files(path.resolve(), basedir)
 
     def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path, options: Dict[str, Any]) -> bytes:
@@ -85,8 +138,32 @@ class PythonLanguage(Language):
         raise NotImplementedError
 
     def is_verification_file(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bool:
+        """
+        Return true if path is a verification file.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            basedir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         return '.test.py' in path.name
 
     def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Sequence[PythonLanguageEnvironment]:
+        """
+        Returns a list of environment entries.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            basedir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         # TODO add another environment (e.g. pypy)
         return [PythonLanguageEnvironment()]

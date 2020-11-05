@@ -21,6 +21,12 @@ from onlinejudge_verify.languages.cplusplus_bundle import BundleError
 @unittest.skipIf(platform.system() == 'Darwin', 'We cannot use the fake g++ of macOS.')
 class TestCPlusPlusBundlingUnit(unittest.TestCase):
     def test_no_newline(self) -> None:
+        """
+        Test for new test files.
+
+        Args:
+            self: (todo): write your description
+        """
         # 末尾に改行がないコードをincludeした時に改行が足されていることの確認
 
         files = {
@@ -38,6 +44,12 @@ class TestCPlusPlusBundlingUnit(unittest.TestCase):
                 self.assertIn(b'void foo() {}\n', bundler.get())
 
     def test_uncommenting(self) -> None:
+        """
+        Test if the given file.
+
+        Args:
+            self: (todo): write your description
+        """
         # prepare files
         files = {
             'foo.cpp': textwrap.dedent("""\
@@ -67,6 +79,12 @@ class TestCPlusPlusBundlingUnit(unittest.TestCase):
 
     @unittest.skipIf(shutil.which('clang++') is None, 'clang++ is required for this test')
     def test_reject_clang(self) -> None:
+        """
+        Reject test test files.
+
+        Args:
+            self: (todo): write your description
+        """
         files = {
             'example.test.cpp': b'',
         }
@@ -80,6 +98,12 @@ class TestCPlusPlusBundlingUnit(unittest.TestCase):
 @unittest.skipIf(platform.system() == 'Darwin', 'We cannot use the fake g++ of macOS.')
 class TestCPlusPlusBundlingEndToEnd(unittest.TestCase):
     def test_smoke(self) -> None:
+        """
+        Run test test test test.
+
+        Args:
+            self: (todo): write your description
+        """
         files = {
             'library.hpp': textwrap.dedent("""\
                 #pragma once
@@ -116,6 +140,12 @@ class TestCPlusPlusBundlingEndToEnd(unittest.TestCase):
                 self.assertEqual(subprocess.check_output([str(pathlib.Path('a.out').resolve())]), ('Hello World' + os.linesep).encode())
 
     def test_complicated(self) -> None:
+        """
+        Load test test test files.
+
+        Args:
+            self: (todo): write your description
+        """
         library_files_1 = {
             pathlib.Path('library', 'macro.hpp'): textwrap.dedent("""\
                 #pragma once
@@ -180,6 +210,12 @@ class TestCPlusPlusBundlingEndToEnd(unittest.TestCase):
             self.assertEqual(subprocess.check_output([str(tempdir_dst / 'a.out')], input=b'30\n'), ('832040' + os.linesep).encode())
 
     def test_standard_headers(self) -> None:
+        """
+        Generate standard standard files.
+
+        Args:
+            self: (todo): write your description
+        """
         test_files = {pathlib.Path('test', 'main.cpp'): textwrap.dedent("""\
             #include <bits/stdtr1c++.h>
             #include <tr2/dynamic_bitset>

@@ -15,6 +15,11 @@ _error_timestamp = datetime.datetime.fromtimestamp(0, tz=datetime.timezone(datet
 
 
 def _cwd() -> pathlib.Path:
+    """
+    Return the working copy of the working directory.
+
+    Args:
+    """
     # .resolve() is required for Windows on GitHub Actions because we need to expand 8.3 filenames like `C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\tmp_xxxxxxx` to `C:\\Users\\runneradmin\\AppData\\Local\\Temp\\tmp_xxxxxxx`
     return pathlib.Path.cwd().resolve(strict=True)
 
@@ -27,12 +32,32 @@ class VerificationMarker(object):
     verification_statuses: Dict[pathlib.Path, str]
 
     def __init__(self, *, json_path: pathlib.Path, use_git_timestamp: bool, jobs: Optional[int] = None) -> None:
+        """
+        Initialize the job.
+
+        Args:
+            self: (todo): write your description
+            json_path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            use_git_timestamp: (int): write your description
+            jobs: (todo): write your description
+        """
         self.json_path = json_path
         self.use_git_timestamp = use_git_timestamp
         self.verification_statuses = {}
         self.load_timestamps(jobs=jobs)
 
     def get_current_timestamp(self, path: pathlib.Path) -> datetime.datetime:
+        """
+        Get the current timestamp of the given path.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         if self.use_git_timestamp:
             return get_last_commit_time_to_verify(path)
         else:
@@ -49,6 +74,15 @@ class VerificationMarker(object):
                 return datetime.datetime.fromtimestamp(timestamp, tz=system_local_timezone).replace(microsecond=0)  # microsecond=0 is required because it's erased on timestamps.*.json
 
     def is_verified(self, path: pathlib.Path) -> bool:
+        """
+        Return true if the given path is already verified.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         if not path.exists():
             return False
         path = path.resolve(strict=True).relative_to(_cwd())
@@ -64,6 +98,15 @@ class VerificationMarker(object):
         self.verification_statuses[path] = 'verified'
 
     def is_failed(self, path: pathlib.Path) -> bool:
+        """
+        Return true if path is failed false otherwise.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         if not path.exists():
             return True
         path = path.resolve(strict=True).relative_to(_cwd())
@@ -74,12 +117,28 @@ class VerificationMarker(object):
         return self.verification_statuses[path] == 'failed'
 
     def mark_failed(self, path: pathlib.Path) -> None:
+        """
+        Makes sure that a failed.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         if not path.exists():
             return
         path = path.resolve(strict=True).relative_to(_cwd())
         self.verification_statuses[path] = 'failed'
 
     def load_timestamps(self, *, jobs: Optional[int] = None) -> None:
+        """
+        Load timestamps from a job.
+
+        Args:
+            self: (todo): write your description
+            jobs: (str): write your description
+        """
         # 古いものを読み込む
         self.old_timestamps = {}
         if self.json_path.exists():
@@ -94,6 +153,13 @@ class VerificationMarker(object):
         self.new_timestamps = {}
 
         def load(path, timestamp):
+            """
+            Load a file at the given path.
+
+            Args:
+                path: (str): write your description
+                timestamp: (int): write your description
+            """
             if path.exists() and _error_timestamp < self.get_current_timestamp(path) <= timestamp:
                 self.mark_verified(path)
                 return
@@ -114,6 +180,12 @@ class VerificationMarker(object):
                     executor.submit(load, path, timestamp)
 
     def save_timestamps(self) -> None:
+        """
+        Save timestamps to disk.
+
+        Args:
+            self: (todo): write your description
+        """
         data = {}
         for path, timestamp in self.new_timestamps.items():
             if self.verification_statuses[path] == 'verified':
@@ -122,9 +194,24 @@ class VerificationMarker(object):
             json.dump(data, fh, sort_keys=True, indent=0)
 
     def __enter__(self) -> 'VerificationMarker':
+        """
+        Returns the current request.
+
+        Args:
+            self: (todo): write your description
+        """
         return self
 
     def __exit__(self, exc_type, exc_value, traceback) -> None:
+        """
+        Sets the exception.
+
+        Args:
+            self: (todo): write your description
+            exc_type: (todo): write your description
+            exc_value: (todo): write your description
+            traceback: (todo): write your description
+        """
         self.save_timestamps()
 
 
@@ -132,6 +219,12 @@ _verification_marker = None  # type: Optional[VerificationMarker]
 
 
 def get_verification_marker(*, jobs: Optional[int] = None) -> VerificationMarker:
+    """
+    Get the verification.
+
+    Args:
+        jobs: (todo): write your description
+    """
     global _verification_marker
     if _verification_marker is None:
         # use different files in local and in remote to avoid conflicts
@@ -146,6 +239,14 @@ def get_verification_marker(*, jobs: Optional[int] = None) -> VerificationMarker
 
 @functools.lru_cache(maxsize=None)
 def _get_last_commit_time_to_verify(path: pathlib.Path) -> datetime.datetime:
+    """
+    Get the last commit timestamp.
+
+    Args:
+        path: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     language = onlinejudge_verify.languages.list.get(path)
     assert language is not None
     try:

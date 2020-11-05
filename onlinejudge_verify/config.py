@@ -13,6 +13,14 @@ _loaded_config: Optional[Dict[str, Any]] = None
 
 
 def set_config_path(config_path: pathlib.Path) -> None:
+    """
+    Set the config file.
+
+    Args:
+        config_path: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     global _loaded_config
     assert _loaded_config is None
     if not config_path.exists():
@@ -24,6 +32,11 @@ def set_config_path(config_path: pathlib.Path) -> None:
 
 
 def get_config() -> Dict[str, Any]:
+    """
+    Returns the configuration file.
+
+    Args:
+    """
     if _loaded_config is None:
         set_config_path(default_config_path)
     assert _loaded_config is not None

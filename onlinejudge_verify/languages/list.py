@@ -20,6 +20,11 @@ _dict: Optional[Dict[str, Language]] = None
 
 
 def _get_dict() -> Dict[str, Language]:
+    """
+    Create a dictionary of config objects.
+
+    Args:
+    """
     global _dict
     if _dict is None:
         _dict = {}
@@ -48,4 +53,12 @@ def _get_dict() -> Dict[str, Language]:
 
 
 def get(path: pathlib.Path) -> Optional[Language]:
+    """
+    Get a dict of the given path.
+
+    Args:
+        path: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     return _get_dict().get(path.suffix)

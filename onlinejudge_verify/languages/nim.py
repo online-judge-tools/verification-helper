@@ -16,20 +16,69 @@ class NimLanguageEnvironment(LanguageEnvironment):
     NIMFLAGS: List[str]
 
     def __init__(self, *, compile_to: str, NIMFLAGS: List[str]):
+        """
+        Initialize the compiler.
+
+        Args:
+            self: (todo): write your description
+            compile_to: (todo): write your description
+            NIMFLAGS: (int): write your description
+        """
         self.compile_to = compile_to
         self.NIMFLAGS = NIMFLAGS
 
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
+        """
+        Compile and compile the given path.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            basedir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            tempdir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         command = ["nim", self.compile_to, "-p:.", f"-o:{str(tempdir /'a.out')}", f"--nimcache:{str(tempdir)}"] + self.NIMFLAGS + [str(path)]
         logger.info('$ %s', ' '.join(command))
         subprocess.check_call(command)
 
     def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
+        """
+        Execute a command on the server.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            basedir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            tempdir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         return [str(tempdir / "a.out")]
 
 
 @functools.lru_cache(maxsize=None)
 def _list_direct_dependencies(path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
+    """
+    Return a list of direct direct dependencies.
+
+    Args:
+        path: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        basedir: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     items: List[str] = []
     with open(basedir / path, 'rb') as fh:
         for line in fh.read().decode().splitlines():
@@ -63,12 +112,35 @@ class NimLanguage(Language):
     config: Dict[str, Any]
 
     def __init__(self, *, config: Optional[Dict[str, Any]] = None):
+        """
+        Initialize configuration.
+
+        Args:
+            self: (todo): write your description
+            config: (todo): write your description
+            Optional: (todo): write your description
+            Dict: (todo): write your description
+            str: (todo): write your description
+            Any: (float): write your description
+        """
         if config is None:
             self.config = get_config().get('languages', {}).get('nim', {})
         else:
             self.config = config
 
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
+        """
+        Return a list of all dependencies.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            basedir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         dependencies = []
         visited: Set[pathlib.Path] = set()
         stk = [path.resolve()]
@@ -83,12 +155,49 @@ class NimLanguage(Language):
         return list(set(dependencies))
 
     def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path, options: Dict[str, Any]) -> bytes:
+        """
+        Bundle a bundle.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            basedir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            options: (dict): write your description
+        """
         raise NotImplementedError
 
     def is_verification_file(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bool:
+        """
+        Return true if path is a verification file.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            basedir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         return path.name.endswith("_test.nim")
 
     def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[NimLanguageEnvironment]:
+        """
+        Return a list of environments.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            basedir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         default_compile_to = 'cpp'
         default_NIMFLAGS = ['-d:release', '--opt:speed']
         envs = []

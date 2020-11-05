@@ -6,6 +6,11 @@ from examples.python.union_find import UnionFindTree
 
 
 def main() -> None:
+    """
+    Main function.
+
+    Args:
+    """
     N, Q = map(int, input().split())
     uft = UnionFindTree(N)
     for _ in range(Q):

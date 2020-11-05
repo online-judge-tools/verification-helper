@@ -14,6 +14,12 @@ class TestPythonListDependencies(unittest.TestCase):
     """TestPythonListDependencies has unit (or integrated) tests for the feature to list dependencies of Python files.
     """
     def test_one_dir(self) -> None:
+        """
+        Create a temporary directory.
+
+        Args:
+            self: (todo): write your description
+        """
         files = {
             'main.py': textwrap.dedent("""\
                 import imported
@@ -30,6 +36,12 @@ class TestPythonListDependencies(unittest.TestCase):
                 self.assertEqual(actual, expected)
 
     def test_separated_dir(self) -> None:
+        """
+        Create a temporary directory.
+
+        Args:
+            self: (todo): write your description
+        """
         files = {
             pathlib.Path('tests', 'main.py'): textwrap.dedent("""\
                 import library.imported

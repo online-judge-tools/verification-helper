@@ -18,6 +18,12 @@ _config_yml_path: str = '_config.yml'
 
 
 def print_stats_json(*, jobs: int = 1) -> None:
+    """
+    Print stats.
+
+    Args:
+        jobs: (todo): write your description
+    """
     basedir = pathlib.Path.cwd()
     logger.info('load verification status...')
     marker = onlinejudge_verify.marker.get_verification_marker(jobs=jobs)
@@ -30,6 +36,14 @@ def print_stats_json(*, jobs: int = 1) -> None:
 
 
 def load_render_config(*, basedir: pathlib.Path) -> SiteRenderConfig:
+    """
+    Loads the yaml configuration.
+
+    Args:
+        basedir: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     # load default _config.yml
     default_config_yml = yaml.safe_load(pkg_resources.resource_string(_resource_package, _config_yml_path))
     assert default_config_yml is not None
@@ -58,6 +72,12 @@ def load_render_config(*, basedir: pathlib.Path) -> SiteRenderConfig:
 
 # TODO: この configure.py + build.py というファイル分割そこまでうまくはいってなくないか？ もうすこし整理したい
 def main(*, jobs: int = 1) -> None:
+    """
+    Main entry point.
+
+    Args:
+        jobs: (int): write your description
+    """
     basedir = pathlib.Path.cwd()
     config = load_render_config(basedir=basedir)
     logger.info('load verification status...')

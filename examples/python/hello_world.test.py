@@ -2,6 +2,11 @@
 import examples.python.hello_world
 
 def main():
+    """
+    Main function
+
+    Args:
+    """
     print(examples.python.hello_world.get_hello_world())
 
 if __name__ == '__main__':

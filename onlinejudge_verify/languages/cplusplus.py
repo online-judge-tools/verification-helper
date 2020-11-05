@@ -24,26 +24,90 @@ class CPlusPlusLanguageEnvironment(LanguageEnvironment):
     CXXFLAGS: List[str]
 
     def __init__(self, *, CXX: pathlib.Path, CXXFLAGS: List[str]):
+        """
+        Initialize cXX list
+
+        Args:
+            self: (todo): write your description
+            CXX: (int): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            CXXFLAGS: (int): write your description
+        """
         self.CXX = CXX
         self.CXXFLAGS = CXXFLAGS
 
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
+        """
+        Compile the given directory.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            basedir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            tempdir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         command = [str(self.CXX), *self.CXXFLAGS, '-I', str(basedir), '-o', str(tempdir / 'a.out'), str(path)]
         logger.info('$ %s', ' '.join(command))
         subprocess.check_call(command)
 
     def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
+        """
+        Execute a command on the server.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            basedir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            tempdir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         return [str(tempdir / 'a.out')]
 
     def _is_clang(self) -> bool:
+        """
+        Returns true if the class is clang.
+
+        Args:
+            self: (todo): write your description
+        """
         return 'clang++' in self.CXX.name
 
     def _is_gcc(self) -> bool:
+        """
+        Return true if this element is a gcc - cron.
+
+        Args:
+            self: (todo): write your description
+        """
         return not self._is_clang() and 'g++' in self.CXX.name
 
 
 @functools.lru_cache(maxsize=None)
 def _cplusplus_list_depending_files(path: pathlib.Path, *, CXX: pathlib.Path, joined_CXXFLAGS: str) -> List[pathlib.Path]:
+    """
+    Gets a list of a list files.
+
+    Args:
+        path: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        CXX: (todo): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        joined_CXXFLAGS: (todo): write your description
+    """
     # Using /dev/stdout is acceptable because Library Chcker doesn't work on Windows.
     is_windows = (platform.uname().system == 'Windows')
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -64,6 +128,18 @@ def _cplusplus_list_depending_files(path: pathlib.Path, *, CXX: pathlib.Path, jo
 
 @functools.lru_cache(maxsize=None)
 def _cplusplus_list_defined_macros(path: pathlib.Path, *, CXX: pathlib.Path, joined_CXXFLAGS: str) -> Dict[str, str]:
+    """
+    Return a list of macros.
+
+    Args:
+        path: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        CXX: (todo): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        joined_CXXFLAGS: (todo): write your description
+    """
     command = [str(CXX), *shlex.split(joined_CXXFLAGS), '-dM', '-E', str(path)]
     data = subprocess.check_output(command)
     define = {}
@@ -92,12 +168,29 @@ class CPlusPlusLanguage(Language):
     config: Dict[str, Any]
 
     def __init__(self, *, config: Optional[Dict[str, Any]] = None):
+        """
+        Initialize configuration.
+
+        Args:
+            self: (todo): write your description
+            config: (todo): write your description
+            Optional: (todo): write your description
+            Dict: (todo): write your description
+            str: (todo): write your description
+            Any: (float): write your description
+        """
         if config is None:
             self.config = get_config().get('languages', {}).get('cpp', {})
         else:
             self.config = config
 
     def _list_environments(self) -> List[CPlusPlusLanguageEnvironment]:
+        """
+        List environments
+
+        Args:
+            self: (todo): write your description
+        """
         default_CXXFLAGS = ['--std=c++17', '-O2', '-Wall', '-g']
         if platform.system() == 'Windows' or 'CYGWIN' in platform.system():
             default_CXXFLAGS.append('-Wl,-stack,0x10000000')
@@ -141,6 +234,18 @@ class CPlusPlusLanguage(Language):
         return envs
 
     def list_attributes(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Dict[str, Any]:
+        """
+        Return a list of all the attributes in a given path.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            basedir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         attributes: Dict[str, Any] = {}
         attributes.update(special_comments.list_doxygen_annotations(path.resolve()))
 
@@ -182,11 +287,39 @@ class CPlusPlusLanguage(Language):
         return attributes
 
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
+        """
+        Lists the list of dependencies.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            basedir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         env = self._list_environments()[0]
         joined_CXXFLAGS = ' '.join(map(shlex.quote, [*env.CXXFLAGS, '-I', str(basedir)]))
         return _cplusplus_list_depending_files(path.resolve(), CXX=env.CXX, joined_CXXFLAGS=joined_CXXFLAGS)
 
     def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path = pathlib.Path.cwd(), options: Dict[str, Any]) -> bytes:
+        """
+        Bundle bundle.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            basedir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            cwd: (int): write your description
+            options: (dict): write your description
+        """
         include_paths: List[pathlib.Path] = options['include_paths']
         assert isinstance(include_paths, list)
         bundler = Bundler(iquotes=include_paths)
@@ -194,6 +327,18 @@ class CPlusPlusLanguage(Language):
         return bundler.get()
 
     def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[CPlusPlusLanguageEnvironment]:
+        """
+        Return a list of environments.
+
+        Args:
+            self: (todo): write your description
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+            basedir: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         attributes = self.list_attributes(path, basedir=basedir)
         envs = []
         for env in self._list_environments():

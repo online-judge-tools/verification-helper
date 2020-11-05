@@ -32,6 +32,11 @@ logger = getLogger(__name__)
 
 
 def get_parser() -> argparse.ArgumentParser:
+    """
+    Get the argument parser.
+
+    Args:
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument('--config-file', default=onlinejudge_verify.config.default_config_path, help='default: ".verify-helper/config.toml"')
 
@@ -86,6 +91,11 @@ def subcommand_run(paths: List[pathlib.Path], *, timeout: float = 600, tle: floa
 
 
 def push_timestamp_to_branch() -> None:
+    """
+    Push branch to local branch.
+
+    Args:
+    """
     # read config
     logger.info('use GITHUB_TOKEN')  # NOTE: don't use GH_PAT here, because it may cause infinite loops with triggering GitHub Actions itself
     url = 'https://{}:{}@github.com/{}.git'.format(os.environ['GITHUB_ACTOR'], os.environ['GITHUB_TOKEN'], os.environ['GITHUB_REPOSITORY'])
@@ -106,6 +116,15 @@ def push_timestamp_to_branch() -> None:
 
 
 def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-pages') -> None:
+    """
+    Push all the pages in github
+
+    Args:
+        src_dir: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        dst_branch: (todo): write your description
+    """
     # read config
     if not os.environ.get('GH_PAT'):
         # If we push commits using GITHUB_TOKEN, the build of GitHub Pages will not run. See https://github.com/marketplace/actions/github-pages-deploy#secrets and https://github.com/maxheld83/ghpages/issues/1
@@ -156,6 +175,12 @@ def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-p
 
 
 def subcommand_docs(*, jobs: int = 1) -> None:
+    """
+    Create a subcommand
+
+    Args:
+        jobs: (todo): write your description
+    """
     if 'GITHUB_ACTION' in os.environ and 'GITHUB_TOKEN' in os.environ:
         if os.environ['GITHUB_REF'] == 'refs/heads/master':
             logger.info('generate documents...')
@@ -180,10 +205,21 @@ def subcommand_docs(*, jobs: int = 1) -> None:
 
 
 def subcommand_stats(*, jobs: int = 1) -> None:
+    """
+    Subcommand stats.
+
+    Args:
+        jobs: (todo): write your description
+    """
     onlinejudge_verify.documentation.main.print_stats_json(jobs=jobs)
 
 
 def generate_gitignore() -> None:
+    """
+    Generate gitignore.
+
+    Args:
+    """
     path = pathlib.Path('.verify-helper/.gitignore')
     data = textwrap.dedent("""\
         .gitignore
@@ -246,6 +282,14 @@ def _delete_gitignore() -> None:
 
 
 def main(args: Optional[List[str]] = None) -> None:
+    """
+    Main entry point.
+
+    Args:
+        Optional: (todo): write your description
+        List: (todo): write your description
+        str: (todo): write your description
+    """
     # configure logging
     log_format = '%(log_color)s%(levelname)s%(reset)s:%(name)s:%(message)s'
     handler = colorlog.StreamHandler()

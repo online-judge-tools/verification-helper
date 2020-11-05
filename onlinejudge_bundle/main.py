@@ -13,6 +13,14 @@ logger = getLogger(__name__)
 
 
 def main(args: Optional[List[str]] = None) -> None:
+    """
+    Main entry point.
+
+    Args:
+        Optional: (todo): write your description
+        List: (todo): write your description
+        str: (todo): write your description
+    """
     # configure logging
     log_format = '%(log_color)s%(levelname)s%(reset)s:%(name)s:%(message)s'
     handler = colorlog.StreamHandler()

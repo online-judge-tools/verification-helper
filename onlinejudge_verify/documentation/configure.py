@@ -15,9 +15,30 @@ logger = getLogger(__name__)
 
 
 def _find_matched_file_paths(pred: Callable[[pathlib.Path], bool], *, basedir: pathlib.Path) -> List[pathlib.Path]:
+    """
+    Return a list of a list of the file paths in the file paths.
+
+    Args:
+        pred: (todo): write your description
+        Callable: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        bool: (str): write your description
+        basedir: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     found: List[pathlib.Path] = []
 
     def dfs(x: pathlib.Path) -> None:
+        """
+        Return a list of the directory paths.
+
+        Args:
+            x: (todo): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         for y in x.iterdir():
             if y.name.startswith('.'):
                 continue
@@ -32,14 +53,46 @@ def _find_matched_file_paths(pred: Callable[[pathlib.Path], bool], *, basedir: p
 
 
 def _find_source_code_paths(*, basedir: pathlib.Path) -> List[pathlib.Path]:
+    """
+    Return list of the source code files matching code.
+
+    Args:
+        basedir: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     def pred(path: pathlib.Path) -> bool:
+        """
+        Return a list of the pred predefined predicates.
+
+        Args:
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         return onlinejudge_verify.languages.list.get(path) is not None
 
     return _find_matched_file_paths(pred, basedir=basedir)
 
 
 def find_markdown_paths(*, basedir: pathlib.Path) -> List[pathlib.Path]:
+    """
+    Find all paths in the given paths.
+
+    Args:
+        basedir: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     def pred(path: pathlib.Path) -> bool:
+        """
+        Return true if path is true or false otherwise false.
+
+        Args:
+            path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         return path.suffix == '.md'
 
     return _find_matched_file_paths(pred, basedir=basedir)
@@ -141,6 +194,44 @@ def _get_source_code_stat(
     marker: VerificationMarker,
     basedir: pathlib.Path,
 ) -> SourceCodeStat:
+    """
+    Get source code for given source code.
+
+    Args:
+        path: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        depends_on: (todo): write your description
+        Dict: (todo): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        List: (todo): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        required_by: (todo): write your description
+        Dict: (todo): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        List: (todo): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        verified_with: (str): write your description
+        Dict: (todo): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        List: (todo): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        verification_status: (str): write your description
+        Dict: (todo): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        VerificationStatus: (str): write your description
+        marker: (todo): write your description
+        basedir: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     absolute_path = (basedir / path).resolve()
     relative_path = absolute_path.relative_to(basedir)
     language = onlinejudge_verify.languages.list.get(path)
@@ -167,6 +258,15 @@ def _get_source_code_stat(
 
 
 def generate_source_code_stats(*, marker: VerificationMarker, basedir: pathlib.Path) -> List[SourceCodeStat]:
+    """
+    Generate source stats for source code.
+
+    Args:
+        marker: (str): write your description
+        basedir: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     source_code_paths = _find_source_code_paths(basedir=basedir)
     depends_on, required_by, verified_with = _build_dependency_graph(source_code_paths, basedir=basedir)
     verification_status = _build_verification_status(source_code_paths, verified_with=verified_with, basedir=basedir, marker=marker)
@@ -186,6 +286,18 @@ def generate_source_code_stats(*, marker: VerificationMarker, basedir: pathlib.P
 
 
 def is_excluded(relative_path: pathlib.Path, *, excluded_paths: List[pathlib.Path]) -> bool:
+    """
+    Check if a list of path is excluded.
+
+    Args:
+        relative_path: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        excluded_paths: (str): write your description
+        List: (todo): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     for excluded in excluded_paths:
         if relative_path == excluded or excluded in relative_path.parents:
             return True
@@ -193,10 +305,32 @@ def is_excluded(relative_path: pathlib.Path, *, excluded_paths: List[pathlib.Pat
 
 
 def apply_exclude_list_to_paths(paths: List[pathlib.Path], *, excluded_paths: List[pathlib.Path]) -> List[pathlib.Path]:
+    """
+    Given a list of paths into a list of paths.
+
+    Args:
+        paths: (str): write your description
+        List: (list): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        excluded_paths: (str): write your description
+        List: (list): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     return [path for path in paths if not is_excluded(path, excluded_paths=excluded_paths)]
 
 
 def apply_exclude_list_to_stats(*, excluded_paths: List[pathlib.Path], source_code_stats: List[SourceCodeStat]) -> List[SourceCodeStat]:
+    """
+    Given a list of statuses to a list of files.
+
+    Args:
+        excluded_paths: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        source_code_stats: (str): write your description
+    """
     result = []
     for stat in source_code_stats:
         if is_excluded(stat.path, excluded_paths=excluded_paths):
@@ -216,6 +350,18 @@ def apply_exclude_list_to_stats(*, excluded_paths: List[pathlib.Path], source_co
 
 
 def resolve_documentation_of(documentation_of: str, *, markdown_path: pathlib.Path, basedir: pathlib.Path) -> Optional[pathlib.Path]:
+    """
+    Resolve a path to a given document.
+
+    Args:
+        documentation_of: (str): write your description
+        markdown_path: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        basedir: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     if documentation_of.startswith('.'):
         # a relative path
         path = markdown_path.parent / pathlib.Path(pathlib.PurePosixPath(documentation_of))
@@ -242,6 +388,16 @@ def resolve_documentation_of(documentation_of: str, *, markdown_path: pathlib.Pa
 
 
 def convert_to_page_render_jobs(*, source_code_stats: List[SourceCodeStat], markdown_paths: List[pathlib.Path], site_render_config: SiteRenderConfig) -> List[PageRenderJob]:
+    """
+    Convert a dictionary of pages.
+
+    Args:
+        source_code_stats: (str): write your description
+        markdown_paths: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        site_render_config: (todo): write your description
+    """
     basedir = site_render_config.basedir
 
     page_render_jobs: Dict[pathlib.Path, PageRenderJob] = {}

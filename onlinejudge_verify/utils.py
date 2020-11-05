@@ -8,6 +8,11 @@ import onlinejudge_verify.languages.list
 
 
 def is_local_execution() -> bool:
+    """
+    Determine if the local execution execution.
+
+    Args:
+    """
     return 'GITHUB_ACTION' not in os.environ
 
 
@@ -29,4 +34,9 @@ def glob_with_predicate(pred: Callable[[pathlib.Path], bool]) -> Iterator[pathli
 
 
 def iterate_verification_files() -> Iterator[pathlib.Path]:
+    """
+    Iterate a list of all files in the directory.
+
+    Args:
+    """
     return glob_with_predicate(is_verification_file)

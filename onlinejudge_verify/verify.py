@@ -18,9 +18,25 @@ logger = getLogger(__name__)
 
 class VerificationSummary(object):
     def __init__(self, *, failed_test_paths: List[pathlib.Path]):
+        """
+        Initialize the test paths.
+
+        Args:
+            self: (todo): write your description
+            failed_test_paths: (str): write your description
+            List: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         self.failed_test_paths = failed_test_paths
 
     def show(self) -> None:
+        """
+        Show the list of files that have failed.
+
+        Args:
+            self: (todo): write your description
+        """
         if self.failed_test_paths:
             logger.error('%d tests failed', len(self.failed_test_paths))
             for path in self.failed_test_paths:
@@ -29,10 +45,22 @@ class VerificationSummary(object):
             logger.info('all tests succeeded')
 
     def succeeded(self) -> bool:
+        """
+        Return true if the failed failed.
+
+        Args:
+            self: (todo): write your description
+        """
         return not self.failed_test_paths
 
 
 def exec_command(command: List[str]):
+    """
+    Run a command in the given command.
+
+    Args:
+        command: (str): write your description
+    """
     # NOTE: secrets like YUKICODER_TOKEN are masked
     logger.info('$ %s', ' '.join(command))
 
@@ -48,6 +76,17 @@ def exec_command(command: List[str]):
 
 
 def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: int) -> Optional[bool]:
+    """
+    Verify a file
+
+    Args:
+        path: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        compilers: (str): write your description
+        tle: (str): write your description
+        jobs: (str): write your description
+    """
     logger.info('verify: %s', path)
 
     language = onlinejudge_verify.languages.list.get(path)
@@ -116,6 +155,24 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
 
 
 def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.VerificationMarker, timeout: float = math.inf, tle: float = 60, jobs: int = 1) -> VerificationSummary:
+    """
+    Main function.
+
+    Args:
+        paths: (str): write your description
+        List: (todo): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        marker: (todo): write your description
+        onlinejudge_verify: (bool): write your description
+        marker: (todo): write your description
+        VerificationMarker: (str): write your description
+        timeout: (float): write your description
+        math: (str): write your description
+        inf: (int): write your description
+        tle: (str): write your description
+        jobs: (int): write your description
+    """
     try:
         import resource
         _, hard = resource.getrlimit(resource.RLIMIT_STACK)

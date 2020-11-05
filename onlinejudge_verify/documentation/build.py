@@ -37,6 +37,12 @@ _copied_static_file_paths: List[str] = [
 
 
 def _build_page_title_dict(*, page_render_jobs: List[PageRenderJob]) -> Dict[pathlib.Path, str]:
+    """
+    Builds a dict with the title.
+
+    Args:
+        page_render_jobs: (todo): write your description
+    """
     page_title_dict: Dict[pathlib.Path, str] = {}
     for job in page_render_jobs:
         assert job.path.suffix == '.md'
@@ -49,6 +55,12 @@ def _build_page_title_dict(*, page_render_jobs: List[PageRenderJob]) -> Dict[pat
 
 
 def _get_verification_status_icon(verification_status: VerificationStatus) -> str:
+    """
+    Returns the verification status.
+
+    Args:
+        verification_status: (todo): write your description
+    """
     table = {
         VerificationStatus.LIBRARY_ALL_AC: ':heavy_check_mark:',
         VerificationStatus.LIBRARY_PARTIAL_AC: ':question:',
@@ -63,6 +75,15 @@ def _get_verification_status_icon(verification_status: VerificationStatus) -> st
 
 
 def _render_source_code_stat(stat: SourceCodeStat, *, basedir: pathlib.Path) -> Dict[str, Any]:
+    """
+    Render the source code for a given stat.
+
+    Args:
+        stat: (todo): write your description
+        basedir: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     with open(basedir / stat.path, 'rb') as fh:
         code = fh.read().decode()
     try:
@@ -93,6 +114,27 @@ def _render_source_code_stat_for_page(
     page_title_dict: Dict[pathlib.Path, str],
     basedir: pathlib.Path,
 ) -> Dict[str, Any]:
+    """
+    Render the source code for a given page.
+
+    Args:
+        path: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        source_code_stats_dict: (str): write your description
+        Dict: (todo): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        SourceCodeStat: (str): write your description
+        page_title_dict: (dict): write your description
+        Dict: (todo): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        str: (todo): write your description
+        basedir: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     relative_path = (basedir / path).resolve().relative_to(basedir)
     stat = source_code_stats_dict[relative_path]
     data = _render_source_code_stat(stat, basedir=basedir)
@@ -100,6 +142,14 @@ def _render_source_code_stat_for_page(
     data['_verificationStatusIcon'] = _get_verification_status_icon(stat.verification_status)
 
     def ext(relative_path: pathlib.Path) -> Dict[str, Any]:
+        """
+        Return a dictionary of extension information about - source code
+
+        Args:
+            relative_path: (str): write your description
+            pathlib: (str): write your description
+            Path: (str): write your description
+        """
         stat = source_code_stats_dict[relative_path]
         return {
             'path': str(relative_path),
@@ -120,6 +170,20 @@ def _render_source_code_stats_for_top_page(
     page_title_dict: Dict[pathlib.Path, str],
     basedir: pathlib.Path,
 ) -> Dict[str, Any]:
+    """
+    Render the source code for a dictionary.
+
+    Args:
+        source_code_stats: (str): write your description
+        page_title_dict: (dict): write your description
+        Dict: (todo): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+        str: (todo): write your description
+        basedir: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     libraryCategories: Dict[str, List[Dict[str, str]]] = {}
     verificationCategories: Dict[str, List[Dict[str, str]]] = {}
     for stat in source_code_stats:
@@ -182,6 +246,15 @@ def render_pages(*, page_render_jobs: List[PageRenderJob], source_code_stats: Li
 
 
 def render_source_code_stats(*, source_code_stats: List[SourceCodeStat], basedir: pathlib.Path) -> List[Dict[str, Any]]:
+    """
+    Render source_code_stats
+
+    Args:
+        source_code_stats: (str): write your description
+        basedir: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     data: List[Dict[str, Any]] = []
     for stat in source_code_stats:
         data.append(_render_source_code_stat(stat, basedir=basedir))
@@ -189,6 +262,12 @@ def render_source_code_stats(*, source_code_stats: List[SourceCodeStat], basedir
 
 
 def load_static_files(*, site_render_config: SiteRenderConfig) -> Dict[pathlib.Path, bytes]:
+    """
+    Loads the static static files.
+
+    Args:
+        site_render_config: (str): write your description
+    """
     files: Dict[pathlib.Path, bytes] = {}
 
     # write merged config.yml

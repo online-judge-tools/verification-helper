@@ -11,6 +11,14 @@ logger = getLogger(__name__)
 # special comments like Vim and Python: see https://www.python.org/dev/peps/pep-0263/
 @functools.lru_cache(maxsize=None)
 def list_special_comments(path: pathlib.Path) -> Dict[str, str]:
+    """
+    List all special variables in path.
+
+    Args:
+        path: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     pattern = re.compile(r'\b(?:verify|verification)-helper:\s*([0-9A-Z_]+)(?:\s(.*))?$')
     attributes = {}
     with open(path, 'rb') as fh:
@@ -27,6 +35,14 @@ def list_special_comments(path: pathlib.Path) -> Dict[str, str]:
 
 @functools.lru_cache(maxsize=None)
 def list_doxygen_annotations(path: pathlib.Path) -> Dict[str, str]:
+    """
+    List all annotations from doxygen.
+
+    Args:
+        path: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     pattern = re.compile(r'@(title|category|brief|docs|see|sa|ignore) (.*)')
     attributes = {}
     with open(path, 'rb') as fh:
@@ -53,6 +69,14 @@ def list_doxygen_annotations(path: pathlib.Path) -> Dict[str, str]:
 
 @functools.lru_cache(maxsize=None)
 def list_embedded_urls(path: pathlib.Path) -> List[str]:
+    """
+    Gets a list of urls.
+
+    Args:
+        path: (str): write your description
+        pathlib: (str): write your description
+        Path: (str): write your description
+    """
     pattern = re.compile(r"""['"`]?https?://\S*""")  # use a broad pattern. There are no needs to make match strict.
     with open(path, 'rb') as fh:
         content = fh.read().decode()

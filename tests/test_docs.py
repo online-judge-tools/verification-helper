@@ -15,6 +15,12 @@ class TestDocsSubcommandSmoke(unittest.TestCase):
     """TestDocsSubcommandSmoke is a class for smoke tests of `docs` subcommand.
     """
     def test_run(self) -> None:
+        """
+        Executes the command.
+
+        Args:
+            self: (todo): write your description
+        """
         onlinejudge_verify.main.subcommand_docs()
 
 
@@ -22,6 +28,12 @@ class TestDocsSubcommand(unittest.TestCase):
     """TestDocsSubcommand is a class for end-to-end tests of `docs` subcommand.
     """
     def test_documentation_of(self) -> None:
+        """
+        Generate a test test test test test.
+
+        Args:
+            self: (todo): write your description
+        """
         get_random_string = lambda: ''.join([random.choice('0123456789abcdef') for _ in range(64)])
         random_relative_hpp = get_random_string()
         random_absolute_hpp = get_random_string()

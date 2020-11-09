@@ -65,6 +65,24 @@ class TestCPlusPlusBundlingUnit(unittest.TestCase):
                 self.assertIn(b'void foo() {}', bundled)
                 self.assertNotIn(b'void bar() {}', bundled)
 
+    def test_without_extension(self) -> None:
+        # .hppといった拡張子がないheader fileがinclude中に現れても正しく展開される事を確認
+
+        files = {
+            'example.test.cpp': b'#include "bar"\n#include "foo.hpp"',
+            'bar': b'#include "./bar.hpp"',
+            'bar.hpp': b'hello bar\n',
+            'foo.hpp': b'hello foo\n',
+        }
+        path = pathlib.Path('example.test.cpp')
+        with tests.utils.load_files(files) as tempdir:
+            with tests.utils.chdir(tempdir):
+                bundler = cplusplus_bundle.Bundler(iquotes=[tempdir])
+                bundler.update(path)
+                res = bundler.get()
+                self.assertIn(b'hello bar\n', res)
+                self.assertIn(b'hello foo\n', res)
+
     @unittest.skipIf(shutil.which('clang++') is None, 'clang++ is required for this test')
     def test_reject_clang(self) -> None:
         files = {

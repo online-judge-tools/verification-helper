@@ -189,8 +189,10 @@ class CPlusPlusLanguage(Language):
     def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path = pathlib.Path.cwd(), options: Dict[str, Any]) -> bytes:
         include_paths: List[pathlib.Path] = options['include_paths']
         assert isinstance(include_paths, list)
+        expand_acl: bool = options['expand_acl']
+        assert isinstance(expand_acl, bool)
         bundler = Bundler(iquotes=include_paths)
-        bundler.update(path)
+        bundler.update(path, expand_acl)
         return bundler.get()
 
     def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[CPlusPlusLanguageEnvironment]:

@@ -257,7 +257,7 @@ class Bundler(object):
                 return (dir_ / path).resolve()
         raise BundleErrorAt(path, -1, "no such header")
 
-    def update(self, path: pathlib.Path) -> None:
+    def update(self, path: pathlib.Path, expand_acl: bool = False) -> None:
         if path.resolve() in self.pragma_once:
             logger.debug('%s: skipped since this file is included once with include guard', str(path))
             return
@@ -354,7 +354,8 @@ class Bundler(object):
 
                 # #include <...>
                 matched = re.match(rb'\s*#\s*include\s*<(.*)>\s*', uncommented_line)
-                if matched:
+                acl_matched = re.match(rb'\s*#\s*include\s*<(atcoder/.*)>\s*', uncommented_line)
+                if matched and (not acl_matched or not expand_acl):
                     included = matched.group(1).decode()
                     logger.debug('%s: line %s: #include <%s>', str(path), i + 1, str(included))
                     if included in self.pragma_once_system:
@@ -388,15 +389,18 @@ class Bundler(object):
                             self.pragma_once_system.add(bits_stdcxx_h)
                     continue
 
-                # #include "..."
-                matched = re.match(rb'\s*#\s*include\s*"(.*)"\s*', uncommented_line)
+                # #include "..." or #include <atcoder/...>
+                if acl_matched and expand_acl:
+                    matched = acl_matched
+                else:
+                    matched = re.match(rb'\s*#\s*include\s*"(.*)"\s*', uncommented_line)
                 if matched:
                     included = matched.group(1).decode()
                     logger.debug('%s: line %s: #include "%s"', str(path), i + 1, included)
                     if not is_toplevel:
                         # #if の中から #include されると #pragma once 系の判断が不可能になるので諦める
                         raise BundleErrorAt(path, i + 1, "unable to process #include in #if / #ifdef / #ifndef other than include guards")
-                    self.update(self._resolve(pathlib.Path(included), included_from=path))
+                    self.update(self._resolve(pathlib.Path(included), included_from=path), expand_acl)
                     self._line(i + 2, path)
                     # TODO: #include "iostream" みたいに書いたときの挙動をはっきりさせる
                     # TODO: #include <iostream> /* とかをやられた場合を落とす

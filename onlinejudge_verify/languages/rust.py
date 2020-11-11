@@ -3,7 +3,6 @@ import itertools
 import json
 import pathlib
 import subprocess
-import sys
 from logging import getLogger
 from subprocess import PIPE
 from typing import *
@@ -50,11 +49,7 @@ class RustLanguage(Language):
         for parent in path.parents:
             if parent.parent.joinpath('Cargo.toml').exists() and \
                     parent.parts[-1] == 'target':
-                print(
-                    f'This is a generated file!: {path}',
-                    file=sys.stderr,
-                    flush=True,
-                )
+                logger.warning(f'This is a generated file!: {path}')
                 return []
 
         metadata = _cargo_metadata(cwd=path.parent)

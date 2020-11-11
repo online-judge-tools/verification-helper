@@ -1,6 +1,8 @@
+import itertools
 import json
 import pathlib
 import subprocess
+import sys
 from logging import getLogger
 from subprocess import PIPE
 from typing import *
@@ -44,7 +46,38 @@ class RustLanguage(Language):
         pass
 
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
-        raise NotImplementedError
+        for parent in path.parents:
+            if parent.parent.joinpath('Cargo.toml').exists() and \
+                    parent.parts[-1] == 'target':
+                print(
+                    f'This is a generated file!: {path}',
+                    file=sys.stderr,
+                    flush=True,
+                )
+                return []
+
+        metadata = cargo_metadata(cwd=path.parent)
+        package_and_target = find_target(metadata, path)
+
+        if not package_and_target:
+            return [other for other in path.parent.rglob('*.rs') if other != path]
+        package, target = package_and_target
+
+        packages_by_id = {package['id']: package for package in metadata['packages']}
+        normal_build_node_deps = {normal_build_node_dep['name']: normal_build_node_dep for node in metadata['resolve']['nodes'] if node['id'] == package['id'] for normal_build_node_dep in node['deps'] if not packages_by_id[normal_build_node_dep['pkg']]['source'] and any(not dep_kind['kind'] or dep_kind['kind'] == 'build' for dep_kind in normal_build_node_dep['dep_kinds'])}
+
+        if target['kind'] == ['bin']:
+            renames = {dependency['rename'] for dependency in package['dependencies'] if dependency['rename']}
+            unused_packages = {package_id
+                               for unused_dep in json.loads(subprocess.run(
+                                   ['rustup', 'run', 'nightly', 'cargo', 'udeps', '--output', 'json', '--manifest-path', package['manifest_path'], '--bin', target['name']],
+                                   check=False,
+                                   stdout=PIPE,
+                               ).stdout.decode())['unused_deps'].values() if unused_dep['manifest_path'] == package['manifest_path'] for name_in_toml in itertools.chain(unused_dep['normal'], unused_dep['build']) for package_id in ([normal_build_node_deps[name_in_toml]] if name_in_toml in renames else [normal_build_node_dep['pkg'] for normal_build_node_dep in normal_build_node_deps.values() if packages_by_id[normal_build_node_dep['pkg']]['name'] == name_in_toml][:1])}
+        else:
+            unused_packages = set()
+
+        return sorted(pathlib.Path(target['src_path']) for normal_build_node_dep in normal_build_node_deps.values() if normal_build_node_dep['pkg'] not in unused_packages for target in packages_by_id[normal_build_node_dep['pkg']]['targets'] if target['kind'] == ['lib'] and pathlib.Path(target['src_path']) != path)
 
     def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path, options: Dict[str, Any]) -> bytes:
         raise NotImplementedError

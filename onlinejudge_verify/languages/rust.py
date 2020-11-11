@@ -1,3 +1,4 @@
+import functools
 import itertools
 import json
 import pathlib
@@ -91,15 +92,27 @@ class RustLanguage(Language):
 
 
 def _cargo_metadata(cwd: pathlib.Path, no_deps: bool = False) -> Dict[str, Any]:
-    args = ['cargo', 'metadata', '--format-version', '1']
-    if no_deps:
-        args.append('--no-deps')
-    return json.loads(subprocess.run(
-        args,
-        stdout=PIPE,
-        cwd=cwd,
-        check=True,
-    ).stdout.decode())
+    def find_root_manifest_for_wd() -> pathlib.Path:
+        # https://docs.rs/cargo/0.48.0/cargo/util/important_paths/fn.find_root_manifest_for_wd.html
+        for directory in [cwd, *cwd.parents]:
+            manifest_path = directory.joinpath('Cargo.toml')
+            if manifest_path.exists():
+                return manifest_path
+        raise RuntimeError(f'Could not find `Cargo.toml` in `{cwd}` or any parent directory')
+
+    @functools.lru_cache(maxsize=None)
+    def cargo_metadata(manifest_path: pathlib.Path, no_deps: bool) -> Dict[str, Any]:
+        args = ['cargo', 'metadata', '--format-version', '1', '--manifest-path', str(manifest_path)]
+        if no_deps:
+            args.append('--no-deps')
+        return json.loads(subprocess.run(
+            args,
+            stdout=PIPE,
+            cwd=manifest_path.parent,
+            check=True,
+        ).stdout.decode())
+
+    return cargo_metadata(find_root_manifest_for_wd(), no_deps)
 
 
 def _find_target(

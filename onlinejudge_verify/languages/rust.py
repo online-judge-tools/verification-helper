@@ -29,7 +29,14 @@ class RustLanguageEnvironment(LanguageEnvironment):
         )
 
     def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
-        raise NotImplementedError
+        metadata = cargo_metadata(cwd=path.parent, no_deps=True)
+        package_and_target = find_target(metadata, path)
+        if not package_and_target:
+            raise Exception(f'{path} is not a main source file of any target')
+        _, target = package_and_target
+        if target['kind'] != ['bin']:
+            raise RuntimeError(f'`{target["name"]}` is not a `bin` target')
+        return [str(pathlib.Path(metadata['target_directory'], 'release', target['name']))]
 
 
 class RustLanguage(Language):

@@ -17,8 +17,8 @@ class RustLanguageEnvironment(LanguageEnvironment):
         pass
 
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
-        metadata = cargo_metadata(cwd=path.parent, no_deps=True)
-        package_and_target = find_target(metadata, path)
+        metadata = _cargo_metadata(cwd=path.parent, no_deps=True)
+        package_and_target = _find_target(metadata, path)
         if not package_and_target:
             raise Exception(f'{path} is not a main source file of any target')
         _, target = package_and_target
@@ -31,8 +31,8 @@ class RustLanguageEnvironment(LanguageEnvironment):
         )
 
     def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
-        metadata = cargo_metadata(cwd=path.parent, no_deps=True)
-        package_and_target = find_target(metadata, path)
+        metadata = _cargo_metadata(cwd=path.parent, no_deps=True)
+        package_and_target = _find_target(metadata, path)
         if not package_and_target:
             raise Exception(f'{path} is not a main source file of any target')
         _, target = package_and_target
@@ -56,8 +56,8 @@ class RustLanguage(Language):
                 )
                 return []
 
-        metadata = cargo_metadata(cwd=path.parent)
-        package_and_target = find_target(metadata, path)
+        metadata = _cargo_metadata(cwd=path.parent)
+        package_and_target = _find_target(metadata, path)
 
         if not package_and_target:
             return [other for other in path.parent.rglob('*.rs') if other != path]
@@ -90,7 +90,7 @@ class RustLanguage(Language):
         return [RustLanguageEnvironment()]
 
 
-def cargo_metadata(cwd: pathlib.Path, no_deps: bool = False) -> Dict[str, Any]:
+def _cargo_metadata(cwd: pathlib.Path, no_deps: bool = False) -> Dict[str, Any]:
     args = ['cargo', 'metadata', '--format-version', '1']
     if no_deps:
         args.append('--no-deps')
@@ -102,7 +102,7 @@ def cargo_metadata(cwd: pathlib.Path, no_deps: bool = False) -> Dict[str, Any]:
     ).stdout.decode())
 
 
-def find_target(
+def _find_target(
     metadata: Dict[str, Any],
     src_path: pathlib.Path,
 ) -> Optional[Tuple[Dict[str, Any], Dict[str, Any]]]:

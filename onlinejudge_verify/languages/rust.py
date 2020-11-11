@@ -9,7 +9,7 @@ logger = getLogger(__name__)
 
 class RustLanguageEnvironment(LanguageEnvironment):
     def __init__(self):
-        raise NotImplementedError
+        pass
 
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
         raise NotImplementedError
@@ -20,7 +20,7 @@ class RustLanguageEnvironment(LanguageEnvironment):
 
 class RustLanguage(Language):
     def __init__(self, *, config: Optional[Dict[str, Any]] = None):
-        raise NotImplementedError
+        pass
 
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
         raise NotImplementedError

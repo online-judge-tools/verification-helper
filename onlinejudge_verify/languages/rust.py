@@ -19,12 +19,7 @@ class RustLanguageEnvironment(LanguageEnvironment):
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
         path = basedir.joinpath(path)
         metadata = _cargo_metadata(cwd=path.parent, no_deps=True)
-        package_and_target = _find_target(metadata, path)
-        if not package_and_target:
-            raise RuntimeError(f'{path} is not a main source file of any target')
-        _, target = package_and_target
-        if target['kind'] != ['bin']:
-            raise RuntimeError(f'`{target["name"]}` is not a `bin` target')
+        target = _find_bin_target(metadata, path)
         subprocess.run(
             ['cargo', 'build', '--release', '--bin', target['name']],
             cwd=path.parent,
@@ -34,12 +29,7 @@ class RustLanguageEnvironment(LanguageEnvironment):
     def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
         path = basedir.joinpath(path)
         metadata = _cargo_metadata(cwd=path.parent, no_deps=True)
-        package_and_target = _find_target(metadata, path)
-        if not package_and_target:
-            raise RuntimeError(f'{path} is not a main source file of any target')
-        _, target = package_and_target
-        if target['kind'] != ['bin']:
-            raise RuntimeError(f'`{target["name"]}` is not a `bin` target')
+        target = _find_bin_target(metadata, path)
         return [str(pathlib.Path(metadata['target_directory'], 'release', target['name']))]
 
 
@@ -129,3 +119,13 @@ def _find_target(
             if pathlib.Path(target['src_path']) == src_path:
                 return package, target
     return None
+
+
+def _find_bin_target(metadata: Dict[str, Any], src_path: pathlib.Path) -> Dict[str, Any]:
+    package_and_target = _find_target(metadata, src_path)
+    if not package_and_target:
+        raise RuntimeError(f'{src_path} is not a main source file of any target')
+    _, target = package_and_target
+    if target['kind'] != ['bin']:
+        raise RuntimeError(f'`{target["name"]}` is not a `bin` target')
+    return target

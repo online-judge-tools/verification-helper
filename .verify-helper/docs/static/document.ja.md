@@ -66,24 +66,24 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
 
 依存ファイルを列挙する動作は `.verify-helper/config.toml` の `languages.rust.list_dependencies_backend` で変更できます。
 
-- `none`
+- `kind = "none"`
 
     デフォルトです。
 
     - どの[ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html)のmain source fileでもなければ`../**/*.rs`を
-    - `lib`, `bin`,`example`ターゲットのルートファイルであるならば依存しているクレートのmain source fileを
+    - あるターゲットのmain source fileであるならば依存しているクレートのmain source fileを
 
     列挙します。
-    クレートはすべてひとまとまりとして扱われます。
+    クレートはすべてひとまとまりとして扱われ、「モジュール間の依存関係」については調べません。
 
     ```toml
     [languages.rust.list_dependencies_backend]
-    kind = 'none'
+    kind = "none"
     ```
 
-- `cargo-udeps`
+- `kind = "cargo-udeps"`
 
-    基本的に`none`と同じですが`$PATH`内の[cargo-udeps](https://github.com/est31/cargo-udeps)で`bin`/`example` → `lib`の依存を絞り込みます。
+    基本的に`kind = "none"`と同じですが`$PATH`内にある[cargo-udeps](https://github.com/est31/cargo-udeps)で`bin`/`example` → `lib`の依存を絞り込みます。
 
     ```toml
     [languages.rust.list_dependencies_backend]
@@ -91,7 +91,7 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
     toolchain = "nightly-yyyy-mm-dd" # defaults to "nightly"
     ```
 
-    cargo-udeps は crates.io から `cargo install` する他にも [GitHub Releases](https://github.com/est31/cargo-udeps/releases) からバイナリを直接ダウンロードすることでインストールすることができます。
+    cargo-udeps は crates.io から `cargo install` する他にも [GitHub Releases](https://github.com/est31/cargo-udeps/releases) からバイナリを直接ダウンロードすることでもインストールすることができます。
 
     ```yaml
         - name: Setup Rust (nightly)

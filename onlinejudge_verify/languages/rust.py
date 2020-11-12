@@ -89,8 +89,13 @@ class RustLanguage(Language):
         raise NotImplementedError
 
     def is_verification_file(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bool:
-        parts = basedir.joinpath(path).parts
-        return len(parts) >= 3 and parts[-3] == 'src' and parts[-2] == 'bin' and pathlib.Path(parts[-1]).suffix == '.rs'
+        path = basedir.joinpath(path)
+        metadata = _cargo_metadata(cwd=path.parent)
+        package_and_target = _find_target(metadata, path)
+        if not package_and_target:
+            return False
+        _, target = package_and_target
+        return target['kind'] == ['bin']
 
     def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Sequence[RustLanguageEnvironment]:
         return [RustLanguageEnvironment()]

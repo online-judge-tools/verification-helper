@@ -64,23 +64,32 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
 
 [`bin` ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html#binaries)と [`example` ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html#examples) (ただし`crate-type`が指定されているのは除く) の main source fileがテストファイルだと認識されます。
 
-`.verify-helper/config.toml`
+依存ファイルを列挙する動作は `.verify-helper/config.toml` の `languages.rust.list_dependencies_backend` で変更できます。
 
 - `none`
 
+    デフォルトです。
 
-```toml
-[languages.rust.list_dependencies_backend]
-kind = 'none'
-```
+    - どの[ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html)のmain source fileでもなければ`../**/*.rs`を
+    - `lib`, `bin`,`example`ターゲットのルートファイルであるならば依存しているクレートのmain source fileを
 
-- `none`
+    列挙します。
+    クレートはすべてひとまとまりとして扱われます。
 
-```toml
-[languages.rust.list_dependencies_backend]
-kind = "cargo-udeps"
-toolchain = "nightly-yyyy-mm-dd" # defaults to "nightly"
-```
+    ```toml
+    [languages.rust.list_dependencies_backend]
+    kind = 'none'
+    ```
+
+- `cargo-udeps`
+
+    基本的に`none`と同じですが`$PATH`内の[cargo-udeps](https://github.com/est31/cargo-udeps)で`bin`/`example` → `lib`の依存を絞り込みます。
+
+    ```toml
+    [languages.rust.list_dependencies_backend]
+    kind = "cargo-udeps"
+    toolchain = "nightly-yyyy-mm-dd" # defaults to "nightly"
+    ```
 
 ### その他の言語の設定
 

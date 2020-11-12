@@ -21,7 +21,7 @@ class RustLanguageEnvironment(LanguageEnvironment):
         metadata = _cargo_metadata(cwd=path.parent, no_deps=True)
         package_and_target = _find_target(metadata, path)
         if not package_and_target:
-            raise Exception(f'{path} is not a main source file of any target')
+            raise RuntimeError(f'{path} is not a main source file of any target')
         _, target = package_and_target
         if target['kind'] != ['bin']:
             raise RuntimeError(f'`{target["name"]}` is not a `bin` target')
@@ -36,7 +36,7 @@ class RustLanguageEnvironment(LanguageEnvironment):
         metadata = _cargo_metadata(cwd=path.parent, no_deps=True)
         package_and_target = _find_target(metadata, path)
         if not package_and_target:
-            raise Exception(f'{path} is not a main source file of any target')
+            raise RuntimeError(f'{path} is not a main source file of any target')
         _, target = package_and_target
         if target['kind'] != ['bin']:
             raise RuntimeError(f'`{target["name"]}` is not a `bin` target')

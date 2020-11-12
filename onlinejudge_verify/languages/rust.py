@@ -19,9 +19,9 @@ class RustLanguageEnvironment(LanguageEnvironment):
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
         path = basedir.joinpath(path)
         metadata = _cargo_metadata(cwd=path.parent, no_deps=True)
-        target = _find_bin_target(metadata, path)
+        target = _find_bin_or_example_bin(metadata, path)
         subprocess.run(
-            ['cargo', 'build', '--release', '--bin', target['name']],
+            ['cargo', 'build', '--release', '--bin' if _is_bin(target) else '--example', target['name']],
             cwd=path.parent,
             check=True,
         )
@@ -29,8 +29,8 @@ class RustLanguageEnvironment(LanguageEnvironment):
     def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
         path = basedir.joinpath(path)
         metadata = _cargo_metadata(cwd=path.parent, no_deps=True)
-        target = _find_bin_target(metadata, path)
-        return [str(pathlib.Path(metadata['target_directory'], 'release', target['name']))]
+        target = _find_bin_or_example_bin(metadata, path)
+        return [str(pathlib.Path(metadata['target_directory'], 'release', *([] if _is_bin(target) else ['examples']), target['name']))]
 
 
 class RustLanguage(Language):
@@ -53,15 +53,17 @@ class RustLanguage(Language):
         package, target = package_and_target
 
         packages_by_id = {package['id']: package for package in metadata['packages']}
-        normal_build_node_deps = {normal_build_node_dep['name']: normal_build_node_dep for node in metadata['resolve']['nodes'] if node['id'] == package['id'] for normal_build_node_dep in node['deps'] if not packages_by_id[normal_build_node_dep['pkg']]['source'] and any(not dep_kind['kind'] or dep_kind['kind'] == 'build' for dep_kind in normal_build_node_dep['dep_kinds'])}
+        normal_build_node_deps = {normal_build_node_dep['name']: normal_build_node_dep['pkg'] for node in metadata['resolve']['nodes'] if node['id'] == package['id'] for normal_build_node_dep in node['deps'] if not packages_by_id[normal_build_node_dep['pkg']]['source'] and any(not dep_kind['kind'] or dep_kind['kind'] == 'build' for dep_kind in normal_build_node_dep['dep_kinds'])}
+        if _is_bin_or_example_bin(target) and any(_is_lib(t) for t in package['targets']):
+            normal_build_node_deps[package['name']] = package['id']
 
         unused_packages = set()
-        if target['kind'] == ['bin']:
+        if _is_bin_or_example_bin(target):
             renames = {dependency['rename'] for dependency in package['dependencies'] if dependency['rename']}
             if not shutil.which('cargo-udeps'):
                 raise RuntimeError('`cargo-udeps` not in $PATH')
             unused_deps = json.loads(subprocess.run(
-                ['rustup', 'run', 'nightly', 'cargo', 'udeps', '--output', 'json', '--manifest-path', package['manifest_path'], '--bin', target['name']],
+                ['rustup', 'run', 'nightly', 'cargo', 'udeps', '--output', 'json', '--manifest-path', package['manifest_path'], '--bin' if _is_bin(target) else '--example', target['name']],
                 check=False,
                 stdout=PIPE,
             ).stdout.decode())['unused_deps'].values()
@@ -71,17 +73,15 @@ class RustLanguage(Language):
                         if name_in_toml in renames:
                             unused_packages.add(normal_build_node_deps[name_in_toml])
                         else:
-                            for normal_build_node_dep in normal_build_node_deps.values():
-                                package_id = normal_build_node_dep['pkg']
+                            for package_id in normal_build_node_deps.values():
                                 if packages_by_id[package_id]['name'] == name_in_toml:
                                     unused_packages.add(package_id)
 
         ret = [path]
-        for normal_build_node_dep in normal_build_node_deps.values():
-            package_id = normal_build_node_dep['pkg']
+        for package_id in normal_build_node_deps.values():
             if package_id not in unused_packages:
                 for target in packages_by_id[package_id]['targets']:
-                    if target['kind'] == ['lib']:
+                    if _is_lib(target):
                         ret.append(pathlib.Path(target['src_path']))
         return sorted(ret)
 
@@ -95,7 +95,7 @@ class RustLanguage(Language):
         if not package_and_target:
             return False
         _, target = package_and_target
-        return target['kind'] == ['bin']
+        return _is_bin_or_example_bin(target)
 
     def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Sequence[RustLanguageEnvironment]:
         return [RustLanguageEnvironment()]
@@ -136,11 +136,27 @@ def _find_target(
     return None
 
 
-def _find_bin_target(metadata: Dict[str, Any], src_path: pathlib.Path) -> Dict[str, Any]:
+def _find_bin_or_example_bin(metadata: Dict[str, Any], src_path: pathlib.Path) -> Dict[str, Any]:
     package_and_target = _find_target(metadata, src_path)
     if not package_and_target:
         raise RuntimeError(f'{src_path} is not a main source file of any target')
     _, target = package_and_target
-    if target['kind'] != ['bin']:
-        raise RuntimeError(f'`{target["name"]}` is not a `bin` target')
+    if not _is_bin_or_example_bin(target):
+        if target['kind'] == ['example'] and target['crate_types'] != ['bin']:
+            message = f'`{target["name"]}` is a `example` target but its `crate_type` is `{target["crate_type"]}`'
+        else:
+            message = f'`{target["name"]}` is not a `bin` or `example` target'
+        raise RuntimeError(message)
     return target
+
+
+def _is_lib(target: Dict[str, Any]) -> bool:
+    return target['kind'] == ['lib']
+
+
+def _is_bin(target: Dict[str, Any]) -> bool:
+    return target['kind'] == ['bin']
+
+
+def _is_bin_or_example_bin(target: Dict[str, Any]) -> bool:
+    return _is_bin(target) or target['kind'] == ['example'] and target['crate_types'] == ['bin']

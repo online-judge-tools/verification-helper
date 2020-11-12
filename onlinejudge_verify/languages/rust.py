@@ -1,6 +1,7 @@
 import functools
 import json
 import pathlib
+import shutil
 import subprocess
 from logging import getLogger
 from subprocess import PIPE
@@ -57,6 +58,8 @@ class RustLanguage(Language):
         unused_packages = set()
         if target['kind'] == ['bin']:
             renames = {dependency['rename'] for dependency in package['dependencies'] if dependency['rename']}
+            if not shutil.which('cargo-udeps'):
+                raise RuntimeError('`cargo-udeps` not in $PATH')
             unused_deps = json.loads(subprocess.run(
                 ['rustup', 'run', 'nightly', 'cargo', 'udeps', '--output', 'json', '--manifest-path', package['manifest_path'], '--bin', target['name']],
                 check=False,

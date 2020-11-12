@@ -20,6 +20,11 @@ class _ListDependenciesBackend(object):
         raise NotImplementedError
 
 
+class _NoBackend(_ListDependenciesBackend):
+    def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
+        return _list_dependencies_by_crate(path, basedir=basedir, use_cargo_udeps=False)
+
+
 class _CargoUdeps(_ListDependenciesBackend):
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
         return _list_dependencies_by_crate(path, basedir=basedir, use_cargo_udeps=True)
@@ -110,12 +115,14 @@ class RustLanguage(Language):
             list_dependencies_backend_kind = list_dependencies_backend['kind']
             if not isinstance(list_dependencies_backend_kind, str):
                 raise RuntimeError('`language.rust.list_dependencies_backend.kind` must be `str`')
+            if list_dependencies_backend_kind == 'none':
+                self._list_dependencies_backend = _NoBackend()
             if list_dependencies_backend_kind == 'cargo-udeps':
                 self._list_dependencies_backend = _CargoUdeps()
             else:
-                raise RuntimeError("expected 'cargo-udeps' for `language.rust.list_dependencies_backend.kind`")
+                raise RuntimeError("expected 'none' or 'cargo-udeps' for `language.rust.list_dependencies_backend.kind`")
         else:
-            self._list_dependencies_backend = _CargoUdeps()
+            self._list_dependencies_backend = _NoBackend()
 
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
         return self._list_dependencies_backend.list_dependencies(path, basedir=basedir)

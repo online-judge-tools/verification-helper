@@ -91,6 +91,25 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
     toolchain = "nightly-yyyy-mm-dd" # defaults to "nightly"
     ```
 
+    cargo-udeps は crates.io から `cargo install` する他にも [GitHub Releases](https://github.com/est31/cargo-udeps/releases) からバイナリを直接ダウンロードすることでインストールすることができます。
+
+    ```yaml
+        - name: Setup Rust (nightly)
+            uses: actions-rs/toolchain@v1
+            with:
+              toolchain: nightly-x86_64-unknown-linux-gnu
+              default: false
+              profile: minimal
+              components: rustfmt
+
+        - name: Install cargo-udeps
+            run: |
+              VERSION=0.1.15
+              wget "https://github.com/est31/cargo-udeps/releases/download/v$VERSION/cargo-udeps-v$VERSION-x86_64-unknown-linux-gnu.tar.gz"
+              tar xzvf "./cargo-udeps-v$VERSION-x86_64-unknown-linux-gnu.tar.gz" -C /tmp/
+              echo "/tmp/cargo-udeps-v$VERSION-x86_64-unknown-linux-gnu" >> $GITHUB_PATH
+    ```
+
 ### その他の言語の設定
 
 上記以外の言語でも実行可能です (例: [examples/awk/circle.test.awk](https://github.com/online-judge-tools/verification-helper/blob/master/examples/awk/circle.test.awk))。

@@ -17,6 +17,7 @@ class RustLanguageEnvironment(LanguageEnvironment):
         pass
 
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
+        path = basedir.joinpath(path)
         metadata = _cargo_metadata(cwd=path.parent, no_deps=True)
         package_and_target = _find_target(metadata, path)
         if not package_and_target:
@@ -31,6 +32,7 @@ class RustLanguageEnvironment(LanguageEnvironment):
         )
 
     def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
+        path = basedir.joinpath(path)
         metadata = _cargo_metadata(cwd=path.parent, no_deps=True)
         package_and_target = _find_target(metadata, path)
         if not package_and_target:
@@ -46,6 +48,7 @@ class RustLanguage(Language):
         pass
 
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
+        path = basedir.joinpath(path)
         for parent in path.parents:
             if parent.parent.joinpath('Cargo.toml').exists() and \
                     parent.parts[-1] == 'target':
@@ -79,7 +82,7 @@ class RustLanguage(Language):
         raise NotImplementedError
 
     def is_verification_file(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bool:
-        parts = path.parts
+        parts = basedir.joinpath(path).parts
         return len(parts) >= 3 and parts[-3] == 'src' and parts[-2] == 'bin' and pathlib.Path(parts[-1]).suffix == '.rs'
 
     def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Sequence[RustLanguageEnvironment]:

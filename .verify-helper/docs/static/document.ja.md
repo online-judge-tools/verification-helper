@@ -95,19 +95,19 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
 
     ```yaml
         - name: Setup Rust (nightly)
-            uses: actions-rs/toolchain@v1
-            with:
-              toolchain: nightly-x86_64-unknown-linux-gnu
-              default: false
-              profile: minimal
-              components: rustfmt
+          uses: actions-rs/toolchain@v1
+          with:
+            toolchain: nightly-x86_64-unknown-linux-gnu
+            default: false
+            profile: minimal
+            components: rustfmt
 
         - name: Install cargo-udeps
-            run: |
-              VERSION=0.1.15
-              wget "https://github.com/est31/cargo-udeps/releases/download/v$VERSION/cargo-udeps-v$VERSION-x86_64-unknown-linux-gnu.tar.gz"
-              tar xzvf "./cargo-udeps-v$VERSION-x86_64-unknown-linux-gnu.tar.gz" -C /tmp/
-              echo "/tmp/cargo-udeps-v$VERSION-x86_64-unknown-linux-gnu" >> $GITHUB_PATH
+          run: |
+            VERSION=0.1.15
+            wget "https://github.com/est31/cargo-udeps/releases/download/v$VERSION/cargo-udeps-v$VERSION-x86_64-unknown-linux-gnu.tar.gz"
+            tar xzvf "./cargo-udeps-v$VERSION-x86_64-unknown-linux-gnu.tar.gz" -C /tmp/
+            echo "/tmp/cargo-udeps-v$VERSION-x86_64-unknown-linux-gnu" >> $GITHUB_PATH
     ```
 
 ### その他の言語の設定

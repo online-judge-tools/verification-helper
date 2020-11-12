@@ -22,15 +22,21 @@ class _ListDependenciesBackend(object):
 
 class _NoBackend(_ListDependenciesBackend):
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
-        return _list_dependencies_by_crate(path, basedir=basedir, use_cargo_udeps=False)
+        return _list_dependencies_by_crate(path, basedir=basedir, cargo_udeps_toolchain=None)
 
 
 class _CargoUdeps(_ListDependenciesBackend):
+    toolchain: str = 'nightly'
+
+    def __init__(self, *, toolchain: Optional[str]):
+        if toolchain is not None:
+            self.toolchain = toolchain
+
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
-        return _list_dependencies_by_crate(path, basedir=basedir, use_cargo_udeps=True)
+        return _list_dependencies_by_crate(path, basedir=basedir, cargo_udeps_toolchain=self.toolchain)
 
 
-def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, use_cargo_udeps: bool) -> List[pathlib.Path]:
+def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, cargo_udeps_toolchain: Optional[str]) -> List[pathlib.Path]:
     path = basedir.joinpath(path)
 
     for parent in path.parents:
@@ -51,12 +57,12 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, us
         normal_build_node_deps[package['name']] = package['id']
 
     unused_packages = set()
-    if use_cargo_udeps and _is_bin_or_example_bin(target):
+    if cargo_udeps_toolchain is not None and _is_bin_or_example_bin(target):
         renames = {dependency['rename'] for dependency in package['dependencies'] if dependency['rename']}
         if not shutil.which('cargo-udeps'):
             raise RuntimeError('`cargo-udeps` not in $PATH')
         unused_deps = json.loads(subprocess.run(
-            ['rustup', 'run', 'nightly', 'cargo', 'udeps', '--output', 'json', '--manifest-path', package['manifest_path'], '--bin' if _is_bin(target) else '--example', target['name']],
+            ['rustup', 'run', cargo_udeps_toolchain, 'cargo', 'udeps', '--output', 'json', '--manifest-path', package['manifest_path'], '--bin' if _is_bin(target) else '--example', target['name']],
             check=False,
             stdout=PIPE,
         ).stdout.decode())['unused_deps'].values()
@@ -118,7 +124,13 @@ class RustLanguage(Language):
             if list_dependencies_backend_kind == 'none':
                 self._list_dependencies_backend = _NoBackend()
             if list_dependencies_backend_kind == 'cargo-udeps':
-                self._list_dependencies_backend = _CargoUdeps()
+                if 'toolchain' not in list_dependencies_backend:
+                    toolchain = None
+                elif isinstance(list_dependencies_backend['toolchain'], str):
+                    toolchain = list_dependencies_backend['toolchain']
+                else:
+                    raise RuntimeError('`language.rust.list_dependencies_backend.toolchain` must be `str`')
+                self._list_dependencies_backend = _CargoUdeps(toolchain=toolchain)
             else:
                 raise RuntimeError("expected 'none' or 'cargo-udeps' for `language.rust.list_dependencies_backend.kind`")
         else:

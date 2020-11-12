@@ -76,7 +76,14 @@ class RustLanguage(Language):
         else:
             unused_packages = set()
 
-        return sorted(pathlib.Path(target['src_path']) for normal_build_node_dep in normal_build_node_deps.values() if normal_build_node_dep['pkg'] not in unused_packages for target in packages_by_id[normal_build_node_dep['pkg']]['targets'] if target['kind'] == ['lib'])
+        ret = [path]
+        for normal_build_node_dep in normal_build_node_deps.values():
+            pkg = normal_build_node_dep['pkg']
+            if pkg not in unused_packages:
+                for target in packages_by_id[pkg]['targets']:
+                    if target['kind'] == ['lib']:
+                        ret.append(pathlib.Path(target['src_path']))
+        return sorted(ret)
 
     def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path, options: Dict[str, Any]) -> bytes:
         raise NotImplementedError

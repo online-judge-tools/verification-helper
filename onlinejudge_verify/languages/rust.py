@@ -53,7 +53,7 @@ class RustLanguage(Language):
             if parent.parent.joinpath('Cargo.toml').exists() and \
                     parent.parts[-1] == 'target':
                 logger.warning(f'This is a generated file!: {path}')
-                return []
+                return [path]
 
         metadata = _cargo_metadata(cwd=path.parent)
         package_and_target = _find_target(metadata, path)

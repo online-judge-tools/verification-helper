@@ -123,7 +123,7 @@ class RustLanguage(Language):
                 raise RuntimeError('`language.rust.list_dependencies_backend.kind` must be `str`')
             if list_dependencies_backend_kind == 'none':
                 self._list_dependencies_backend = _NoBackend()
-            if list_dependencies_backend_kind == 'cargo-udeps':
+            elif list_dependencies_backend_kind == 'cargo-udeps':
                 if 'toolchain' not in list_dependencies_backend:
                     toolchain = None
                 elif isinstance(list_dependencies_backend['toolchain'], str):

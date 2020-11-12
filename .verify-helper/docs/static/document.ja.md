@@ -16,6 +16,7 @@
 | Ruby | `.rb` | `.test.rb` | `# verification-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [hello_world.test.rb](https://github.com/online-judge-tools/verification-helper/blob/master/examples/ruby/hello_world.test.rb) |
 | Go | `.go` | `.test.go` | `// verification-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [helloworld.test.go](https://github.com/online-judge-tools/verification-helper/blob/master/examples/go/helloworld.test.go) |
 | Java | `.java` | `_test.java` | `// verification-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [HelloWorld_test.java](https://github.com/online-judge-tools/verification-helper/blob/master/examples/java/HelloWorld_test.java) |
+| Rust | `.rs` | 特殊 | `// verification-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | not yet |
 
 ### C++ の設定
 
@@ -58,6 +59,28 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
 ### Python 3 の設定
 
 設定項目は特にありません。
+
+### Rust の設定
+
+[`bin` ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html#binaries)と [`example` ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html#examples) (ただし`crate-type`が指定されているのは除く) の main source fileがテストファイルだと認識されます。
+
+`.verify-helper/config.toml`
+
+- `none`
+
+
+```toml
+[languages.rust.list_dependencies_backend]
+kind = 'none'
+```
+
+- `none`
+
+```toml
+[languages.rust.list_dependencies_backend]
+kind = "cargo-udeps"
+toolchain = "nightly-yyyy-mm-dd" # defaults to "nightly"
+```
 
 ### その他の言語の設定
 

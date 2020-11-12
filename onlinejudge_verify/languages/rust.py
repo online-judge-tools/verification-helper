@@ -1,5 +1,4 @@
 import functools
-import itertools
 import json
 import pathlib
 import subprocess
@@ -39,9 +38,9 @@ class RustLanguage(Language):
 
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
         path = basedir.joinpath(path)
+
         for parent in path.parents:
-            if parent.parent.joinpath('Cargo.toml').exists() and \
-                    parent.parts[-1] == 'target':
+            if parent.parent.joinpath('Cargo.toml').exists() and parent.parts[-1] == 'target':
                 logger.warning(f'This is a generated file!: {path}')
                 return [path]
 
@@ -49,28 +48,36 @@ class RustLanguage(Language):
         package_and_target = _find_target(metadata, path)
 
         if not package_and_target:
-            return [other for other in path.parent.rglob('*.rs')]
+            return list(path.parent.rglob('*.rs'))
         package, target = package_and_target
 
         packages_by_id = {package['id']: package for package in metadata['packages']}
         normal_build_node_deps = {normal_build_node_dep['name']: normal_build_node_dep for node in metadata['resolve']['nodes'] if node['id'] == package['id'] for normal_build_node_dep in node['deps'] if not packages_by_id[normal_build_node_dep['pkg']]['source'] and any(not dep_kind['kind'] or dep_kind['kind'] == 'build' for dep_kind in normal_build_node_dep['dep_kinds'])}
 
+        unused_packages = set()
         if target['kind'] == ['bin']:
             renames = {dependency['rename'] for dependency in package['dependencies'] if dependency['rename']}
-            unused_packages = {package_id
-                               for unused_dep in json.loads(subprocess.run(
-                                   ['rustup', 'run', 'nightly', 'cargo', 'udeps', '--output', 'json', '--manifest-path', package['manifest_path'], '--bin', target['name']],
-                                   check=False,
-                                   stdout=PIPE,
-                               ).stdout.decode())['unused_deps'].values() if unused_dep['manifest_path'] == package['manifest_path'] for name_in_toml in itertools.chain(unused_dep['normal'], unused_dep['build']) for package_id in ([normal_build_node_deps[name_in_toml]] if name_in_toml in renames else [normal_build_node_dep['pkg'] for normal_build_node_dep in normal_build_node_deps.values() if packages_by_id[normal_build_node_dep['pkg']]['name'] == name_in_toml][:1])}
-        else:
-            unused_packages = set()
+            unused_deps = json.loads(subprocess.run(
+                ['rustup', 'run', 'nightly', 'cargo', 'udeps', '--output', 'json', '--manifest-path', package['manifest_path'], '--bin', target['name']],
+                check=False,
+                stdout=PIPE,
+            ).stdout.decode())['unused_deps'].values()
+            for unused_dep in unused_deps:
+                if unused_dep['manifest_path'] == package['manifest_path']:
+                    for name_in_toml in [*unused_dep['normal'], *unused_dep['build']]:
+                        if name_in_toml in renames:
+                            unused_packages.add(normal_build_node_deps[name_in_toml])
+                        else:
+                            for normal_build_node_dep in normal_build_node_deps.values():
+                                package_id = normal_build_node_dep['pkg']
+                                if packages_by_id[package_id]['name'] == name_in_toml:
+                                    unused_packages.add(package_id)
 
         ret = [path]
         for normal_build_node_dep in normal_build_node_deps.values():
-            pkg = normal_build_node_dep['pkg']
-            if pkg not in unused_packages:
-                for target in packages_by_id[pkg]['targets']:
+            package_id = normal_build_node_dep['pkg']
+            if package_id not in unused_packages:
+                for target in packages_by_id[package_id]['targets']:
                     if target['kind'] == ['lib']:
                         ret.append(pathlib.Path(target['src_path']))
         return sorted(ret)

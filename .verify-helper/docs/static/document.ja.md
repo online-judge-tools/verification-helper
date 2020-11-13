@@ -62,7 +62,7 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
 
 ### Rust の設定
 
-[`bin` ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html#binaries)と [`example` ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html#examples) (ただし`crate-type`が指定されているのは除く) の main source fileがテストファイルだと認識されます。
+[`bin` ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html#binaries)と [`example` ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html#examples) (ただし`crate-type`が指定されているのは除く) の [root source file](https://docs.rs/cargo_metadata/0.12.0/cargo_metadata/struct.Target.html#structfield.src_path) がテストファイルだと認識されます。
 
 依存ファイルを列挙する動作は `.verify-helper/config.toml` の `languages.rust.list_dependencies_backend` で変更できます。
 
@@ -75,20 +75,20 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
     kind = "none"
     ```
 
-    - どの[ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html)の[main source file](https://docs.rs/cargo_metadata/0.12.0/cargo_metadata/struct.Target.html#structfield.src_path)でもなければ、あるターゲットのmain source fileの「部品」だと考え空を返します。
+    - どの[ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html)の root source file でもなければ、あるターゲットの root source file の「部品」だと考え空を返します。
 
-    - あるターゲットのmain source fileであるならば、
+    - あるターゲットの root source file であるならば、
 
-        - `$target_directory/debug/deps/$snakecased_name-*.d` のうちそれっぽいものの中から`mtime`が最新のファイルに書かれている`.rs`ファイルと
-        - 依存しているクレートがローカルにあるならそれらのmain source file (i.e. `lib.rs`)を
+        - `$target_directory/debug/deps/$snakecased_name-*.d` のうちそれっぽいものの中から `mtime` が最新のファイルに書かれている `.rs` ファイルと
+        - 依存しているクレートがローカルにあるならそれらの root source file (i.e. `lib.rs`) を
 
       列挙して返します。
 
-    クレート (∈ パッケージ) 内の`.rs`ファイルはすべてひとまとまりとして扱われ、「モジュール間の依存関係」については調べません。
+    クレート (∈ パッケージ) 内の `.rs` ファイルはすべてひとまとまりとして扱われ、「モジュール間の依存関係」については調べません。
 
 - `kind = "cargo-udeps"`
 
-    基本的に`kind = "none"`と同じですが`$PATH`内にある[cargo-udeps](https://github.com/est31/cargo-udeps)で`bin`/`example` → `lib`の依存を絞り込みます。
+    基本的に `kind = "none"` と同じですが `$PATH` 内にある [cargo-udeps](https://github.com/est31/cargo-udeps) で `bin`/`example` → `lib` の依存を絞り込みます。
 
     ```toml
     [languages.rust.list_dependencies_backend]

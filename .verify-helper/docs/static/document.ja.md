@@ -68,18 +68,23 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
 
 - `kind = "none"`
 
-    デフォルトです。
-
-    - どの[ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html)のmain source fileでもなければ`../**/*.rs`を
-    - あるターゲットのmain source fileであるならば依存しているクレートのmain source fileを
-
-    列挙します。
-    クレートはすべてひとまとまりとして扱われ、「モジュール間の依存関係」については調べません。
+    デフォルトの動作です。
 
     ```toml
     [languages.rust.list_dependencies_backend]
     kind = "none"
     ```
+
+    - どの[ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html)の[main source file](https://docs.rs/cargo_metadata/0.12.0/cargo_metadata/struct.Target.html#structfield.src_path)でもなければ、あるターゲットのmain source fileの「部品」だと考え空を返します。
+
+    - あるターゲットのmain source fileであるならば、
+
+        - `$target_directory/debug/deps/$snakecased_name-*.d` のうちそれっぽいものの中から`mtime`が最新のファイルに書かれている`.rs`ファイルと
+        - 依存しているクレートがローカルにあるならそれらのmain source file (i.e. `lib.rs`)を
+
+      列挙して返します。
+
+    クレート (∈ パッケージ) 内の`.rs`ファイルはすべてひとまとまりとして扱われ、「モジュール間の依存関係」については調べません。
 
 - `kind = "cargo-udeps"`
 

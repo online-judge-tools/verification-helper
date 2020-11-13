@@ -48,8 +48,31 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
     package_and_target = _find_target(metadata, path)
 
     if not package_and_target:
-        return list(path.parent.rglob('*.rs'))
+        return [path]
     package, target = package_and_target
+
+    subprocess.run(
+        ['cargo', 'check', '--manifest-path', package['manifest_path'], *_target_option(target)],
+        cwd=metadata['workspace_root'],
+        check=True,
+    )
+
+    ret = [path]
+
+    d_file_paths = sorted(
+        pathlib.Path(metadata['target_directory'], 'debug', 'deps').glob(f'{target["name"].replace("-", "_")}-*.d'),
+        key=lambda p: p.stat().st_mtime_ns,
+        reverse=True,
+    )
+    for d_file_path in d_file_paths:
+        with open(d_file_path) as d_file:
+            d = d_file.read()
+        rs_file_paths = [pathlib.Path(metadata['workspace_root'], line.rstrip(':')).resolve() for line in d.splitlines() if line.endswith(':') and not pathlib.Path(line.rstrip(':')).is_absolute()]
+        if rs_file_paths[:1] == [path]:
+            ret.extend(rs_file_paths[1:])
+            break
+    else:
+        logger.warning(f'no `.d` file that contains `{path}`')
 
     packages_by_id = {package['id']: package for package in metadata['packages']}
     normal_build_node_deps = {normal_build_node_dep['name']: normal_build_node_dep['pkg'] for node in metadata['resolve']['nodes'] if node['id'] == package['id'] for normal_build_node_dep in node['deps'] if not packages_by_id[normal_build_node_dep['pkg']]['source'] and any(not dep_kind['kind'] or dep_kind['kind'] == 'build' for dep_kind in normal_build_node_dep['dep_kinds'])}
@@ -62,7 +85,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
         if not shutil.which('cargo-udeps'):
             raise RuntimeError('`cargo-udeps` not in $PATH')
         unused_deps = json.loads(subprocess.run(
-            ['rustup', 'run', cargo_udeps_toolchain, 'cargo', 'udeps', '--output', 'json', '--manifest-path', package['manifest_path'], '--bin' if _is_bin(target) else '--example', target['name']],
+            ['rustup', 'run', cargo_udeps_toolchain, 'cargo', 'udeps', '--output', 'json', '--manifest-path', package['manifest_path'], *_target_option(target)],
             check=False,
             stdout=PIPE,
         ).stdout.decode())['unused_deps'].values()
@@ -76,7 +99,6 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
                             if packages_by_id[package_id]['name'] == name_in_toml:
                                 unused_packages.add(package_id)
 
-    ret = [path]
     for package_id in normal_build_node_deps.values():
         if package_id not in unused_packages:
             for target in packages_by_id[package_id]['targets']:
@@ -94,7 +116,7 @@ class RustLanguageEnvironment(LanguageEnvironment):
         metadata = _cargo_metadata(cwd=path.parent, no_deps=True)
         target = _find_bin_or_example_bin(metadata, path)
         subprocess.run(
-            ['cargo', 'build', '--release', '--bin' if _is_bin(target) else '--example', target['name']],
+            ['cargo', 'build', '--release', *_target_option(target)],
             cwd=path.parent,
             check=True,
         )
@@ -214,3 +236,15 @@ def _is_bin(target: Dict[str, Any]) -> bool:
 
 def _is_bin_or_example_bin(target: Dict[str, Any]) -> bool:
     return _is_bin(target) or target['kind'] == ['example'] and target['crate_types'] == ['bin']
+
+
+def _target_option(target: Dict[str, Any]) -> List[str]:
+    if target['kind'] == ['bin']:
+        return ['--bin', target['name']]
+    if target['kind'] == ['example']:
+        return ['--example', target['name']]
+    if target['kind'] == ['test']:
+        return ['--test', target['name']]
+    if target['kind'] == ['bench']:
+        return ['--bench', target['name']]
+    return ['--lib']

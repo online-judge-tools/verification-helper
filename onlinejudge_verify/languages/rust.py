@@ -108,9 +108,6 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
 
 
 class RustLanguageEnvironment(LanguageEnvironment):
-    def __init__(self):
-        pass
-
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
         path = basedir.joinpath(path)
         metadata = _cargo_metadata(cwd=path.parent, no_deps=True)

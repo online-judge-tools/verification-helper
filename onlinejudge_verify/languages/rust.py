@@ -65,6 +65,32 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
         reverse=True,
     )
     for d_file_path in d_file_paths:
+        # Like this:
+        #
+        # ```
+        # /home/ryo/src/github.com/rust-lang-ja/ac-library-rs/target/debug/deps/ac_library_rs-a044142420f688ff.rmeta: src/lib.rs src/convolution.rs src/dsu.rs src/fenwicktree.rs src/lazysegtree.rs src/math.rs src/maxflow.rs src/mincostflow.rs src/modint.rs src/scc.rs src/segtree.rs src/string.rs src/twosat.rs src/internal_bit.rs src/internal_math.rs src/internal_queue.rs src/internal_scc.rs src/internal_type_traits.rs
+        #
+        # /home/ryo/src/github.com/rust-lang-ja/ac-library-rs/target/debug/deps/ac_library_rs-a044142420f688ff.d: src/lib.rs src/convolution.rs src/dsu.rs src/fenwicktree.rs src/lazysegtree.rs src/math.rs src/maxflow.rs src/mincostflow.rs src/modint.rs src/scc.rs src/segtree.rs src/string.rs src/twosat.rs src/internal_bit.rs src/internal_math.rs src/internal_queue.rs src/internal_scc.rs src/internal_type_traits.rs
+        #
+        # src/lib.rs:
+        # src/convolution.rs:
+        # src/dsu.rs:
+        # src/fenwicktree.rs:
+        # src/lazysegtree.rs:
+        # src/math.rs:
+        # src/maxflow.rs:
+        # src/mincostflow.rs:
+        # src/modint.rs:
+        # src/scc.rs:
+        # src/segtree.rs:
+        # src/string.rs:
+        # src/twosat.rs:
+        # src/internal_bit.rs:
+        # src/internal_math.rs:
+        # src/internal_queue.rs:
+        # src/internal_scc.rs:
+        # src/internal_type_traits.rs:
+        # ```
         with open(d_file_path) as d_file:
             d = d_file.read()
         rs_file_paths = [pathlib.Path(metadata['workspace_root'], line.rstrip(':')).resolve() for line in d.splitlines() if line.endswith(':') and not pathlib.Path(line.rstrip(':')).is_absolute()]

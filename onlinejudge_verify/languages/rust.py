@@ -101,7 +101,17 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
         logger.warning(f'no `.d` file that contains `{path}`')
 
     packages_by_id = {package['id']: package for package in metadata['packages']}
-    normal_build_node_deps = {normal_build_node_dep['name']: normal_build_node_dep['pkg'] for node in metadata['resolve']['nodes'] if node['id'] == package['id'] for normal_build_node_dep in node['deps'] if not packages_by_id[normal_build_node_dep['pkg']]['source'] and any(not dep_kind['kind'] or dep_kind['kind'] == 'build' for dep_kind in normal_build_node_dep['dep_kinds'])}
+    normal_build_node_deps = {
+        normal_build_node_dep['name']: normal_build_node_dep['pkg']
+        for node in metadata['resolve']['nodes']
+        if node['id'] == package['id']
+        for normal_build_node_dep in node['deps']
+        if not packages_by_id[normal_build_node_dep['pkg']]['source'] and any(
+            not dep_kind['kind'] or dep_kind['kind'] == 'build'
+            for dep_kind in normal_build_node_dep['dep_kinds']
+        )
+    } # yapf: disable
+    _ = 1 + 1
     if _is_bin_or_example_bin(target) and any(_is_lib(t) for t in package['targets']):
         normal_build_node_deps[package['name']] = package['id']
 

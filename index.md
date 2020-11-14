@@ -93,26 +93,6 @@ data:
     - icon: ':heavy_check_mark:'
       path: examples/python/union_find.py
       title: examples/python/union_find.py
-  - name: onlinejudge_verify_resources
-    pages:
-    - icon: ':warning:'
-      path: onlinejudge_verify_resources/__init__.py
-      title: onlinejudge_verify_resources/__init__.py
-  - name: onlinejudge_verify_resources/_includes
-    pages:
-    - icon: ':warning:'
-      path: onlinejudge_verify_resources/_includes/__init__.py
-      title: onlinejudge_verify_resources/_includes/__init__.py
-  - name: onlinejudge_verify_resources/_layouts
-    pages:
-    - icon: ':warning:'
-      path: onlinejudge_verify_resources/_layouts/__init__.py
-      title: onlinejudge_verify_resources/_layouts/__init__.py
-  - name: .
-    pages:
-    - icon: ':warning:'
-      path: setup.py
-      title: setup.py
   verificationCategories:
   - name: Examples2/Haskell
     pages:

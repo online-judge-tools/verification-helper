@@ -136,7 +136,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
 class RustLanguageEnvironment(LanguageEnvironment):
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
         path = basedir.joinpath(path)
-        metadata = _cargo_metadata(cwd=path.parent, no_deps=True)
+        metadata = _cargo_metadata(cwd=path.parent)
         target = _find_bin_or_example_bin(metadata, path)
         subprocess.run(
             ['cargo', 'build', '--release', *_target_option(target)],
@@ -146,7 +146,7 @@ class RustLanguageEnvironment(LanguageEnvironment):
 
     def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
         path = basedir.joinpath(path)
-        metadata = _cargo_metadata(cwd=path.parent, no_deps=True)
+        metadata = _cargo_metadata(cwd=path.parent)
         target = _find_bin_or_example_bin(metadata, path)
         return [str(pathlib.Path(metadata['target_directory'], 'release', *([] if _is_bin(target) else ['examples']), target['name']))]
 
@@ -200,7 +200,7 @@ class RustLanguage(Language):
         return [RustLanguageEnvironment()]
 
 
-def _cargo_metadata(cwd: pathlib.Path, no_deps: bool = False) -> Dict[str, Any]:
+def _cargo_metadata(cwd: pathlib.Path) -> Dict[str, Any]:
     def find_root_manifest_for_wd() -> pathlib.Path:
         # https://docs.rs/cargo/0.48.0/cargo/util/important_paths/fn.find_root_manifest_for_wd.html
         for directory in [cwd, *cwd.parents]:
@@ -210,18 +210,15 @@ def _cargo_metadata(cwd: pathlib.Path, no_deps: bool = False) -> Dict[str, Any]:
         raise RuntimeError(f'Could not find `Cargo.toml` in `{cwd}` or any parent directory')
 
     @functools.lru_cache(maxsize=None)
-    def cargo_metadata(manifest_path: pathlib.Path, no_deps: bool) -> Dict[str, Any]:
-        args = ['cargo', 'metadata', '--format-version', '1', '--manifest-path', str(manifest_path)]
-        if no_deps:
-            args.append('--no-deps')
+    def cargo_metadata(manifest_path: pathlib.Path) -> Dict[str, Any]:
         return json.loads(subprocess.run(
-            args,
+            ['cargo', 'metadata', '--format-version', '1', '--manifest-path', str(manifest_path)],
             stdout=PIPE,
             cwd=manifest_path.parent,
             check=True,
         ).stdout.decode())
 
-    return cargo_metadata(find_root_manifest_for_wd(), no_deps)
+    return cargo_metadata(find_root_manifest_for_wd())
 
 
 def _find_target(

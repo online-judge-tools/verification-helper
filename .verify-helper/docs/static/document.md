@@ -32,7 +32,7 @@ CXXFLAGS = ["-std=c++17", "-Wall", "-g", "-fsanitize=undefined", "-D_GLIBCXX_DEB
 ```
 
 -   If you use environments which [`ulimit`](https://linux.die.net/man/3/ulimit) doesn't work on, and if you want to set `CXXFLAGS` by yourself, please be careful about the stack size.
--   Note that currently the extensions such as `.c`, `.cc`, or `.h++` are not recognized ([#248](https://github.com/online-judge-tools/verification-helper/issues/248)).
+-   The supported extensions are `.cpp`, `.hpp`, `.cc`, and `.h`. Please note that files with other extensions like `.c` `.h++` and files without extensions are not recognized.
 
 ### Settings for C#
 

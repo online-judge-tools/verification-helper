@@ -32,7 +32,7 @@ CXXFLAGS = ["-std=c++17", "-Wall", "-g", "-fsanitize=undefined", "-D_GLIBCXX_DEB
 ```
 
 -   [`ulimit`](https://linux.die.net/man/3/ulimit) が動作しないような環境では、自分で `CXXFLAGS` を設定する場合はスタックサイズに注意してください。
--   いまのところ `.c` や `.cc` や `.h++` のような拡張子が認識されないことに注意してください ([#248](https://github.com/online-judge-tools/verification-helper/issues/248))。
+-   認識される拡張子は `.cpp` `.hpp` `.cc` `.h` のみです。`.c` や `.h++` のような拡張子のファイルや拡張子なしのファイルは認識されないことに注意してください。
 
 ### C# script の設定
 

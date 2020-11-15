@@ -75,16 +75,12 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
     kind = "none"
     ```
 
-    - どの[ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html)の root source file でもなければ、あるターゲットの root source file の「部品」だと考え空を返します。
+    - あるターゲットの root source file であるならば、そのターゲット及びローカルにある依存クレートの、
+    - どの[ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html)の root source file でもなければ自身を含むターゲットの、
 
-    - あるターゲットの root source file であるならば、
+    `.rs`ファイルすべてを列挙して返します。
 
-        - `$target_directory/debug/deps/$snakecased_name-*.d` のうちそれっぽいものの中から `mtime` が最新のファイルに書かれている `.rs` ファイルと
-        - 依存しているクレートがローカルにあるならそれらの root source file (i.e. `lib.rs`) を
-
-      列挙して返します。
-
-    クレート (∈ パッケージ) 内の `.rs` ファイルはすべてひとまとまりとして扱われ、「モジュール間の依存関係」については調べません。
+    ターゲット (= クレート) (∈ パッケージ) 内の `.rs` ファイルはすべてひとまとまりとして扱われ、「モジュール間の依存関係」等については調べません。
 
 - `kind = "cargo-udeps"`
 

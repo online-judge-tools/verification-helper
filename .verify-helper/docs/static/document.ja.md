@@ -62,7 +62,7 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
 
 ### Rust の設定
 
-[`bin` ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html#binaries)と [`example` ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html#examples) (ただし`crate-type`が指定されているのは除く) の [root source file](https://docs.rs/cargo_metadata/0.12.0/cargo_metadata/struct.Target.html#structfield.src_path) がテストファイルだと認識されます。
+[`bin` ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html#binaries)と [`example` ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html#examples) (ただし`crate-type`が指定されているのは除く) の [root source file](https://docs.rs/cargo_metadata/0.12.0/cargo_metadata/struct.Target.html#structfield.src_path) のうち、[`PROBLEM`](#利用可能な属性)が設定されてあるソースファイルがテストファイルだと認識されます。
 
 依存ファイルを列挙する動作は `.verify-helper/config.toml` の `languages.rust.list_dependencies_backend` で変更できます。
 

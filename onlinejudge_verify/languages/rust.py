@@ -10,6 +10,7 @@ from subprocess import PIPE
 from typing import *
 
 from onlinejudge_verify.config import get_config
+from onlinejudge_verify.languages import special_comments
 from onlinejudge_verify.languages.models import Language, LanguageEnvironment
 
 logger = getLogger(__name__)
@@ -50,7 +51,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
     metadata = _cargo_metadata(cwd=path.parent)
     package_and_target = _find_target(metadata, path)
 
-    source_file_groups = _source_file_groups(metadata)
+    source_file_groups = _source_file_groups(metadata)  # mutable
 
     def source_files_in_same_targets(p: pathlib.Path) -> FrozenSet[pathlib.Path]:
         # `p` may be used by multiple targets with `#[path = ".."] mod foo;` or something.
@@ -74,11 +75,11 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
         )
     } # yapf: disable
 
-    if _is_bin_or_example_bin(target) and any(_is_lib(t) for t in package['targets']):
+    if not _is_lib_or_proc_macro(target) and any(map(_is_lib_or_proc_macro, package['targets'])):
         normal_build_node_deps[package['name']] = package['id']
 
     unused_packages = set()
-    if cargo_udeps_toolchain is not None and _is_bin_or_example_bin(target):
+    if cargo_udeps_toolchain is not None and not _is_lib_or_proc_macro(target):
         renames = {dependency['rename'] for dependency in package['dependencies'] if dependency['rename']}
         if not shutil.which('cargo-udeps'):
             raise RuntimeError('`cargo-udeps` not in $PATH')
@@ -89,7 +90,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
         ).stdout.decode())['unused_deps'].values()
         for unused_dep in unused_deps:
             if unused_dep['manifest_path'] == package['manifest_path']:
-                for name_in_toml in [*unused_dep['normal'], *unused_dep['build']]:
+                for name_in_toml in [*unused_dep['normal'], *unused_dep['development'], *unused_dep['build']]:
                     if name_in_toml in renames:
                         unused_packages.add(normal_build_node_deps[name_in_toml])
                     else:
@@ -102,7 +103,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
             package = packages_by_id[package_id]
             source_file_groups = _source_file_groups(_cargo_metadata(pathlib.Path(package["manifest_path"]).parent))
             for target in package['targets']:
-                if _is_lib(target):
+                if _is_lib_or_proc_macro(target):
                     ret |= source_files_in_same_targets(pathlib.Path(target['src_path']))
     return sorted(ret)
 
@@ -185,7 +186,7 @@ class RustLanguageEnvironment(LanguageEnvironment):
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
         path = basedir.joinpath(path)
         metadata = _cargo_metadata(cwd=path.parent)
-        target = _find_bin_or_example_bin(metadata, path)
+        target = _ensure_target(metadata, path)
         subprocess.run(
             ['cargo', 'build', '--release', *_target_option(target)],
             cwd=path.parent,
@@ -195,8 +196,8 @@ class RustLanguageEnvironment(LanguageEnvironment):
     def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
         path = basedir.joinpath(path)
         metadata = _cargo_metadata(cwd=path.parent)
-        target = _find_bin_or_example_bin(metadata, path)
-        return [str(pathlib.Path(metadata['target_directory'], 'release', *([] if _is_bin(target) else ['examples']), target['name']))]
+        target = _ensure_target(metadata, path)
+        return [str(pathlib.Path(metadata['target_directory'], 'release', *_target_option(target)))]
 
 
 class RustLanguage(Language):
@@ -242,7 +243,7 @@ class RustLanguage(Language):
         if not package_and_target:
             return False
         _, target = package_and_target
-        return _is_bin_or_example_bin(target)
+        return _is_bin_or_example_bin(target) and 'PROBLEM' in special_comments.list_special_comments(pathlib.Path(target['src_path']))
 
     def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Sequence[RustLanguageEnvironment]:
         return [RustLanguageEnvironment()]
@@ -280,30 +281,20 @@ def _find_target(
     return None
 
 
-def _find_bin_or_example_bin(metadata: Dict[str, Any], src_path: pathlib.Path) -> Dict[str, Any]:
+def _ensure_target(metadata: Dict[str, Any], src_path: pathlib.Path) -> Dict[str, Any]:
     package_and_target = _find_target(metadata, src_path)
     if not package_and_target:
         raise RuntimeError(f'{src_path} is not a main source file of any target')
     _, target = package_and_target
-    if not _is_bin_or_example_bin(target):
-        if target['kind'] == ['example'] and target['crate_types'] != ['bin']:
-            message = f'`{target["name"]}` is a `example` target but its `crate_type` is `{target["crate_type"]}`'
-        else:
-            message = f'`{target["name"]}` is not a `bin` or `example` target'
-        raise RuntimeError(message)
     return target
 
 
-def _is_lib(target: Dict[str, Any]) -> bool:
-    return target['kind'] == ['lib']
-
-
-def _is_bin(target: Dict[str, Any]) -> bool:
-    return target['kind'] == ['bin']
+def _is_lib_or_proc_macro(target: Dict[str, Any]) -> bool:
+    return target['kind'] in [['lib'], ['proc-macro']]
 
 
 def _is_bin_or_example_bin(target: Dict[str, Any]) -> bool:
-    return _is_bin(target) or target['kind'] == ['example'] and target['crate_types'] == ['bin']
+    return target['kind'] == ['bin'] or target['kind'] == ['example'] and target['crate_types'] == ['bin']
 
 
 def _target_option(target: Dict[str, Any]) -> List[str]:

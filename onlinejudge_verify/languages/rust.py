@@ -15,7 +15,7 @@ from onlinejudge_verify.languages.models import Language, LanguageEnvironment
 
 logger = getLogger(__name__)
 _cargo_checked_workspaces: Set[pathlib.Path] = set()
-_source_file_groups_by_manifest_path: Dict[pathlib.Path, FrozenSet[FrozenSet[pathlib.Path]]] = {}
+_source_file_sets_by_package_manifest_path: Dict[pathlib.Path, FrozenSet[FrozenSet[pathlib.Path]]] = {}
 
 
 class _ListDependenciesBackend(object):
@@ -51,11 +51,11 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
     metadata = _cargo_metadata(cwd=path.parent)
     package_and_target = _find_target(metadata, path)
 
-    source_file_groups = _source_file_groups(metadata)  # mutable
+    source_file_sets = _source_file_sets(metadata)  # mutable
 
     def source_files_in_same_targets(p: pathlib.Path) -> FrozenSet[pathlib.Path]:
         # `p` may be used by multiple targets with `#[path = ".."] mod foo;` or something.
-        return frozenset({p, *itertools.chain.from_iterable(s for s in source_file_groups if p in s)})
+        return frozenset({p, *itertools.chain.from_iterable(s for s in source_file_sets if p in s)})
 
     ret = set(source_files_in_same_targets(path))
 
@@ -101,15 +101,14 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
     for package_id in normal_build_node_deps.values():
         if package_id not in unused_packages:
             package = packages_by_id[package_id]
-            source_file_groups = _source_file_groups(_cargo_metadata(pathlib.Path(package["manifest_path"]).parent))
+            source_file_sets = _source_file_sets(_cargo_metadata(pathlib.Path(package["manifest_path"]).parent))
             for target in package['targets']:
                 if _is_lib_or_proc_macro(target):
                     ret |= source_files_in_same_targets(pathlib.Path(target['src_path']))
     return sorted(ret)
 
 
-# FIXME: use a DSU-like data structure
-def _source_file_groups(metadata: Dict[str, Any]) -> FrozenSet[FrozenSet[pathlib.Path]]:
+def _source_file_sets(metadata: Dict[str, Any]) -> FrozenSet[FrozenSet[pathlib.Path]]:
     if pathlib.Path(metadata['workspace_root']) not in _cargo_checked_workspaces:
         subprocess.run(
             ['cargo', 'check', '--manifest-path', pathlib.Path(metadata['workspace_root'], 'Cargo.toml'), '--workspace', '--all-targets'],
@@ -118,68 +117,70 @@ def _source_file_groups(metadata: Dict[str, Any]) -> FrozenSet[FrozenSet[pathlib
         )
         _cargo_checked_workspaces.add(pathlib.Path(metadata['workspace_root']))
 
-    if 'root' not in metadata['resolve']:
-        raise RuntimeError('`resolve.root` is `null`. `cargo metadata` is not considered to be called for virtual workspaces. this is a bug.')
-    root_package_id = metadata['resolve']['root']
-    root_package = [p for p in metadata['packages'] if p['id'] == root_package_id][0]
-    root_package_manifest_path = pathlib.Path(root_package["manifest_path"])
+    ret: Set[FrozenSet[pathlib.Path]] = set()
 
-    if root_package_manifest_path in _source_file_groups_by_manifest_path:
-        return _source_file_groups_by_manifest_path[root_package_manifest_path]
+    for ws_member in (p for p in metadata['packages'] if p['id'] in metadata['workspace_members']):
+        ws_member_manifest_path = pathlib.Path(ws_member['manifest_path'])
 
-    source_file_groups = set()
-    for target in root_package['targets']:
-        d_file_paths = sorted(
-            pathlib.Path(metadata['target_directory'], 'debug', 'deps').glob(f'{target["name"].replace("-", "_")}-*.d'),
-            key=lambda p: p.stat().st_mtime_ns,
-            reverse=True,
-        )
-        for d_file_path in d_file_paths:
-            # Like this:
-            #
-            # ```
-            # /home/ryo/src/github.com/rust-lang-ja/ac-library-rs/target/debug/deps/ac_library_rs-a044142420f688ff.rmeta: src/lib.rs src/convolution.rs src/dsu.rs src/fenwicktree.rs src/lazysegtree.rs src/math.rs src/maxflow.rs src/mincostflow.rs src/modint.rs src/scc.rs src/segtree.rs src/string.rs src/twosat.rs src/internal_bit.rs src/internal_math.rs src/internal_queue.rs src/internal_scc.rs src/internal_type_traits.rs
-            #
-            # /home/ryo/src/github.com/rust-lang-ja/ac-library-rs/target/debug/deps/ac_library_rs-a044142420f688ff.d: src/lib.rs src/convolution.rs src/dsu.rs src/fenwicktree.rs src/lazysegtree.rs src/math.rs src/maxflow.rs src/mincostflow.rs src/modint.rs src/scc.rs src/segtree.rs src/string.rs src/twosat.rs src/internal_bit.rs src/internal_math.rs src/internal_queue.rs src/internal_scc.rs src/internal_type_traits.rs
-            #
-            # src/lib.rs:
-            # src/convolution.rs:
-            # src/dsu.rs:
-            # src/fenwicktree.rs:
-            # src/lazysegtree.rs:
-            # src/math.rs:
-            # src/maxflow.rs:
-            # src/mincostflow.rs:
-            # src/modint.rs:
-            # src/scc.rs:
-            # src/segtree.rs:
-            # src/string.rs:
-            # src/twosat.rs:
-            # src/internal_bit.rs:
-            # src/internal_math.rs:
-            # src/internal_queue.rs:
-            # src/internal_scc.rs:
-            # src/internal_type_traits.rs:
-            # ```
-            with open(d_file_path) as d_file:
-                d = d_file.read()
-            source_file_group = None
-            for line in d.splitlines():
-                words = line.split(':')
-                if len(words) == 2 and pathlib.Path(words[0]) == d_file_path:
-                    paths = [pathlib.Path(metadata['workspace_root'], s) for s in words[1].split() if not pathlib.Path(s).is_absolute()]
-                    if paths[:1] == [pathlib.Path(target['src_path'])]:
-                        source_file_group = frozenset(paths)
-                        break
-            if source_file_group is not None:
-                source_file_groups.add(source_file_group)
-                break
-        else:
-            logger.warning(f'no `.d` file for `{target["name"]}`')
+        if ws_member_manifest_path in _source_file_sets_by_package_manifest_path:
+            ret |= _source_file_sets_by_package_manifest_path[ws_member_manifest_path]
+            continue
 
-    ret = frozenset(source_file_groups)
-    _source_file_groups_by_manifest_path[root_package_manifest_path] = ret
-    return ret
+        source_file_sets = set()
+
+        for target in ws_member['targets']:
+            d_file_paths = sorted(
+                pathlib.Path(metadata['target_directory'], 'debug', 'deps').glob(f'{target["name"].replace("-", "_")}-*.d'),
+                key=lambda p: p.stat().st_mtime_ns,
+                reverse=True,
+            )
+            for d_file_path in d_file_paths:
+                # Like this:
+                #
+                # ```
+                # /home/ryo/src/github.com/rust-lang-ja/ac-library-rs/target/debug/deps/ac_library_rs-a044142420f688ff.rmeta: src/lib.rs src/convolution.rs src/dsu.rs src/fenwicktree.rs src/lazysegtree.rs src/math.rs src/maxflow.rs src/mincostflow.rs src/modint.rs src/scc.rs src/segtree.rs src/string.rs src/twosat.rs src/internal_bit.rs src/internal_math.rs src/internal_queue.rs src/internal_scc.rs src/internal_type_traits.rs
+                #
+                # /home/ryo/src/github.com/rust-lang-ja/ac-library-rs/target/debug/deps/ac_library_rs-a044142420f688ff.d: src/lib.rs src/convolution.rs src/dsu.rs src/fenwicktree.rs src/lazysegtree.rs src/math.rs src/maxflow.rs src/mincostflow.rs src/modint.rs src/scc.rs src/segtree.rs src/string.rs src/twosat.rs src/internal_bit.rs src/internal_math.rs src/internal_queue.rs src/internal_scc.rs src/internal_type_traits.rs
+                #
+                # src/lib.rs:
+                # src/convolution.rs:
+                # src/dsu.rs:
+                # src/fenwicktree.rs:
+                # src/lazysegtree.rs:
+                # src/math.rs:
+                # src/maxflow.rs:
+                # src/mincostflow.rs:
+                # src/modint.rs:
+                # src/scc.rs:
+                # src/segtree.rs:
+                # src/string.rs:
+                # src/twosat.rs:
+                # src/internal_bit.rs:
+                # src/internal_math.rs:
+                # src/internal_queue.rs:
+                # src/internal_scc.rs:
+                # src/internal_type_traits.rs:
+                # ```
+                with open(d_file_path) as d_file:
+                    d = d_file.read()
+                source_file_group = None
+                for line in d.splitlines():
+                    words = line.split(':')
+                    if len(words) == 2 and pathlib.Path(words[0]) == d_file_path:
+                        paths = [pathlib.Path(metadata['workspace_root'], s) for s in words[1].split() if not pathlib.Path(s).is_absolute()]
+                        if paths[:1] == [pathlib.Path(target['src_path'])]:
+                            source_file_group = frozenset(paths)
+                            break
+                if source_file_group is not None:
+                    source_file_sets.add(source_file_group)
+                    break
+            else:
+                logger.warning(f'no `.d` file for `{target["name"]}`')
+
+        _source_file_sets_by_package_manifest_path[ws_member_manifest_path] = frozenset(source_file_sets)
+        ret |= source_file_sets
+
+    return frozenset(ret)
 
 
 class RustLanguageEnvironment(LanguageEnvironment):
@@ -293,8 +294,12 @@ def _is_lib_or_proc_macro(target: Dict[str, Any]) -> bool:
     return target['kind'] in [['lib'], ['proc-macro']]
 
 
+def _is_bin(target: Dict[str, Any]) -> bool:
+    return target['kind'] == ['bin']
+
+
 def _is_bin_or_example_bin(target: Dict[str, Any]) -> bool:
-    return target['kind'] == ['bin'] or target['kind'] == ['example'] and target['crate_types'] == ['bin']
+    return _is_bin(target) or target['kind'] == ['example'] and target['crate_types'] == ['bin']
 
 
 def _target_option(target: Dict[str, Any]) -> List[str]:

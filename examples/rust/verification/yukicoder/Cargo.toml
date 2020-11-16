@@ -1,0 +1,9 @@
+[package]
+name = "yukicoder"
+version = "0.0.0"
+edition = "2018"
+publish = false
+
+[dependencies]
+verification-helper-rust-example-hello = { path = "../../crates/hello" }
+verification-helper-rust-example-world = { path = "../../crates/world" }

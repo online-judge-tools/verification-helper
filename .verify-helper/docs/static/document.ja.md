@@ -76,7 +76,7 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
     ```
 
     - あるターゲットの root source file であるならば、そのターゲット及びローカルにある依存クレートの、
-    - どの[ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html)の root source file でもなければ自身を含むターゲットの、
+    - どの[ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html)の root source file でもなければ、自身を含むターゲットの、
 
     `.rs`ファイルすべてを列挙して返します。
 

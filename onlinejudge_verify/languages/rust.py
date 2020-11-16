@@ -197,7 +197,7 @@ class RustLanguageEnvironment(LanguageEnvironment):
         path = basedir.joinpath(path)
         metadata = _cargo_metadata(cwd=path.parent)
         target = _ensure_target(metadata, path)
-        return [str(pathlib.Path(metadata['target_directory'], 'release', *_target_option(target)))]
+        return [str(pathlib.Path(metadata['target_directory'], 'release', *([] if _is_bin(target) else ['example']), target['name']))]
 
 
 class RustLanguage(Language):

@@ -79,7 +79,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
         normal_build_node_deps[package['name']] = package['id']
 
     unused_packages = set()
-    if cargo_udeps_toolchain is not None and not _is_lib_or_proc_macro(target):
+    if cargo_udeps_toolchain is not None:
         renames = {dependency['rename'] for dependency in package['dependencies'] if dependency['rename']}
         if not shutil.which('cargo-udeps'):
             raise RuntimeError('`cargo-udeps` not in $PATH')

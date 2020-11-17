@@ -111,7 +111,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
 def _source_file_sets(metadata: Dict[str, Any]) -> FrozenSet[FrozenSet[pathlib.Path]]:
     if pathlib.Path(metadata['workspace_root']) not in _cargo_checked_workspaces:
         subprocess.run(
-            ['cargo', 'check', '--manifest-path', pathlib.Path(metadata['workspace_root'], 'Cargo.toml'), '--workspace', '--all-targets'],
+            ['cargo', 'check', '--manifest-path', str(pathlib.Path(metadata['workspace_root'], 'Cargo.toml')), '--workspace', '--all-targets'],
             cwd=metadata['workspace_root'],
             check=True,
         )

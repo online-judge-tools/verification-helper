@@ -69,46 +69,29 @@ class TestRustVerification(unittest.TestCase):
                 1.42.0
                 """).encode(),
             pathlib.Path('Cargo.toml'): textwrap.dedent("""\
-                [workspace]
-                members = ["crates/*", "verification/*"]
-                """).encode(),
-            pathlib.Path('crates', 'hello', 'Cargo.toml'): textwrap.dedent("""\
                 [package]
-                name = "hello"
+                name = "verification"
                 version = "0.0.0"
                 edition = "2018"
                 """).encode(),
-            pathlib.Path('crates', 'hello', 'src', 'lib.rs'): textwrap.dedent("""\
-                pub static HELLO: &str = "Hello";
-                """).encode(),
-            pathlib.Path('crates', 'world', 'Cargo.toml'): textwrap.dedent("""\
-                [package]
-                name = "world"
-                version = "0.0.0"
-                edition = "2018"
-                """).encode(),
-            pathlib.Path('crates', 'world', 'src', 'lib.rs'): textwrap.dedent("""\
-                pub static WORLD: &str = "World";
-                """).encode(),
-            pathlib.Path('verification', 'yukicoder', 'Cargo.toml'): textwrap.dedent("""\
-                [package]
-                name = "yukicoder"
-                version = "0.0.0"
-                edition = "2018"
+            pathlib.Path('src', 'bin', 'library-checker-aplusb.rs'): textwrap.dedent("""\
+                // verification-helper: PROBLEM https://judge.yosupo.jp/problem/aplusb
 
-                [dependencies]
-                hello = { path = "../../crates/hello" }
-                world = { path = "../../crates/world" }
-                """).encode(),
-            pathlib.Path('verification', 'yukicoder', 'src', 'bin', '9000.rs'): textwrap.dedent("""\
-                // verification-helper: PROBLEM https://yukicoder.me/problems/no/9000
+                use std::io::{self, Read as _};
 
                 fn main() {
-                    println!("{} {}!", hello::HELLO, world::WORLD);
+                    let mut input = "".to_owned();
+                    io::stdin().read_to_string(&mut input).unwrap();
+                    let mut input = input.split_ascii_whitespace();
+                    macro_rules! read(($ty:ty) => (input.next().unwrap().parse::<$ty>().unwrap()));
+
+                    let (a, b) = (read!(u64), read!(u64));
+
+                    println!("{}", a + b);
                 }
                 """).encode(),
         }
-        paths = [pathlib.Path('verification', 'yukicoder', 'src', 'bin', '9000.rs')]
+        paths = [pathlib.Path('src', 'bin', 'library-checker-aplusb.rs')]
 
         with _load_files_nocheck(files) as tempdir:
             with tests.utils.chdir(tempdir):
@@ -117,7 +100,7 @@ class TestRustVerification(unittest.TestCase):
                     self.assertEqual(verify.main(paths, marker=marker).failed_test_paths, [])
                 with open(timestamps_path) as fh:
                     timestamps = json.load(fh)
-                self.assertEqual(list(timestamps.keys()), [])
+                self.assertEqual(list(timestamps.keys()), paths)
 
 
 def _load_files_nocheck(files: Dict[pathlib.Path, bytes]) -> ContextManager[pathlib.Path]:

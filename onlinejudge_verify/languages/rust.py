@@ -210,12 +210,12 @@ class RustLanguage(Language):
         if 'list_dependencies_backend' in config:
             list_dependencies_backend = config['list_dependencies_backend']
             if not isinstance(list_dependencies_backend, dict):
-                raise RuntimeError('`language.rust.list_dependencies_backend` must be `dict`')
+                raise RuntimeError('`languages.rust.list_dependencies_backend` must be `dict`')
             if 'kind' not in list_dependencies_backend:
-                raise RuntimeError('missing `language.rust.list_dependencies_backend.kind`')
+                raise RuntimeError('missing `languages.rust.list_dependencies_backend.kind`')
             list_dependencies_backend_kind = list_dependencies_backend['kind']
             if not isinstance(list_dependencies_backend_kind, str):
-                raise RuntimeError('`language.rust.list_dependencies_backend.kind` must be `str`')
+                raise RuntimeError('`languages.rust.list_dependencies_backend.kind` must be `str`')
             if list_dependencies_backend_kind == 'none':
                 self._list_dependencies_backend = _NoBackend()
             elif list_dependencies_backend_kind == 'cargo-udeps':
@@ -224,10 +224,10 @@ class RustLanguage(Language):
                 elif isinstance(list_dependencies_backend['toolchain'], str):
                     toolchain = list_dependencies_backend['toolchain']
                 else:
-                    raise RuntimeError('`language.rust.list_dependencies_backend.toolchain` must be `str`')
+                    raise RuntimeError('`languages.rust.list_dependencies_backend.toolchain` must be `str`')
                 self._list_dependencies_backend = _CargoUdeps(toolchain=toolchain)
             else:
-                raise RuntimeError("expected 'none' or 'cargo-udeps' for `language.rust.list_dependencies_backend.kind`")
+                raise RuntimeError("expected 'none' or 'cargo-udeps' for `languages.rust.list_dependencies_backend.kind`")
         else:
             self._list_dependencies_backend = _NoBackend()
 

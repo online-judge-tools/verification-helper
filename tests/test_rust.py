@@ -91,16 +91,16 @@ class TestRustVerification(unittest.TestCase):
                 }
                 """).encode(),
         }
-        paths = [pathlib.Path('src', 'bin', 'library-checker-aplusb.rs')]
+        path = pathlib.Path('src', 'bin', 'library-checker-aplusb.rs')
 
         with _load_files_nocheck(files) as tempdir:
             with tests.utils.chdir(tempdir):
                 timestamps_path = tempdir / 'timestamps.json'
                 with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
-                    self.assertEqual(verify.main(paths, marker=marker).failed_test_paths, [])
+                    self.assertEqual(verify.main([path], marker=marker).failed_test_paths, [])
                 with open(timestamps_path) as fh:
                     timestamps = json.load(fh)
-                self.assertEqual(list(timestamps.keys()), paths)
+                self.assertEqual(list(timestamps.keys()), [str(path)])
 
 
 def _load_files_nocheck(files: Dict[pathlib.Path, bytes]) -> ContextManager[pathlib.Path]:

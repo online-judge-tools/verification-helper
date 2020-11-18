@@ -84,7 +84,7 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
 
 - `kind = "cargo-udeps"`
 
-    基本的に `kind = "none"` と同じですが `$PATH` 内にある [cargo-udeps](https://github.com/est31/cargo-udeps) でクレート間の依存を絞り込みます。
+    基本的に `kind = "none"` と同じですが、 `$PATH` 内にある [cargo-udeps](https://github.com/est31/cargo-udeps) を使い「パッケージからクレートへの依存」からさらに「クレート間の依存」を絞り込みます。
 
     ```toml
     [languages.rust.list_dependencies_backend]
@@ -106,7 +106,7 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
           uses: actions-rs/install@v0.1
           with:
             crate: cargo-udeps
-            use-tool-cache: true
+            use-tool-cache: true # 特定のバイナリクレートについてだけ、@actions-rsが管理するS3に置いてあるビルド済みバイナリをダウンロードしてくれる。
     ```
 
 ### その他の言語の設定

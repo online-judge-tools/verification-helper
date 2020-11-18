@@ -92,23 +92,6 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
     toolchain = "nightly-yyyy-mm-dd" # defaults to "nightly"
     ```
 
-    cargo-udepsは[rust-cargo-install](https://github.com/actions-rs/install)を使ってインストールすることを推奨します。
-
-    ```yaml
-        - name: Setup Rust (nightly)
-          uses: actions-rs/toolchain@v1
-          with:
-            toolchain: nightly-x86_64-unknown-linux-gnu
-            default: false
-            profile: minimal
-
-        - name: Install cargo-udeps
-          uses: actions-rs/install@v0.1
-          with:
-            crate: cargo-udeps
-            use-tool-cache: true # 特定のバイナリクレートについてだけ、@actions-rsが管理するS3に置いてあるビルド済みバイナリをダウンロードしてくれる。
-    ```
-
 ### その他の言語の設定
 
 上記以外の言語でも実行可能です (例: [examples/awk/circle.test.awk](https://github.com/online-judge-tools/verification-helper/blob/master/examples/awk/circle.test.awk))。

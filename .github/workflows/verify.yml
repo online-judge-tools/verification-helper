@@ -52,6 +52,7 @@ jobs:
         default: true
         profile: minimal
 
+    # required by cargo-udeps
     - name: Set up Rust (nightly)
       uses: actions-rs/toolchain@v1
       with:

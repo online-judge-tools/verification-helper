@@ -11,9 +11,9 @@ from typing import *
 
 logger = getLogger(__name__)
 
-bits_stdcxx_h = 'bits/stdc++.h'
+BITS_STDCXX_H = 'bits/stdc++.h'
 
-cxx_standard_libs = {
+CXX_STANDARD_LIBS = {
     'algorithm',
     'array',
     'bitset',
@@ -61,7 +61,7 @@ cxx_standard_libs = {
     'vector',
 }
 
-c_standard_libs = {
+C_STANDARD_LIBS = {
     'assert.h',
     'complex.h',
     'ctype.h',
@@ -93,11 +93,11 @@ c_standard_libs = {
     'wctype.h',
 }
 
-cxx_c_origin_libs = {'c' + name[:-len('.h')] for name in c_standard_libs}
+CXX_C_ORIGIN_LIBS = {'c' + name[:-len('.h')] for name in C_STANDARD_LIBS}
 
-bits_extcxx_h = 'bits/extc++.h'
+BITS_EXTCXX_H = 'bits/extc++.h'
 
-ext_libs = {
+EXT_LIBS = {
     'ext/algorithm',
     'ext/array_allocator.h',
     'ext/atomicity.h',
@@ -134,9 +134,9 @@ ext_libs = {
     'ext/pb_ds/trie_policy.hpp',
 }
 
-bits_stdtr1cxx_h = 'bits/stdtr1c++.h'
+BITS_STDTR1CXX_H = 'bits/stdtr1c++.h'
 
-tr1_libs = {
+TR1_LIBS = {
     'tr1/array',
     'tr1/cctype',
     'tr1/cfenv',
@@ -219,7 +219,7 @@ class BundleErrorAt(BundleError):
         super().__init__(message, *args, **kwargs)  # type: ignore
 
 
-class Bundler(object):
+class Bundler:
     iquotes: List[pathlib.Path]
     pragma_once: Set[pathlib.Path]
     pragma_once_system: Set[str]
@@ -227,7 +227,9 @@ class Bundler(object):
     path_stack: Set[pathlib.Path]
     compiler: str
 
-    def __init__(self, *, iquotes: List[pathlib.Path] = [], compiler: str = os.environ.get('CXX', 'g++')) -> None:
+    def __init__(self, *, iquotes: Optional[List[pathlib.Path]] = None, compiler: str = os.environ.get('CXX', 'g++')) -> None:
+        if iquotes is None:
+            iquotes = []
         self.iquotes = iquotes
         self.pragma_once = set()
         self.pragma_once_system = set()
@@ -362,20 +364,20 @@ class Bundler(object):
                     elif not is_toplevel:
                         # #pragma once 系の判断ができない場合はそっとしておく
                         self.result_lines.append(line)
-                    elif included in c_standard_libs or included in cxx_standard_libs or included in cxx_c_origin_libs:
-                        if bits_stdcxx_h in self.pragma_once_system:
+                    elif included in C_STANDARD_LIBS or included in CXX_STANDARD_LIBS or included in CXX_C_ORIGIN_LIBS:
+                        if BITS_STDCXX_H in self.pragma_once_system:
                             self._line(i + 2, path)
                         else:
                             self.pragma_once_system.add(included)
                             self.result_lines.append(line)
-                    elif included in ext_libs:
-                        if bits_extcxx_h in self.pragma_once_system:
+                    elif included in EXT_LIBS:
+                        if BITS_EXTCXX_H in self.pragma_once_system:
                             self._line(i + 2, path)
                         else:
                             self.pragma_once_system.add(included)
                             self.result_lines.append(line)
-                    elif included in tr1_libs:
-                        if bits_stdtr1cxx_h in self.pragma_once_system:
+                    elif included in TR1_LIBS:
+                        if BITS_STDTR1CXX_H in self.pragma_once_system:
                             self._line(i + 2, path)
                         else:
                             self.pragma_once_system.add(included)
@@ -384,8 +386,8 @@ class Bundler(object):
                         # possibly: bits/*, tr2/* boost/*, c-posix library, etc.
                         self.pragma_once_system.add(included)
                         self.result_lines.append(line)
-                        if included in [bits_extcxx_h, bits_stdtr1cxx_h]:
-                            self.pragma_once_system.add(bits_stdcxx_h)
+                        if included in [BITS_EXTCXX_H, BITS_STDTR1CXX_H]:
+                            self.pragma_once_system.add(BITS_STDCXX_H)
                     continue
 
                 # #include "..."

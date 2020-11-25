@@ -20,7 +20,7 @@ _dict: Optional[Dict[str, Language]] = None
 
 
 def _get_dict() -> Dict[str, Language]:
-    global _dict
+    global _dict  # pylint: disable=invalid-name
     if _dict is None:
         _dict = {}
         _dict['.cpp'] = CPlusPlusLanguage()
@@ -42,7 +42,7 @@ def _get_dict() -> Dict[str, Language]:
                         if key in config:
                             raise RuntimeError("You cannot overwrite existing language: .{}".format(ext))
             else:
-                logger.warn("config.toml: languages.%s: Adding new languages using `config.toml` is supported but not recommended. Please consider making pull requests for your languages, see https://github.com/kmyk/online-judge-verify-helper/issues/116", ext)
+                logger.warning("config.toml: languages.%s: Adding new languages using `config.toml` is supported but not recommended. Please consider making pull requests for your languages, see https://github.com/kmyk/online-judge-verify-helper/issues/116", ext)
                 _dict['.' + ext] = UserDefinedLanguage(extension=ext, config=config)
     return _dict
 

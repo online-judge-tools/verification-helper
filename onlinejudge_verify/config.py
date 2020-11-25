@@ -13,7 +13,7 @@ _loaded_config: Optional[Dict[str, Any]] = None
 
 
 def set_config_path(config_path: pathlib.Path) -> None:
-    global _loaded_config
+    global _loaded_config  # pylint: disable=invalid-name
     assert _loaded_config is None
     if not config_path.exists():
         _loaded_config = {}

@@ -6,7 +6,7 @@ from typing import *
 import onlinejudge_verify.languages.special_comments as special_comments
 
 
-class LanguageEnvironment(object):
+class LanguageEnvironment:
     @abc.abstractmethod
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
         """
@@ -20,7 +20,7 @@ class LanguageEnvironment(object):
         raise NotImplementedError
 
 
-class Language(object):
+class Language:
     def list_attributes(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Dict[str, Any]:
         """
         :throws Exception:

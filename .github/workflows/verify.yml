@@ -18,7 +18,7 @@ jobs:
 
     # required only if you want to verify Haskell code
     - name: Install dependencies (Haskell)
-      uses: actions/setup-haskell@v1.1
+      uses: actions/setup-haskell@v1
 
     # required only if you want to verify Java code
     - name: Install dependencies (Java)

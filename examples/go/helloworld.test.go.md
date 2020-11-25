@@ -27,13 +27,13 @@ data:
     \npackage main\n\nimport (\n    \"fmt\"\n    \"./helloworld\"\n)\n\nfunc main()\
     \ {\n    fmt.Printf(\"%s\\n\", helloworld.GetHelloWorld())\n}\n"
   dependsOn:
-  - examples/go/helloworld.go
   - examples/go/helloworld/helloworld.go
+  - examples/go/helloworld.go
   isVerificationFile: true
   path: examples/go/helloworld.test.go
   requiredBy:
-  - examples/go/helloworld.go
   - examples/go/helloworld/helloworld.go
+  - examples/go/helloworld.go
   timestamp: '2020-09-17 19:04:09+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []

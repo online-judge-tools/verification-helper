@@ -58,12 +58,12 @@ data:
   timestamp: '2019-11-29 11:28:05+09:00'
   verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
-  - examples/union_find_tree.yosupo.test.cpp
+  - examples/segment_tree.point_set_range_composite.test.cpp
   - examples/debug/include_relative.test.cpp
   - examples/union_find_tree.aoj.test.cpp
-  - examples/segment_tree.point_set_range_composite.test.cpp
-  - examples/segment_tree.range_sum_query.test.cpp
   - examples/segment_tree.range_minimum_query.test.cpp
+  - examples/segment_tree.range_sum_query.test.cpp
+  - examples/union_find_tree.yosupo.test.cpp
 documentation_of: examples/macros.hpp
 layout: document
 redirect_from:

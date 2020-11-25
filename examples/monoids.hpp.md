@@ -37,8 +37,8 @@ data:
   timestamp: '2019-11-29 11:28:05+09:00'
   verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
-  - examples/segment_tree.range_sum_query.test.cpp
   - examples/segment_tree.range_minimum_query.test.cpp
+  - examples/segment_tree.range_sum_query.test.cpp
 documentation_of: examples/monoids.hpp
 layout: document
 redirect_from:

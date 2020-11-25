@@ -56,8 +56,8 @@ def _python_list_depending_files(path: pathlib.Path, basedir: pathlib.Path) -> L
     res_graph = importlab.graph.ImportGraph.create(env, [str(path)])
     try:
         node_deps_pairs = res_graph.deps_list()  # type: List[Tuple[str, List[str]]]
-    except Exception:
-        raise RuntimeError(f"Failed to analyze the dependency graph (circular imports?): {path}")
+    except Exception as e:
+        raise RuntimeError(f"Failed to analyze the dependency graph (circular imports?): {path}") from e
     logger.debug('the dependency graph of %s: %s', str(path), node_deps_pairs)
 
     # collect Python files which are depended by the `path` and under `basedir`

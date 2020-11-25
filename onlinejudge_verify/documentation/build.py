@@ -17,8 +17,8 @@ from onlinejudge_verify.documentation.type import *
 
 logger = getLogger(__name__)
 
-_resource_package = 'onlinejudge_verify_resources'
-_copied_static_file_paths: List[str] = [
+_RESOURCE_PACKAGE = 'onlinejudge_verify_resources'
+_COPIED_STATIC_FILE_PATHS: List[str] = [
     '_layouts/page.html',
     '_layouts/document.html',
     '_layouts/toppage.html',
@@ -107,9 +107,9 @@ def _render_source_code_stat_for_page(
             'icon': _get_verification_status_icon(stat.verification_status),
         }
 
-    data['_extendedDependsOn'] = [ext(path) for path in sorted(stat.depends_on, key=lambda x: str(x))]
-    data['_extendedRequiredBy'] = [ext(path) for path in sorted(stat.required_by, key=lambda x: str(x))]
-    data['_extendedVerifiedWith'] = [ext(path) for path in sorted(stat.verified_with, key=lambda x: str(x))]
+    data['_extendedDependsOn'] = [ext(path) for path in sorted(stat.depends_on, key=str)]
+    data['_extendedRequiredBy'] = [ext(path) for path in sorted(stat.required_by, key=str)]
+    data['_extendedVerifiedWith'] = [ext(path) for path in sorted(stat.verified_with, key=str)]
 
     return data
 
@@ -120,13 +120,13 @@ def _render_source_code_stats_for_top_page(
     page_title_dict: Dict[pathlib.Path, str],
     basedir: pathlib.Path,
 ) -> Dict[str, Any]:
-    libraryCategories: Dict[str, List[Dict[str, str]]] = {}
-    verificationCategories: Dict[str, List[Dict[str, str]]] = {}
+    library_categories: Dict[str, List[Dict[str, str]]] = {}
+    verification_categories: Dict[str, List[Dict[str, str]]] = {}
     for stat in source_code_stats:
         if utils.is_verification_file(stat.path, basedir=basedir):
-            categories = verificationCategories
+            categories = verification_categories
         else:
-            categories = libraryCategories
+            categories = library_categories
         category = str(stat.path.parent)
         if category not in categories:
             categories[category] = []
@@ -138,13 +138,13 @@ def _render_source_code_stats_for_top_page(
 
     data: Dict[str, Any] = {}
     data['libraryCategories'] = []
-    for category, pages in libraryCategories.items():
+    for category, pages in library_categories.items():
         data['libraryCategories'].append({
             'name': category,
             'pages': pages,
         })
     data['verificationCategories'] = []
-    for category, pages in verificationCategories.items():
+    for category, pages in verification_categories.items():
         data['verificationCategories'].append({
             'name': category,
             'pages': pages,
@@ -195,8 +195,8 @@ def load_static_files(*, site_render_config: SiteRenderConfig) -> Dict[pathlib.P
     files[site_render_config.destination_dir / '_config.yml'] = yaml.safe_dump(site_render_config.config_yml).encode()
 
     # load files in onlinejudge_verify_resources/
-    for path in _copied_static_file_paths:
-        files[site_render_config.destination_dir / pathlib.Path(path)] = pkg_resources.resource_string(_resource_package, path)
+    for path in _COPIED_STATIC_FILE_PATHS:
+        files[site_render_config.destination_dir / pathlib.Path(path)] = pkg_resources.resource_string(_RESOURCE_PACKAGE, path)
 
     # overwrite with docs/static
     for src in site_render_config.static_dir.glob('**/*'):

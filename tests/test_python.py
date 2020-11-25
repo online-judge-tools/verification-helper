@@ -48,12 +48,12 @@ class TestPythonListDependencies(unittest.TestCase):
                 self.assertEqual(actual, expected)
 
 
-library_imported_py = rb"""\
+LIBRARY_IMPORTED_PY = rb"""\
 def solve(x: int) -> int:
     return x ** 3
 """
 
-tests_main_py = rb"""\
+TESTS_MAIN_PY = rb"""\
 # verify-helper: PROBLEM http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_B
 from library.imported import solve
 
@@ -76,8 +76,8 @@ class TestPythonVerification(unittest.TestCase):
 
         files = {
             pathlib.Path('library', '__init__.py'): b"",
-            pathlib.Path('library', 'imported.py'): library_imported_py,
-            pathlib.Path('tests', 'main.py'): tests_main_py,
+            pathlib.Path('library', 'imported.py'): LIBRARY_IMPORTED_PY,
+            pathlib.Path('tests', 'main.py'): TESTS_MAIN_PY,
         }
         path = pathlib.Path('tests', 'main.py')
         with tests.utils.load_files_pathlib(files) as tempdir:

@@ -19,7 +19,7 @@ def _cwd() -> pathlib.Path:
     return pathlib.Path.cwd().resolve(strict=True)
 
 
-class VerificationMarker(object):
+class VerificationMarker:
     json_path: pathlib.Path
     use_git_timestamp: bool
     old_timestamps: Dict[pathlib.Path, datetime.datetime]
@@ -124,15 +124,15 @@ class VerificationMarker(object):
     def __enter__(self) -> 'VerificationMarker':
         return self
 
-    def __exit__(self, exc_type, exc_value, traceback) -> None:
+    def __exit__(self, exc_type, exc_value, exc_tb) -> None:
         self.save_timestamps()
 
 
-_verification_marker = None  # type: Optional[VerificationMarker]
+_verification_marker: Optional[VerificationMarker] = None  # pylint: disable=invalid-name
 
 
 def get_verification_marker(*, jobs: Optional[int] = None) -> VerificationMarker:
-    global _verification_marker
+    global _verification_marker  # pylint: disable=invalid-name
     if _verification_marker is None:
         # use different files in local and in remote to avoid conflicts
         if onlinejudge_verify.utils.is_local_execution():

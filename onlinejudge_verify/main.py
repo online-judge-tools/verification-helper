@@ -7,7 +7,7 @@ try:
     import onlinejudge.service
 except ModuleNotFoundError:
     print("Due to a known bug, the online-judge-tools is not yet properly installed. Please re-run $ pip3 install --force-reinstall online-judge-api-client")
-    exit(1)
+    exit(1)  # pylint: disable=consider-using-sys-exit
 # pylint: enable=unused-import,ungrouped-imports
 
 import argparse
@@ -99,7 +99,7 @@ def push_timestamp_to_branch() -> None:
     logger.info('$ git add %s && git commit && git push', str(path))
     if path.exists():
         subprocess.check_call(['git', 'add', str(path)])
-    if subprocess.run(['git', 'diff', '--quiet', '--staged']).returncode:
+    if subprocess.run(['git', 'diff', '--quiet', '--staged'], check=False).returncode:
         message = '[auto-verifier] verify commit {}'.format(os.environ['GITHUB_SHA'])
         subprocess.check_call(['git', 'commit', '-m', message])
         subprocess.check_call(['git', 'push', url, 'HEAD'])
@@ -149,7 +149,7 @@ def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-p
     subprocess.check_call(['git', 'config', '--global', 'user.name', 'GitHub'])
     subprocess.check_call(['git', 'config', '--global', 'user.email', 'noreply@github.com'])
     subprocess.check_call(['git', 'add', '.'])
-    if subprocess.run(['git', 'diff', '--quiet', '--staged']).returncode:
+    if subprocess.run(['git', 'diff', '--quiet', '--staged'], check=False).returncode:
         message = '[auto-verifier] docs commit {}'.format(os.environ['GITHUB_SHA'])
         subprocess.check_call(['git', 'commit', '-m', message])
         subprocess.check_call(['git', 'push', url, 'HEAD'])
@@ -219,7 +219,7 @@ def _delete_gitignore() -> None:
 
         # check if .verify-helper/.gitignore exists
         gitignore_path = pathlib.Path('.verify-helper', '.gitignore')
-        gitignore_checked_in = (subprocess.run(['git', 'ls-files', '--error-unmatch', str(gitignore_path)]).returncode == 0)
+        gitignore_checked_in = (subprocess.run(['git', 'ls-files', '--error-unmatch', str(gitignore_path)], check=False).returncode == 0)
         if not gitignore_checked_in:
             return
         logger.warning('file %s exists in this Git repository. It should not be checked in.', str(gitignore_path))

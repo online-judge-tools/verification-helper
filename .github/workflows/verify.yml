@@ -31,7 +31,7 @@ jobs:
       with:
         dotnet-version: '3.1.101'
     - name: Install dependencies (C#)
-      run: dotnet tool install -g dotnet-script && echo ::add-path::$HOME/.dotnet/tools
+      run: dotnet tool install -g dotnet-script
 
     # required only if you want to verify Go code
     - name: Install dependencies (Go)

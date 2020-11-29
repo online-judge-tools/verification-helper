@@ -49,7 +49,6 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
             return [path]
 
     metadata = _cargo_metadata(cwd=path.parent)
-    package_and_target = _find_target(metadata, path)
 
     source_file_sets = _source_file_sets(metadata)  # mutable
 
@@ -59,6 +58,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
 
     ret = set(source_files_in_same_targets(path))
 
+    package_and_target = _find_target(metadata, path)
     if not package_and_target:
         return sorted(ret)
     package, target = package_and_target

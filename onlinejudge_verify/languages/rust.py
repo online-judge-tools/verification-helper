@@ -15,7 +15,7 @@ from onlinejudge_verify.languages.models import Language, LanguageEnvironment
 
 logger = getLogger(__name__)
 _cargo_checked_workspaces: Set[pathlib.Path] = set()
-_related_source_files_by_package_manifest_path: Dict[pathlib.Path, FrozenSet[FrozenSet[pathlib.Path]]] = {}
+_related_source_files_by_package_manifest_path: Dict[pathlib.Path, Dict[pathlib.Path, FrozenSet[pathlib.Path]]] = {}
 
 
 class _ListDependenciesBackend:
@@ -53,8 +53,12 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
     related_source_files = _related_source_files(metadata)  # mutable
 
     def source_files_in_same_targets(p: pathlib.Path) -> FrozenSet[pathlib.Path]:
-        # `p` may be used by multiple targets with `#[path = ".."] mod foo;` or something.
-        return frozenset({p, *itertools.chain.from_iterable(s for s in related_source_files if p in s)})
+        # A `src_path` belongs to just one `target` unless it's weirdly symlinked.
+        if p in related_source_files:
+            return frozenset({p, *related_source_files[p]})
+
+        # If `p` is not one of the `src_path`s, it may be used by multiple targets with `#[path = ".."] mod foo;` or something.
+        return frozenset(itertools.chain.from_iterable({k, *v} for (k, v) in related_source_files.items() if p in v)) or frozenset({p})
 
     ret = set(source_files_in_same_targets(path))
 
@@ -108,7 +112,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
     return sorted(ret)
 
 
-def _related_source_files(metadata: Dict[str, Any]) -> FrozenSet[FrozenSet[pathlib.Path]]:
+def _related_source_files(metadata: Dict[str, Any]) -> Dict[pathlib.Path, FrozenSet[pathlib.Path]]:
     if pathlib.Path(metadata['workspace_root']) not in _cargo_checked_workspaces:
         subprocess.run(
             ['cargo', 'check', '--manifest-path', str(pathlib.Path(metadata['workspace_root'], 'Cargo.toml')), '--workspace', '--all-targets'],
@@ -117,16 +121,16 @@ def _related_source_files(metadata: Dict[str, Any]) -> FrozenSet[FrozenSet[pathl
         )
         _cargo_checked_workspaces.add(pathlib.Path(metadata['workspace_root']))
 
-    ret: Set[FrozenSet[pathlib.Path]] = set()
+    for_ws: Dict[pathlib.Path, FrozenSet[pathlib.Path]] = dict()
 
     for ws_member in (p for p in metadata['packages'] if p['id'] in metadata['workspace_members']):
         ws_member_manifest_path = pathlib.Path(ws_member['manifest_path'])
 
         if ws_member_manifest_path in _related_source_files_by_package_manifest_path:
-            ret |= _related_source_files_by_package_manifest_path[ws_member_manifest_path]
+            for_ws.update(_related_source_files_by_package_manifest_path[ws_member_manifest_path])
             continue
 
-        related_source_files = set()
+        for_package: Dict[pathlib.Path, FrozenSet[pathlib.Path]] = dict()
 
         for target in ws_member['targets']:
             # Finds a **latest** `.d` file that contains a line in the following format, and parses the line.
@@ -142,24 +146,24 @@ def _related_source_files(metadata: Dict[str, Any]) -> FrozenSet[FrozenSet[pathl
             for d_file_path in d_file_paths:
                 with open(d_file_path) as d_file:
                     d = d_file.read()
-                source_file_group = None
+                for_target: Optional[Tuple[pathlib.Path, FrozenSet[pathlib.Path]]] = None
                 for line in d.splitlines():
                     words = line.split(':')
                     if len(words) == 2 and pathlib.Path(words[0]) == d_file_path:
                         paths = [pathlib.Path(metadata['workspace_root'], s) for s in words[1].split() if not pathlib.Path(s).is_absolute()]
                         if paths[:1] == [pathlib.Path(target['src_path'])]:
-                            source_file_group = frozenset(paths)
+                            for_target = (paths[0], frozenset(paths[1:]))
                             break
-                if source_file_group is not None:
-                    related_source_files.add(source_file_group)
+                if for_target is not None:
+                    for_package.update([for_target])
                     break
             else:
                 logger.warning('no `.d` file for `%s`', target["name"])
 
-        _related_source_files_by_package_manifest_path[ws_member_manifest_path] = frozenset(related_source_files)
-        ret |= related_source_files
+        _related_source_files_by_package_manifest_path[ws_member_manifest_path] = for_package
+        for_ws.update(for_package)
 
-    return frozenset(ret)
+    return for_ws
 
 
 class RustLanguageEnvironment(LanguageEnvironment):

@@ -15,7 +15,7 @@ from onlinejudge_verify.languages.models import Language, LanguageEnvironment
 
 logger = getLogger(__name__)
 _cargo_checked_workspaces: Set[pathlib.Path] = set()
-_source_file_sets_by_package_manifest_path: Dict[pathlib.Path, FrozenSet[FrozenSet[pathlib.Path]]] = {}
+_related_source_files_by_package_manifest_path: Dict[pathlib.Path, FrozenSet[FrozenSet[pathlib.Path]]] = {}
 
 
 class _ListDependenciesBackend:
@@ -50,11 +50,11 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
 
     metadata = _cargo_metadata(cwd=path.parent)
 
-    source_file_sets = _source_file_sets(metadata)  # mutable
+    related_source_files = _related_source_files(metadata)  # mutable
 
     def source_files_in_same_targets(p: pathlib.Path) -> FrozenSet[pathlib.Path]:
         # `p` may be used by multiple targets with `#[path = ".."] mod foo;` or something.
-        return frozenset({p, *itertools.chain.from_iterable(s for s in source_file_sets if p in s)})
+        return frozenset({p, *itertools.chain.from_iterable(s for s in related_source_files if p in s)})
 
     ret = set(source_files_in_same_targets(path))
 
@@ -101,14 +101,14 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
     for package_id in normal_build_node_deps.values():
         if package_id not in unused_packages:
             package = packages_by_id[package_id]
-            source_file_sets = _source_file_sets(_cargo_metadata(pathlib.Path(package["manifest_path"]).parent))
+            related_source_files = _related_source_files(_cargo_metadata(pathlib.Path(package["manifest_path"]).parent))
             for target in package['targets']:
                 if _is_lib_or_proc_macro(target):
                     ret |= source_files_in_same_targets(pathlib.Path(target['src_path']))
     return sorted(ret)
 
 
-def _source_file_sets(metadata: Dict[str, Any]) -> FrozenSet[FrozenSet[pathlib.Path]]:
+def _related_source_files(metadata: Dict[str, Any]) -> FrozenSet[FrozenSet[pathlib.Path]]:
     if pathlib.Path(metadata['workspace_root']) not in _cargo_checked_workspaces:
         subprocess.run(
             ['cargo', 'check', '--manifest-path', str(pathlib.Path(metadata['workspace_root'], 'Cargo.toml')), '--workspace', '--all-targets'],
@@ -122,11 +122,11 @@ def _source_file_sets(metadata: Dict[str, Any]) -> FrozenSet[FrozenSet[pathlib.P
     for ws_member in (p for p in metadata['packages'] if p['id'] in metadata['workspace_members']):
         ws_member_manifest_path = pathlib.Path(ws_member['manifest_path'])
 
-        if ws_member_manifest_path in _source_file_sets_by_package_manifest_path:
-            ret |= _source_file_sets_by_package_manifest_path[ws_member_manifest_path]
+        if ws_member_manifest_path in _related_source_files_by_package_manifest_path:
+            ret |= _related_source_files_by_package_manifest_path[ws_member_manifest_path]
             continue
 
-        source_file_sets = set()
+        related_source_files = set()
 
         for target in ws_member['targets']:
             # Finds a **latest** `.d` file that contains a line in the following format, and parses the line.
@@ -151,13 +151,13 @@ def _source_file_sets(metadata: Dict[str, Any]) -> FrozenSet[FrozenSet[pathlib.P
                             source_file_group = frozenset(paths)
                             break
                 if source_file_group is not None:
-                    source_file_sets.add(source_file_group)
+                    related_source_files.add(source_file_group)
                     break
             else:
                 logger.warning('no `.d` file for `%s`', target["name"])
 
-        _source_file_sets_by_package_manifest_path[ws_member_manifest_path] = frozenset(source_file_sets)
-        ret |= source_file_sets
+        _related_source_files_by_package_manifest_path[ws_member_manifest_path] = frozenset(related_source_files)
+        ret |= related_source_files
 
     return frozenset(ret)
 

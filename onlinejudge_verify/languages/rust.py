@@ -15,7 +15,7 @@ from onlinejudge_verify.languages.models import Language, LanguageEnvironment
 
 logger = getLogger(__name__)
 _cargo_checked_workspaces: Set[pathlib.Path] = set()
-_related_source_files_by_package_manifest_path: Dict[pathlib.Path, Dict[pathlib.Path, FrozenSet[pathlib.Path]]] = {}
+_related_source_files_by_workspace: Dict[pathlib.Path, Dict[pathlib.Path, FrozenSet[pathlib.Path]]] = {}
 
 
 class _ListDependenciesBackend:
@@ -113,6 +113,9 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
 
 
 def _related_source_files(metadata: Dict[str, Any]) -> Dict[pathlib.Path, FrozenSet[pathlib.Path]]:
+    if pathlib.Path(metadata['workspace_root']) in _related_source_files_by_workspace:
+        return _related_source_files_by_workspace[pathlib.Path(metadata['workspace_root'])]
+
     if pathlib.Path(metadata['workspace_root']) not in _cargo_checked_workspaces:
         subprocess.run(
             ['cargo', 'check', '--manifest-path', str(pathlib.Path(metadata['workspace_root'], 'Cargo.toml')), '--workspace', '--all-targets'],
@@ -124,12 +127,6 @@ def _related_source_files(metadata: Dict[str, Any]) -> Dict[pathlib.Path, Frozen
     for_ws: Dict[pathlib.Path, FrozenSet[pathlib.Path]] = dict()
 
     for ws_member in (p for p in metadata['packages'] if p['id'] in metadata['workspace_members']):
-        ws_member_manifest_path = pathlib.Path(ws_member['manifest_path'])
-
-        if ws_member_manifest_path in _related_source_files_by_package_manifest_path:
-            for_ws.update(_related_source_files_by_package_manifest_path[ws_member_manifest_path])
-            continue
-
         for_package: Dict[pathlib.Path, FrozenSet[pathlib.Path]] = dict()
 
         for target in ws_member['targets']:
@@ -160,8 +157,9 @@ def _related_source_files(metadata: Dict[str, Any]) -> Dict[pathlib.Path, Frozen
             else:
                 logger.warning('no `.d` file for `%s`', target["name"])
 
-        _related_source_files_by_package_manifest_path[ws_member_manifest_path] = for_package
         for_ws.update(for_package)
+
+    _related_source_files_by_workspace[pathlib.Path(metadata['workspace_root'])] = for_ws
 
     return for_ws
 

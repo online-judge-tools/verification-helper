@@ -2,7 +2,6 @@ import json
 import pathlib
 import textwrap
 import unittest
-from typing import *
 
 import onlinejudge_verify.marker
 import onlinejudge_verify.verify as verify
@@ -56,7 +55,7 @@ class TestRustListDependencies(unittest.TestCase):
                 """).encode(),
         }
 
-        with _load_files_nocheck(files) as tempdir:
+        with tests.utils.load_files_pathlib(files) as tempdir:
             expected = sorted(tempdir / 'crates' / name / 'src' / 'lib.rs' for name in ['a', 'b', 'c'])
             actual = sorted(RustLanguage(config=None).list_dependencies(tempdir / 'crates' / 'a' / 'src' / 'lib.rs', basedir=tempdir))
             self.assertEqual(actual, expected)
@@ -93,7 +92,7 @@ class TestRustVerification(unittest.TestCase):
         }
         path = pathlib.Path('src', 'bin', 'library-checker-aplusb.rs')
 
-        with _load_files_nocheck(files) as tempdir:
+        with tests.utils.load_files_pathlib(files) as tempdir:
             with tests.utils.chdir(tempdir):
                 timestamps_path = tempdir / 'timestamps.json'
                 with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
@@ -101,7 +100,3 @@ class TestRustVerification(unittest.TestCase):
                 with open(timestamps_path) as fh:
                     timestamps = json.load(fh)
                 self.assertEqual(list(timestamps.keys()), [str(path)])
-
-
-def _load_files_nocheck(files: Dict[pathlib.Path, bytes]) -> ContextManager[pathlib.Path]:
-    return tests.utils.load_files_pathlib(files)

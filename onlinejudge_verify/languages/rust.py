@@ -251,6 +251,8 @@ class RustLanguage(Language):
 
 
 def _cargo_metadata(cwd: pathlib.Path) -> Dict[str, Any]:
+    """Runs `cargo metadata` for a Cargo.toml file in `cwd` or its parent directories.
+    """
     def find_root_manifest_for_wd() -> pathlib.Path:
         # https://docs.rs/cargo/0.48.0/cargo/util/important_paths/fn.find_root_manifest_for_wd.html
         assert cwd.is_absolute()
@@ -260,11 +262,22 @@ def _cargo_metadata(cwd: pathlib.Path) -> Dict[str, Any]:
                 return manifest_path
         raise RuntimeError(f'Could not find `Cargo.toml` in `{cwd}` or any parent directory')
 
-    return cargo_metadata_by_manifest_path(find_root_manifest_for_wd())
+    return _cargo_metadata_by_manifest_path(find_root_manifest_for_wd())
 
 
 @functools.lru_cache(maxsize=None)
-def cargo_metadata_by_manifest_path(manifest_path: pathlib.Path) -> Dict[str, Any]:
+def _cargo_metadata_by_manifest_path(manifest_path: pathlib.Path) -> Dict[str, Any]:
+    """Runs `cargo metadata` for a certain `Cargo.toml`.
+
+    This function is considered to be executed for every Cargo.toml in the repository.
+    For detailed information about `cargo metadata`, see:
+
+    - <https://doc.rust-lang.org/cargo/commands/cargo-metadata.html#output-format>
+    - <https://docs.rs/cargo_metadata>
+
+    :param manifest_path: Path to a `Cargo.toml`
+    :returns: Output of `cargo metadata` command
+    """
     return json.loads(subprocess.run(
         ['cargo', 'metadata', '--format-version', '1', '--manifest-path', str(manifest_path)],
         stdout=PIPE,

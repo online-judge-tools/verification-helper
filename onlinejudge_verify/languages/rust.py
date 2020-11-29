@@ -253,6 +253,7 @@ class RustLanguage(Language):
 def _cargo_metadata(cwd: pathlib.Path) -> Dict[str, Any]:
     def find_root_manifest_for_wd() -> pathlib.Path:
         # https://docs.rs/cargo/0.48.0/cargo/util/important_paths/fn.find_root_manifest_for_wd.html
+        assert cwd.is_absolute()
         for directory in [cwd, *cwd.parents]:
             manifest_path = directory / 'Cargo.toml'
             if manifest_path.exists():

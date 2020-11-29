@@ -30,7 +30,7 @@ You can run the format checking with the following commands. You can automatical
 set -e
 
 mypy onlinejudge_verify onlinejudge_bundle tests setup.py
-pylint --disable=all --enable=unused-import onlinejudge_verify onlinejudge_bundle tests setup.py
+pylint --rcfile=setup.cfg onlinejudge_verify onlinejudge_bundle tests setup.py
 isort --check-only --diff onlinejudge_verify onlinejudge_bundle tests setup.py
 yapf --diff --recursive onlinejudge_verify onlinejudge_bundle tests setup.py
 ```

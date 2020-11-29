@@ -16,7 +16,7 @@ import onlinejudge_verify.marker
 logger = getLogger(__name__)
 
 
-class VerificationSummary(object):
+class VerificationSummary:
     def __init__(self, *, failed_test_paths: List[pathlib.Path]):
         self.failed_test_paths = failed_test_paths
 
@@ -58,7 +58,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
     # analyze attributes
     try:
         attributes = language.list_attributes(path, basedir=pathlib.Path.cwd())
-    except:
+    except Exception:
         traceback.print_exc()
         return False
     if 'IGNORE' in attributes:
@@ -74,7 +74,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
 
     # download test cases
     directory = pathlib.Path('.verify-helper/cache') / hashlib.md5(url.encode()).hexdigest()
-    if not (directory / 'test').exists() or not len(list((directory / 'test').iterdir())):
+    if not (directory / 'test').exists() or list((directory / 'test').iterdir()) == []:
         directory.mkdir(parents=True, exist_ok=True)
         exec_command(['sleep', '2'])
         command = ['oj', 'download', '--system', '-d', str(directory / 'test'), '--silent', url]
@@ -83,7 +83,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
             command += ['--yukicoder-token', os.environ['YUKICODER_TOKEN']]
         try:
             exec_command(command)
-        except:
+        except Exception:
             traceback.print_exc()
             if isinstance(problem, onlinejudge.service.yukicoder.YukicoderProblem) and not os.environ.get('YUKICODER_TOKEN'):
                 logger.warning('the $YUKICODER_TOKEN environment variable is not set')
@@ -94,7 +94,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
         try:
             environment.compile(path, basedir=pathlib.Path.cwd(), tempdir=directory)
             execute = ' '.join(environment.get_execute_command(path, basedir=pathlib.Path.cwd(), tempdir=directory))  # TODO: use shlex.join added in Python 3.8
-        except:
+        except Exception:
             traceback.print_exc()
             return False
 
@@ -108,7 +108,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
             command += ['-j', str(jobs)]
         try:
             exec_command(command)
-        except:
+        except Exception:
             traceback.print_exc()
             return False
 
@@ -117,12 +117,12 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
 
 def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.VerificationMarker, timeout: float = math.inf, tle: float = 60, jobs: int = 1) -> VerificationSummary:
     try:
-        import resource
+        import resource  # pylint: disable=import-outside-toplevel
         _, hard = resource.getrlimit(resource.RLIMIT_STACK)
         resource.setrlimit(resource.RLIMIT_STACK, (hard, hard))
-    except:
+    except Exception:
         logger.warning('failed to increase the stack size')
-        print(f'::warning ::failed to ulimit')
+        print('::warning ::failed to ulimit')
 
     compilers = []
     if 'CXX' in os.environ:

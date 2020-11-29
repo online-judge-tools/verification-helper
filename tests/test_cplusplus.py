@@ -20,7 +20,7 @@ class TestCPlusPlusListDependencies(unittest.TestCase):
                 """).encode(),
         }
 
-        with tests.utils.load_files(files) as tempdir:
+        with tests.utils.load_files(files=files) as tempdir:
             with tests.utils.chdir(tempdir):
                 expected = sorted([tempdir / 'main.cpp', tempdir / 'included.hpp'])
                 actual = sorted(cplusplus.CPlusPlusLanguage().list_dependencies(tempdir / 'main.cpp', basedir=tempdir))
@@ -37,7 +37,7 @@ class TestCPlusPlusListDependencies(unittest.TestCase):
                 """).encode(),
         }
 
-        with tests.utils.load_files(files={}) as tempdir:
+        with tests.utils.load_files(files=files) as tempdir:
             with tests.utils.chdir(tempdir):
                 self.assertRaises(Exception, lambda: cplusplus.CPlusPlusLanguage().list_dependencies(tempdir / 'main.cpp', basedir=tempdir))
 
@@ -52,6 +52,6 @@ class TestCPlusPlusListDependencies(unittest.TestCase):
                 """).encode(),
         }
 
-        with tests.utils.load_files(files={}) as tempdir:
+        with tests.utils.load_files(files=files) as tempdir:
             with tests.utils.chdir(tempdir):
                 self.assertRaises(Exception, lambda: cplusplus.CPlusPlusLanguage().list_dependencies(tempdir / 'main.cpp', basedir=tempdir))

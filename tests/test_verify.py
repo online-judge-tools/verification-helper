@@ -13,7 +13,7 @@ import onlinejudge_verify.marker
 import onlinejudge_verify.verify as verify
 import tests.utils
 
-success_test_cpp = rb"""\
+SUCCESS_TEST_CPP = rb"""\
 #define PROBLEM "http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_B"
 #include <cstdio>
 int main() {
@@ -23,7 +23,7 @@ int main() {
 }
 """
 
-failure_test_cpp = rb"""\
+FAILURE_TEST_CPP = rb"""\
 #define PROBLEM "http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_B"
 #include <cstdio>
 int main() {
@@ -33,20 +33,20 @@ int main() {
 }
 """
 
-timestamp_format = '%Y-%m-%d %H:%M:%S %z'
+TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S %z'
 
 
 def get_timestamp_string(path: pathlib.Path) -> str:
     system_local_timezone = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
     epoch = path.stat().st_mtime
     timestamp = datetime.datetime.fromtimestamp(epoch, tz=system_local_timezone).replace(microsecond=0)
-    return timestamp.strftime(timestamp_format)
+    return timestamp.strftime(TIMESTAMP_FORMAT)
 
 
 def get_timestamp_string_of_past() -> str:
     system_local_timezone = datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo
     timestamp = datetime.datetime(year=2000, month=1, day=1, tzinfo=system_local_timezone)
-    return timestamp.strftime(timestamp_format)
+    return timestamp.strftime(TIMESTAMP_FORMAT)
 
 
 class TestVerification(unittest.TestCase):
@@ -56,7 +56,7 @@ class TestVerification(unittest.TestCase):
         """
 
         files = {
-            'example.test.cpp': success_test_cpp,
+            'example.test.cpp': SUCCESS_TEST_CPP,
         }
         paths = [pathlib.Path('example.test.cpp')]
         with tests.utils.load_files(files) as tempdir:
@@ -77,7 +77,7 @@ class TestVerification(unittest.TestCase):
             'timestamps.json': json.dumps({
                 'example.test.cpp': get_timestamp_string_of_past(),
             }).encode(),
-            'example.test.cpp': failure_test_cpp,
+            'example.test.cpp': FAILURE_TEST_CPP,
         }
         paths = [pathlib.Path('example.test.cpp')]
         with tests.utils.load_files(files) as tempdir:
@@ -96,11 +96,11 @@ class TestVerification(unittest.TestCase):
 
         # prepare files
         files = {
-            'not-updated.test.cpp': success_test_cpp,
-            'updated-success.test.cpp': success_test_cpp,
-            'updated-failure.test.cpp': failure_test_cpp,
-            'new-success.test.cpp': success_test_cpp,
-            'new-failure.test.cpp': failure_test_cpp,
+            'not-updated.test.cpp': SUCCESS_TEST_CPP,
+            'updated-success.test.cpp': SUCCESS_TEST_CPP,
+            'updated-failure.test.cpp': FAILURE_TEST_CPP,
+            'new-success.test.cpp': SUCCESS_TEST_CPP,
+            'new-failure.test.cpp': FAILURE_TEST_CPP,
         }
         paths = list(map(pathlib.Path, files.keys()))
 

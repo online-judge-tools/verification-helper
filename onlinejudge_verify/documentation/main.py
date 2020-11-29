@@ -13,8 +13,8 @@ from onlinejudge_verify.documentation.type import *
 
 logger = getLogger(__name__)
 
-_resource_package = 'onlinejudge_verify_resources'
-_config_yml_path: str = '_config.yml'
+_RESOURCE_PACKAGE = 'onlinejudge_verify_resources'
+_CONFIG_YML_PATH: str = '_config.yml'
 
 
 def print_stats_json(*, jobs: int = 1) -> None:
@@ -31,7 +31,7 @@ def print_stats_json(*, jobs: int = 1) -> None:
 
 def load_render_config(*, basedir: pathlib.Path) -> SiteRenderConfig:
     # load default _config.yml
-    default_config_yml = yaml.safe_load(pkg_resources.resource_string(_resource_package, _config_yml_path))
+    default_config_yml = yaml.safe_load(pkg_resources.resource_string(_RESOURCE_PACKAGE, _CONFIG_YML_PATH))
     assert default_config_yml is not None
     config_yml = default_config_yml
 

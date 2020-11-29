@@ -259,16 +259,17 @@ def _cargo_metadata(cwd: pathlib.Path) -> Dict[str, Any]:
                 return manifest_path
         raise RuntimeError(f'Could not find `Cargo.toml` in `{cwd}` or any parent directory')
 
-    @functools.lru_cache(maxsize=None)
-    def cargo_metadata(manifest_path: pathlib.Path) -> Dict[str, Any]:
-        return json.loads(subprocess.run(
-            ['cargo', 'metadata', '--format-version', '1', '--manifest-path', str(manifest_path)],
-            stdout=PIPE,
-            cwd=manifest_path.parent,
-            check=True,
-        ).stdout.decode())
+    return cargo_metadata_by_manifest_path(find_root_manifest_for_wd())
 
-    return cargo_metadata(find_root_manifest_for_wd())
+
+@functools.lru_cache(maxsize=None)
+def cargo_metadata_by_manifest_path(manifest_path: pathlib.Path) -> Dict[str, Any]:
+    return json.loads(subprocess.run(
+        ['cargo', 'metadata', '--format-version', '1', '--manifest-path', str(manifest_path)],
+        stdout=PIPE,
+        cwd=manifest_path.parent,
+        check=True,
+    ).stdout.decode())
 
 
 def _find_target(

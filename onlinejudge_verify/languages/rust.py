@@ -129,38 +129,17 @@ def _source_file_sets(metadata: Dict[str, Any]) -> FrozenSet[FrozenSet[pathlib.P
         source_file_sets = set()
 
         for target in ws_member['targets']:
+            # Finds a **latest** `.d` file that contains a line in the following format, and parses the line.
+            #
+            # ```
+            # <absolute path to the `.d` file itself>: <relative path to the root source file> <relative paths to the other related source files>...
+            # ```
             d_file_paths = sorted(
                 pathlib.Path(metadata['target_directory'], 'debug', 'deps').glob(f'{target["name"].replace("-", "_")}-*.d'),
                 key=lambda p: p.stat().st_mtime_ns,
                 reverse=True,
             )
             for d_file_path in d_file_paths:
-                # Like this:
-                #
-                # ```
-                # /home/ryo/src/github.com/rust-lang-ja/ac-library-rs/target/debug/deps/ac_library_rs-a044142420f688ff.rmeta: src/lib.rs src/convolution.rs src/dsu.rs src/fenwicktree.rs src/lazysegtree.rs src/math.rs src/maxflow.rs src/mincostflow.rs src/modint.rs src/scc.rs src/segtree.rs src/string.rs src/twosat.rs src/internal_bit.rs src/internal_math.rs src/internal_queue.rs src/internal_scc.rs src/internal_type_traits.rs
-                #
-                # /home/ryo/src/github.com/rust-lang-ja/ac-library-rs/target/debug/deps/ac_library_rs-a044142420f688ff.d: src/lib.rs src/convolution.rs src/dsu.rs src/fenwicktree.rs src/lazysegtree.rs src/math.rs src/maxflow.rs src/mincostflow.rs src/modint.rs src/scc.rs src/segtree.rs src/string.rs src/twosat.rs src/internal_bit.rs src/internal_math.rs src/internal_queue.rs src/internal_scc.rs src/internal_type_traits.rs
-                #
-                # src/lib.rs:
-                # src/convolution.rs:
-                # src/dsu.rs:
-                # src/fenwicktree.rs:
-                # src/lazysegtree.rs:
-                # src/math.rs:
-                # src/maxflow.rs:
-                # src/mincostflow.rs:
-                # src/modint.rs:
-                # src/scc.rs:
-                # src/segtree.rs:
-                # src/string.rs:
-                # src/twosat.rs:
-                # src/internal_bit.rs:
-                # src/internal_math.rs:
-                # src/internal_queue.rs:
-                # src/internal_scc.rs:
-                # src/internal_type_traits.rs:
-                # ```
                 with open(d_file_path) as d_file:
                     d = d_file.read()
                 source_file_group = None

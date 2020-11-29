@@ -41,10 +41,10 @@ class _CargoUdeps(_ListDependenciesBackend):
 
 
 def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, cargo_udeps_toolchain: Optional[str]) -> List[pathlib.Path]:
-    path = basedir.joinpath(path)
+    path = basedir / path
 
     for parent in path.parents:
-        if parent.parent.joinpath('Cargo.toml').exists() and parent.parts[-1] == 'target':
+        if (parent.parent / 'Cargo.toml').exists() and parent.parts[-1] == 'target':
             logger.warning('This is a generated file!: %s', path)
             return [path]
 
@@ -185,7 +185,7 @@ def _source_file_sets(metadata: Dict[str, Any]) -> FrozenSet[FrozenSet[pathlib.P
 
 class RustLanguageEnvironment(LanguageEnvironment):
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
-        path = basedir.joinpath(path)
+        path = basedir / path
         metadata = _cargo_metadata(cwd=path.parent)
         target = _ensure_target(metadata, path)
         subprocess.run(
@@ -195,7 +195,7 @@ class RustLanguageEnvironment(LanguageEnvironment):
         )
 
     def get_execute_command(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> List[str]:
-        path = basedir.joinpath(path)
+        path = basedir / path
         metadata = _cargo_metadata(cwd=path.parent)
         target = _ensure_target(metadata, path)
         return [str(pathlib.Path(metadata['target_directory'], 'release', *([] if _is_bin(target) else ['examples']), target['name']))]
@@ -238,7 +238,7 @@ class RustLanguage(Language):
         raise NotImplementedError
 
     def is_verification_file(self, path: pathlib.Path, *, basedir: pathlib.Path) -> bool:
-        path = basedir.joinpath(path)
+        path = basedir / path
         metadata = _cargo_metadata(cwd=path.parent)
         package_and_target = _find_target(metadata, path)
         if not package_and_target:
@@ -254,7 +254,7 @@ def _cargo_metadata(cwd: pathlib.Path) -> Dict[str, Any]:
     def find_root_manifest_for_wd() -> pathlib.Path:
         # https://docs.rs/cargo/0.48.0/cargo/util/important_paths/fn.find_root_manifest_for_wd.html
         for directory in [cwd, *cwd.parents]:
-            manifest_path = directory.joinpath('Cargo.toml')
+            manifest_path = directory / 'Cargo.toml'
             if manifest_path.exists():
                 return manifest_path
         raise RuntimeError(f'Could not find `Cargo.toml` in `{cwd}` or any parent directory')

@@ -18,7 +18,7 @@ _cargo_checked_workspaces: Set[pathlib.Path] = set()
 _source_file_sets_by_package_manifest_path: Dict[pathlib.Path, FrozenSet[FrozenSet[pathlib.Path]]] = {}
 
 
-class _ListDependenciesBackend(object):
+class _ListDependenciesBackend:
     @abc.abstractmethod
     def list_dependencies(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
         raise NotImplementedError
@@ -45,7 +45,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
 
     for parent in path.parents:
         if parent.parent.joinpath('Cargo.toml').exists() and parent.parts[-1] == 'target':
-            logger.warning(f'This is a generated file!: {path}')
+            logger.warning('This is a generated file!: %s', path)
             return [path]
 
     metadata = _cargo_metadata(cwd=path.parent)
@@ -175,7 +175,7 @@ def _source_file_sets(metadata: Dict[str, Any]) -> FrozenSet[FrozenSet[pathlib.P
                     source_file_sets.add(source_file_group)
                     break
             else:
-                logger.warning(f'no `.d` file for `{target["name"]}`')
+                logger.warning('no `.d` file for `%s`', target["name"])
 
         _source_file_sets_by_package_manifest_path[ws_member_manifest_path] = frozenset(source_file_sets)
         ret |= source_file_sets

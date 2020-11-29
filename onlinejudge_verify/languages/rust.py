@@ -208,6 +208,7 @@ class RustLanguage(Language):
         if config is None:
             config = get_config().get('languages', {}).get('rust', {})
 
+        # Parses `languages.rust.list_dependencies_backend`.
         if 'list_dependencies_backend' in config:
             list_dependencies_backend = config['list_dependencies_backend']
 

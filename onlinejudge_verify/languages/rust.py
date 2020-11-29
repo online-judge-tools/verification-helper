@@ -41,6 +41,13 @@ class _CargoUdeps(_ListDependenciesBackend):
 
 
 def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, cargo_udeps_toolchain: Optional[str]) -> List[pathlib.Path]:
+    """The `list_dependencies` implementation for `_NoBackend` and `CargoUdeps`.
+
+    :param path: A parameter in `Language.list_dependencies`.
+    :param basedir: A parameter in `Language.list_dependencies`.
+    :param cargo_udeps_toolchain: A Rust toolchain name for cargo-udeps. If it is `None`, we don't run cargo-udeps.
+    :returns: Paths to the `.rs` files for `Language.list_dependencies`.
+    """
     path = basedir / path
 
     for parent in path.parents:
@@ -113,6 +120,11 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
 
 
 def _related_source_files(metadata: Dict[str, Any]) -> Dict[pathlib.Path, FrozenSet[pathlib.Path]]:
+    """Collects all of the `.rs` files recognized by a workspace.
+
+    :param metadata: Output of `cargo metadata`
+    :returns: A (main source file) → (other related files) map
+    """
     if pathlib.Path(metadata['workspace_root']) in _related_source_files_by_workspace:
         return _related_source_files_by_workspace[pathlib.Path(metadata['workspace_root'])]
 

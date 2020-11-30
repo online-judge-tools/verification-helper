@@ -65,7 +65,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
     package, target = package_and_target
 
     packages_by_id = {package['id']: package for package in metadata['packages']}
-    normal_build_node_deps = {
+    neighbors_on_no_dev_graph = {
         normal_build_node_dep['name']: normal_build_node_dep['pkg']
         for node in metadata['resolve']['nodes']
         if node['id'] == package['id']
@@ -77,7 +77,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
     } # yapf: disable
 
     if not _is_lib_or_proc_macro(target) and any(map(_is_lib_or_proc_macro, package['targets'])):
-        normal_build_node_deps[package['name']] = package['id']
+        neighbors_on_no_dev_graph[package['name']] = package['id']
 
     unused_packages = set()
     if cargo_udeps_toolchain is not None:
@@ -94,14 +94,14 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
                 continue
             for name_in_toml in [*unused_dep['normal'], *unused_dep['development'], *unused_dep['build']]:
                 if name_in_toml in renames:
-                    unused_packages.add(normal_build_node_deps[name_in_toml])
+                    unused_packages.add(neighbors_on_no_dev_graph[name_in_toml])
                 else:
-                    for package_id in normal_build_node_deps.values():
+                    for package_id in neighbors_on_no_dev_graph.values():
                         if packages_by_id[package_id]['name'] == name_in_toml:
                             unused_packages.add(package_id)
 
     ret = common_result
-    for package_id in normal_build_node_deps.values():
+    for package_id in neighbors_on_no_dev_graph.values():
         if package_id in unused_packages:
             continue
         package = packages_by_id[package_id]

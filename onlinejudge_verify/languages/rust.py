@@ -50,6 +50,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
     """
     path = basedir / path
 
+    # We regard that (seemingly) generated files don't depend on any files.
     for parent in path.parents:
         if (parent.parent / 'Cargo.toml').exists() and parent.parts[-1] == 'target':
             logger.warning('This is a generated file!: %s', path)
@@ -57,6 +58,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
 
     metadata = _cargo_metadata(cwd=path.parent)
 
+    # First, collects source files in the same crate.
     common_result = set(_source_files_in_same_targets(path, _related_source_files(metadata)))
 
     package_and_target = _find_target(metadata, path)
@@ -64,8 +66,10 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
         return sorted(common_result)
     package, target = package_and_target
 
-    neighbors_on_no_dev_graph = {}
     packages_by_id = {package['id']: package for package in metadata['packages']}
+
+    # Collect "neighbors" into a <"extern crate name"> → <package> map.
+    neighbors_on_no_dev_graph = {}
     node = [node for node in metadata['resolve']['nodes'] if node['id'] == package['id']][0]
     for dep in node['deps']:
         if packages_by_id[dep['pkg']]['source']:
@@ -73,10 +77,10 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
         if all(dep_kind['kind'] == ['dev'] for dep_kind in dep['dep_kinds']):
             continue
         neighbors_on_no_dev_graph[dep['name']] = dep['pkg']
-
     if not _is_lib_or_proc_macro(target) and any(map(_is_lib_or_proc_macro, package['targets'])):
         neighbors_on_no_dev_graph[package['name']] = package['id']
 
+    # If `cargo_udeps_toolchain` is present, collects packages that are "unused" by `target`.
     unused_packages = set()
     if cargo_udeps_toolchain is not None:
         renames = {dependency['rename'] for dependency in package['dependencies'] if dependency['rename']}
@@ -92,8 +96,10 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
                 continue
             for name_in_toml in [*unused_dep['normal'], *unused_dep['development'], *unused_dep['build']]:
                 if name_in_toml in renames:
+                    # If the `name_in_toml` is explicitly renamed one, it equals to the "extern crate name".
                     unused_packages.add(neighbors_on_no_dev_graph[name_in_toml])
                 else:
+                    # Otherwise, it equals to the package name.
                     for package_id in neighbors_on_no_dev_graph.values():
                         if packages_by_id[package_id]['name'] == name_in_toml:
                             unused_packages.add(package_id)
@@ -174,11 +180,11 @@ def _source_files_in_same_targets(path: pathlib.Path, related_source_files: Dict
     :param related_source_files: Output of `_related_source_files`
     :returns: Relating `.rs` file paths
     """
-    # A `src_path` belongs to just one `target` unless it's weirdly symlinked.
+    # If `p` is `src_path` of a target, it does not belong to any other target unless it's weirdly symlinked,
     if path in related_source_files:
         return frozenset({path, *related_source_files[path]})
 
-    # If `p` is not one of the `src_path`s, it may be used by multiple targets with `#[path = ".."] mod foo;` or something.
+    # Otherwise, it may be used by multiple targets with `#[path = ".."] mod foo;` or something.
     return frozenset(itertools.chain.from_iterable({k, *v} for (k, v) in related_source_files.items() if path in v)) or frozenset({path})
 
 

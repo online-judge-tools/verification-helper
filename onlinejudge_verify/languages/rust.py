@@ -126,6 +126,7 @@ def _related_source_files(metadata: Dict[str, Any]) -> Dict[pathlib.Path, Frozen
     if pathlib.Path(metadata['workspace_root']) in _related_source_files_by_workspace:
         return _related_source_files_by_workspace[pathlib.Path(metadata['workspace_root'])]
 
+    # Runs `cargo check` to generate `$target_directory/debug/deps/*.d`.
     if pathlib.Path(metadata['workspace_root']) not in _cargo_checked_workspaces:
         subprocess.run(
             ['cargo', 'check', '--manifest-path', str(pathlib.Path(metadata['workspace_root'], 'Cargo.toml')), '--workspace', '--all-targets'],
@@ -136,34 +137,35 @@ def _related_source_files(metadata: Dict[str, Any]) -> Dict[pathlib.Path, Frozen
 
     ret: Dict[pathlib.Path, FrozenSet[pathlib.Path]] = dict()
 
-    for workspace_member in (p for p in metadata['packages'] if p['id'] in metadata['workspace_members']):
-        for target in workspace_member['targets']:
-            # Finds a **latest** `.d` file that contains a line in the following format, and parses the line.
-            #
-            # ```
-            # <absolute path to the `.d` file itself>: <relative path to the root source file> <relative paths to the other related source files>...
-            # ```
-            d_file_paths = sorted(
-                pathlib.Path(metadata['target_directory'], 'debug', 'deps').glob(f'{target["name"].replace("-", "_")}-*.d'),
-                key=lambda p: p.stat().st_mtime_ns,
-                reverse=True,
-            )
-            for d_file_path in d_file_paths:
-                with open(d_file_path) as d_file:
-                    d = d_file.read()
-                source_files_in_target: Optional[Tuple[pathlib.Path, FrozenSet[pathlib.Path]]] = None
-                for line in d.splitlines():
-                    words = line.split(':')
-                    if len(words) == 2 and pathlib.Path(words[0]) == d_file_path:
-                        paths = [pathlib.Path(metadata['workspace_root'], s) for s in words[1].split() if not pathlib.Path(s).is_absolute()]
-                        if paths[:1] == [pathlib.Path(target['src_path'])]:
-                            source_files_in_target = (paths[0], frozenset(paths[1:]))
-                            break
-                if source_files_in_target is not None:
-                    ret.update([source_files_in_target])
-                    break
-            else:
-                logger.warning('no `.d` file for `%s`', target["name"])
+    targets_in_workspace = itertools.chain.from_iterable(p['targets'] for p in metadata['packages'] if p['id'] in metadata['workspace_members'])
+    for target in targets_in_workspace:
+        # Finds a **latest** `.d` file that contains a line in the following format, and parses the line.
+        #
+        # ```
+        # <absolute path to the `.d` file itself>: <relative path to the root source file> <relative/aboslute paths to the other related files>...
+        # ```
+        d_file_paths = sorted(
+            pathlib.Path(metadata['target_directory'], 'debug', 'deps').glob(f'{target["name"].replace("-", "_")}-*.d'),
+            key=lambda p: p.stat().st_mtime_ns,
+            reverse=True,
+        )
+        for d_file_path in d_file_paths:
+            with open(d_file_path) as d_file:
+                d = d_file.read()
+            found = False
+            for line in d.splitlines():
+                words = line.split(':')
+                if len(words) == 2 and pathlib.Path(words[0]) == d_file_path:
+                    # Ignores paths like `/dev/null` or `/usr/share/foo/bar` (if any).
+                    paths = [pathlib.Path(metadata['workspace_root'], s) for s in words[1].split() if not pathlib.Path(s).is_absolute()]
+                    if paths[:1] == [pathlib.Path(target['src_path'])]:
+                        ret[paths[0]] = frozenset(paths[1:])
+                        found = True
+                        break
+            if found:
+                break
+        else:
+            logger.warning('no `.d` file for `%s`', target["name"])
 
     _related_source_files_by_workspace[pathlib.Path(metadata['workspace_root'])] = ret
     return ret

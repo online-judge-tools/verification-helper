@@ -64,17 +64,15 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
         return sorted(common_result)
     package, target = package_and_target
 
+    neighbors_on_no_dev_graph = {}
     packages_by_id = {package['id']: package for package in metadata['packages']}
-    neighbors_on_no_dev_graph = {
-        normal_build_node_dep['name']: normal_build_node_dep['pkg']
-        for node in metadata['resolve']['nodes']
-        if node['id'] == package['id']
-        for normal_build_node_dep in node['deps']
-        if not packages_by_id[normal_build_node_dep['pkg']]['source'] and any(
-            not dep_kind['kind'] or dep_kind['kind'] == 'build'
-            for dep_kind in normal_build_node_dep['dep_kinds']
-        )
-    } # yapf: disable
+    node = [node for node in metadata['resolve']['nodes'] if node['id'] == package['id']][0]
+    for dep in node['deps']:
+        if packages_by_id[dep['pkg']]['source']:
+            continue
+        if all(dep_kind['kind'] == ['dev'] for dep_kind in dep['dep_kinds']):
+            continue
+        neighbors_on_no_dev_graph[dep['name']] = dep['pkg']
 
     if not _is_lib_or_proc_macro(target) and any(map(_is_lib_or_proc_macro, package['targets'])):
         neighbors_on_no_dev_graph[package['name']] = package['id']

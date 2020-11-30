@@ -1,0 +1,11 @@
+[package]
+name = "verification-helper-rust-example-input"
+version = "0.1.0"
+authors = ["Ryo Yamashita <qryxip@gmail.com>"]
+edition = "2018"
+
+[lib]
+name = "input"
+
+[dependencies]
+verification-helper-rust-example-scanner = { path = "../scanner" }

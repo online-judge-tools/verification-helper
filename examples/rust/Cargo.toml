@@ -1,5 +1,5 @@
 [workspace]
-members = ["verification/*"]
+members = ["verification/"]
 
 [package]
 name = "verification-helper-rust-example"
@@ -8,5 +8,7 @@ edition = "2018"
 publish = false
 
 [dependencies]
-verification-helper-rust-example-hello = { path = "crates/hello" }
-verification-helper-rust-example-world = { path = "crates/world" }
+verification-helper-rust-example-hello = { path = "crates/helloworld/hello" }
+verification-helper-rust-example-input = { path = "crates/io/input" }
+verification-helper-rust-example-scanner = { path = "crates/io/scanner" }
+verification-helper-rust-example-world = { path = "crates/helloworld/world" }

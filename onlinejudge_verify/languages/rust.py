@@ -137,8 +137,6 @@ def _related_source_files(metadata: Dict[str, Any]) -> Dict[pathlib.Path, Frozen
     for_workspace: Dict[pathlib.Path, FrozenSet[pathlib.Path]] = dict()
 
     for workspace_member in (p for p in metadata['packages'] if p['id'] in metadata['workspace_members']):
-        for_package: Dict[pathlib.Path, FrozenSet[pathlib.Path]] = dict()
-
         for target in workspace_member['targets']:
             # Finds a **latest** `.d` file that contains a line in the following format, and parses the line.
             #
@@ -162,12 +160,10 @@ def _related_source_files(metadata: Dict[str, Any]) -> Dict[pathlib.Path, Frozen
                             for_target = (paths[0], frozenset(paths[1:]))
                             break
                 if for_target is not None:
-                    for_package.update([for_target])
+                    for_workspace.update([for_target])
                     break
             else:
                 logger.warning('no `.d` file for `%s`', target["name"])
-
-        for_workspace.update(for_package)
 
     _related_source_files_by_workspace[pathlib.Path(metadata['workspace_root'])] = for_workspace
 

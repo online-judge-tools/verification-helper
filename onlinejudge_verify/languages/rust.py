@@ -57,17 +57,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
 
     metadata = _cargo_metadata(cwd=path.parent)
 
-    related_source_files = _related_source_files(metadata)  # mutable
-
-    def source_files_in_same_targets(p: pathlib.Path) -> FrozenSet[pathlib.Path]:
-        # A `src_path` belongs to just one `target` unless it's weirdly symlinked.
-        if p in related_source_files:
-            return frozenset({p, *related_source_files[p]})
-
-        # If `p` is not one of the `src_path`s, it may be used by multiple targets with `#[path = ".."] mod foo;` or something.
-        return frozenset(itertools.chain.from_iterable({k, *v} for (k, v) in related_source_files.items() if p in v)) or frozenset({p})
-
-    ret = set(source_files_in_same_targets(path))
+    ret = set(_source_files_in_same_targets(path, _related_source_files(metadata)))
 
     package_and_target = _find_target(metadata, path)
     if not package_and_target:
@@ -114,10 +104,10 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
         if package_id in unused_packages:
             continue
         package = packages_by_id[package_id]
-        related_source_files = _related_source_files(_cargo_metadata(pathlib.Path(package["manifest_path"]).parent))
+        related_source_files = _related_source_files(_cargo_metadata_by_manifest_path(pathlib.Path(package["manifest_path"])))
         for target in package['targets']:
             if _is_lib_or_proc_macro(target):
-                ret |= source_files_in_same_targets(pathlib.Path(target['src_path']))
+                ret |= _source_files_in_same_targets(pathlib.Path(target['src_path']), related_source_files)
     return sorted(ret)
 
 
@@ -176,6 +166,21 @@ def _related_source_files(metadata: Dict[str, Any]) -> Dict[pathlib.Path, Frozen
     _related_source_files_by_workspace[pathlib.Path(metadata['workspace_root'])] = for_ws
 
     return for_ws
+
+
+def _source_files_in_same_targets(path: pathlib.Path, related_source_files: Dict[pathlib.Path, FrozenSet[pathlib.Path]]) -> FrozenSet[pathlib.Path]:
+    """Returns `.rs` file paths relating to `path`.
+
+    :param path: Path to a `.rs` file
+    :param related_source_files: Output of `_related_source_files`
+    :returns: Relating `.rs` file paths
+    """
+    # A `src_path` belongs to just one `target` unless it's weirdly symlinked.
+    if path in related_source_files:
+        return frozenset({path, *related_source_files[path]})
+
+    # If `p` is not one of the `src_path`s, it may be used by multiple targets with `#[path = ".."] mod foo;` or something.
+    return frozenset(itertools.chain.from_iterable({k, *v} for (k, v) in related_source_files.items() if path in v)) or frozenset({path})
 
 
 class RustLanguageEnvironment(LanguageEnvironment):

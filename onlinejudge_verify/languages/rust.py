@@ -134,7 +134,7 @@ def _related_source_files(metadata: Dict[str, Any]) -> Dict[pathlib.Path, Frozen
         )
         _cargo_checked_workspaces.add(pathlib.Path(metadata['workspace_root']))
 
-    for_workspace: Dict[pathlib.Path, FrozenSet[pathlib.Path]] = dict()
+    ret: Dict[pathlib.Path, FrozenSet[pathlib.Path]] = dict()
 
     for workspace_member in (p for p in metadata['packages'] if p['id'] in metadata['workspace_members']):
         for target in workspace_member['targets']:
@@ -151,23 +151,22 @@ def _related_source_files(metadata: Dict[str, Any]) -> Dict[pathlib.Path, Frozen
             for d_file_path in d_file_paths:
                 with open(d_file_path) as d_file:
                     d = d_file.read()
-                for_target: Optional[Tuple[pathlib.Path, FrozenSet[pathlib.Path]]] = None
+                source_files_in_target: Optional[Tuple[pathlib.Path, FrozenSet[pathlib.Path]]] = None
                 for line in d.splitlines():
                     words = line.split(':')
                     if len(words) == 2 and pathlib.Path(words[0]) == d_file_path:
                         paths = [pathlib.Path(metadata['workspace_root'], s) for s in words[1].split() if not pathlib.Path(s).is_absolute()]
                         if paths[:1] == [pathlib.Path(target['src_path'])]:
-                            for_target = (paths[0], frozenset(paths[1:]))
+                            source_files_in_target = (paths[0], frozenset(paths[1:]))
                             break
-                if for_target is not None:
-                    for_workspace.update([for_target])
+                if source_files_in_target is not None:
+                    ret.update([source_files_in_target])
                     break
             else:
                 logger.warning('no `.d` file for `%s`', target["name"])
 
-    _related_source_files_by_workspace[pathlib.Path(metadata['workspace_root'])] = for_workspace
-
-    return for_workspace
+    _related_source_files_by_workspace[pathlib.Path(metadata['workspace_root'])] = ret
+    return ret
 
 
 def _source_files_in_same_targets(path: pathlib.Path, related_source_files: Dict[pathlib.Path, FrozenSet[pathlib.Path]]) -> FrozenSet[pathlib.Path]:

@@ -100,22 +100,24 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
             stdout=PIPE,
         ).stdout.decode())['unused_deps'].values()
         for unused_dep in unused_deps:
-            if unused_dep['manifest_path'] == package['manifest_path']:
-                for name_in_toml in [*unused_dep['normal'], *unused_dep['development'], *unused_dep['build']]:
-                    if name_in_toml in renames:
-                        unused_packages.add(normal_build_node_deps[name_in_toml])
-                    else:
-                        for package_id in normal_build_node_deps.values():
-                            if packages_by_id[package_id]['name'] == name_in_toml:
-                                unused_packages.add(package_id)
+            if unused_dep['manifest_path'] != package['manifest_path']:
+                continue
+            for name_in_toml in [*unused_dep['normal'], *unused_dep['development'], *unused_dep['build']]:
+                if name_in_toml in renames:
+                    unused_packages.add(normal_build_node_deps[name_in_toml])
+                else:
+                    for package_id in normal_build_node_deps.values():
+                        if packages_by_id[package_id]['name'] == name_in_toml:
+                            unused_packages.add(package_id)
 
     for package_id in normal_build_node_deps.values():
-        if package_id not in unused_packages:
-            package = packages_by_id[package_id]
-            related_source_files = _related_source_files(_cargo_metadata(pathlib.Path(package["manifest_path"]).parent))
-            for target in package['targets']:
-                if _is_lib_or_proc_macro(target):
-                    ret |= source_files_in_same_targets(pathlib.Path(target['src_path']))
+        if package_id in unused_packages:
+            continue
+        package = packages_by_id[package_id]
+        related_source_files = _related_source_files(_cargo_metadata(pathlib.Path(package["manifest_path"]).parent))
+        for target in package['targets']:
+            if _is_lib_or_proc_macro(target):
+                ret |= source_files_in_same_targets(pathlib.Path(target['src_path']))
     return sorted(ret)
 
 

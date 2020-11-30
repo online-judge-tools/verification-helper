@@ -40,6 +40,7 @@ class _CargoUdeps(_ListDependenciesBackend):
         return _list_dependencies_by_crate(path, basedir=basedir, cargo_udeps_toolchain=self.toolchain)
 
 
+@functools.lru_cache(maxsize=None)
 def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, cargo_udeps_toolchain: Optional[str]) -> List[pathlib.Path]:
     """The `list_dependencies` implementation for `_NoBackend` and `CargoUdeps`.
 

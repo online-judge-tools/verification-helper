@@ -129,12 +129,12 @@ def _related_source_files(metadata: Dict[str, Any]) -> Dict[pathlib.Path, Frozen
         )
         _cargo_checked_workspaces.add(pathlib.Path(metadata['workspace_root']))
 
-    for_ws: Dict[pathlib.Path, FrozenSet[pathlib.Path]] = dict()
+    for_workspace: Dict[pathlib.Path, FrozenSet[pathlib.Path]] = dict()
 
-    for ws_member in (p for p in metadata['packages'] if p['id'] in metadata['workspace_members']):
+    for workspace_member in (p for p in metadata['packages'] if p['id'] in metadata['workspace_members']):
         for_package: Dict[pathlib.Path, FrozenSet[pathlib.Path]] = dict()
 
-        for target in ws_member['targets']:
+        for target in workspace_member['targets']:
             # Finds a **latest** `.d` file that contains a line in the following format, and parses the line.
             #
             # ```
@@ -162,11 +162,11 @@ def _related_source_files(metadata: Dict[str, Any]) -> Dict[pathlib.Path, Frozen
             else:
                 logger.warning('no `.d` file for `%s`', target["name"])
 
-        for_ws.update(for_package)
+        for_workspace.update(for_package)
 
-    _related_source_files_by_workspace[pathlib.Path(metadata['workspace_root'])] = for_ws
+    _related_source_files_by_workspace[pathlib.Path(metadata['workspace_root'])] = for_workspace
 
-    return for_ws
+    return for_workspace
 
 
 def _source_files_in_same_targets(path: pathlib.Path, related_source_files: Dict[pathlib.Path, FrozenSet[pathlib.Path]]) -> FrozenSet[pathlib.Path]:

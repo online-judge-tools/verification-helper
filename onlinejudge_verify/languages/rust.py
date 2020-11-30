@@ -57,11 +57,11 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
 
     metadata = _cargo_metadata(cwd=path.parent)
 
-    ret = set(_source_files_in_same_targets(path, _related_source_files(metadata)))
+    common_result = set(_source_files_in_same_targets(path, _related_source_files(metadata)))
 
     package_and_target = _find_target(metadata, path)
     if not package_and_target:
-        return sorted(ret)
+        return sorted(common_result)
     package, target = package_and_target
 
     packages_by_id = {package['id']: package for package in metadata['packages']}
@@ -100,6 +100,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
                         if packages_by_id[package_id]['name'] == name_in_toml:
                             unused_packages.add(package_id)
 
+    ret = common_result
     for package_id in normal_build_node_deps.values():
         if package_id in unused_packages:
             continue

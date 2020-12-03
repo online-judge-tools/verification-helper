@@ -92,9 +92,8 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
             check=False,
             stdout=PIPE,
         ).stdout.decode())['unused_deps'].values()
-        for unused_dep in unused_deps:
-            if unused_dep['manifest_path'] != main_package['manifest_path']:
-                continue
+        unused_dep = next((u for u in unused_deps if u['manifest_path'] == main_package['manifest_path']), None)
+        if unused_dep:
             for name_in_toml in [*unused_dep['normal'], *unused_dep['development'], *unused_dep['build']]:
                 if name_in_toml in explicit_names_in_toml:
                     # If the `name_in_toml` is explicitly renamed one, it equals to the `extern_crate_name`.

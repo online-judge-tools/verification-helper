@@ -74,8 +74,11 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
     for dep in next(n['deps'] for n in metadata['resolve']['nodes'] if n['id'] == main_package['id']):
         if _need_dev_deps(main_target) or any(dep_kind['kind'] != ['dev'] for dep_kind in dep['dep_kinds']):
             dependencies[dep['name']] = packages_by_id[dep['pkg']]
-    if not _is_lib_or_proc_macro(main_target) and any(map(_is_lib_or_proc_macro, main_package['targets'])):
-        dependencies[main_package['name']] = main_package
+
+    # Decides whether to include `main_package` itself.
+    # Note that cargo-udeps does not detect it if it is unused.
+    # https://github.com/est31/cargo-udeps/pull/35
+    depends_on_main_package_itself = not _is_lib_or_proc_macro(main_target) and any(map(_is_lib_or_proc_macro, main_package['targets']))
 
     # If `cargo_udeps_toolchain` is present, collects packages that are "unused" by `target`.
     unused_packages = set()
@@ -98,9 +101,12 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
                     # Otherwise, it equals to the `package.name`.
                     unused_packages.add(next(p['id'] for p in dependencies.values() if p['name'] == name_in_toml))
 
-    # Finally, adds source files related to the depended crates.
+    # Finally, adds source files related to the depended crates except:
+    #
+    # - those detected by cargo-udeps
+    # - those come from Crates.io or Git repositories (e.g. `proconio`, other people's libraries including `ac-library-rs`)
     ret = common_result
-    for depended_package in dependencies.values():
+    for depended_package in [*dependencies.values(), *([main_package] if depends_on_main_package_itself else [])]:
         if depended_package['id'] in unused_packages or depended_package['source']:
             continue
         depended_target = next(filter(_is_lib_or_proc_macro, depended_package['targets']), None)

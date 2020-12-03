@@ -88,6 +88,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
             raise RuntimeError('`cargo-udeps` not in $PATH')
         unused_deps = json.loads(subprocess.run(
             ['rustup', 'run', cargo_udeps_toolchain, 'cargo', 'udeps', '--output', 'json', '--manifest-path', main_package['manifest_path'], *_target_option(main_target)],
+            cwd=metadata['workspace_root'],
             check=False,
             stdout=PIPE,
         ).stdout.decode())['unused_deps'].values()

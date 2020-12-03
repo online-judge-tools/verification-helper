@@ -62,38 +62,38 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
     # First, collects source files in the same crate.
     common_result = set(_source_files_in_same_targets(path, _related_source_files(metadata)))
 
-    package_and_target = _find_target(metadata, path)
-    if not package_and_target:
+    main_package_and_target = _find_target(metadata, path)
+    if not main_package_and_target:
         return sorted(common_result)
-    package, target = package_and_target
+    main_package, main_target = main_package_and_target
 
-    packages_by_id = {package['id']: package for package in metadata['packages']}
+    packages_by_id = {p['id']: p for p in metadata['packages']}
 
-    # Collect `normal`/`build` dependent crate from filesystem paths into a <"extern crate name"> → <package ID> map.
+    # Collect depended crate from filesystem paths into a <"extern crate name"> → <package ID> map.
     non_dev_path_dependencies = {}
-    node = next(n for n in metadata['resolve']['nodes'] if n['id'] == package['id'])
+    node = next(n for n in metadata['resolve']['nodes'] if n['id'] == main_package['id'])
     for dep in node['deps']:
         if packages_by_id[dep['pkg']]['source']:
             continue
         if all(dep_kind['kind'] == ['dev'] for dep_kind in dep['dep_kinds']):
             continue
         non_dev_path_dependencies[dep['name']] = dep['pkg']
-    if not _is_lib_or_proc_macro(target) and any(map(_is_lib_or_proc_macro, package['targets'])):
-        non_dev_path_dependencies[package['name']] = package['id']
+    if not _is_lib_or_proc_macro(main_target) and any(map(_is_lib_or_proc_macro, main_package['targets'])):
+        non_dev_path_dependencies[main_package['name']] = main_package['id']
 
     # If `cargo_udeps_toolchain` is present, collects packages that are "unused" by `target`.
     unused_packages = set()
     if cargo_udeps_toolchain is not None:
-        explicit_names_in_toml = {d['rename'] for d in package['dependencies'] if d['rename']}
+        explicit_names_in_toml = {d['rename'] for d in main_package['dependencies'] if d['rename']}
         if not shutil.which('cargo-udeps'):
             raise RuntimeError('`cargo-udeps` not in $PATH')
         unused_deps = json.loads(subprocess.run(
-            ['rustup', 'run', cargo_udeps_toolchain, 'cargo', 'udeps', '--output', 'json', '--manifest-path', package['manifest_path'], *_target_option(target)],
+            ['rustup', 'run', cargo_udeps_toolchain, 'cargo', 'udeps', '--output', 'json', '--manifest-path', main_package['manifest_path'], *_target_option(main_target)],
             check=False,
             stdout=PIPE,
         ).stdout.decode())['unused_deps'].values()
         for unused_dep in unused_deps:
-            if unused_dep['manifest_path'] != package['manifest_path']:
+            if unused_dep['manifest_path'] != main_package['manifest_path']:
                 continue
             for name_in_toml in [*unused_dep['normal'], *unused_dep['development'], *unused_dep['build']]:
                 if name_in_toml in explicit_names_in_toml:
@@ -103,16 +103,16 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
                     # Otherwise, it equals to the `package.name`.
                     unused_packages.add(next(i for i in non_dev_path_dependencies.values() if packages_by_id[i]['name'] == name_in_toml))
 
-    # Finally, adds source files related to the dependent crates.
+    # Finally, adds source files related to the depended crates.
     ret = common_result
-    for dependent_package_id in non_dev_path_dependencies.values():
-        if dependent_package_id in unused_packages:
+    for depended_package_id in non_dev_path_dependencies.values():
+        if depended_package_id in unused_packages:
             continue
-        dependent_package = packages_by_id[dependent_package_id]
-        dependent_target = next(filter(_is_lib_or_proc_macro, dependent_package['targets']), None)
-        if dependent_target:
-            related_source_files = _related_source_files(_cargo_metadata_by_manifest_path(pathlib.Path(dependent_package["manifest_path"])))
-            ret |= _source_files_in_same_targets(pathlib.Path(dependent_target['src_path']), related_source_files)
+        depended_package = packages_by_id[depended_package_id]
+        depended_target = next(filter(_is_lib_or_proc_macro, depended_package['targets']), None)
+        if depended_target:
+            related_source_files = _related_source_files(_cargo_metadata_by_manifest_path(pathlib.Path(depended_package["manifest_path"])))
+            ret |= _source_files_in_same_targets(pathlib.Path(depended_target['src_path']), related_source_files)
     return sorted(ret)
 
 

@@ -69,14 +69,13 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
 
     packages_by_id = {p['id']: p for p in metadata['packages']}
 
-    # Collect the `(|build-)dependencies` into a <"extern crate name"> → <package ID> map.
-    non_dev_dependencies = {}
-    node = next(n for n in metadata['resolve']['nodes'] if n['id'] == main_package['id'])
-    for dep in node['deps']:
-        if not all(dep_kind['kind'] == ['dev'] for dep_kind in dep['dep_kinds']):
-            non_dev_dependencies[dep['name']] = dep['pkg']
+    # Collect the `(|dev-|build-)dependencies` into a <"extern crate name"> → <package ID> dictionary.
+    dependencies = {}
+    for dep in next(n['deps'] for n in metadata['resolve']['nodes'] if n['id'] == main_package['id']):
+        if _need_dev_deps(main_target) or all(dep_kind['kind'] != ['dev'] for dep_kind in dep['dep_kinds']):
+            dependencies[dep['name']] = dep['pkg']
     if not _is_lib_or_proc_macro(main_target) and any(map(_is_lib_or_proc_macro, main_package['targets'])):
-        non_dev_dependencies[main_package['name']] = main_package['id']
+        dependencies[main_package['name']] = main_package['id']
 
     # If `cargo_udeps_toolchain` is present, collects packages that are "unused" by `target`.
     unused_packages = set()
@@ -94,14 +93,14 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
             for name_in_toml in [*unused_dep['normal'], *unused_dep['development'], *unused_dep['build']]:
                 if name_in_toml in explicit_names_in_toml:
                     # If the `name_in_toml` is explicitly renamed one, it equals to the `extern_crate_name`.
-                    unused_packages.add(non_dev_dependencies[name_in_toml])
+                    unused_packages.add(dependencies[name_in_toml])
                 else:
                     # Otherwise, it equals to the `package.name`.
-                    unused_packages.add(next(i for i in non_dev_dependencies.values() if packages_by_id[i]['name'] == name_in_toml))
+                    unused_packages.add(next(i for i in dependencies.values() if packages_by_id[i]['name'] == name_in_toml))
 
     # Finally, adds source files related to the depended crates.
     ret = common_result
-    for depended_package_id in non_dev_dependencies.values():
+    for depended_package_id in dependencies.values():
         if depended_package_id in unused_packages:
             continue
         depended_package = packages_by_id[depended_package_id]
@@ -325,6 +324,11 @@ def _is_bin(target: Dict[str, Any]) -> bool:
 
 def _is_bin_or_example_bin(target: Dict[str, Any]) -> bool:
     return _is_bin(target) or target['kind'] == ['example'] and target['crate_types'] == ['bin']
+
+
+def _need_dev_deps(target: Dict[str, Any]) -> bool:
+    # Comes from https://docs.rs/cargo/0.49.0/cargo/ops/enum.CompileFilter.html#method.need_dev_deps
+    return not (_is_lib_or_proc_macro(target) or _is_bin(target))
 
 
 def _target_option(target: Dict[str, Any]) -> List[str]:

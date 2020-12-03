@@ -101,9 +101,11 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
                     unused_packages.add(non_dev_path_dependencies[name_in_toml])
                 else:
                     # Otherwise, it equals to the `package.name`.
-                    for package_id in non_dev_path_dependencies.values():
-                        if packages_by_id[package_id]['name'] == name_in_toml:
-                            unused_packages.add(package_id)
+                    package_id = next((i for i in non_dev_path_dependencies.values() if packages_by_id[i]['name'] == name_in_toml), None)
+                    if package_id:
+                        unused_packages.add(package_id)
+                    else:
+                        logger.error('could not resolve `%s`', name_in_toml)
 
     ret = common_result
     for package_id in non_dev_path_dependencies.values():

@@ -69,13 +69,13 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
 
     packages_by_id = {p['id']: p for p in metadata['packages']}
 
-    # Collect the `(|dev-|build-)dependencies` into a <"extern crate name"> → <package ID> dictionary.
+    # Collect the `(|dev-|build-)dependencies` into a <"extern crate name"> → <package> dictionary.
     dependencies = {}
     for dep in next(n['deps'] for n in metadata['resolve']['nodes'] if n['id'] == main_package['id']):
-        if _need_dev_deps(main_target) or all(dep_kind['kind'] != ['dev'] for dep_kind in dep['dep_kinds']):
-            dependencies[dep['name']] = dep['pkg']
+        if _need_dev_deps(main_target) or any(dep_kind['kind'] != ['dev'] for dep_kind in dep['dep_kinds']):
+            dependencies[dep['name']] = packages_by_id[dep['pkg']]
     if not _is_lib_or_proc_macro(main_target) and any(map(_is_lib_or_proc_macro, main_package['targets'])):
-        dependencies[main_package['name']] = main_package['id']
+        dependencies[main_package['name']] = main_package
 
     # If `cargo_udeps_toolchain` is present, collects packages that are "unused" by `target`.
     unused_packages = set()
@@ -93,18 +93,15 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
             for name_in_toml in [*unused_dep['normal'], *unused_dep['development'], *unused_dep['build']]:
                 if name_in_toml in explicit_names_in_toml:
                     # If the `name_in_toml` is explicitly renamed one, it equals to the `extern_crate_name`.
-                    unused_packages.add(dependencies[name_in_toml])
+                    unused_packages.add(dependencies[name_in_toml]['id'])
                 else:
                     # Otherwise, it equals to the `package.name`.
-                    unused_packages.add(next(i for i in dependencies.values() if packages_by_id[i]['name'] == name_in_toml))
+                    unused_packages.add(next(p['id'] for p in dependencies.values() if p['name'] == name_in_toml))
 
     # Finally, adds source files related to the depended crates.
     ret = common_result
-    for depended_package_id in dependencies.values():
-        if depended_package_id in unused_packages:
-            continue
-        depended_package = packages_by_id[depended_package_id]
-        if depended_package['source']:
+    for depended_package in dependencies.values():
+        if depended_package['id'] in unused_packages or depended_package['source']:
             continue
         depended_target = next(filter(_is_lib_or_proc_macro, depended_package['targets']), None)
         if depended_target:

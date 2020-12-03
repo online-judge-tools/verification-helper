@@ -71,7 +71,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
 
     # Collect `normal`/`build` dependent crate from filesystem paths into a <"extern crate name"> → <package ID> map.
     non_dev_path_dependencies = {}
-    node = [node for node in metadata['resolve']['nodes'] if node['id'] == package['id']][0]
+    node = next(n for n in metadata['resolve']['nodes'] if n['id'] == package['id'])
     for dep in node['deps']:
         if packages_by_id[dep['pkg']]['source']:
             continue
@@ -101,21 +101,18 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
                     unused_packages.add(non_dev_path_dependencies[name_in_toml])
                 else:
                     # Otherwise, it equals to the `package.name`.
-                    package_id = next((i for i in non_dev_path_dependencies.values() if packages_by_id[i]['name'] == name_in_toml), None)
-                    if package_id:
-                        unused_packages.add(package_id)
-                    else:
-                        logger.error('could not resolve `%s`', name_in_toml)
+                    unused_packages.add(next(i for i in non_dev_path_dependencies.values() if packages_by_id[i]['name'] == name_in_toml))
 
+    # Finally, adds source files related to the dependent crates.
     ret = common_result
-    for package_id in non_dev_path_dependencies.values():
-        if package_id in unused_packages:
+    for dependent_package_id in non_dev_path_dependencies.values():
+        if dependent_package_id in unused_packages:
             continue
-        package = packages_by_id[package_id]
-        related_source_files = _related_source_files(_cargo_metadata_by_manifest_path(pathlib.Path(package["manifest_path"])))
-        for target in package['targets']:
-            if _is_lib_or_proc_macro(target):
-                ret |= _source_files_in_same_targets(pathlib.Path(target['src_path']), related_source_files)
+        dependent_package = packages_by_id[dependent_package_id]
+        dependent_target = next(filter(_is_lib_or_proc_macro, dependent_package['targets']), None)
+        if dependent_target:
+            related_source_files = _related_source_files(_cargo_metadata_by_manifest_path(pathlib.Path(dependent_package["manifest_path"])))
+            ret |= _source_files_in_same_targets(pathlib.Path(dependent_target['src_path']), related_source_files)
     return sorted(ret)
 
 

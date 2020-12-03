@@ -51,7 +51,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
     """
     path = basedir / path
 
-    # We regard that (seemingly) generated files don't depend on any files.
+    # We regard that a generated file does not depend on any files.
     for parent in path.parents:
         if (parent.parent / 'Cargo.toml').exists() and parent.parts[-1] == 'target':
             logger.warning('This is a generated file!: %s', path)
@@ -69,22 +69,22 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
 
     packages_by_id = {package['id']: package for package in metadata['packages']}
 
-    # Collect "neighbors" into a <"extern crate name"> → <package> map.
-    neighbors_on_no_dev_graph = {}
+    # Collect `normal`/`build` dependent crate from filesystem paths into a <"extern crate name"> → <package ID> map.
+    non_dev_path_dependencies = {}
     node = [node for node in metadata['resolve']['nodes'] if node['id'] == package['id']][0]
     for dep in node['deps']:
         if packages_by_id[dep['pkg']]['source']:
             continue
         if all(dep_kind['kind'] == ['dev'] for dep_kind in dep['dep_kinds']):
             continue
-        neighbors_on_no_dev_graph[dep['name']] = dep['pkg']
+        non_dev_path_dependencies[dep['name']] = dep['pkg']
     if not _is_lib_or_proc_macro(target) and any(map(_is_lib_or_proc_macro, package['targets'])):
-        neighbors_on_no_dev_graph[package['name']] = package['id']
+        non_dev_path_dependencies[package['name']] = package['id']
 
     # If `cargo_udeps_toolchain` is present, collects packages that are "unused" by `target`.
     unused_packages = set()
     if cargo_udeps_toolchain is not None:
-        renames = {dependency['rename'] for dependency in package['dependencies'] if dependency['rename']}
+        explicit_names_in_toml = {d['rename'] for d in package['dependencies'] if d['rename']}
         if not shutil.which('cargo-udeps'):
             raise RuntimeError('`cargo-udeps` not in $PATH')
         unused_deps = json.loads(subprocess.run(
@@ -96,17 +96,17 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
             if unused_dep['manifest_path'] != package['manifest_path']:
                 continue
             for name_in_toml in [*unused_dep['normal'], *unused_dep['development'], *unused_dep['build']]:
-                if name_in_toml in renames:
-                    # If the `name_in_toml` is explicitly renamed one, it equals to the "extern crate name".
-                    unused_packages.add(neighbors_on_no_dev_graph[name_in_toml])
+                if name_in_toml in explicit_names_in_toml:
+                    # If the `name_in_toml` is explicitly renamed one, it equals to the `extern_crate_name`.
+                    unused_packages.add(non_dev_path_dependencies[name_in_toml])
                 else:
-                    # Otherwise, it equals to the package name.
-                    for package_id in neighbors_on_no_dev_graph.values():
+                    # Otherwise, it equals to the `package.name`.
+                    for package_id in non_dev_path_dependencies.values():
                         if packages_by_id[package_id]['name'] == name_in_toml:
                             unused_packages.add(package_id)
 
     ret = common_result
-    for package_id in neighbors_on_no_dev_graph.values():
+    for package_id in non_dev_path_dependencies.values():
         if package_id in unused_packages:
             continue
         package = packages_by_id[package_id]

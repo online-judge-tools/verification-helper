@@ -17,7 +17,7 @@ class TestRustListDependencies(unittest.TestCase):
                 """).encode(),
             pathlib.Path('Cargo.toml'): textwrap.dedent("""\
                 [workspace]
-                members = ["crates/*"]
+                members = ["crates/*/", "verification/"]
                 """).encode(),
             pathlib.Path('crates', 'a', 'Cargo.toml'): textwrap.dedent("""\
                 [package]
@@ -53,11 +53,33 @@ class TestRustListDependencies(unittest.TestCase):
             pathlib.Path('crates', 'c', 'src', 'lib.rs'): textwrap.dedent("""\
                 pub struct C;
                 """).encode(),
+            pathlib.Path('verification', 'Cargo.toml'): textwrap.dedent("""\
+                [package]
+                name = "verification"
+                version = "0.0.0"
+                edition = "2018"
+
+                [dependencies]
+                a = { path = "../crates/a" }
+                """).encode(),
+            pathlib.Path('verification', 'src', 'bin', 'aizu-online-judge-itp1-1-a.rs'): textwrap.dedent("""\
+                // verification-helper: PROBLEM http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_A
+
+                use a as _;
+
+                fn main() {
+                    println!("Hello World");
+                }
+                """).encode(),
         }
 
         with tests.utils.load_files_pathlib(files) as tempdir:
             expected = sorted(tempdir / 'crates' / name / 'src' / 'lib.rs' for name in ['a', 'b', 'c'])
             actual = sorted(RustLanguage(config=None).list_dependencies(tempdir / 'crates' / 'a' / 'src' / 'lib.rs', basedir=tempdir))
+            self.assertEqual(actual, expected)
+
+            expected = [tempdir / 'crates' / 'a' / 'src' / 'lib.rs', tempdir / 'verification' / 'src' / 'bin' / 'aizu-online-judge-itp1-1-a.rs']
+            actual = sorted(RustLanguage(config=None).list_dependencies(tempdir / 'verification' / 'src' / 'bin' / 'aizu-online-judge-itp1-1-a.rs', basedir=tempdir))
             self.assertEqual(actual, expected)
 
     def test_mono_crate(self) -> None:
@@ -79,6 +101,15 @@ class TestRustListDependencies(unittest.TestCase):
             pathlib.Path('src', 'a.rs'): b'',
             pathlib.Path('src', 'b.rs'): b'',
             pathlib.Path('src', 'c.rs'): b'',
+            pathlib.Path('examples', 'aizu-online-judge-itp1-1-a.rs'): textwrap.dedent("""\
+                // verification-helper: PROBLEM http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_A
+
+                use my_competitive_library as _;
+
+                fn main() {
+                    println!("Hello World");
+                }
+                """).encode(),
         }
 
         with tests.utils.load_files_pathlib(files) as tempdir:
@@ -87,6 +118,10 @@ class TestRustListDependencies(unittest.TestCase):
             for file_stem in ['a', 'b', 'c', 'lib']:
                 actual = sorted(RustLanguage(config=None).list_dependencies(tempdir / 'src' / f'{file_stem}.rs', basedir=tempdir))
                 self.assertEqual(actual, expected)
+
+            expected = sorted([*expected, tempdir / 'examples' / 'aizu-online-judge-itp1-1-a.rs'])
+            actual = sorted(RustLanguage(config=None).list_dependencies(tempdir / 'examples' / 'aizu-online-judge-itp1-1-a.rs', basedir=tempdir))
+            self.assertEqual(actual, expected)
 
 
 class TestRustVerification(unittest.TestCase):

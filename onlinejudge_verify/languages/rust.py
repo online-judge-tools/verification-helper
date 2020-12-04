@@ -169,7 +169,7 @@ def _related_source_files(basedir: pathlib.Path, metadata: Dict[str, Any]) -> Di
         # - https://github.com/rust-lang/cargo/blob/rust-1.49.0/src/cargo/core/compiler/fingerprint.rs#L1979-L1997
         # - https://github.com/rust-lang/cargo/blob/rust-1.49.0/src/cargo/core/compiler/fingerprint.rs#L1824-L1830
         dep_info_paths = sorted(
-            pathlib.Path(metadata['target_directory'], 'debug', 'deps').glob(f'{target["name"].replace("-", "_")}-*.d'),
+            pathlib.Path(metadata['target_directory'], 'debug', 'examples' if _is_example(target) else 'deps').glob(f'{target["name"].replace("-", "_")}-*.d'),
             key=lambda p: p.stat().st_mtime_ns,
             reverse=True,
         )
@@ -362,8 +362,12 @@ def _is_bin(target: Dict[str, Any]) -> bool:
     return target['kind'] == ['bin']
 
 
+def _is_example(target: Dict[str, Any]) -> bool:
+    return target['kind'] == ['example']
+
+
 def _is_bin_or_example_bin(target: Dict[str, Any]) -> bool:
-    return _is_bin(target) or target['kind'] == ['example'] and target['crate_types'] == ['bin']
+    return _is_bin(target) or _is_example(target) and target['crate_types'] == ['bin']
 
 
 def _need_dev_deps(target: Dict[str, Any]) -> bool:

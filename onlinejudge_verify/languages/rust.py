@@ -1,10 +1,13 @@
 import abc
+import enum
 import functools
 import itertools
 import json
 import pathlib
 import shutil
 import subprocess
+from collections import defaultdict
+from enum import Enum
 from logging import getLogger
 from subprocess import PIPE
 from typing import *
@@ -69,13 +72,23 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
 
     packages_by_id = {p['id']: p for p in metadata['packages']}
 
+    class DependencyNamespace(Enum):
+        NORMAL_DEVELOPMENT = enum.auto()
+        BUILD = enum.auto()
+
+        @classmethod
+        def from_dep_kind(cls, kind: str):
+            if kind == 'build':
+                return cls.BUILD
+            return cls.NORMAL_DEVELOPMENT
+
     # Collect the `(|dev-|build-)dependencies` into a <is a `build-dependency`> → (<"extern crate name"> → <package>) dictionary.
-    dependencies: Dict[bool, Dict[str, Dict[str, Any]]] = {False: {}, True: {}}
+    dependencies: DefaultDict[DependencyNamespace, Dict[str, Dict[str, Any]]] = defaultdict(dict)
     for dep in next(n['deps'] for n in metadata['resolve']['nodes'] if n['id'] == main_package['id']):
-        if any(k['kind'] == ['build'] for k in dep['dep_kinds']):
-            dependencies[True][dep['name']] = packages_by_id[dep['pkg']]
         if _need_dev_deps(main_target) or any(k['kind'] is None for k in dep['dep_kinds']):
-            dependencies[False][dep['name']] = packages_by_id[dep['pkg']]
+            dependencies[DependencyNamespace.NORMAL_DEVELOPMENT][dep['name']] = packages_by_id[dep['pkg']]
+        if any(k['kind'] == ['build'] for k in dep['dep_kinds']):
+            dependencies[DependencyNamespace.BUILD][dep['name']] = packages_by_id[dep['pkg']]
 
     # Decides whether to include `main_package` itself.
     # Note that cargo-udeps does not detect it if it is unused.
@@ -83,9 +96,9 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
     depends_on_main_package_itself = not _is_lib_or_proc_macro(main_target) and any(map(_is_lib_or_proc_macro, main_package['targets']))
 
     # If `cargo_udeps_toolchain` is present, collects packages that are "unused" by `target`.
-    unused_packages: Dict[bool, Set[str]] = {False: set(), True: set()}
+    unused_packages = defaultdict(set)
     if cargo_udeps_toolchain is not None:
-        explicit_names_in_toml = {(d['kind'] == 'build', d['rename']) for d in main_package['dependencies'] if d['rename']}
+        explicit_names_in_toml = {(DependencyNamespace.from_dep_kind(d['kind']), d['rename']) for d in main_package['dependencies'] if d['rename']}
         if not shutil.which('cargo-udeps'):
             raise RuntimeError('`cargo-udeps` not in $PATH')
         unused_deps = json.loads(subprocess.run(
@@ -96,23 +109,25 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
         ).stdout.decode())['unused_deps'].values()
         unused_dep = next((u for u in unused_deps if u['manifest_path'] == main_package['manifest_path']), None)
         if unused_dep:
-            for is_build, name_in_toml in [*[(False, n) for n in [*unused_dep['normal'], *unused_dep['development']]], *[(True, n) for n in unused_dep['build']]]:
-                if (is_build, name_in_toml) in explicit_names_in_toml:
+            names_in_toml = [(DependencyNamespace.NORMAL_DEVELOPMENT, name_in_toml) for name_in_toml in [*unused_dep['normal'], *unused_dep['development']]]
+            names_in_toml.extend((DependencyNamespace.BUILD, name_in_toml) for name_in_toml in unused_dep['build'])
+            for dependency_namespace, name_in_toml in names_in_toml:
+                if (dependency_namespace, name_in_toml) in explicit_names_in_toml:
                     # If the `name_in_toml` is explicitly renamed one, it equals to the `extern_crate_name`.
-                    unused_packages[is_build].add(dependencies[is_build][name_in_toml]['id'])
+                    unused_packages[dependency_namespace].add(dependencies[dependency_namespace][name_in_toml]['id'])
                 else:
                     # Otherwise, it equals to the `package.name`.
-                    unused_packages[is_build].add(next(p['id'] for p in dependencies[is_build].values() if p['name'] == name_in_toml))
+                    unused_packages[dependency_namespace].add(next(p['id'] for p in dependencies[dependency_namespace].values() if p['name'] == name_in_toml))
 
     # Finally, adds source files related to the depended crates except:
     #
     # - those detected by cargo-udeps
     # - those come from Crates.io or Git repositories (e.g. `proconio`, other people's libraries including `ac-library-rs`)
     ret = common_result
-    depended_packages = [(False, main_package)] if depends_on_main_package_itself else []
-    depended_packages.extend((is_build, package) for is_build, dependencies in dependencies.items() for package in dependencies.values())
-    for is_build, depended_package in depended_packages:
-        if depended_package['id'] in unused_packages[is_build] or depended_package['source']:
+    depended_packages = [(DependencyNamespace.NORMAL_DEVELOPMENT, main_package)] if depends_on_main_package_itself else []
+    depended_packages.extend((dependency_namespace, package) for dependency_namespace, dependencies in dependencies.items() for package in dependencies.values())
+    for dependency_namespace, depended_package in depended_packages:
+        if depended_package['id'] in unused_packages[dependency_namespace] or depended_package['source']:
             continue
         depended_target = next(filter(_is_lib_or_proc_macro, depended_package['targets']), None)
         if depended_target:

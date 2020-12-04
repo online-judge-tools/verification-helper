@@ -275,6 +275,70 @@ class TestRustListDependencies(unittest.TestCase):
             actual = sorted(RustLanguage(config=None).list_dependencies(tempdir / 'examples' / 'aizu-online-judge-itp1-1-a.rs', basedir=tempdir))
             self.assertEqual(actual, expected)
 
+    def test_build_dependencies(self) -> None:
+        files = {
+            pathlib.Path('rust-toolchain'): textwrap.dedent("""\
+                1.42.0
+                """).encode(),
+            pathlib.Path('Cargo.toml'): textwrap.dedent("""\
+                [workspace]
+                members = ["crates/*"]
+                """).encode(),
+            pathlib.Path('crates', 'a', 'Cargo.toml'): textwrap.dedent("""\
+                [package]
+                name = "a"
+                version = "0.0.0"
+                edition = "2018"
+
+                [build-dependencies]
+                b = { path = "../b" }
+                """).encode(),
+            pathlib.Path('crates', 'a', 'build.rs'): textwrap.dedent("""\
+                use std::{env, fs, path::PathBuf};
+
+                fn main() {
+                    let out_dir = PathBuf::from(env::var_os("OUT_DIR").unwrap());
+                    fs::write(out_dir.join("message.txt"), b::MESSAGE).unwrap();
+                }
+                """).encode(),
+            pathlib.Path('crates', 'a', 'src', 'lib.rs'): textwrap.dedent("""\
+                pub fn print_message() {
+                    println!("{}", include_str!(concat!(env!("OUT_DIR"), "/message.txt")));
+                }
+                """).encode(),
+            pathlib.Path('crates', 'b', 'Cargo.toml'): textwrap.dedent("""\
+                [package]
+                name = "b"
+                version = "0.0.0"
+                edition = "2018"
+                """).encode(),
+            pathlib.Path('crates', 'b', 'src', 'lib.rs'): textwrap.dedent("""\
+                pub static MESSAGE: &str = "hi";
+                """).encode(),
+        }
+
+        with tests.utils.load_files_pathlib(files) as tempdir:
+
+            def build_src_path(package_name: str) -> pathlib.Path:
+                return tempdir / 'crates' / package_name / 'build.rs'
+
+            def lib_src_path(package_name: str) -> pathlib.Path:
+                return tempdir / 'crates' / package_name / 'src' / 'lib.rs'
+
+            for src_path in [build_src_path('a'), lib_src_path('a')]:
+                actual = RustLanguage(config=None).list_dependencies(src_path, basedir=tempdir)
+                generated_file = next((tempdir / 'target' / 'debug' / 'build').rglob('message.txt'))
+                expected = sorted([build_src_path('a'), lib_src_path('a'), lib_src_path('b'), generated_file])
+                self.assertEqual(actual, expected)
+
+            expected = [generated_file]
+            actual = RustLanguage(config=None).list_dependencies(generated_file, basedir=tempdir)
+            self.assertEqual(actual, expected)
+
+            expected = [lib_src_path('b')]
+            actual = sorted(RustLanguage(config=None).list_dependencies(lib_src_path('b'), basedir=tempdir))
+            self.assertEqual(actual, expected)
+
 
 class TestRustVerification(unittest.TestCase):
     def test_success(self) -> None:

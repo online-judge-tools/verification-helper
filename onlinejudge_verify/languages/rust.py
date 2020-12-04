@@ -87,13 +87,8 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
     for dep in next(n['deps'] for n in metadata['resolve']['nodes'] if n['id'] == main_package['id']):
         if _need_dev_deps(main_target) or any(k['kind'] is None for k in dep['dep_kinds']):
             dependencies[DependencyNamespace.NORMAL_DEVELOPMENT][dep['name']] = packages_by_id[dep['pkg']]
-        if any(k['kind'] == ['build'] for k in dep['dep_kinds']):
+        if any(k['kind'] == 'build' for k in dep['dep_kinds']):
             dependencies[DependencyNamespace.BUILD][dep['name']] = packages_by_id[dep['pkg']]
-
-    # Decides whether to include `main_package` itself.
-    # Note that cargo-udeps does not detect it if it is unused.
-    # https://github.com/est31/cargo-udeps/pull/35
-    depends_on_main_package_itself = not _is_lib_or_proc_macro(main_target) and any(map(_is_lib_or_proc_macro, main_package['targets']))
 
     # If `cargo_udeps_toolchain` is present, collects packages that are "unused" by `target`.
     unused_packages = defaultdict(set)
@@ -124,14 +119,22 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
     #
     # - those detected by cargo-udeps
     # - those come from Crates.io or Git repositories (e.g. `proconio`, other people's libraries including `ac-library-rs`)
+
+    # `main_package` should always be included.
+    # Note that cargo-udeps does not detect it if it is unused.
+    # https://github.com/est31/cargo-udeps/pull/35
+    depended_packages = [main_package]
+    for dependency_namespace, values in dependencies.items():
+        for depended_package in values.values():
+            if depended_package['id'] not in unused_packages[dependency_namespace] and not depended_package['source']:
+                depended_packages.append(depended_package)
+
     ret = common_result
-    depended_packages = [(DependencyNamespace.NORMAL_DEVELOPMENT, main_package)] if depends_on_main_package_itself else []
-    depended_packages.extend((dependency_namespace, package) for dependency_namespace, dependencies in dependencies.items() for package in dependencies.values())
-    for dependency_namespace, depended_package in depended_packages:
-        if depended_package['id'] in unused_packages[dependency_namespace] or depended_package['source']:
-            continue
-        depended_target = next(filter(_is_lib_or_proc_macro, depended_package['targets']), None)
-        if depended_target:
+
+    for depended_package in depended_packages:
+        depended_targets = [t for t in depended_package['targets'] if t != main_target and (_is_build(t) or _is_lib_or_proc_macro(t))]
+        assert len(depended_targets) <= 2
+        for depended_target in depended_targets:
             related_source_files = _related_source_files(basedir, _cargo_metadata_by_manifest_path(pathlib.Path(depended_package["manifest_path"])))
             ret |= _source_files_in_same_targets(pathlib.Path(depended_target['src_path']).resolve(strict=True), related_source_files)
     return sorted(ret)
@@ -168,12 +171,13 @@ def _related_source_files(basedir: pathlib.Path, metadata: Dict[str, Any]) -> Di
         #
         # - https://github.com/rust-lang/cargo/blob/rust-1.49.0/src/cargo/core/compiler/fingerprint.rs#L1979-L1997
         # - https://github.com/rust-lang/cargo/blob/rust-1.49.0/src/cargo/core/compiler/fingerprint.rs#L1824-L1830
-        dep_info_paths = sorted(
-            pathlib.Path(metadata['target_directory'], 'debug', 'examples' if _is_example(target) else 'deps').glob(f'{target["name"].replace("-", "_")}-*.d'),
-            key=lambda p: p.stat().st_mtime_ns,
-            reverse=True,
-        )
-        for dep_info_path in dep_info_paths:
+        if _is_build(target):
+            dep_info_paths = pathlib.Path(metadata['target_directory'], 'debug', 'build').rglob(f'{_crate_name(target)}-*.d')
+        elif _is_example(target):
+            dep_info_paths = pathlib.Path(metadata['target_directory'], 'debug', 'examples').glob(f'{_crate_name(target)}-*.d')
+        else:
+            dep_info_paths = pathlib.Path(metadata['target_directory'], 'debug', 'deps').glob(f'{_crate_name(target)}-*.d')
+        for dep_info_path in sorted(dep_info_paths, key=lambda p: p.stat().st_mtime_ns, reverse=True):
             with open(dep_info_path) as file:
                 dep_info = file.read()
             for line in dep_info.splitlines():
@@ -353,6 +357,14 @@ def _ensure_target(metadata: Dict[str, Any], src_path: pathlib.Path) -> Dict[str
         raise RuntimeError(f'{src_path} is not a main source file of any target')
     _, target = package_and_target
     return target
+
+
+def _crate_name(target: Dict[str, Any]) -> bool:
+    return target['name'].replace('-', '_')
+
+
+def _is_build(target: Dict[str, Any]) -> bool:
+    return target['kind'] == ['custom-build']
 
 
 def _is_lib_or_proc_macro(target: Dict[str, Any]) -> bool:

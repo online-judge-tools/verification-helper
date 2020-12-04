@@ -114,10 +114,11 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
             for dependency_namespace, name_in_toml in names_in_toml:
                 if (dependency_namespace, name_in_toml) in explicit_names_in_toml:
                     # If the `name_in_toml` is explicitly renamed one, it equals to the `extern_crate_name`.
-                    unused_packages[dependency_namespace].add(dependencies[dependency_namespace][name_in_toml]['id'])
+                    unused_package = dependencies[dependency_namespace][name_in_toml]['id']
                 else:
                     # Otherwise, it equals to the `package.name`.
-                    unused_packages[dependency_namespace].add(next(p['id'] for p in dependencies[dependency_namespace].values() if p['name'] == name_in_toml))
+                    unused_package = next(p['id'] for p in dependencies[dependency_namespace].values() if p['name'] == name_in_toml)
+                unused_packages[dependency_namespace].add(unused_package)
 
     # Finally, adds source files related to the depended crates except:
     #
@@ -170,21 +171,20 @@ def _related_source_files(metadata: Dict[str, Any]) -> Dict[pathlib.Path, Frozen
         )
         for d_file_path in d_file_paths:
             with open(d_file_path) as d_file:
-                d = d_file.read()
-            found = False
-            for line in d.splitlines():
+                d_file_content = d_file.read()
+            for line in d_file_content.splitlines():
                 words = line.split(':')
                 if len(words) == 2 and pathlib.Path(words[0]) == d_file_path:
                     # Ignores paths like `/dev/null` or `/usr/share/foo/bar` (if any).
                     paths = [pathlib.Path(metadata['workspace_root'], s) for s in words[1].split() if not pathlib.Path(s).is_absolute()]
                     if paths[:1] == [pathlib.Path(target['src_path'])]:
                         ret[paths[0]] = frozenset(paths[1:])
-                        found = True
                         break
-            if found:
-                break
+            else:
+                continue
+            break
         else:
-            logger.warning('no `.d` file for `%s`', target["name"])
+            logger.error('no `.d` file for `%s`', target["name"])
 
     _related_source_files_by_workspace[pathlib.Path(metadata['workspace_root'])] = ret
     return ret

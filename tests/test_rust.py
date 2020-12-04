@@ -222,16 +222,15 @@ class TestRustListDependencies(unittest.TestCase):
         }
 
         with tests.utils.load_files_pathlib(files) as tempdir:
-            expected = [*[tempdir / 'crates' / 'manifests' / name / '..' / '..' / 'sourcefiles' / f'{name}.rs' for name in ['a', 'b', 'c']], tempdir / 'src' / 'lib.rs']
+            expected = [*[tempdir / 'crates' / 'sourcefiles' / f'{name}.rs' for name in ['a', 'b', 'c']], tempdir / 'src' / 'lib.rs']
             actual = sorted(RustLanguage(config=None).list_dependencies(tempdir / 'src' / 'lib.rs', basedir=tempdir))
             self.assertEqual(actual, expected)
 
-            # FIXME: should pass. something is wrong
-            # expected = [tempdir / 'crates' / 'manifests' / name / '..' / '..' / 'sourcefiles' / f'{name}.rs' for name in ['a', 'b', 'c']]
-            # actual = sorted(RustLanguage(config=None).list_dependencies(tempdir / 'crates' / 'sourcefiles' / 'a.rs', basedir=tempdir))
-            # self.assertEqual(actual, expected)
+            expected = [tempdir / 'crates' / 'sourcefiles' / f'{name}.rs' for name in ['a', 'b', 'c']]
+            actual = sorted(RustLanguage(config=None).list_dependencies(tempdir / 'crates' / 'sourcefiles' / 'a.rs', basedir=tempdir))
+            self.assertEqual(actual, expected)
 
-            expected = [tempdir / 'crates' / 'manifests' / 'a' / '..' / '..' / 'sourcefiles' / 'a.rs', tempdir / 'verification' / 'src' / 'bin' / 'aizu-online-judge-itp1-1-a.rs']
+            expected = [tempdir / 'crates' / 'sourcefiles' / 'a.rs', tempdir / 'verification' / 'src' / 'bin' / 'aizu-online-judge-itp1-1-a.rs']
             actual = sorted(RustLanguage(config=None).list_dependencies(tempdir / 'verification' / 'src' / 'bin' / 'aizu-online-judge-itp1-1-a.rs', basedir=tempdir))
             self.assertEqual(actual, expected)
 

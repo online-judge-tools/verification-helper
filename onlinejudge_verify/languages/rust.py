@@ -133,7 +133,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
         depended_target = next(filter(_is_lib_or_proc_macro, depended_package['targets']), None)
         if depended_target:
             related_source_files = _related_source_files(basedir, _cargo_metadata_by_manifest_path(pathlib.Path(depended_package["manifest_path"])))
-            ret |= _source_files_in_same_targets(pathlib.Path(depended_target['src_path']), related_source_files)
+            ret |= _source_files_in_same_targets(pathlib.Path(depended_target['src_path']).resolve(strict=True), related_source_files)
     return sorted(ret)
 
 
@@ -186,7 +186,7 @@ def _related_source_files(basedir: pathlib.Path, metadata: Dict[str, Any]) -> Di
                             s = s.rstrip('\\')
                             s += ' '
                             s += next(it)
-                        path = pathlib.Path(metadata['workspace_root'], s)
+                        path = pathlib.Path(metadata['workspace_root'], s).resolve(strict=True)
                         # Ignores paths that don't start with the `basedir`. (e.g. `/dev/null`, `/usr/local/share/foo/bar`)
                         try:
                             # `PurePath.is_relative_to` is since Python 3.9.
@@ -194,7 +194,7 @@ def _related_source_files(basedir: pathlib.Path, metadata: Dict[str, Any]) -> Di
                             paths.append(path)
                         except ValueError:
                             pass
-                    if paths[:1] == [pathlib.Path(target['src_path'])]:
+                    if paths[:1] == [pathlib.Path(target['src_path']).resolve(strict=True)]:
                         ret[paths[0]] = frozenset(paths[1:])
                         break
             else:
@@ -289,7 +289,7 @@ class RustLanguage(Language):
         if not package_and_target:
             return False
         _, target = package_and_target
-        return _is_bin_or_example_bin(target) and 'PROBLEM' in special_comments.list_special_comments(pathlib.Path(target['src_path']))
+        return _is_bin_or_example_bin(target) and 'PROBLEM' in special_comments.list_special_comments(path)
 
     def list_environments(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Sequence[RustLanguageEnvironment]:
         return [RustLanguageEnvironment()]
@@ -298,10 +298,10 @@ class RustLanguage(Language):
 def _cargo_metadata(cwd: pathlib.Path) -> Dict[str, Any]:
     """Runs `cargo metadata` for a Cargo.toml file in `cwd` or its parent directories.
 
-    :raises ValueError: if `cwd` is not absolute
+    :raises ValueError: if `cwd` is not absolute or contains `..`
     """
-    if not cwd.is_absolute():
-        raise ValueError(f'the `cwd` parameter must be absolute: {cwd}')
+    if not cwd.is_absolute() or '..' in cwd.parts:
+        raise ValueError(f'the `cwd` parameter must be absolute and must not contain `..`: {cwd}')
 
     def find_root_manifest_for_wd() -> pathlib.Path:
         # https://docs.rs/cargo/0.48.0/cargo/util/important_paths/fn.find_root_manifest_for_wd.html
@@ -341,7 +341,8 @@ def _find_target(
 ) -> Optional[Tuple[Dict[str, Any], Dict[str, Any]]]:
     for package in metadata['packages']:
         for target in package['targets']:
-            if pathlib.Path(target['src_path']) == src_path:
+            # A `src_path` may contain `..`
+            if pathlib.Path(target['src_path']).resolve(strict=True) == src_path:
                 return package, target
     return None
 

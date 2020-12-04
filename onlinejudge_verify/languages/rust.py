@@ -187,9 +187,13 @@ def _related_source_files(basedir: pathlib.Path, metadata: Dict[str, Any]) -> Di
                             s += ' '
                             s += next(it)
                         path = pathlib.Path(metadata['workspace_root'], s)
-                        # Ignores paths like `/dev/null` or `/usr/share/foo/bar` (if any).
-                        if any(path.parts[:i + 1] == basedir.parts for i, _ in enumerate(path.parts)):
+                        # Ignores paths that don't start with the `basedir`. (e.g. `/dev/null`, `/usr/local/share/foo/bar`)
+                        try:
+                            # `PurePath.is_relative_to` is since Python 3.9.
+                            _ = path.relative_to(basedir)
                             paths.append(path)
+                        except ValueError:
+                            pass
                     if paths[:1] == [pathlib.Path(target['src_path'])]:
                         ret[paths[0]] = frozenset(paths[1:])
                         break

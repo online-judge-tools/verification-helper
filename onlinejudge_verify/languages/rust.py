@@ -63,7 +63,7 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
     metadata = _cargo_metadata(cwd=path.parent)
 
     # First, collects source files in the same crate.
-    common_result = set(_source_files_in_same_targets(path, _related_source_files(metadata)))
+    common_result = set(_source_files_in_same_targets(path, _related_source_files(basedir, metadata)))
 
     main_package_and_target = _find_target(metadata, path)
     if not main_package_and_target:
@@ -132,14 +132,15 @@ def _list_dependencies_by_crate(path: pathlib.Path, *, basedir: pathlib.Path, ca
             continue
         depended_target = next(filter(_is_lib_or_proc_macro, depended_package['targets']), None)
         if depended_target:
-            related_source_files = _related_source_files(_cargo_metadata_by_manifest_path(pathlib.Path(depended_package["manifest_path"])))
+            related_source_files = _related_source_files(basedir, _cargo_metadata_by_manifest_path(pathlib.Path(depended_package["manifest_path"])))
             ret |= _source_files_in_same_targets(pathlib.Path(depended_target['src_path']), related_source_files)
     return sorted(ret)
 
 
-def _related_source_files(metadata: Dict[str, Any]) -> Dict[pathlib.Path, FrozenSet[pathlib.Path]]:
+def _related_source_files(basedir: pathlib.Path, metadata: Dict[str, Any]) -> Dict[pathlib.Path, FrozenSet[pathlib.Path]]:
     """Collects all of the `.rs` files recognized by a workspace.
 
+    :param basedir: A parameter from `Language.list_dependencies`.
     :param metadata: Output of `cargo metadata`
     :returns: A (main source file) → (other related files) map
     """
@@ -159,24 +160,36 @@ def _related_source_files(metadata: Dict[str, Any]) -> Dict[pathlib.Path, Frozen
 
     targets_in_workspace = itertools.chain.from_iterable(p['targets'] for p in metadata['packages'] if p['id'] in metadata['workspace_members'])
     for target in targets_in_workspace:
-        # Finds a **latest** `.d` file that contains a line in the following format, and parses the line.
+        # Finds the **latest** "dep-info" file that contains a line in the following format, and parses the line.
         #
         # ```
-        # <absolute path to the `.d` file itself>: <relative path to the root source file> <relative/aboslute paths to the other related files>...
+        # <relative/absolute path to the `.d` file itself>: <relative/absolute path to the root source file> <relative/aboslute paths to the other related files>...
         # ```
-        d_file_paths = sorted(
+        #
+        # - https://github.com/rust-lang/cargo/blob/rust-1.49.0/src/cargo/core/compiler/fingerprint.rs#L1979-L1997
+        # - https://github.com/rust-lang/cargo/blob/rust-1.49.0/src/cargo/core/compiler/fingerprint.rs#L1824-L1830
+        dep_info_paths = sorted(
             pathlib.Path(metadata['target_directory'], 'debug', 'deps').glob(f'{target["name"].replace("-", "_")}-*.d'),
             key=lambda p: p.stat().st_mtime_ns,
             reverse=True,
         )
-        for d_file_path in d_file_paths:
-            with open(d_file_path) as d_file:
-                d_file_content = d_file.read()
-            for line in d_file_content.splitlines():
-                words = line.split(':')
-                if len(words) == 2 and pathlib.Path(words[0]) == d_file_path:
-                    # Ignores paths like `/dev/null` or `/usr/share/foo/bar` (if any).
-                    paths = [pathlib.Path(metadata['workspace_root'], s) for s in words[1].split() if not pathlib.Path(s).is_absolute()]
+        for dep_info_path in dep_info_paths:
+            with open(dep_info_path) as file:
+                dep_info = file.read()
+            for line in dep_info.splitlines():
+                ss = line.split(': ')
+                if len(ss) == 2 and pathlib.Path(metadata['workspace_root'], ss[0]) == dep_info_path:
+                    paths = []
+                    it = iter(ss[1].split())
+                    for s in it:
+                        while s.endswith('\\'):
+                            s = s.rstrip('\\')
+                            s += ' '
+                            s += next(it)
+                        path = pathlib.Path(metadata['workspace_root'], s)
+                        # Ignores paths like `/dev/null` or `/usr/share/foo/bar` (if any).
+                        if any(path.parts[:i + 1] == basedir.parts for i, _ in enumerate(path.parts)):
+                            paths.append(path)
                     if paths[:1] == [pathlib.Path(target['src_path'])]:
                         ret[paths[0]] = frozenset(paths[1:])
                         break

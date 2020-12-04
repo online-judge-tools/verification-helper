@@ -76,15 +76,9 @@ class TestRustListDependencies(unittest.TestCase):
                 pub mod b;
                 pub mod c;
                 """).encode(),
-            pathlib.Path('src', 'a.rs'): textwrap.dedent("""\
-                pub struct A;
-                """).encode(),
-            pathlib.Path('src', 'b.rs'): textwrap.dedent("""\
-                pub struct B;
-                """).encode(),
-            pathlib.Path('src', 'c.rs'): textwrap.dedent("""\
-                pub struct C;
-                """).encode(),
+            pathlib.Path('src', 'a.rs'): b'',
+            pathlib.Path('src', 'b.rs'): b'',
+            pathlib.Path('src', 'c.rs'): b'',
         }
 
         with tests.utils.load_files_pathlib(files) as tempdir:

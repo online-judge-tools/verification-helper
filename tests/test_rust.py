@@ -10,7 +10,7 @@ from onlinejudge_verify.languages.rust import RustLanguage
 
 
 class TestRustListDependencies(unittest.TestCase):
-    def test_success(self) -> None:
+    def test_separate_crates(self) -> None:
         files = {
             pathlib.Path('rust-toolchain'): textwrap.dedent("""\
                 1.42.0
@@ -59,6 +59,40 @@ class TestRustListDependencies(unittest.TestCase):
             expected = sorted(tempdir / 'crates' / name / 'src' / 'lib.rs' for name in ['a', 'b', 'c'])
             actual = sorted(RustLanguage(config=None).list_dependencies(tempdir / 'crates' / 'a' / 'src' / 'lib.rs', basedir=tempdir))
             self.assertEqual(actual, expected)
+
+    def test_mono_crate(self) -> None:
+        files = {
+            pathlib.Path('rust-toolchain'): textwrap.dedent("""\
+                1.42.0
+                """).encode(),
+            pathlib.Path('Cargo.toml'): textwrap.dedent("""\
+                [package]
+                name = "my_competitive_library"
+                version = "0.0.0"
+                edition = "2018"
+                """).encode(),
+            pathlib.Path('src', 'lib.rs'): textwrap.dedent("""\
+                pub mod a;
+                pub mod b;
+                pub mod c;
+                """).encode(),
+            pathlib.Path('src', 'a.rs'): textwrap.dedent("""\
+                pub struct A;
+                """).encode(),
+            pathlib.Path('src', 'b.rs'): textwrap.dedent("""\
+                pub struct B;
+                """).encode(),
+            pathlib.Path('src', 'c.rs'): textwrap.dedent("""\
+                pub struct C;
+                """).encode(),
+        }
+
+        with tests.utils.load_files_pathlib(files) as tempdir:
+            expected = [tempdir / 'src' / f'{stem}.rs' for stem in ['a', 'b', 'c', 'lib']]
+
+            for file_stem in ['a', 'b', 'c', 'lib']:
+                actual = sorted(RustLanguage(config=None).list_dependencies(tempdir / 'src' / f'{file_stem}.rs', basedir=tempdir))
+                self.assertEqual(actual, expected)
 
 
 class TestRustVerification(unittest.TestCase):

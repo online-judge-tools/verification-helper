@@ -82,7 +82,160 @@ class TestRustListDependencies(unittest.TestCase):
             actual = sorted(RustLanguage(config=None).list_dependencies(tempdir / 'verification' / 'src' / 'bin' / 'aizu-online-judge-itp1-1-a.rs', basedir=tempdir))
             self.assertEqual(actual, expected)
 
-    def test_mono_crate(self) -> None:
+    def test_separate_workspaces(self) -> None:
+        files = {
+            pathlib.Path('rust-toolchain'): textwrap.dedent("""\
+                1.42.0
+                """).encode(),
+            pathlib.Path('Cargo.toml'): textwrap.dedent("""\
+                [workspace]
+                members = ["crates/*"]
+                """).encode(),
+            pathlib.Path('crates', 'a', 'Cargo.toml'): textwrap.dedent("""\
+                [package]
+                name = "a"
+                version = "0.0.0"
+                edition = "2018"
+                """).encode(),
+            pathlib.Path('crates', 'a', 'src', 'lib.rs'): b'',
+            pathlib.Path('verification', 'aizu-online-judge', 'Cargo.toml'): textwrap.dedent("""\
+                [workspace]
+
+                [package]
+                name = "aizu-online-judge"
+                version = "0.0.0"
+                edition = "2018"
+
+                [dependencies]
+                a = { path = "../../crates/a" }
+                """).encode(),
+            pathlib.Path('verification', 'aizu-online-judge', 'src', 'bin', 'itp1-1-a.rs'): textwrap.dedent("""\
+                // verification-helper: PROBLEM http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_A
+
+                use a as _;
+
+                fn main() {
+                    println!("Hello World");
+                }
+                """).encode(),
+        }
+
+        with tests.utils.load_files_pathlib(files) as tempdir:
+            library_path = tempdir / 'crates' / 'a' / 'src' / 'lib.rs'
+            verification_path = tempdir / 'verification' / 'aizu-online-judge' / 'src' / 'bin' / 'itp1-1-a.rs'
+
+            expected = [library_path]
+            actual = sorted(RustLanguage(config=None).list_dependencies(library_path, basedir=tempdir))
+            self.assertEqual(actual, expected)
+
+            expected = [library_path, verification_path]
+            actual = sorted(RustLanguage(config=None).list_dependencies(verification_path, basedir=tempdir))
+            self.assertEqual(actual, expected)
+
+    def test_gathered_source_files(self) -> None:
+        files = {
+            pathlib.Path('rust-toolchain'): textwrap.dedent("""\
+                1.42.0
+                """).encode(),
+            pathlib.Path('Cargo.toml'): textwrap.dedent("""\
+                [workspace]
+                members = ["verification"]
+
+                [package]
+                name = "my_competitive_library"
+                version = "0.0.0"
+                edition = "2018"
+
+                [dependencies]
+                my-competitive-library-a = { path = "./crates/manifests/a" }
+                my-competitive-library-b = { path = "./crates/manifests/b" }
+                my-competitive-library-c = { path = "./crates/manifests/c" }
+                """).encode(),
+            pathlib.Path('src', 'lib.rs'): textwrap.dedent("""\
+                macro_rules! re_export(($($name:ident),* $(,)?) => ($(pub mod $name { pub use $name::*; })*));
+                re_export!(a, b, c);
+                """).encode(),
+            pathlib.Path('crates', 'manifests', 'a', 'Cargo.toml'): textwrap.dedent("""\
+                [package]
+                name = "my-competitive-library-a"
+                version = "0.0.0"
+                edition = "2018"
+
+                [lib]
+                name = "a"
+                path = "../../sourcefiles/a.rs"
+
+                [dependencies]
+                my-competitive-library-b = { path = "../b" }
+                my-competitive-library-c = { path = "../c" }
+                """).encode(),
+            pathlib.Path('crates', 'manifests', 'b', 'Cargo.toml'): textwrap.dedent("""\
+                [package]
+                name = "my-competitive-library-b"
+                version = "0.0.0"
+                edition = "2018"
+
+                [lib]
+                name = "b"
+                path = "../../sourcefiles/b.rs"
+                """).encode(),
+            pathlib.Path('crates', 'manifests', 'c', 'Cargo.toml'): textwrap.dedent("""\
+                [package]
+                name = "my-competitive-library-c"
+                version = "0.0.0"
+                edition = "2018"
+
+                [lib]
+                name = "c"
+                path = "../../sourcefiles/c.rs"
+                """).encode(),
+            pathlib.Path('crates', 'sourcefiles', 'a.rs'): textwrap.dedent("""\
+                use b::B;
+                use c::C;
+
+                pub struct A(B, C);
+                """).encode(),
+            pathlib.Path('crates', 'sourcefiles', 'b.rs'): textwrap.dedent("""\
+                pub struct B;
+                """).encode(),
+            pathlib.Path('crates', 'sourcefiles', 'c.rs'): textwrap.dedent("""\
+                pub struct C;
+                """).encode(),
+            pathlib.Path('verification', 'Cargo.toml'): textwrap.dedent("""\
+                [package]
+                name = "verification"
+                version = "0.0.0"
+                edition = "2018"
+
+                [dependencies]
+                my-competitive-library-a = { path = "../crates/manifests/a" }
+                """).encode(),
+            pathlib.Path('verification', 'src', 'bin', 'aizu-online-judge-itp1-1-a.rs'): textwrap.dedent("""\
+                // verification-helper: PROBLEM http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_A
+
+                use a as _;
+
+                fn main() {
+                    println!("Hello World");
+                }
+                """).encode(),
+        }
+
+        with tests.utils.load_files_pathlib(files) as tempdir:
+            expected = [*[tempdir / 'crates' / 'manifests' / name / '..' / '..' / 'sourcefiles' / f'{name}.rs' for name in ['a', 'b', 'c']], tempdir / 'src' / 'lib.rs']
+            actual = sorted(RustLanguage(config=None).list_dependencies(tempdir / 'src' / 'lib.rs', basedir=tempdir))
+            self.assertEqual(actual, expected)
+
+            # FIXME: should pass. something is wrong
+            # expected = [tempdir / 'crates' / 'manifests' / name / '..' / '..' / 'sourcefiles' / f'{name}.rs' for name in ['a', 'b', 'c']]
+            # actual = sorted(RustLanguage(config=None).list_dependencies(tempdir / 'crates' / 'sourcefiles' / 'a.rs', basedir=tempdir))
+            # self.assertEqual(actual, expected)
+
+            expected = [tempdir / 'crates' / 'manifests' / 'a' / '..' / '..' / 'sourcefiles' / 'a.rs', tempdir / 'verification' / 'src' / 'bin' / 'aizu-online-judge-itp1-1-a.rs']
+            actual = sorted(RustLanguage(config=None).list_dependencies(tempdir / 'verification' / 'src' / 'bin' / 'aizu-online-judge-itp1-1-a.rs', basedir=tempdir))
+            self.assertEqual(actual, expected)
+
+    def test_mono_package(self) -> None:
         files = {
             pathlib.Path('rust-toolchain'): textwrap.dedent("""\
                 1.42.0

@@ -1,23 +1,19 @@
 //! Re-exports the crates for rustdoc.
+//!
+//! This crate itself is not intended to be used directly.
+
+// With `custom-build` and `syn` crate, we can expand crate-level rustdocs.
+
+macro_rules! re_export(($($name:ident),* $(,)?) => ($(pub mod $name { pub use ::$name::*; })*));
+
 pub mod helloworld {
     //! Crates of "hello" and "world".
-    pub mod hello {
-        //! A re-export of `verification-helper-rust-example-hello`.
-        pub use hello::*;
-    }
-    pub mod world {
-        //! A re-export of `verification-helper-rust-example-world`.
-        pub use world::*;
-    }
+
+    re_export!(hello, world);
 }
+
 pub mod io {
     //! Crates about IO.
-    pub mod input {
-        //! A re-export of `verification-helper-rust-example-input`.
-        pub use input::*;
-    }
-    pub mod scanner {
-        //! A re-export of `verification-helper-rust-example-scanner`.
-        pub use scanner::*;
-    }
+
+    re_export!(input, scanner);
 }

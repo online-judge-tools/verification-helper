@@ -7,6 +7,9 @@ version = "0.0.0"
 edition = "2018"
 publish = false
 
+[lib]
+name = "crate" # This crate itself is not intended to be used directly.
+
 [dependencies]
 verification-helper-rust-example-hello = { path = "crates/helloworld/hello" }
 verification-helper-rust-example-input = { path = "crates/io/input" }

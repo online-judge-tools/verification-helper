@@ -17,6 +17,7 @@ from onlinejudge_verify.languages import special_comments
 from onlinejudge_verify.languages.models import Language, LanguageEnvironment
 
 logger = getLogger(__name__)
+_metadata_by_manifest_path: Dict[pathlib.Path, Dict[str, Any]] = {}
 _cargo_checked_workspaces: Set[pathlib.Path] = set()
 _related_source_files_by_workspace: Dict[pathlib.Path, Dict[pathlib.Path, FrozenSet[pathlib.Path]]] = {}
 
@@ -300,29 +301,45 @@ class RustLanguage(Language):
 
 
 def _cargo_metadata(cwd: pathlib.Path) -> Dict[str, Any]:
-    """Runs `cargo metadata` for a Cargo.toml file in `cwd` or its parent directories.
+    """Returns "metadata" for a Cargo.toml file in `cwd` or its parent directories.
 
     :raises ValueError: if `cwd` is not absolute or contains `..`
+    :returns: Output of `cargo metadata` command
     """
     if not cwd.is_absolute() or '..' in cwd.parts:
         raise ValueError(f'the `cwd` parameter must be absolute and must not contain `..`: {cwd}')
 
-    def find_root_manifest_for_wd() -> pathlib.Path:
-        # https://docs.rs/cargo/0.48.0/cargo/util/important_paths/fn.find_root_manifest_for_wd.html
-        for directory in [cwd, *cwd.parents]:
-            manifest_path = directory / 'Cargo.toml'
-            if manifest_path.exists():
-                return manifest_path
-        raise RuntimeError(f'Could not find `Cargo.toml` in `{cwd}` or any parent directory')
-
-    return _cargo_metadata_by_manifest_path(find_root_manifest_for_wd())
+    # https://docs.rs/cargo/0.49.0/src/cargo/util/important_paths.rs.html#6-20
+    for directory in [cwd, *cwd.parents]:
+        manifest_path = directory / 'Cargo.toml'
+        if manifest_path.exists():
+            return _cargo_metadata_by_manifest_path(manifest_path)
+    raise RuntimeError(f'could not find `Cargo.toml` in `{cwd}` or any parent directory')
 
 
-@functools.lru_cache(maxsize=None)
 def _cargo_metadata_by_manifest_path(manifest_path: pathlib.Path) -> Dict[str, Any]:
+    """Returns "metadata" for a certain `Cargo.toml`.
+
+    :returns: Output of `cargo metadata` command
+    """
+    if manifest_path in _metadata_by_manifest_path:
+        return _metadata_by_manifest_path[manifest_path]
+
+    metadata = _run_cargo_metadata(manifest_path)
+    root_manifest_path = pathlib.Path(metadata['workspace_root'], 'Cargo.toml')
+    if root_manifest_path != manifest_path:
+        metadata = _run_cargo_metadata(root_manifest_path)
+
+    for key in [root_manifest_path, *(pathlib.Path(p['manifest_path']) for p in metadata['packages'] if p['id'] in metadata['workspace_members'])]:
+        _metadata_by_manifest_path[key] = metadata
+
+    return metadata
+
+
+def _run_cargo_metadata(manifest_path: pathlib.Path) -> Dict[str, Any]:
     """Runs `cargo metadata` for a certain `Cargo.toml`.
 
-    This function is considered to be executed for every Cargo.toml in the repository.
+    This function is considered to be executed just once for every Cargo.toml in the repository.
     For detailed information about `cargo metadata`, see:
 
     - <https://doc.rust-lang.org/cargo/commands/cargo-metadata.html#output-format>

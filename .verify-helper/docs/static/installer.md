@@ -9,6 +9,7 @@ Steps:
 1.  <form>
         <label>Input the URL of the library repository in the textbox on the right: </label>
         <input type="text" id="input" placeholder="https://github.com/beet-aizu/library" value="https://github.com/beet-aizu/library" size="48">
+        (branch: <input type="text" id="input-branch" placeholder="master" value="master" size="12">)
     </form>
 
 1.  Open <a id="output" target="_blank"></a> and click the green `Commit new file` button.

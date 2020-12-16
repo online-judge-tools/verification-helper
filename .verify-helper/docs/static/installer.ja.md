@@ -9,6 +9,7 @@
 1.  <form>
         <label>競プロライブラリの GitHub のレポジトリの URL を右の textbox に入力: </label>
         <input type="text" id="input" placeholder="https://github.com/beet-aizu/library" value="https://github.com/beet-aizu/library" size="48">
+        (ブランチ: <input type="text" id="input-branch" placeholder="master" value="master" size="12">)
     </form>
 
 1.  ページ <a id="output" target="_blank"></a> を開き、下の方にある緑の `Commit new file` ボタンを押す

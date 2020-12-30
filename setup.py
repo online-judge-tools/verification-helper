@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='online-judge-verify-helper',
-    version='5.3.0',
+    version='5.4.0',
     author='Kimiyuki Onaka',
     author_email='kimiyuki95@gmail.com',
     url='https://github.com/kmyk/online-judge-verify-helper',

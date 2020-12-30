@@ -16,6 +16,7 @@ Summary:
 | Ruby | `.rb` | `.test.rb` | `# verification-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [hello_world.test.rb](https://github.com/online-judge-tools/verification-helper/blob/master/examples/ruby/hello_world.test.rb) |
 | Go | `.go` | `.test.go` | `// verification-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [helloworld.test.go](https://github.com/online-judge-tools/verification-helper/blob/master/examples/go/helloworld.test.go) |
 | Java | `.java` | `_test.java` | `// verification-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [HelloWorld_test.java](https://github.com/online-judge-tools/verification-helper/blob/master/examples/java/HelloWorld_test.java) |
+| Rust | `.rs` | special | `// verification-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [itp1-1-a.rs](https://github.com/online-judge-tools/verification-helper/blob/master/examples/rust/verification/src/bin/aizu-online-judge-itp1-1-a.rs) |
 
 ### Settings for C++
 
@@ -58,6 +59,35 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
 ### Settings for Python 3
 
 There is no config now.
+
+### Settings for Rust
+
+`oj-verify` uses [root source files](https://docs.rs/cargo_metadata/0.12.0/cargo_metadata/struct.Target.html#structfield.src_path) of [binary targets](https://doc.rust-lang.org/cargo/reference/cargo-targets.html#binaries) or [example targets](https://doc.rust-lang.org/cargo/reference/cargo-targets.html#examples) (excluding targets which `crate-type` is specified) which have the [`PROBLEM`](#available-macro-definitions) attribute
+
+You can customize the method to list depending files with `languages.rust.list_dependencies_backend` of `.verify-helper/config.toml`.
+
+- `kind = "none"`
+
+    This is the default behavoir.
+    For each target, all `.rs` files in the target is treated as a block. The dependency relationship of files in each target are not analyzed.
+
+    ```toml
+    [languages.rust.list_dependencies_backend]
+    kind = "none"
+    ```
+
+    - For a file which is a root source file of a target, the file depends all `.rs` files in its target and all depending local crates.
+    - For a file which is not a root source file of any targets, the file depends all `.rs` files in its target.
+
+- `kind = "cargo-udeps"`
+
+    This method is similar to `kind = "none"`, but uses [cargo-udeps](https://github.com/est31/cargo-udeps) in `$PATH` to narrow down dependencies. It computes the dependency relationship of files using the dependencies relationship between crates.
+
+    ```toml
+    [languages.rust.list_dependencies_backend]
+    kind = "cargo-udeps"
+    toolchain = "nightly-yyyy-mm-dd" # defaults to "nightly"
+    ```
 
 ### Settings for other languages
 

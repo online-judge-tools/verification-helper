@@ -69,22 +69,19 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
 - `kind = "none"`
 
     デフォルトの動作です。
+    それぞれのターゲットに関連する `.rs` ファイルはすべてひとまとまりとして扱われ、それぞれのターゲット内のファイルの間の依存関係などについては調べません。
 
     ```toml
     [languages.rust.list_dependencies_backend]
     kind = "none"
     ```
 
-    - あるターゲットの root source file であるならば、そのターゲット及びローカルにある依存クレートの、
-    - どのターゲットの root source file でもなければ、自身を含むターゲットの、
-
-    `.rs`ファイルすべてを列挙して返します。
-
-    ターゲットに関連する `.rs` ファイルはすべてひとまとまりとして扱われ、「モジュール間の依存関係」等については調べません。
+    - あるターゲットの root source file であるようなソースファイルについては、そのターゲット及びローカルにある依存クレートの `.rs` ファイルすべてを依存ファイルとして扱います。
+    - どのターゲットの root source file でもないようなソースファイルについては、自身を含むターゲットの `.rs` ファイルすべてを依存ファイルとして扱います。
 
 - `kind = "cargo-udeps"`
 
-    基本的に `kind = "none"` と同じですが、 `$PATH` 内にある [cargo-udeps](https://github.com/est31/cargo-udeps) を使い「パッケージからクレートへの依存」からさらに「クレート間の依存」を絞り込みます。
+    基本的に `kind = "none"` と同じですが、 `$PATH` 内にある [cargo-udeps](https://github.com/est31/cargo-udeps) を利用します。クレート間の依存関係を解析し、より適切なファイル間の依存関係を求めます。
 
     ```toml
     [languages.rust.list_dependencies_backend]

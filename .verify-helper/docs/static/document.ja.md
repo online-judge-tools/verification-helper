@@ -16,6 +16,7 @@
 | Ruby | `.rb` | `.test.rb` | `# verification-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [hello_world.test.rb](https://github.com/online-judge-tools/verification-helper/blob/master/examples/ruby/hello_world.test.rb) |
 | Go | `.go` | `.test.go` | `// verification-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [helloworld.test.go](https://github.com/online-judge-tools/verification-helper/blob/master/examples/go/helloworld.test.go) |
 | Java | `.java` | `_test.java` | `// verification-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [HelloWorld_test.java](https://github.com/online-judge-tools/verification-helper/blob/master/examples/java/HelloWorld_test.java) |
+| Rust | `.rs` | 特殊 | `// verification-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [itp1-1-a.rs](https://github.com/online-judge-tools/verification-helper/blob/master/examples/rust/verification/src/bin/aizu-online-judge-itp1-1-a.rs) |
 
 ### C++ の設定
 
@@ -58,6 +59,38 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
 ### Python 3 の設定
 
 設定項目は特にありません。
+
+### Rust の設定
+
+[binary ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html#binaries)と [example ターゲット](https://doc.rust-lang.org/cargo/reference/cargo-targets.html#examples) (ただし`crate-type`が指定されているのは除く) の [root source file](https://docs.rs/cargo_metadata/0.12.0/cargo_metadata/struct.Target.html#structfield.src_path) のうち、[`PROBLEM`](#利用可能な属性)が設定されてあるソースファイルがテストファイルだと認識されます。
+
+依存ファイルを列挙する動作は `.verify-helper/config.toml` の `languages.rust.list_dependencies_backend` で変更できます。
+
+- `kind = "none"`
+
+    デフォルトの動作です。
+
+    ```toml
+    [languages.rust.list_dependencies_backend]
+    kind = "none"
+    ```
+
+    - あるターゲットの root source file であるならば、そのターゲット及びローカルにある依存クレートの、
+    - どのターゲットの root source file でもなければ、自身を含むターゲットの、
+
+    `.rs`ファイルすべてを列挙して返します。
+
+    ターゲットに関連する `.rs` ファイルはすべてひとまとまりとして扱われ、「モジュール間の依存関係」等については調べません。
+
+- `kind = "cargo-udeps"`
+
+    基本的に `kind = "none"` と同じですが、 `$PATH` 内にある [cargo-udeps](https://github.com/est31/cargo-udeps) を使い「パッケージからクレートへの依存」からさらに「クレート間の依存」を絞り込みます。
+
+    ```toml
+    [languages.rust.list_dependencies_backend]
+    kind = "cargo-udeps"
+    toolchain = "nightly-yyyy-mm-dd" # defaults to "nightly"
+    ```
 
 ### その他の言語の設定
 

@@ -1,0 +1,8 @@
+[package]
+name = "verification-helper-rust-example-scanner"
+version = "0.1.0"
+authors = ["Ryo Yamashita <qryxip@gmail.com>"]
+edition = "2018"
+
+[lib]
+name = "scanner"

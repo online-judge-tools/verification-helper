@@ -1,0 +1,10 @@
+[package]
+name = "verification"
+version = "0.0.0"
+edition = "2018"
+publish = false
+
+[dependencies]
+verification-helper-rust-example-hello = { path = "../crates/helloworld/hello" }
+verification-helper-rust-example-input = { path = "../crates/io/input" }
+verification-helper-rust-example-world = { path = "../crates/helloworld/world" }

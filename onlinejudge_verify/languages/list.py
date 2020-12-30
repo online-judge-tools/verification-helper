@@ -12,6 +12,7 @@ from onlinejudge_verify.languages.models import Language
 from onlinejudge_verify.languages.nim import NimLanguage
 from onlinejudge_verify.languages.python import PythonLanguage
 from onlinejudge_verify.languages.ruby import RubyLanguage
+from onlinejudge_verify.languages.rust import RustLanguage
 from onlinejudge_verify.languages.user_defined import UserDefinedLanguage
 
 logger = getLogger(__name__)
@@ -34,6 +35,7 @@ def _get_dict() -> Dict[str, Language]:
         _dict['.ruby'] = RubyLanguage()
         _dict['.go'] = GoLanguage()
         _dict['.java'] = JavaLanguage()
+        _dict['.rs'] = RustLanguage()
 
         for ext, config in get_config().get('languages', {}).items():
             if '.' + ext in _dict:

@@ -64,7 +64,8 @@ class UserDefinedLanguage(Language):
         return dependencies
 
     def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path, options: Dict[str, Any]) -> bytes:
-        assert 'bundle' in self.config
+        if 'bundle' not in self.config:
+            raise RuntimeError('bundler is not specified: {}'.format(str(path)))
         command = self.config['bundle'].format(path=str(path), basedir=str(basedir))
         logger.info('$ %s', command)
         return subprocess.check_output(shlex.split(command))

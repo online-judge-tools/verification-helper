@@ -93,6 +93,7 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
 
 上記以外の言語でも実行可能です (例: [examples/awk/circle.test.awk](https://github.com/online-judge-tools/verification-helper/blob/master/examples/awk/circle.test.awk))。
 `.verify-helper/config.toml` というファイルを作って、以下のようにコンパイルや実行のためのコマンドを書いてください (例: [.verify-helper/config.toml](https://github.com/online-judge-tools/verification-helper/blob/master/.verify-helper/config.toml))。
+`compile` と `execute` のフィールドは必須で、その他は省略可能です。
 
 ``` toml
 [languages.awk]
@@ -100,6 +101,7 @@ compile = "bash -c 'echo hello > {tempdir}/hello'"
 execute = "env AWKPATH={basedir} awk -f {path}"
 bundle = "false"
 list_dependencies = "sed 's/^@include \"\\(.*\\)\"$/\\1/ ; t ; d' {path}"
+verification_file_suffix = ".test.sed"
 ```
 
 ## verify 自動実行

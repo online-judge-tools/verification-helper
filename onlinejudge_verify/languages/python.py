@@ -1,4 +1,5 @@
 # Python Version: 3.x
+import concurrent.futures
 import functools
 import pathlib
 import sys
@@ -53,7 +54,12 @@ def _python_list_depending_files(path: pathlib.Path, basedir: pathlib.Path) -> L
         importlab.fs.Path([importlab.fs.OSFileSystem(str(basedir.resolve()))]),
         (sys.version_info.major, sys.version_info.minor),
     )
-    res_graph = importlab.graph.ImportGraph.create(env, [str(path)])
+    try:
+        executor = concurrent.futures.ThreadPoolExecutor()
+        future = executor.submit(importlab.graph.ImportGraph.create, env, [str(path)])
+        res_graph = future.result(timeout=1.0)
+    except concurrent.futures.TimeoutError as e:
+        raise RuntimeError(f"Failed to analyze the dependency graph (timeout): {path}") from e
     try:
         node_deps_pairs = res_graph.deps_list()  # type: List[Tuple[str, List[str]]]
     except Exception as e:

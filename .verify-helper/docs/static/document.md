@@ -62,6 +62,7 @@ There is no config now.
 ### Settings for other languages
 
 You can use languages other than above (e.g. AWK [examples/awk/circle.test.awk](https://github.com/online-judge-tools/verification-helper/blob/master/examples/awk/circle.test.awk)). Please write commands to compile and execute in the config file `.verify-helper/config.toml` (e.g. [.verify-helper/config.toml](https://github.com/kmyk/online-judge-verify-helper/blob/master/.verify-helper/config.toml)).
+`compile` field and `execute` field is required, and other fields are optional.
 
 ``` toml
 [languages.awk]
@@ -69,6 +70,7 @@ compile = "bash -c 'echo hello > {tempdir}/hello'"
 execute = "env AWKPATH={basedir} awk -f {path}"
 bundle = "false"
 list_dependencies = "sed 's/^@include \"\\(.*\\)\"$/\\1/ ; t ; d' {path}"
+verification_file_suffix = ".test.sed"
 ```
 
 ## Automating the verification

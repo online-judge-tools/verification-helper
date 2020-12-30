@@ -15,9 +15,9 @@ data:
     PROBLEM: https://judge.yosupo.jp/problem/unionfind
     links:
     - https://judge.yosupo.jp/problem/unionfind
-  bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.9.0/x64/lib/python3.9/site-packages/onlinejudge_verify/documentation/build.py\"\
+  bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.9.1/x64/lib/python3.9/site-packages/onlinejudge_verify/documentation/build.py\"\
     , line 71, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
-    \ basedir=basedir, options={'include_paths': [basedir]}).decode()\n  File \"/opt/hostedtoolcache/Python/3.9.0/x64/lib/python3.9/site-packages/onlinejudge_verify/languages/nim.py\"\
+    \ basedir=basedir, options={'include_paths': [basedir]}).decode()\n  File \"/opt/hostedtoolcache/Python/3.9.1/x64/lib/python3.9/site-packages/onlinejudge_verify/languages/nim.py\"\
     , line 86, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "# verification-helper: PROBLEM https://judge.yosupo.jp/problem/unionfind\n\
     \ninclude \"examples/nim/headers.nim\"\nfrom examples/nim/union_find_tree import\

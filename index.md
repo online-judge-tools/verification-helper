@@ -93,6 +93,31 @@ data:
     - icon: ':heavy_check_mark:'
       path: examples/python/union_find.py
       title: examples/python/union_find.py
+  - name: examples/rust/crates/helloworld/hello/src
+    pages:
+    - icon: ':heavy_check_mark:'
+      path: examples/rust/crates/helloworld/hello/src/lib.rs
+      title: examples/rust/crates/helloworld/hello/src/lib.rs
+  - name: examples/rust/crates/helloworld/world/src
+    pages:
+    - icon: ':heavy_check_mark:'
+      path: examples/rust/crates/helloworld/world/src/lib.rs
+      title: examples/rust/crates/helloworld/world/src/lib.rs
+  - name: examples/rust/crates/io/input/src
+    pages:
+    - icon: ':heavy_check_mark:'
+      path: examples/rust/crates/io/input/src/lib.rs
+      title: examples/rust/crates/io/input/src/lib.rs
+  - name: examples/rust/crates/io/scanner/src
+    pages:
+    - icon: ':warning:'
+      path: examples/rust/crates/io/scanner/src/lib.rs
+      title: examples/rust/crates/io/scanner/src/lib.rs
+  - name: examples/rust/src
+    pages:
+    - icon: ':warning:'
+      path: examples/rust/src/lib.rs
+      title: examples/rust/src/lib.rs
   verificationCategories:
   - name: Examples2/Haskell
     pages:
@@ -169,6 +194,14 @@ data:
     - icon: ':heavy_check_mark:'
       path: examples/python/union_find_yosupo.test.py
       title: examples/python/union_find_yosupo.test.py
+  - name: examples/rust/verification/src/bin
+    pages:
+    - icon: ':heavy_check_mark:'
+      path: examples/rust/verification/src/bin/aizu-online-judge-itp1-1-a.rs
+      title: examples/rust/verification/src/bin/aizu-online-judge-itp1-1-a.rs
+    - icon: ':heavy_check_mark:'
+      path: examples/rust/verification/src/bin/library-checker-aplusb.rs
+      title: examples/rust/verification/src/bin/library-checker-aplusb.rs
   - name: examples
     pages:
     - icon: ':heavy_check_mark:'

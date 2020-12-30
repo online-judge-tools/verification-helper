@@ -69,22 +69,19 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
 - `kind = "none"`
 
     デフォルトの動作です。
+    それぞれのターゲットに関連する `.rs` ファイルはすべてひとまとまりとして扱われ、それぞれのターゲット内のファイルの間の依存関係などについては調べません。
 
     ```toml
     [languages.rust.list_dependencies_backend]
     kind = "none"
     ```
 
-    - あるターゲットの root source file であるならば、そのターゲット及びローカルにある依存クレートの、
-    - どのターゲットの root source file でもなければ、自身を含むターゲットの、
-
-    `.rs`ファイルすべてを列挙して返します。
-
-    ターゲットに関連する `.rs` ファイルはすべてひとまとまりとして扱われ、「モジュール間の依存関係」等については調べません。
+    - あるターゲットの root source file であるようなソースファイルについては、そのターゲット及びローカルにある依存クレートの `.rs` ファイルすべてを依存ファイルとして扱います。
+    - どのターゲットの root source file でもないようなソースファイルについては、自身を含むターゲットの `.rs` ファイルすべてを依存ファイルとして扱います。
 
 - `kind = "cargo-udeps"`
 
-    基本的に `kind = "none"` と同じですが、 `$PATH` 内にある [cargo-udeps](https://github.com/est31/cargo-udeps) を使い「パッケージからクレートへの依存」からさらに「クレート間の依存」を絞り込みます。
+    基本的に `kind = "none"` と同じですが、 `$PATH` 内にある [cargo-udeps](https://github.com/est31/cargo-udeps) を利用します。クレート間の依存関係を解析し、より適切なファイル間の依存関係を求めます。
 
     ```toml
     [languages.rust.list_dependencies_backend]
@@ -96,6 +93,7 @@ NIMFLAGS = ["--warning:on", "--opt:none"]
 
 上記以外の言語でも実行可能です (例: [examples/awk/circle.test.awk](https://github.com/online-judge-tools/verification-helper/blob/master/examples/awk/circle.test.awk))。
 `.verify-helper/config.toml` というファイルを作って、以下のようにコンパイルや実行のためのコマンドを書いてください (例: [.verify-helper/config.toml](https://github.com/online-judge-tools/verification-helper/blob/master/.verify-helper/config.toml))。
+`compile` と `execute` のフィールドは必須で、その他は省略可能です。
 
 ``` toml
 [languages.awk]
@@ -103,6 +101,7 @@ compile = "bash -c 'echo hello > {tempdir}/hello'"
 execute = "env AWKPATH={basedir} awk -f {path}"
 bundle = "false"
 list_dependencies = "sed 's/^@include \"\\(.*\\)\"$/\\1/ ; t ; d' {path}"
+verification_file_suffix = ".test.sed"
 ```
 
 ## verify 自動実行

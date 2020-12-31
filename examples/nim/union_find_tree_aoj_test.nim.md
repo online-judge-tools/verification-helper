@@ -40,11 +40,11 @@ data:
     \ com == 1:\n    echo if uft.is_same(x, y): 1 else: 0\n"
   dependsOn:
   - examples/nim/headers.nim
+  - examples/nim/union_find_tree.nim
   - examples/nim/hoge.nim
   - examples/nim/headers.nim
   - examples/nim/union_find_tree.nim
   - examples/nim/hoge.nim
-  - examples/nim/union_find_tree.nim
   isVerificationFile: true
   path: examples/nim/union_find_tree_aoj_test.nim
   requiredBy: []

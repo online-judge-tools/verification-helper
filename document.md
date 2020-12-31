@@ -21,7 +21,7 @@ Summary:
 ### Settings for C++
 
 You can specify compilers and options with writing `.verify-helper/config.toml` as below.
-If there is no settings, online-judge-verify-helper automatically detects compilers (`g++` and `clang++` if exists) and use recommended options.
+If there are no settings, online-judge-verify-helper automatically detects compilers (`g++` and `clang++` if exists) and use recommended options.
 
 ``` toml
 [[languages.cpp.environments]]
@@ -92,7 +92,7 @@ You can customize the method to list depending files with `languages.rust.list_d
 ### Settings for other languages
 
 You can use languages other than above (e.g. AWK [examples/awk/circle.test.awk](https://github.com/online-judge-tools/verification-helper/blob/master/examples/awk/circle.test.awk)). Please write commands to compile and execute in the config file `.verify-helper/config.toml` (e.g. [.verify-helper/config.toml](https://github.com/kmyk/online-judge-verify-helper/blob/master/.verify-helper/config.toml)).
-`compile` field and `execute` field is required, and other fields are optional.
+`compile` field and `execute` field are required, and other fields are optional.
 
 ``` toml
 [languages.awk]

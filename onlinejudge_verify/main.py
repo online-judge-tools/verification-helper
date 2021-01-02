@@ -11,10 +11,12 @@ except ModuleNotFoundError:
 # pylint: enable=unused-import,ungrouped-imports
 
 import argparse
+import json
 import glob
 import math
 import os
 import pathlib
+import urllib.request
 import subprocess
 import sys
 import textwrap
@@ -157,12 +159,33 @@ def push_documents_to_gh_pages(*, src_dir: pathlib.Path, dst_branch: str = 'gh-p
 
 def subcommand_docs(*, jobs: int = 1) -> None:
     if 'GITHUB_ACTION' in os.environ and 'GITHUB_TOKEN' in os.environ:
-        if os.environ['GITHUB_REF'] == 'refs/heads/master':
-            logger.info('generate documents...')
-            onlinejudge_verify.documentation.main.main(jobs=jobs)
+        # check it is kicked by "push" event
+        if os.environ['GITHUB_EVENT_NAME'] != 'push':
+            logger.info('This execution is not kicked from "push" event. Updating GitHub Pages is skipped.')
+            return
 
-            logger.info('upload documents...')
-            push_documents_to_gh_pages(src_dir=pathlib.Path('.verify-helper/markdown'))
+        # check it is on the default branch.
+        try:
+            # /repos/{owner}/{repo} endpoint. See https://docs.github.com/en/free-pro-team@latest/rest/reference/repos#get-a-repository
+            req = urllib.request.Request(os.environ['GITHUB_API_URL'] + '/repos/' + os.environ['GITHUB_REPOSITORY'])
+            req.add_header('authorization', 'Bearer ' + os.environ['GITHUB_TOKEN'])
+            with urllib.request.urlopen(req) as fh:
+                repos = json.loads(fh.read())
+            default_branch = repos['default_branch']
+        except Exception as e:
+            logger.exception('failed to get the default branch: %s', e)
+            logger.info('Updating GitHub Pages is skipped.')
+            return
+        if os.environ['GITHUB_REF'] == 'refs/heads/{}'.format(default_branch):
+            logger.info('This execution is not on the default branch (the default is "refs/heads/%s" but the actual is "%s"). Updating GitHub Pages is skipped.', default_branch, os.environ['GITHUB_REF'])
+            return
+
+        # updating the GitHub Pages
+        logger.info('generate documents...')
+        onlinejudge_verify.documentation.main.main(jobs=jobs)
+
+        logger.info('upload documents...')
+        push_documents_to_gh_pages(src_dir=pathlib.Path('.verify-helper/markdown'))
 
     else:
         logger.info('generate documents...')

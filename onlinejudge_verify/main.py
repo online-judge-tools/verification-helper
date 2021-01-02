@@ -176,7 +176,7 @@ def subcommand_docs(*, jobs: int = 1) -> None:
             logger.exception('failed to get the default branch: %s', e)
             logger.info('Updating GitHub Pages is skipped.')
             return
-        if os.environ['GITHUB_REF'] == 'refs/heads/{}'.format(default_branch):
+        if os.environ['GITHUB_REF'] != 'refs/heads/{}'.format(default_branch):
             logger.info('This execution is not on the default branch (the default is "refs/heads/%s" but the actual is "%s"). Updating GitHub Pages is skipped.', default_branch, os.environ['GITHUB_REF'])
             return
 

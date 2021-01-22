@@ -98,6 +98,7 @@ def _render_source_code_stat_for_page(
     data = _render_source_code_stat(stat, basedir=basedir)
     data['_pathExtension'] = path.suffix.lstrip('.')
     data['_verificationStatusIcon'] = _get_verification_status_icon(stat.verification_status)
+    data['_isVerificationFailed'] = stat.verification_status in (VerificationStatus.LIBRARY_SOME_WA, VerificationStatus.LIBRARY_ALL_WA, VerificationStatus.TEST_WRONG_ANSWER)
 
     def ext(relative_path: pathlib.Path) -> Dict[str, Any]:
         stat = source_code_stats_dict[relative_path]

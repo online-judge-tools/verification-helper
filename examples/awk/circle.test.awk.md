@@ -6,6 +6,7 @@ data:
     title: examples/awk/circle.awk
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
+  _isVerificationFailed: false
   _pathExtension: awk
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:

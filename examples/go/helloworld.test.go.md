@@ -15,6 +15,7 @@ data:
     path: examples/go/helloworld/helloworld.go
     title: examples/go/helloworld/helloworld.go
   _extendedVerifiedWith: []
+  _isVerificationFailed: false
   _pathExtension: go
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:

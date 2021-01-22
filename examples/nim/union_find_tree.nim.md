@@ -15,6 +15,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: examples/nim/union_find_tree_aoj_test.nim
     title: examples/nim/union_find_tree_aoj_test.nim
+  _isVerificationFailed: false
   _pathExtension: nim
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:

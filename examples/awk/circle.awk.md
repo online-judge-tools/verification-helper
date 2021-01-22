@@ -6,6 +6,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: examples/awk/circle.test.awk
     title: examples/awk/circle.test.awk
+  _isVerificationFailed: false
   _pathExtension: awk
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes: {}

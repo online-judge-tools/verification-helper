@@ -15,6 +15,7 @@ data:
     title: examples/rust/crates/io/scanner/src/lib.rs
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
+  _isVerificationFailed: false
   _pathExtension: rs
   _verificationStatusIcon: ':warning:'
   attributes:

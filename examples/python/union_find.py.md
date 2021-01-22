@@ -9,6 +9,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: examples/python/union_find_yosupo.test.py
     title: examples/python/union_find_yosupo.test.py
+  _isVerificationFailed: false
   _pathExtension: py
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:

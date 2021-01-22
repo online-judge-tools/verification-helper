@@ -9,6 +9,7 @@ data:
     path: Examples2/Haskell/HelloWorld.hs
     title: Examples2/Haskell/HelloWorld.hs
   _extendedVerifiedWith: []
+  _isVerificationFailed: false
   _pathExtension: hs
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:

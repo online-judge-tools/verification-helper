@@ -12,6 +12,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: examples/csharpscript/segment_tree.range_sum_query.test.csx
     title: examples/csharpscript/segment_tree.range_sum_query.test.csx
+  _isVerificationFailed: false
   _pathExtension: csx
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:

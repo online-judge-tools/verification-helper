@@ -9,6 +9,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: examples/union_find_tree.yosupo.test.cpp
     title: examples/union_find_tree.yosupo.test.cpp
+  _isVerificationFailed: false
   _pathExtension: hpp
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:

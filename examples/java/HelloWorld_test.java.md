@@ -9,6 +9,7 @@ data:
     path: examples/java/HelloWorld.java
     title: examples/java/HelloWorld.java
   _extendedVerifiedWith: []
+  _isVerificationFailed: false
   _pathExtension: java
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:

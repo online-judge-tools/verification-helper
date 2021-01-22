@@ -15,6 +15,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: examples/go/helloworld.test.go
     title: examples/go/helloworld.test.go
+  _isVerificationFailed: false
   _pathExtension: go
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes: {}

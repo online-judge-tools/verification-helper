@@ -15,6 +15,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: examples/rust/verification/src/bin/library-checker-aplusb.rs
     title: examples/rust/verification/src/bin/library-checker-aplusb.rs
+  _isVerificationFailed: false
   _pathExtension: rs
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:

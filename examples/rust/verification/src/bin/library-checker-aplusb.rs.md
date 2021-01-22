@@ -12,6 +12,7 @@ data:
     title: examples/rust/crates/io/input/src/lib.rs
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
+  _isVerificationFailed: false
   _pathExtension: rs
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:

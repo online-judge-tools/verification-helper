@@ -12,6 +12,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: examples/segment_tree.range_sum_query.test.cpp
     title: examples/segment_tree.range_sum_query.test.cpp
+  _isVerificationFailed: false
   _pathExtension: hpp
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:

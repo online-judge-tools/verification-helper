@@ -9,6 +9,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: examples/java/HelloWorld_test.java
     title: examples/java/HelloWorld_test.java
+  _isVerificationFailed: false
   _pathExtension: java
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes: {}

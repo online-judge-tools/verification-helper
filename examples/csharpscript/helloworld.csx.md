@@ -6,6 +6,7 @@ data:
   - icon: ':heavy_check_mark:'
     path: examples/csharpscript/helloworld.test.csx
     title: examples/csharpscript/helloworld.test.csx
+  _isVerificationFailed: false
   _pathExtension: csx
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:

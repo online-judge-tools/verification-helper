@@ -9,6 +9,7 @@
     <li>Problem: <a href="{{ page.data.attributes.PROBLEM }}">{{ page.data.attributes.PROBLEM }}</a></li>
     {% endif %}
     {% if page.data._pathExtension == "hpp" %}<li><a id="include-directive-anchor">Include: <code id="include-directive-code">#include "{{ page.data.path }}"</code></a></li>{% endif %}
+    {% if page.data._isVerificationFailed %}<li>Link: <a href="{{ site.github.repository_url }}/actions">{{ page.data._verificationStatusIcon }} View error logs on GitHub Actions</a></li>{% endif %}
     {% for link in page.data.attributes.links %}
     {% if link != page.data.attributes.PROBLEM %}
     <li>Link: <a href="{{ link }}">{{ link }}</a></li>

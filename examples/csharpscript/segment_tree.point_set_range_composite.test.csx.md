@@ -6,6 +6,7 @@ data:
     title: examples/csharpscript/segment_tree.csx
   _extendedRequiredBy: []
   _extendedVerifiedWith: []
+  _isVerificationFailed: false
   _pathExtension: csx
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:

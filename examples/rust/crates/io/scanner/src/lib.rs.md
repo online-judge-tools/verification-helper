@@ -9,6 +9,7 @@ data:
     path: examples/rust/src/lib.rs
     title: examples/rust/src/lib.rs
   _extendedVerifiedWith: []
+  _isVerificationFailed: false
   _pathExtension: rs
   _verificationStatusIcon: ':warning:'
   attributes:

@@ -363,7 +363,8 @@ def _find_target(
     for package in metadata['packages']:
         for target in package['targets']:
             # A `src_path` may contain `..`
-            if pathlib.Path(target['src_path']).resolve(strict=True) == src_path:
+            # The path may not actually exist by being excluded from the package.
+            if pathlib.Path(target['src_path']).resolve() == src_path:
                 return package, target
     return None
 

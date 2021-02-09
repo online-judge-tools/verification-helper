@@ -48,8 +48,8 @@ data:
   timestamp: '2019-12-16 05:18:36+09:00'
   verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
-  - examples/union_find_tree.yosupo.test.cpp
   - examples/union_find_tree.aoj.test.cpp
+  - examples/union_find_tree.yosupo.test.cpp
 documentation_of: examples/union_find_tree.hpp
 layout: document
 redirect_from:

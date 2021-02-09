@@ -46,9 +46,9 @@ data:
   timestamp: '2020-02-16 04:32:52+09:00'
   verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
-  - examples/csharpscript/segment_tree.point_set_range_composite.test.csx
-  - examples/csharpscript/segment_tree.range_sum_query.test.csx
   - examples/csharpscript/segment_tree.range_minimum_query.test.csx
+  - examples/csharpscript/segment_tree.range_sum_query.test.csx
+  - examples/csharpscript/segment_tree.point_set_range_composite.test.csx
 documentation_of: examples/csharpscript/segment_tree.csx
 layout: document
 redirect_from:

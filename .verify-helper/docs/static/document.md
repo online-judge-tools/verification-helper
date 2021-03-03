@@ -111,8 +111,8 @@ verification_file_suffix = ".test.sed"
 |---|---|
 | [Library Checker](https://judge.yosupo.jp/) | |
 | [Aizu Online Judge](https://onlinejudge.u-aizu.ac.jp/home) | |
-| [HackerRank](https://www.hackerrank.com/) | |
-| [yukicoder](https://yukicoder.me) | You must set the `YUKICODER_TOKEN` environment variable. See 「ログインしてないと使えない機能をAPIとして使いたい」 in [ヘルプ - yukicoder](https://yukicoder.me/help) and [Creating and using encrypted secrets - GitHub Help](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets). |
+| [HackerRank](https://www.hackerrank.com/) | You must set the `DROPBOX_TOKEN` environment variable. Please obtain the OAuth access token of Dropbox using the instructions which are shown by `$ oj d --dry-run --system https://atcoder.jp/contests/abc100/tasks/agc001_a`, and then add the token to the secrets with [Creating and using encrypted secrets - GitHub Help](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets). |
+| [yukicoder](https://yukicoder.me) | You must set the `YUKICODER_TOKEN` environment variable. Please obtain the API token using the instructions 「ログインしてないと使えない機能をAPIとして使いたい」 in [ヘルプ - yukicoder](https://yukicoder.me/help), and then add the token to the secrets with [Creating and using encrypted secrets - GitHub Help](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets). |
 
 Other judging platforms do not currently publish the test cases in usable forms, and so are not currently supported.
 

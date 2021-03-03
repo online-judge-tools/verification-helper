@@ -113,7 +113,8 @@ verification_file_suffix = ".test.sed"
 | [Library Checker](https://judge.yosupo.jp/) | |
 | [Aizu Online Judge](https://onlinejudge.u-aizu.ac.jp/home) | |
 | [HackerRank](https://www.hackerrank.com/) | たぶん動きますが保証はしません。 |
-| [yukicoder](https://yukicoder.me) | 環境変数 `YUKICODER_TOKEN` の設定が必要です。[ヘルプ - yukicoder](https://yukicoder.me/help) の「ログインしてないと使えない機能をAPIとして使いたい」の節や [暗号化されたシークレットの作成と利用 - GitHub ヘルプ](https://help.github.com/ja/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets#creating-encrypted-secrets) 参考にして設定してください。 |
+| [AtCoder](https://atcoder.jp/) | たぶん動きますが保証はしません。環境変数 `DROPBOX_TOKEN` の設定が必要です。`$ oj d --dry-run --system https://atcoder.jp/contests/abc100/tasks/agc001_a` のように実行して表示される指示に従って Dropbox の OAuth access token を取得し、それを[暗号化されたシークレットの作成と利用 - GitHub ヘルプ](https://help.github.com/ja/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets#creating-encrypted-secrets) 参考にして secrets に設定してください。 |
+| [yukicoder](https://yukicoder.me) | 環境変数 `YUKICODER_TOKEN` の設定が必要です。[ヘルプ - yukicoder](https://yukicoder.me/help) の「ログインしてないと使えない機能をAPIとして使いたい」の節に従って API トークンを取得し、それを[暗号化されたシークレットの作成と利用 - GitHub ヘルプ](https://help.github.com/ja/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets#creating-encrypted-secrets) 参考にして secrets に設定してください。 |
 
 これらの他サービスはテストケースを利用できる形で公開してくれていないため利用できません。
 

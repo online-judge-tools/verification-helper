@@ -28,9 +28,9 @@ data:
     PROBLEM: https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_1_A
     links:
     - https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_1_A
-  bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.9.1/x64/lib/python3.9/site-packages/onlinejudge_verify/documentation/build.py\"\
+  bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.9.2/x64/lib/python3.9/site-packages/onlinejudge_verify/documentation/build.py\"\
     , line 71, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
-    \ basedir=basedir, options={'include_paths': [basedir]}).decode()\n  File \"/opt/hostedtoolcache/Python/3.9.1/x64/lib/python3.9/site-packages/onlinejudge_verify/languages/nim.py\"\
+    \ basedir=basedir, options={'include_paths': [basedir]}).decode()\n  File \"/opt/hostedtoolcache/Python/3.9.2/x64/lib/python3.9/site-packages/onlinejudge_verify/languages/nim.py\"\
     , line 86, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "# verification-helper: PROBLEM https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_1_A\n\
     \ninclude \"examples/nim/headers.nim\"\nimport \"examples/nim/union_find_tree.nim\"\
@@ -41,11 +41,11 @@ data:
     \ com == 1:\n    echo if uft.is_same(x, y): 1 else: 0\n"
   dependsOn:
   - examples/nim/headers.nim
-  - examples/nim/union_find_tree.nim
-  - examples/nim/union_find_tree.nim
-  - examples/nim/hoge.nim
   - examples/nim/headers.nim
   - examples/nim/hoge.nim
+  - examples/nim/union_find_tree.nim
+  - examples/nim/hoge.nim
+  - examples/nim/union_find_tree.nim
   isVerificationFile: true
   path: examples/nim/union_find_tree_aoj_test.nim
   requiredBy: []

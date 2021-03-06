@@ -7,7 +7,7 @@ _separator: bytes = b'---'
 
 def _split_front_matter_without_parsing_yaml(content: bytes) -> Tuple[bytes, bytes]:
     lines = content.splitlines(keepends=True)
-    if lines[0].rstrip() != _separator:
+    if len(lines) == 0 or lines[0].rstrip() != _separator:
         return (b'', content)
     for i, line in enumerate(lines):
         if i == 0:

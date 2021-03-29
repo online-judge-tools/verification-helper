@@ -27,8 +27,8 @@ data:
   code: "package helloworld\n\nfunc GetHelloWorld() string {\n    return \"Hello World\"\
     \n}\n"
   dependsOn:
-  - examples/go/helloworld.test.go
   - examples/go/helloworld.go
+  - examples/go/helloworld.test.go
   isVerificationFile: false
   path: examples/go/helloworld/helloworld.go
   requiredBy:

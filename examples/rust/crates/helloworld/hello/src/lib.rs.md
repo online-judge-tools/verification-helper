@@ -35,8 +35,8 @@ data:
   timestamp: '2020-11-30 13:30:54+09:00'
   verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
-  - examples/rust/verification/src/bin/aizu-online-judge-itp1-1-a.rs
   - examples/rust/verification/src/bin/library-checker-aplusb.rs
+  - examples/rust/verification/src/bin/aizu-online-judge-itp1-1-a.rs
 documentation_of: examples/rust/crates/helloworld/hello/src/lib.rs
 layout: document
 redirect_from:

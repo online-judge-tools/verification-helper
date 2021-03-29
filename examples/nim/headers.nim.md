@@ -39,10 +39,10 @@ data:
   timestamp: '2020-05-04 17:35:34+09:00'
   verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
-  - examples/nim/union_find_tree_aoj_test.nim
-  - examples/nim/union_find_tree_aoj_test.nim
   - examples/nim/union_find_tree_yosupo_test.nim
   - examples/nim/union_find_tree_yosupo_test.nim
+  - examples/nim/union_find_tree_aoj_test.nim
+  - examples/nim/union_find_tree_aoj_test.nim
 documentation_of: examples/nim/headers.nim
 layout: document
 redirect_from:

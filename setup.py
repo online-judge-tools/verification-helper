@@ -13,7 +13,7 @@ setup(
     install_requires=[
         'colorlog',
         'pyyaml',
-        'online-judge-tools >= 8.0.0',
+        'online-judge-tools >= 11.3.0',
         'setuptools',
         'toml',
         'importlab',

@@ -79,6 +79,8 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
         exec_command(['sleep', '2'])
         command = ['oj', 'download', '--system', '-d', str(directory / 'test'), '--silent', url]
 
+        if os.environ.get('DROPBOX_TOKEN'):
+            command += ['--dropbox-token', os.environ['DROPBOX_TOKEN']]
         if os.environ.get('YUKICODER_TOKEN'):
             command += ['--yukicoder-token', os.environ['YUKICODER_TOKEN']]
         try:

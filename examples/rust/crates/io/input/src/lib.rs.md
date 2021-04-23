@@ -20,9 +20,9 @@ data:
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     links: []
-  bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.9.2/x64/lib/python3.9/site-packages/onlinejudge_verify/documentation/build.py\"\
+  bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.9.4/x64/lib/python3.9/site-packages/onlinejudge_verify/documentation/build.py\"\
     , line 71, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
-    \ basedir=basedir, options={'include_paths': [basedir]}).decode()\n  File \"/opt/hostedtoolcache/Python/3.9.2/x64/lib/python3.9/site-packages/onlinejudge_verify/languages/rust.py\"\
+    \ basedir=basedir, options={'include_paths': [basedir]}).decode()\n  File \"/opt/hostedtoolcache/Python/3.9.4/x64/lib/python3.9/site-packages/onlinejudge_verify/languages/rust.py\"\
     , line 288, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "//! A limited `input!` macro.\n//!\n//! ```no_run\n//! use input::input;\n\
     //!\n//! input! {\n//!     a: u32,\n//!     b: u32,\n//! }\n//! ```\n\npub use\
@@ -39,8 +39,8 @@ data:
   timestamp: '2020-11-30 13:30:54+09:00'
   verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
-  - examples/rust/verification/src/bin/library-checker-aplusb.rs
   - examples/rust/verification/src/bin/aizu-online-judge-itp1-1-a.rs
+  - examples/rust/verification/src/bin/library-checker-aplusb.rs
 documentation_of: examples/rust/crates/io/input/src/lib.rs
 layout: document
 redirect_from:

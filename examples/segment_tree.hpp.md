@@ -67,8 +67,8 @@ data:
   verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
   - examples/segment_tree.point_set_range_composite.test.cpp
-  - examples/segment_tree.range_sum_query.test.cpp
   - examples/segment_tree.range_minimum_query.test.cpp
+  - examples/segment_tree.range_sum_query.test.cpp
 documentation_of: examples/segment_tree.hpp
 layout: document
 title: Segment Tree (generalized with monoids)

@@ -60,11 +60,11 @@ data:
   verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
   - examples/segment_tree.point_set_range_composite.test.cpp
-  - examples/debug/include_relative.test.cpp
-  - examples/segment_tree.range_sum_query.test.cpp
-  - examples/segment_tree.range_minimum_query.test.cpp
   - examples/union_find_tree.aoj.test.cpp
+  - examples/segment_tree.range_minimum_query.test.cpp
   - examples/union_find_tree.yosupo.test.cpp
+  - examples/segment_tree.range_sum_query.test.cpp
+  - examples/debug/include_relative.test.cpp
 documentation_of: examples/macros.hpp
 layout: document
 redirect_from:

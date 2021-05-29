@@ -112,7 +112,7 @@ verification_file_suffix = ".test.sed"
 | [Library Checker](https://judge.yosupo.jp/) | |
 | [Aizu Online Judge](https://onlinejudge.u-aizu.ac.jp/home) | |
 | [HackerRank](https://www.hackerrank.com/) | |
-| [AtCoder](https://atcoder.jp) | You must set the `DROPBOX_TOKEN` environment variable. It may suddenly stop working. |
+| [AtCoder](https://atcoder.jp) | You must set the `DROPBOX_TOKEN` environment variable. You can obtain the token by following the HINT message shown by `$ oj d --system https://atcoder.jp/contests/agc001/tasks/agc001_a`. |
 | [yukicoder](https://yukicoder.me) | You must set the `YUKICODER_TOKEN` environment variable. See 「ログインしてないと使えない機能をAPIとして使いたい」 in [ヘルプ - yukicoder](https://yukicoder.me/help) and [Creating and using encrypted secrets - GitHub Help](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets). |
 
 Other judging platforms do not currently publish the test cases in usable forms, and so are not currently supported.

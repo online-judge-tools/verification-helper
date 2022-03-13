@@ -76,7 +76,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
     directory = pathlib.Path('.verify-helper/cache') / hashlib.md5(url.encode()).hexdigest()
     if not (directory / 'test').exists() or list((directory / 'test').iterdir()) == []:
         directory.mkdir(parents=True, exist_ok=True)
-        exec_command(['sleep', '2'])
+        time.sleep(2)
         command = ['oj', 'download', '--system', '-d', str(directory / 'test'), '--silent', url]
 
         if os.environ.get('DROPBOX_TOKEN'):

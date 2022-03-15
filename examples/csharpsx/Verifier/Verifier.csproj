@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<StartupObject>Verifier.LocalRunner</StartupObject>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Library\Library.csproj" />
+		<PackageReference Include="SourceExpander.Generator" Version="4.2.0-beta1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+</Project>

@@ -36,6 +36,15 @@ jobs:
     - name: Install dependencies (C#)
       run: dotnet tool install -g dotnet-script
 
+    # required only if you want to verify C# with SourceExpander
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: |
+          3.1.x
+          6.0.x
+    - name: Install dependencies (C#)
+      run: dotnet tool install -g SourceExpander.Console
+
     # required only if you want to verify Go code
     - name: Install dependencies (Go)
       uses: actions/setup-go@v2

@@ -5,6 +5,7 @@ import os
 import pathlib
 import subprocess
 from logging import getLogger
+from turtle import st
 from typing import *
 import distutils.version
 import shutil
@@ -93,6 +94,14 @@ def _check_env(path: pathlib.Path):
 
 
 @functools.lru_cache(maxsize=None)
+def _check_no_embedder(csproj_path: pathlib.Path) -> None:
+    root = ET.parse(csproj_path).getroot()
+    if root.find('.//PackageReference[@Include="SourceExpander.Embedder"]'):
+        logger.error(
+            " Test project(%s) has `SourceExpander.Embedder` reference. Libraries and tests should not be in same project.", str(csproj_path))
+
+
+@functools.lru_cache(maxsize=None)
 def _resolve_csproj(path: pathlib.Path) -> Optional[pathlib.Path]:
     path = path.resolve()
     if path.suffix == ".csproj":
@@ -120,7 +129,9 @@ def _expand_code_dict(csproj_path: pathlib.Path) -> Dict[pathlib.Path, str]:
 @functools.lru_cache(maxsize=None)
 def _expand_code(path: pathlib.Path) -> bytes:
     _check_expander_console()
-    d = _expand_code_dict(_resolve_csproj(path))
+    csproj_path = _resolve_csproj(path)
+    _check_no_embedder(csproj_path)
+    d = _expand_code_dict(csproj_path)
     return d[path].encode('utf-8')
 
 

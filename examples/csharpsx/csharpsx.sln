@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library", "Library\Library.csproj", "{E7C3477D-EEC5-4824-B9B9-8052120382AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verifier", "Verifier\Verifier.csproj", "{A36FDB96-6312-4D74-B35F-68542F9C6F84}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{A36FDB96-6312-4D74-B35F-68542F9C6F84}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7BB23E5C-7EE5-40CB-8DD2-31929A329847}"
 	ProjectSection(SolutionItems) = preProject

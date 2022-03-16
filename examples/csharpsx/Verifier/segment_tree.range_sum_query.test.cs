@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Library;
 
-// PROBLEM https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_B
+// verification-helper: PROBLEM https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_B
 class range_sum_query
 {
     static void Main()

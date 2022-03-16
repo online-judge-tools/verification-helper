@@ -4,6 +4,6 @@ namespace Library
 {
     public static partial class HelloWorld
     {
-        public static void Hello() => Console.WriteLine(Text);
+        private const string Text = "Hello World";
     }
 }

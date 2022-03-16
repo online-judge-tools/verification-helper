@@ -8,10 +8,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Library\Library.csproj" />
-		<PackageReference Include="SourceExpander.Generator" Version="4.2.0-beta1">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 	</ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Library;
 
-// PROBLEM https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_A
+// verification-helper: PROBLEM https://onlinejudge.u-aizu.ac.jp/courses/library/3/DSL/all/DSL_2_A
 class range_minimum_query
 {
     static void Main()

@@ -27,14 +27,14 @@ def _check_dotnet_version() -> None:
     res = subprocess.check_output(command).decode().strip()
     logger.info('dotnet version: %s', res)
     if distutils.version.LooseVersion(res) <= distutils.version.LooseVersion("6"):
-        raise RuntimeError("needs .NET 6 or newer SDK")
+        raise RuntimeError("oj-verify needs .NET 6 SDK or newer")
 
 
 @functools.lru_cache(maxsize=1)
 def _check_expander_console() -> None:
     if not shutil.which('dotnet-source-expand'):
         raise RuntimeError(
-            '`dotnet-source-expand` not in $PATH. You needs SourceExpander.Console. `dotnet tool install -g SourceExpander.Console`')
+            '`dotnet-source-expand` not in $PATH. Run `dotnet tool install -g SourceExpander.Console`')
     command = ['dotnet-source-expand', 'version']
     logger.info('$ %s', ' '.join(command))
     res = subprocess.check_output(command).decode().strip()

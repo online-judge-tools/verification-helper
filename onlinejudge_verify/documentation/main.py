@@ -1,5 +1,6 @@
 import json
 import pathlib
+import subprocess
 from logging import getLogger
 from typing import *
 
@@ -56,6 +57,10 @@ def load_render_config(*, basedir: pathlib.Path) -> SiteRenderConfig:
     )
 
 
+def _get_gitignored_paths() -> List[pathlib.Path]:
+    return list(map(pathlib.Path, subprocess.check_output(['git', 'ls-files', '--ignored', '--others', '--exclude-standard', '--directory'], text=True).strip().splitlines()))
+
+
 # TODO: この configure.py + build.py というファイル分割そこまでうまくはいってなくないか？ もうすこし整理したい
 def main(*, jobs: int = 1) -> None:
     basedir = pathlib.Path.cwd()
@@ -69,7 +74,7 @@ def main(*, jobs: int = 1) -> None:
     logger.info('list markdown files...')
     markdown_paths = configure.find_markdown_paths(basedir=basedir)
     logger.info('list rendering jobs...')
-    excluded_paths = list(map(pathlib.Path, config.config_yml.get('exclude', [])))
+    excluded_paths = list(map(pathlib.Path, config.config_yml.get('exclude', []))) + _get_gitignored_paths()
     source_code_stats = configure.apply_exclude_list_to_stats(excluded_paths=excluded_paths, source_code_stats=source_code_stats)
     markdown_paths = configure.apply_exclude_list_to_paths(markdown_paths, excluded_paths=excluded_paths)
     render_jobs = configure.convert_to_page_render_jobs(source_code_stats=source_code_stats, markdown_paths=markdown_paths, site_render_config=config)

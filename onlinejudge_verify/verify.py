@@ -119,9 +119,9 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
 
 def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.VerificationMarker, timeout: float = math.inf, tle: float = 60, jobs: int = 1) -> VerificationSummary:
     try:
-        import resource  # pylint: disable=import-outside-toplevel
-        _, hard = resource.getrlimit(resource.RLIMIT_STACK)
-        resource.setrlimit(resource.RLIMIT_STACK, (hard, hard))
+        import resource  # pylint: disable=import-outside-toplevel,import-error
+        _, hard = resource.getrlimit(resource.RLIMIT_STACK) # type: ignore
+        resource.setrlimit(resource.RLIMIT_STACK, (hard, hard)) # type: ignore
     except Exception:
         logger.warning('failed to increase the stack size')
         print('::warning ::failed to ulimit')

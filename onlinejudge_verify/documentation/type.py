@@ -29,6 +29,7 @@ class SourceCodeStat(NamedTuple):
 
 
 class FrontMatterItem(enum.Enum):
+    # pylint: disable=invalid-name
     title = 'title'
     layout = 'layout'
     documentation_of = 'documentation_of'

@@ -15,8 +15,6 @@ from onlinejudge_verify.languages.models import Language, LanguageEnvironment
 
 logger = getLogger(__name__)
 
-dotnet_dll_caches_dir = pathlib.Path('.verify-helper/cache') / 'dotnet'
-
 
 @functools.lru_cache(maxsize=1)
 def _check_dotnet_version() -> None:

@@ -89,6 +89,37 @@ class TestVerification(unittest.TestCase):
                     timestamps = json.load(fh)
                 self.assertEqual(timestamps, {})
 
+    def test_sameas(self) -> None:
+        """
+        `test_sameas` is a simple test for the case when the `.test.cpp` has "SAMEAS" property.
+        """
+
+        files = {
+            'sameas_success.test.cpp': rb"""\
+#define SAMEAS "example.test.cpp"
+int f() {
+    return 0;
+}
+""",
+            'sameas_failure.test.cpp': rb"""\
+#define SAMEAS "failure.test.cpp"
+int f() {
+    return 0;
+}
+""",
+            'example.test.cpp': SUCCESS_TEST_CPP,
+            'failure.test.cpp': FAILURE_TEST_CPP,
+        }
+        paths = [pathlib.Path('sameas_success.test.cpp'), pathlib.Path('sameas_failure.test.cpp'), pathlib.Path('example.test.cpp'), pathlib.Path('failure.test.cpp')]
+        with tests.utils.load_files(files) as tempdir:
+            with tests.utils.chdir(tempdir):
+                timestamps_path = tempdir / 'timestamps.json'
+                with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
+                    self.assertEqual(verify.main(paths, marker=marker).failed_test_paths, [pathlib.Path('failure.test.cpp'), pathlib.Path('sameas_failure.test.cpp')])
+                with open(timestamps_path) as fh:
+                    timestamps = json.load(fh)
+                self.assertEqual(list(timestamps.keys()), ['example.test.cpp', 'sameas_success.test.cpp'])
+
     def test_timestamps(self) -> None:
         """
         `test_timestamps` checks whether `timestamps.json` is properly updated for all cases which files have no dependencies.

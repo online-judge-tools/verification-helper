@@ -32,6 +32,14 @@ class VerificationSummary:
         return not self.failed_test_paths
 
 
+class VerificationStatus:
+    status: Literal['failed', 'verified', 'ignore', 'sameas']
+
+    def __init__(self, status: Literal['failed', 'verified', 'ignore', 'sameas'], *, data: Any = None) -> None:
+        self.status = status
+        self.data = data
+
+
 def exec_command(command: List[str]):
     # NOTE: secrets like YUKICODER_TOKEN are masked
     logger.info('$ %s', ' '.join(command))
@@ -47,27 +55,29 @@ def exec_command(command: List[str]):
             os.chdir(str(cwd))
 
 
-def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: int) -> Optional[bool]:
+def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: int) -> VerificationStatus:
     logger.info('verify: %s', path)
 
     language = onlinejudge_verify.languages.list.get(path)
     if language is None:
         logger.error('unsupported language')
-        return False
+        return VerificationStatus('failed')
 
     # analyze attributes
     try:
         attributes = language.list_attributes(path, basedir=pathlib.Path.cwd())
     except Exception:
         traceback.print_exc()
-        return False
+        return VerificationStatus('failed')
     if 'IGNORE' in attributes:
-        return None
+        return VerificationStatus('ignore')
+    if 'SAMEAS' in attributes:
+        return VerificationStatus('sameas', data=attributes['SAMEAS'])
 
     # recognize PROBLEM
     if 'PROBLEM' not in attributes:
         logger.error('PROBLEM is not specified')
-        return False
+        return VerificationStatus('failed')
     url = attributes['PROBLEM']
     problem = onlinejudge.dispatch.problem_from_url(url)
     logger.info('problem: %s', url)
@@ -89,7 +99,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
             traceback.print_exc()
             if isinstance(problem, onlinejudge.service.yukicoder.YukicoderProblem) and not os.environ.get('YUKICODER_TOKEN'):
                 logger.warning('the $YUKICODER_TOKEN environment variable is not set')
-            return False
+            return VerificationStatus('failed')
 
     for environment in language.list_environments(path, basedir=pathlib.Path.cwd()):
         # compile the ./a.out
@@ -98,7 +108,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
             execute = ' '.join(environment.get_execute_command(path, basedir=pathlib.Path.cwd(), tempdir=directory))  # TODO: use shlex.join added in Python 3.8
         except Exception:
             traceback.print_exc()
-            return False
+            return VerificationStatus('failed')
 
         # run test using oj
         command = ['oj', 'test', '-c', execute, '-d', str(directory / 'test'), '--print-input', '--tle', str(tle)]
@@ -112,9 +122,9 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
             exec_command(command)
         except Exception:
             traceback.print_exc()
-            return False
+            return VerificationStatus('failed')
 
-    return True
+    return VerificationStatus('verified')
 
 
 def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.VerificationMarker, timeout: float = math.inf, tle: float = 60, jobs: int = 1) -> VerificationSummary:
@@ -136,24 +146,53 @@ def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.Verific
     failed_test_paths: List[pathlib.Path] = []
 
     start = time.time()
+
+    verification_statuses: Dict[pathlib.Path, VerificationStatus] = {}
+    same_as_paths: List[Tuple[pathlib.Path, pathlib.Path]] = []
     for path in paths:
         if marker.is_verified(path):
             continue
 
         verified = verify_file(path, compilers=compilers, tle=tle, jobs=jobs)
+        verification_statuses[marker.resolve_path(path)] = verified
 
-        if verified is None:
+        if verified.status == 'ignore':
             logger.info('ignored')
-        elif verified:
+        elif verified.status == 'verified':
             marker.mark_verified(path)
-        else:
+        elif verified.status == 'failed':
             marker.mark_failed(path)
             failed_test_paths.append(path)
             # Set an error message for GitHub Action. https://help.github.com/en/actions/reference/development-tools-for-github-actions
             print(f'::error file={str(path.resolve(strict=True).relative_to(pathlib.Path.cwd().resolve(strict=True)))}::failed to verify')
+        elif verified.status == 'sameas':
+            if not isinstance(verified.data, str):
+                raise RuntimeError('`verified.status` is `sameas` but `verified.data` is not str')
+            same_as_paths.append((path, pathlib.Path(verified.data)))
+        else:
+            raise RuntimeError('`verify_file` returns invalid status')
 
         # to prevent taking too long; we may fail to use the results of verification due to expired tokens
         if timeout is not None and time.time() - start > timeout:
             break
+
+    for path, sameas in same_as_paths:
+        logger.info('%s is same as %s', path, sameas)
+        verified = verification_statuses.get(marker.resolve_path(sameas))
+        if verified is None:
+            raise RuntimeError('SAMEAS calls invalid test file')
+        elif verified.status == 'ignore':
+            logger.info('ignored')
+        elif verified.status == 'verified':
+            marker.mark_verified(path)
+        elif verified.status == 'failed':
+            marker.mark_failed(path)
+            failed_test_paths.append(path)
+            # Set an error message for GitHub Action. https://help.github.com/en/actions/reference/development-tools-for-github-actions
+            print(f'::error file={str(path.resolve(strict=True).relative_to(pathlib.Path.cwd().resolve(strict=True)))}::failed to verify')
+        elif verified.status == 'sameas':
+            raise RuntimeError('SAMEAS calls another SAMEAS file')
+        else:
+            raise RuntimeError('`verify_file` returns invalid status')
 
     return VerificationSummary(failed_test_paths=failed_test_paths)

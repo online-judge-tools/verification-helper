@@ -123,6 +123,7 @@ Other judging platforms do not currently publish the test cases in usable forms,
 |---|---|---|
 | `PROBLEM` | specify the URL of the problem to submit | required |
 | `IGNORE` | If this is defined in a file, the verification is skipped. | You can use this in a scope like `#ifdef __clang__` to ignore in a specific environment. |
+| `SAMEAS` | specify the file path of the another problem. | the verification result is treated the same as that file. |
 | `ERROR` | specify the absolute or relative error to be considered as correct | |
 
 ## Generating Documentation

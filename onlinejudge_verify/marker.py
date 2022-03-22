@@ -51,7 +51,7 @@ class VerificationMarker:
     def is_verified(self, path: pathlib.Path) -> bool:
         if not path.exists():
             return False
-        path = path.resolve(strict=True).relative_to(_cwd())
+        path = self.resolve_path(path)
         return self.verification_statuses.get(path) == 'verified'
 
     def mark_verified(self, path: pathlib.Path) -> None:
@@ -59,14 +59,14 @@ class VerificationMarker:
         :param path: should exist
         """
 
-        path = path.resolve(strict=True).relative_to(_cwd())
+        path = self.resolve_path(path)
         self.new_timestamps[path] = self.get_current_timestamp(path)
         self.verification_statuses[path] = 'verified'
 
     def is_failed(self, path: pathlib.Path) -> bool:
         if not path.exists():
             return True
-        path = path.resolve(strict=True).relative_to(_cwd())
+        path = self.resolve_path(path)
         if path not in self.verification_statuses:
             # verifiedの場合は必ずself.verification_status[path] == 'verified'となるのでこのifの中には入らない
             # それ以外の場合は「そもそもテストを実行していない」可能性もあるが一旦はfailedとみなす
@@ -76,7 +76,7 @@ class VerificationMarker:
     def mark_failed(self, path: pathlib.Path) -> None:
         if not path.exists():
             return
-        path = path.resolve(strict=True).relative_to(_cwd())
+        path = self.resolve_path(path)
         self.verification_statuses[path] = 'failed'
 
     def load_timestamps(self, *, jobs: Optional[int] = None) -> None:
@@ -120,6 +120,9 @@ class VerificationMarker:
                 data[str(path)] = timestamp.strftime('%Y-%m-%d %H:%M:%S %z')
         with open(self.json_path, 'w') as fh:
             json.dump(data, fh, sort_keys=True, indent=0)
+
+    def resolve_path(self, path: pathlib.Path) -> pathlib.Path:
+        return path.resolve(strict=True).relative_to(_cwd())
 
     def __enter__(self) -> 'VerificationMarker':
         return self

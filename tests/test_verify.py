@@ -33,6 +33,20 @@ int main() {
 }
 """
 
+STANDALONE_SUCCESS_TEST_PY = rb"""\
+# verification-helper: STANDALONE
+import subprocess
+import sys
+subprocess.run([sys.executable, '-V'], check=True)
+"""
+
+STANDALONE_FAILURE_TEST_PY = rb"""\
+# verification-helper: STANDALONE
+import subprocess
+import sys
+subprocess.run(['false'], check=True)
+"""
+
 TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S %z'
 
 
@@ -57,8 +71,9 @@ class TestVerification(unittest.TestCase):
 
         files = {
             'example.test.cpp': SUCCESS_TEST_CPP,
+            'standalone.test.py': STANDALONE_SUCCESS_TEST_PY,
         }
-        paths = [pathlib.Path('example.test.cpp')]
+        paths = [pathlib.Path('example.test.cpp'), pathlib.Path('standalone.test.py')]
         with tests.utils.load_files(files) as tempdir:
             with tests.utils.chdir(tempdir):
                 timestamps_path = tempdir / 'timestamps.json'
@@ -66,7 +81,7 @@ class TestVerification(unittest.TestCase):
                     self.assertEqual(verify.main(paths, marker=marker).failed_test_paths, [])
                 with open(timestamps_path) as fh:
                     timestamps = json.load(fh)
-                self.assertEqual(list(timestamps.keys()), ['example.test.cpp'])
+                self.assertEqual(list(timestamps.keys()), ['example.test.cpp', 'standalone.test.py'])
 
     def test_failure(self) -> None:
         """
@@ -78,8 +93,9 @@ class TestVerification(unittest.TestCase):
                 'example.test.cpp': get_timestamp_string_of_past(),
             }).encode(),
             'example.test.cpp': FAILURE_TEST_CPP,
+            'standalone.test.py': STANDALONE_FAILURE_TEST_PY,
         }
-        paths = [pathlib.Path('example.test.cpp')]
+        paths = [pathlib.Path('example.test.cpp'), pathlib.Path('standalone.test.py')]
         with tests.utils.load_files(files) as tempdir:
             with tests.utils.chdir(tempdir):
                 timestamps_path = tempdir / 'timestamps.json'
@@ -91,34 +107,30 @@ class TestVerification(unittest.TestCase):
 
     def test_sameas(self) -> None:
         """
-        `test_sameas` is a simple test for the case when the `.test.cpp` has "SAMEAS" property.
+        `test_sameas` is a simple test for the case when the `.test.py` has "SAMEAS" property.
         """
 
         files = {
-            'sameas_success.test.cpp': rb"""\
-#define SAMEAS "example.test.cpp"
-int f() {
-    return 0;
-}
+            'sameas_success.test.py': rb"""\
+# verification-helper: SAMEAS example.test.py
+print('ok')
 """,
-            'sameas_failure.test.cpp': rb"""\
-#define SAMEAS "failure.test.cpp"
-int f() {
-    return 0;
-}
+            'sameas_failure.test.py': rb"""\
+# verification-helper: SAMEAS failure.test.py
+print('ng')
 """,
-            'example.test.cpp': SUCCESS_TEST_CPP,
-            'failure.test.cpp': FAILURE_TEST_CPP,
+            'example.test.py': STANDALONE_SUCCESS_TEST_PY,
+            'failure.test.py': STANDALONE_FAILURE_TEST_PY,
         }
-        paths = [pathlib.Path('sameas_success.test.cpp'), pathlib.Path('sameas_failure.test.cpp'), pathlib.Path('example.test.cpp'), pathlib.Path('failure.test.cpp')]
+        paths = [pathlib.Path('sameas_success.test.py'), pathlib.Path('sameas_failure.test.py'), pathlib.Path('example.test.py'), pathlib.Path('failure.test.py')]
         with tests.utils.load_files(files) as tempdir:
             with tests.utils.chdir(tempdir):
                 timestamps_path = tempdir / 'timestamps.json'
                 with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
-                    self.assertEqual(verify.main(paths, marker=marker).failed_test_paths, [pathlib.Path('failure.test.cpp'), pathlib.Path('sameas_failure.test.cpp')])
+                    self.assertEqual(verify.main(paths, marker=marker).failed_test_paths, [pathlib.Path('failure.test.py'), pathlib.Path('sameas_failure.test.py')])
                 with open(timestamps_path) as fh:
                     timestamps = json.load(fh)
-                self.assertEqual(list(timestamps.keys()), ['example.test.cpp', 'sameas_success.test.cpp'])
+                self.assertEqual(list(timestamps.keys()), ['example.test.py', 'sameas_success.test.py'])
 
     def test_timestamps(self) -> None:
         """

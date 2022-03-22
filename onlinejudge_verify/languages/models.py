@@ -43,12 +43,12 @@ class Language:
         """
         Merge list_dependencies() and attributes['SAMEAS']
         """
-        dependencies = self.list_dependencies(path, basedir=basedir)
+        dependencies = set(self.list_dependencies(path, basedir=basedir))
         attributes = self.list_attributes(path, basedir=basedir)
         sameas = attributes.get('SAMEAS')
         if isinstance(sameas, str):
-            dependencies.append(basedir / sameas)
-        return dependencies
+            dependencies.add(basedir / sameas)
+        return list(dependencies)
 
     @abc.abstractmethod
     def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path, options: Dict[str, Any]) -> bytes:

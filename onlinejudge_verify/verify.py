@@ -74,6 +74,20 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
     if 'SAMEAS' in attributes:
         return VerificationStatus('sameas', data=attributes['SAMEAS'])
 
+    if 'STANDALONE' in attributes:
+        logger.info('STANDALONE program')
+        directory = pathlib.Path('.verify-helper/cache') / hashlib.md5(str(path).encode()).hexdigest()
+        directory.mkdir(parents=True, exist_ok=True)
+        for environment in language.list_environments(path, basedir=pathlib.Path.cwd()):
+            # compile the ./a.out
+            try:
+                environment.compile(path, basedir=pathlib.Path.cwd(), tempdir=directory)
+                exec_command(environment.get_execute_command(path, basedir=pathlib.Path.cwd(), tempdir=directory))
+                return VerificationStatus('verified')
+            except Exception:
+                traceback.print_exc()
+                return VerificationStatus('failed')
+
     # recognize PROBLEM
     if 'PROBLEM' not in attributes:
         logger.error('PROBLEM is not specified')
@@ -180,7 +194,10 @@ def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.Verific
         logger.info('%s is same as %s', path, sameas)
         verified2 = verification_statuses.get(marker.resolve_path(sameas))
         if verified2 is None:
-            raise RuntimeError('SAMEAS calls invalid test file')
+            if marker.resolve_path(sameas) in marker.old_timestamps:
+                logger.info('already passed')
+            else:
+                raise RuntimeError('SAMEAS calls invalid test file')
         elif verified2.status == 'ignore':
             logger.info('ignored')
         elif verified2.status == 'verified':

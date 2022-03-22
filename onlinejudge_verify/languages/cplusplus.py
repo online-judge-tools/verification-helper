@@ -77,6 +77,7 @@ _IGNORE_IF_CLANG = 'IGNORE_IF_CLANG'
 _IGNORE_IF_GCC = 'IGNORE_IF_GCC'
 _ERROR = 'ERROR'
 _SAMEAS = 'SAMEAS'
+_STANDALONE = 'STANDALONE'
 
 
 # config.toml example:
@@ -154,7 +155,7 @@ class CPlusPlusLanguage(Language):
 
                 # convert macros to attributes
                 if _IGNORE not in macros:
-                    for key in [_PROBLEM, _ERROR, _SAMEAS]:
+                    for key in [_PROBLEM, _ERROR, _SAMEAS, _STANDALONE]:
                         if all_ignored:
                             # the first non-ignored environment
                             if key in macros:

@@ -56,11 +56,14 @@ CXXFLAGS = ["-std=c++17", "-Wall", "-g", "-fsanitize=undefined", "-D_GLIBCXX_DEB
 `.verify-helper/config.toml` というファイルを作って以下のように設定を書くと各種設定ができます。
 
 - static_embedding: `dotnet-source-expand` の `--static-embedding` オプション
+- csproj_template: テストファイルのコンパイル時に使われる csproj を指定します。
 
 ``` toml
 [[languages.csharp]]
 static_embedding = "// embed"
+csproj_template = ".verify-helper/csproj.template"
 ```
+
 ### Nim の設定
 
 `.verify-helper/config.toml` というファイルを作って以下のように設定を書くと、コンパイルの際に変換する言語 (例: `c`, `cpp`) やそのオプションを指定できます。

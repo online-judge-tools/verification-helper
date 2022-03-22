@@ -54,11 +54,13 @@ For the details refer to [examples/csharpsx](https://github.com/online-judge-too
 
 You can specify compilers and options with writing `.verify-helper/config.toml` as below.
 
-- static_embedding: `dotnet-source-expand` with `--static-embedding` option
+- static_embedding: `dotnet-source-expand` with `--static-embedding` option.
+- csproj_template: test file will be compiled with this csproj file.
 
 ``` toml
 [[languages.csharp]]
 static_embedding = "// embed"
+csproj_template = ".verify-helper/csproj.template"
 ```
 
 ### Settings for Nim

@@ -178,6 +178,7 @@ class CSharpConfig:
     def __init__(self, config: Dict[str, Any]) -> None:
         root = config.get('languages', {}).get('csharp', {})
         self.static_embedding: Optional[str] = root.get('static_embedding', None)
+        self.csproj_template: Optional[str] = root.get('csproj_template', None)
 
 
 class CSharpLanguageEnvironment(LanguageEnvironment):
@@ -186,9 +187,8 @@ class CSharpLanguageEnvironment(LanguageEnvironment):
         self.config = config
 
     @staticmethod
-    def _create_runner_project(code: bytes, target_framework: str, output_dir):
-        os.makedirs(str(output_dir), exist_ok=True)
-        with open(output_dir / 'runner.csproj', 'w') as f:
+    def _write_default_project(output_file: pathlib.Path, target_framework: str) -> None:
+        with open(output_file, 'w') as f:
             f.write('''<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -196,6 +196,18 @@ class CSharpLanguageEnvironment(LanguageEnvironment):
   </PropertyGroup>
 </Project>'''.format(target_framework))
 
+    def _write_csproj(self, output_file: pathlib.Path, csproj_template_path: Optional[pathlib.Path], target_framework: str) -> None:
+        if csproj_template_path is None:
+            self._write_default_project(output_file, target_framework)
+        elif not csproj_template_path.exists():
+            logger.warning('%s is not found.', str(csproj_template_path))
+            self._write_default_project(output_file, target_framework)
+        else:
+            shutil.copy(str(csproj_template_path), str(output_file))
+
+    def _create_runner_project(self, code: bytes, target_framework: str, csproj_template_path: Optional[pathlib.Path], output_dir: pathlib.Path):
+        os.makedirs(str(output_dir), exist_ok=True)
+        self._write_csproj(output_dir / 'runner.csproj', csproj_template_path, target_framework)
         with open(output_dir / 'main.cs', 'wb') as f:
             f.write(code)
 
@@ -205,7 +217,8 @@ class CSharpLanguageEnvironment(LanguageEnvironment):
         _check_env(path)
         target_framework = _get_target_framework(_resolve_csproj(path))
         logger.info('build: TargetFramework = %s', target_framework)
-        self._create_runner_project(self._expand_code(path), target_framework, output_dir)
+        csproj_template_path = (basedir / pathlib.Path(self.config.csproj_template)) if self.config.csproj_template else None
+        self._create_runner_project(self._expand_code(path), target_framework, csproj_template_path, output_dir)
 
         command = ['dotnet', 'build', str(output_dir / 'runner.csproj'), '-c', 'Release', '-o', str(output_dir / 'bin')]
         logger.info('$ %s', ' '.join(command))

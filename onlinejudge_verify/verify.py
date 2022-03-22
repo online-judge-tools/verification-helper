@@ -178,19 +178,19 @@ def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.Verific
 
     for path, sameas in same_as_paths:
         logger.info('%s is same as %s', path, sameas)
-        verified = verification_statuses.get(marker.resolve_path(sameas))
-        if verified is None:
+        verified2 = verification_statuses.get(marker.resolve_path(sameas))
+        if verified2 is None:
             raise RuntimeError('SAMEAS calls invalid test file')
-        elif verified.status == 'ignore':
+        elif verified2.status == 'ignore':
             logger.info('ignored')
-        elif verified.status == 'verified':
+        elif verified2.status == 'verified':
             marker.mark_verified(path)
-        elif verified.status == 'failed':
+        elif verified2.status == 'failed':
             marker.mark_failed(path)
             failed_test_paths.append(path)
             # Set an error message for GitHub Action. https://help.github.com/en/actions/reference/development-tools-for-github-actions
             print(f'::error file={str(path.resolve(strict=True).relative_to(pathlib.Path.cwd().resolve(strict=True)))}::failed to verify')
-        elif verified.status == 'sameas':
+        elif verified2.status == 'sameas':
             raise RuntimeError('SAMEAS calls another SAMEAS file')
         else:
             raise RuntimeError('`verify_file` returns invalid status')

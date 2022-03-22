@@ -68,7 +68,7 @@ def _build_dependency_graph(paths: List[pathlib.Path], *, basedir: pathlib.Path)
         assert language is not None
 
         try:
-            dependencies = language.list_dependencies(src, basedir=basedir)
+            dependencies = language.list_dependencies_resolved(src, basedir=basedir)
         except Exception as e:
             logger.exception('failed to list dependencies of %s: %s', str(relative_src), e)
             continue

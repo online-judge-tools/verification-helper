@@ -23,7 +23,7 @@ class TestCPlusPlusListDependencies(unittest.TestCase):
         with tests.utils.load_files(files=files) as tempdir:
             with tests.utils.chdir(tempdir):
                 expected = sorted([tempdir / 'main.cpp', tempdir / 'included.hpp'])
-                actual = sorted(cplusplus.CPlusPlusLanguage().list_dependencies(tempdir / 'main.cpp', basedir=tempdir))
+                actual = sorted(cplusplus.CPlusPlusLanguage().list_dependencies_resolved(tempdir / 'main.cpp', basedir=tempdir))
                 self.assertEqual(actual, expected)
 
     @unittest.skipIf(platform.system() == 'Windows', "The path separator should be '/' for this test.")
@@ -39,7 +39,7 @@ class TestCPlusPlusListDependencies(unittest.TestCase):
 
         with tests.utils.load_files(files=files) as tempdir:
             with tests.utils.chdir(tempdir):
-                self.assertRaises(Exception, lambda: cplusplus.CPlusPlusLanguage().list_dependencies(tempdir / 'main.cpp', basedir=tempdir))
+                self.assertRaises(Exception, lambda: cplusplus.CPlusPlusLanguage().list_dependencies_resolved(tempdir / 'main.cpp', basedir=tempdir))
 
     @unittest.skipIf(platform.system() in ('Windows', 'Darwin'), "The filesystem should be case-sensitive for this test.")
     def test_failure_with_case_insensitive(self) -> None:
@@ -54,4 +54,4 @@ class TestCPlusPlusListDependencies(unittest.TestCase):
 
         with tests.utils.load_files(files=files) as tempdir:
             with tests.utils.chdir(tempdir):
-                self.assertRaises(Exception, lambda: cplusplus.CPlusPlusLanguage().list_dependencies(tempdir / 'main.cpp', basedir=tempdir))
+                self.assertRaises(Exception, lambda: cplusplus.CPlusPlusLanguage().list_dependencies_resolved(tempdir / 'main.cpp', basedir=tempdir))

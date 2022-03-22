@@ -39,6 +39,17 @@ class Language:
 
         raise NotImplementedError
 
+    def list_dependencies_resolved(self, path: pathlib.Path, *, basedir: pathlib.Path) -> List[pathlib.Path]:
+        """
+        Merge list_dependencies() and attributes['SAMEAS']
+        """
+        dependencies = self.list_dependencies(path, basedir=basedir)
+        attributes = self.list_attributes(path, basedir=basedir)
+        sameas = attributes.get('SAMEAS')
+        if isinstance(sameas, str):
+            dependencies.append(basedir / sameas)
+        return dependencies
+
     @abc.abstractmethod
     def bundle(self, path: pathlib.Path, *, basedir: pathlib.Path, options: Dict[str, Any]) -> bytes:
         """

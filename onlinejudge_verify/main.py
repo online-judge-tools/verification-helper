@@ -79,6 +79,7 @@ def subcommand_run(paths: List[pathlib.Path], *, timeout: float = 600, tle: floa
     if not paths:
         paths = sorted(list(onlinejudge_verify.utils.iterate_verification_files()))
     try:
+        onlinejudge_verify.utils.init_dependencies(paths, basedir=pathlib.Path.cwd())
         with onlinejudge_verify.marker.get_verification_marker() as marker:
             return onlinejudge_verify.verify.main(paths, marker=marker, timeout=timeout, tle=tle, jobs=jobs)
     finally:
@@ -282,9 +283,10 @@ def main(args: Optional[List[str]] = None) -> None:
     # load the config file as a global variable
     onlinejudge_verify.config.set_config_path(pathlib.Path(parsed.config_file))
 
-    if getattr(parsed, 'jobs', None) is not None:
-        # 先に並列で読み込みしておく
-        onlinejudge_verify.marker.get_verification_marker(jobs=parsed.jobs)
+    # SAMEAS のパースの都合で先読みしない
+    # if getattr(parsed, 'jobs', None) is not None:
+    #     # 先に並列で読み込みしておく
+    #     onlinejudge_verify.marker.get_verification_marker(jobs=parsed.jobs)
 
     if parsed.subcommand == 'all':
         _delete_gitignore()

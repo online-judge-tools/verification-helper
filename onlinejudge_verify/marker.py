@@ -39,7 +39,8 @@ class VerificationMarker:
             language = onlinejudge_verify.languages.list.get(path)
             assert language is not None
             try:
-                depending_files = language.list_dependencies_resolved(path, basedir=_cwd())
+                depending_files = onlinejudge_verify.utils.get_dependencies(path, basedir=_cwd())
+                depending_files.append(path)
             except Exception:
                 traceback.print_exc()
                 return _error_timestamp
@@ -152,7 +153,7 @@ def _get_last_commit_time_to_verify(path: pathlib.Path) -> datetime.datetime:
     language = onlinejudge_verify.languages.list.get(path)
     assert language is not None
     try:
-        depending_files = language.list_dependencies_resolved(path, basedir=_cwd())
+        depending_files = onlinejudge_verify.utils.get_dependencies(path, basedir=_cwd())
     except Exception:
         traceback.print_exc()
         return _error_timestamp

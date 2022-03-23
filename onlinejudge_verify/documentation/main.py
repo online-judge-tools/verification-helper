@@ -9,6 +9,7 @@ import yaml
 import onlinejudge_verify.documentation.build as build
 import onlinejudge_verify.documentation.configure as configure
 import onlinejudge_verify.marker
+import onlinejudge_verify.utils
 from onlinejudge_verify.documentation.type import *
 
 logger = getLogger(__name__)
@@ -20,10 +21,12 @@ _CONFIG_YML_PATH: str = '_config.yml'
 def print_stats_json(*, jobs: int = 1) -> None:
     basedir = pathlib.Path.cwd()
     logger.info('load verification status...')
+    source_code_paths = configure.find_source_code_paths(basedir=basedir)
+    onlinejudge_verify.utils.init_dependencies(source_code_paths, basedir=basedir)
     marker = onlinejudge_verify.marker.get_verification_marker(jobs=jobs)
 
     logger.info('collect source code statistics...')
-    source_code_stats = configure.generate_source_code_stats(basedir=basedir, marker=marker)
+    source_code_stats = configure.generate_source_code_stats(source_code_paths, basedir=basedir, marker=marker)
     logger.info('dump to json...')
     data = build.render_source_code_stats(source_code_stats=source_code_stats, basedir=basedir)
     print(json.dumps(data))
@@ -61,11 +64,13 @@ def main(*, jobs: int = 1) -> None:
     basedir = pathlib.Path.cwd()
     config = load_render_config(basedir=basedir)
     logger.info('load verification status...')
+    source_code_paths = configure.find_source_code_paths(basedir=basedir)
+    onlinejudge_verify.utils.init_dependencies(source_code_paths, basedir=basedir)
     marker = onlinejudge_verify.marker.get_verification_marker(jobs=jobs)
 
     # configure
     logger.info('collect source code statistics...')
-    source_code_stats = configure.generate_source_code_stats(basedir=basedir, marker=marker)
+    source_code_stats = configure.generate_source_code_stats(source_code_paths, basedir=basedir, marker=marker)
     logger.info('list markdown files...')
     markdown_paths = configure.find_markdown_paths(basedir=basedir)
     logger.info('list rendering jobs...')

@@ -12,6 +12,7 @@ from typing import *
 import onlinejudge
 import onlinejudge_verify.languages.list
 import onlinejudge_verify.marker
+import onlinejudge_verify.utils
 
 logger = getLogger(__name__)
 
@@ -141,7 +142,7 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
     return VerificationStatus('verified')
 
 
-def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.VerificationMarker, timeout: float = math.inf, tle: float = 60, jobs: int = 1) -> VerificationSummary:
+def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.VerificationMarker, timeout: float = math.inf, tle: float = 60, basedir=Optional[pathlib.Path], jobs: int = 1) -> VerificationSummary:
     try:
         import resource  # pylint: disable=import-outside-toplevel,import-error
         _, hard = resource.getrlimit(resource.RLIMIT_STACK)  # type: ignore
@@ -160,7 +161,6 @@ def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.Verific
     failed_test_paths: List[pathlib.Path] = []
 
     start = time.time()
-
     verification_statuses: Dict[pathlib.Path, VerificationStatus] = {}
     same_as_paths: List[Tuple[pathlib.Path, pathlib.Path]] = []
     for path in paths:

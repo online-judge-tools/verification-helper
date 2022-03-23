@@ -78,7 +78,7 @@ class TestVerification(unittest.TestCase):
             with tests.utils.chdir(tempdir):
                 timestamps_path = tempdir / 'timestamps.json'
                 with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
-                    self.assertEqual(verify.main(paths, marker=marker).failed_test_paths, [])
+                    self.assertEqual(verify.main(paths, basedir=tempdir, marker=marker).failed_test_paths, [])
                 with open(timestamps_path) as fh:
                     timestamps = json.load(fh)
                 self.assertEqual(list(timestamps.keys()), ['example.test.cpp', 'standalone.test.py'])
@@ -100,7 +100,7 @@ class TestVerification(unittest.TestCase):
             with tests.utils.chdir(tempdir):
                 timestamps_path = tempdir / 'timestamps.json'
                 with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
-                    self.assertEqual(verify.main(paths, marker=marker).failed_test_paths, paths)
+                    self.assertEqual(verify.main(paths, basedir=tempdir, marker=marker).failed_test_paths, paths)
                 with open(timestamps_path) as fh:
                     timestamps = json.load(fh)
                 self.assertEqual(timestamps, {})
@@ -127,7 +127,7 @@ print('ng')
             with tests.utils.chdir(tempdir):
                 timestamps_path = tempdir / 'timestamps.json'
                 with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
-                    self.assertEqual(verify.main(paths, marker=marker).failed_test_paths, [pathlib.Path('failure.test.py'), pathlib.Path('sameas_failure.test.py')])
+                    self.assertEqual(verify.main(paths, basedir=tempdir, marker=marker).failed_test_paths, [pathlib.Path('failure.test.py'), pathlib.Path('sameas_failure.test.py')])
                 with open(timestamps_path) as fh:
                     timestamps = json.load(fh)
                 self.assertEqual(list(timestamps.keys()), ['example.test.py', 'sameas_success.test.py'])
@@ -173,7 +173,7 @@ print('ng')
             # check actual values
             with tests.utils.chdir(tempdir):
                 with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
-                    self.assertEqual(sorted(verify.main(paths, marker=marker).failed_test_paths), sorted(expected_return))
+                    self.assertEqual(sorted(verify.main(paths, basedir=tempdir, marker=marker).failed_test_paths), sorted(expected_return))
                 with open(str(timestamps_path)) as fh:
                     timestamps = json.load(fh)
                 self.assertEqual(timestamps, expected_timestamps)

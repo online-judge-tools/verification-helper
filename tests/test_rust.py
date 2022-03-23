@@ -105,20 +105,20 @@ class TestRustListDependencies(unittest.TestCase):
             verification_src_path = tempdir / 'verification' / 'src' / 'bin' / 'aizu-online-judge-itp1-1-a.rs'
 
             expected = [sub_crate_src_path('a'), sub_crate_src_path('b'), sub_crate_src_path('c'), top_lib_src_path]
-            actual = sorted(RustLanguage(config=None).list_dependencies_resolved(top_lib_src_path, basedir=tempdir))
+            actual = sorted(RustLanguage(config=None).list_dependencies(top_lib_src_path, basedir=tempdir))
             self.assertEqual(actual, expected)
 
             expected = [sub_crate_src_path('a'), sub_crate_src_path('b'), sub_crate_src_path('c')]
-            actual = sorted(RustLanguage(config=None).list_dependencies_resolved(sub_crate_src_path('a'), basedir=tempdir))
+            actual = sorted(RustLanguage(config=None).list_dependencies(sub_crate_src_path('a'), basedir=tempdir))
             self.assertEqual(actual, expected)
 
             for src_path in [sub_crate_src_path('b'), sub_crate_src_path('c')]:
                 expected = [src_path]
-                actual = sorted(RustLanguage(config=None).list_dependencies_resolved(src_path, basedir=tempdir))
+                actual = sorted(RustLanguage(config=None).list_dependencies(src_path, basedir=tempdir))
                 self.assertEqual(actual, expected)
 
             expected = [sub_crate_src_path('a'), verification_src_path]
-            actual = sorted(RustLanguage(config=None).list_dependencies_resolved(verification_src_path, basedir=tempdir))
+            actual = sorted(RustLanguage(config=None).list_dependencies(verification_src_path, basedir=tempdir))
             self.assertEqual(actual, expected)
 
     def test_separate_workspaces(self) -> None:
@@ -179,15 +179,15 @@ class TestRustListDependencies(unittest.TestCase):
             verification_src_path = tempdir / 'verification' / 'aizu-online-judge' / 'src' / 'bin' / 'itp1-1-a.rs'
 
             expected = [sub_lib_src_path, top_lib_src_path]
-            actual = sorted(RustLanguage(config=None).list_dependencies_resolved(top_lib_src_path, basedir=tempdir))
+            actual = sorted(RustLanguage(config=None).list_dependencies(top_lib_src_path, basedir=tempdir))
             self.assertEqual(actual, expected)
 
             expected = [sub_lib_src_path]
-            actual = sorted(RustLanguage(config=None).list_dependencies_resolved(sub_lib_src_path, basedir=tempdir))
+            actual = sorted(RustLanguage(config=None).list_dependencies(sub_lib_src_path, basedir=tempdir))
             self.assertEqual(actual, expected)
 
             expected = [sub_lib_src_path, verification_src_path]
-            actual = sorted(RustLanguage(config=None).list_dependencies_resolved(verification_src_path, basedir=tempdir))
+            actual = sorted(RustLanguage(config=None).list_dependencies(verification_src_path, basedir=tempdir))
             self.assertEqual(actual, expected)
 
     def test_gathered_source_files(self) -> None:
@@ -288,20 +288,20 @@ class TestRustListDependencies(unittest.TestCase):
             verification_src_path = tempdir / 'verification' / 'src' / 'bin' / 'aizu-online-judge-itp1-1-a.rs'
 
             expected = [*map(sub_lib_src_path, ['a', 'b', 'c']), top_lib_src_path]
-            actual = sorted(RustLanguage(config=None).list_dependencies_resolved(top_lib_src_path, basedir=tempdir))
+            actual = sorted(RustLanguage(config=None).list_dependencies(top_lib_src_path, basedir=tempdir))
             self.assertEqual(actual, expected)
 
             expected = list(map(sub_lib_src_path, ['a', 'b', 'c']))
-            actual = sorted(RustLanguage(config=None).list_dependencies_resolved(sub_lib_src_path('a'), basedir=tempdir))
+            actual = sorted(RustLanguage(config=None).list_dependencies(sub_lib_src_path('a'), basedir=tempdir))
             self.assertEqual(actual, expected)
 
             for src_path in map(sub_lib_src_path, ['b', 'c']):
                 expected = [src_path]
-                actual = sorted(RustLanguage(config=None).list_dependencies_resolved(src_path, basedir=tempdir))
+                actual = sorted(RustLanguage(config=None).list_dependencies(src_path, basedir=tempdir))
                 self.assertEqual(actual, expected)
 
             expected = [sub_lib_src_path('a'), verification_src_path]
-            actual = sorted(RustLanguage(config=None).list_dependencies_resolved(verification_src_path, basedir=tempdir))
+            actual = sorted(RustLanguage(config=None).list_dependencies(verification_src_path, basedir=tempdir))
             self.assertEqual(actual, expected)
 
     def test_mono_package(self) -> None:
@@ -338,11 +338,11 @@ class TestRustListDependencies(unittest.TestCase):
             expected = [tempdir / 'src' / f'{stem}.rs' for stem in ['a', 'b', 'c', 'lib']]
 
             for file_stem in ['a', 'b', 'c', 'lib']:
-                actual = sorted(RustLanguage(config=None).list_dependencies_resolved(tempdir / 'src' / f'{file_stem}.rs', basedir=tempdir))
+                actual = sorted(RustLanguage(config=None).list_dependencies(tempdir / 'src' / f'{file_stem}.rs', basedir=tempdir))
                 self.assertEqual(actual, expected)
 
             expected = sorted([*expected, tempdir / 'examples' / 'aizu-online-judge-itp1-1-a.rs'])
-            actual = sorted(RustLanguage(config=None).list_dependencies_resolved(tempdir / 'examples' / 'aizu-online-judge-itp1-1-a.rs', basedir=tempdir))
+            actual = sorted(RustLanguage(config=None).list_dependencies(tempdir / 'examples' / 'aizu-online-judge-itp1-1-a.rs', basedir=tempdir))
             self.assertEqual(actual, expected)
 
     def test_external_crates(self) -> None:
@@ -369,7 +369,7 @@ class TestRustListDependencies(unittest.TestCase):
             src_path = tempdir / 'src' / 'lib.rs'
 
             expected = [src_path]
-            actual = sorted(RustLanguage(config=None).list_dependencies_resolved(src_path, basedir=tempdir))
+            actual = sorted(RustLanguage(config=None).list_dependencies(src_path, basedir=tempdir))
             self.assertEqual(actual, expected)
 
     def test_build_dependencies(self) -> None:
@@ -423,17 +423,17 @@ class TestRustListDependencies(unittest.TestCase):
                 return tempdir / 'crates' / package_name / 'src' / 'lib.rs'
 
             for src_path in [build_src_path('a'), lib_src_path('a')]:
-                actual = RustLanguage(config=None).list_dependencies_resolved(src_path, basedir=tempdir)
+                actual = RustLanguage(config=None).list_dependencies(src_path, basedir=tempdir)
                 generated_file = next((tempdir / 'target' / 'debug' / 'build').rglob('message.txt'))
                 expected = sorted([build_src_path('a'), lib_src_path('a'), lib_src_path('b'), generated_file])
                 self.assertEqual(actual, expected)
 
             expected = [generated_file]
-            actual = RustLanguage(config=None).list_dependencies_resolved(generated_file, basedir=tempdir)
+            actual = RustLanguage(config=None).list_dependencies(generated_file, basedir=tempdir)
             self.assertEqual(actual, expected)
 
             expected = [lib_src_path('b')]
-            actual = sorted(RustLanguage(config=None).list_dependencies_resolved(lib_src_path('b'), basedir=tempdir))
+            actual = sorted(RustLanguage(config=None).list_dependencies(lib_src_path('b'), basedir=tempdir))
             self.assertEqual(actual, expected)
 
 

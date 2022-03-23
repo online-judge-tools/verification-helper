@@ -31,7 +31,7 @@ def _find_matched_file_paths(pred: Callable[[pathlib.Path], bool], *, basedir: p
     return found
 
 
-def _find_source_code_paths(*, basedir: pathlib.Path) -> List[pathlib.Path]:
+def find_source_code_paths(*, basedir: pathlib.Path) -> List[pathlib.Path]:
     def pred(path: pathlib.Path) -> bool:
         return onlinejudge_verify.languages.list.get(path) is not None
 
@@ -68,7 +68,7 @@ def _build_dependency_graph(paths: List[pathlib.Path], *, basedir: pathlib.Path)
         assert language is not None
 
         try:
-            dependencies = language.list_dependencies_resolved(src, basedir=basedir)
+            dependencies = utils.get_dependencies(src, basedir=basedir)
         except Exception as e:
             logger.exception('failed to list dependencies of %s: %s', str(relative_src), e)
             continue
@@ -166,8 +166,7 @@ def _get_source_code_stat(
     )
 
 
-def generate_source_code_stats(*, marker: VerificationMarker, basedir: pathlib.Path) -> List[SourceCodeStat]:
-    source_code_paths = _find_source_code_paths(basedir=basedir)
+def generate_source_code_stats(source_code_paths: List[pathlib.Path], *, marker: VerificationMarker, basedir: pathlib.Path) -> List[SourceCodeStat]:
     depends_on, required_by, verified_with = _build_dependency_graph(source_code_paths, basedir=basedir)
     verification_status = _build_verification_status(source_code_paths, verified_with=verified_with, basedir=basedir, marker=marker)
     source_code_stats: List[SourceCodeStat] = []

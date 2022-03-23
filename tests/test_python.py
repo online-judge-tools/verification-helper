@@ -26,7 +26,7 @@ class TestPythonListDependencies(unittest.TestCase):
         with tests.utils.load_files(files) as tempdir:
             with tests.utils.chdir(tempdir):
                 expected = sorted([tempdir / 'main.py', tempdir / 'imported.py'])
-                actual = sorted(python.PythonLanguage().list_dependencies_resolved(tempdir / 'main.py', basedir=tempdir))
+                actual = sorted(python.PythonLanguage().list_dependencies(tempdir / 'main.py', basedir=tempdir))
                 self.assertEqual(actual, expected)
 
     def test_separated_dir(self) -> None:
@@ -44,7 +44,7 @@ class TestPythonListDependencies(unittest.TestCase):
             with tests.utils.chdir(tempdir):
                 # TODO: Check why this doesn't include `library/__init__.py`. The lack of `library/__init__.py` is acceptable but not so good.
                 expected = sorted([tempdir / 'tests' / 'main.py', tempdir / 'library' / 'imported.py'])
-                actual = sorted(python.PythonLanguage().list_dependencies_resolved(tempdir / 'tests' / 'main.py', basedir=tempdir))
+                actual = sorted(python.PythonLanguage().list_dependencies(tempdir / 'tests' / 'main.py', basedir=tempdir))
                 self.assertEqual(actual, expected)
 
 

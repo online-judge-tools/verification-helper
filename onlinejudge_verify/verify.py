@@ -197,7 +197,7 @@ def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.Verific
             if marker.resolve_path(sameas) in marker.old_timestamps:
                 logger.info('already passed')
             else:
-                raise RuntimeError('SAMEAS calls invalid test file')
+                logger.warning('SAMEAS file result is not found')
         elif verified2.status == 'ignore':
             logger.info('ignored')
         elif verified2.status == 'verified':

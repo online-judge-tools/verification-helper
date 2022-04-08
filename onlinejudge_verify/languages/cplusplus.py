@@ -76,6 +76,7 @@ _IGNORE = 'IGNORE'
 _IGNORE_IF_CLANG = 'IGNORE_IF_CLANG'
 _IGNORE_IF_GCC = 'IGNORE_IF_GCC'
 _ERROR = 'ERROR'
+_EXTERNAL_FAILURE_FLAG = 'EXTERNAL_FAILURE_FLAG'
 
 
 # config.toml example:
@@ -153,7 +154,7 @@ class CPlusPlusLanguage(Language):
 
                 # convert macros to attributes
                 if _IGNORE not in macros:
-                    for key in [_PROBLEM, _ERROR]:
+                    for key in [_PROBLEM, _ERROR, _EXTERNAL_FAILURE_FLAG]:
                         if all_ignored:
                             # the first non-ignored environment
                             if key in macros:

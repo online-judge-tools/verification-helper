@@ -125,6 +125,7 @@ verification_file_suffix = ".test.sed"
 | `PROBLEM` | 提出する問題の URL を指定します | 必須 |
 | `IGNORE` | これが定義されていれば verify は実行されません | `#ifdef __clang__` などで囲った中で指定することで特定の状況下でのみ実行を抑制することができます |
 | `ERROR` | 許容誤差を指定します | |
+| `EXTERNAL_FAILURE_FLAG` | これで指定した環境変数が定義されていなければ verify は成功したものとみなします | ユニットテスト用 |
 
 ## ドキュメント生成
 

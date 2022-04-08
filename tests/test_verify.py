@@ -5,6 +5,7 @@ To test for each language, use other modules.
 
 import datetime
 import json
+import os
 import pathlib
 import unittest
 from typing import *
@@ -29,6 +30,13 @@ FAILURE_TEST_CPP = rb"""\
 int main() {
     int x; scanf("%d", &x);
     printf("%d\n", x + x + x);
+    return 0;
+}
+"""
+
+EXTERNAL_FAILURE_FLAG_TEST_CPP = rb"""\
+#define EXTERNAL_FAILURE_FLAG EXT_FAILURE_TEST
+int main() {
     return 0;
 }
 """
@@ -82,6 +90,44 @@ class TestVerification(unittest.TestCase):
         paths = [pathlib.Path('example.test.cpp')]
         with tests.utils.load_files(files) as tempdir:
             with tests.utils.chdir(tempdir):
+                timestamps_path = tempdir / 'timestamps.json'
+                with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
+                    self.assertEqual(verify.main(paths, marker=marker).failed_test_paths, paths)
+                with open(timestamps_path) as fh:
+                    timestamps = json.load(fh)
+                self.assertEqual(timestamps, {})
+
+    def test_success_with_external_failure_flag(self) -> None:
+        """
+        `test_success_with_external_failure_flag` is a simple test for the case when the `.test.cpp` has `EXTERNAL_FAILURE_FLAG` attribute.
+        """
+
+        files = {
+            'example.test.cpp': EXTERNAL_FAILURE_FLAG_TEST_CPP,
+        }
+        paths = [pathlib.Path('example.test.cpp')]
+        with tests.utils.load_files(files) as tempdir:
+            with tests.utils.chdir(tempdir):
+                timestamps_path = tempdir / 'timestamps.json'
+                del os.environ['EXT_FAILURE_TEST']
+                with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
+                    self.assertEqual(verify.main(paths, marker=marker).failed_test_paths, [])
+                with open(timestamps_path) as fh:
+                    timestamps = json.load(fh)
+                self.assertEqual(list(timestamps.keys()), ['example.test.cpp'])
+
+    def test_failure_with_external_failure_flag(self) -> None:
+        """
+        `test_failure_with_external_failure_flag` is a simple test for the case when the `.test.cpp` has `EXTERNAL_FAILURE_FLAG` attribute.
+        """
+
+        files = {
+            'example.test.cpp': EXTERNAL_FAILURE_FLAG_TEST_CPP,
+        }
+        paths = [pathlib.Path('example.test.cpp')]
+        with tests.utils.load_files(files) as tempdir:
+            with tests.utils.chdir(tempdir):
+                os.environ['EXT_FAILURE_TEST'] = '1'
                 timestamps_path = tempdir / 'timestamps.json'
                 with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
                     self.assertEqual(verify.main(paths, marker=marker).failed_test_paths, paths)

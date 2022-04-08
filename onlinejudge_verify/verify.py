@@ -61,6 +61,9 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
     except Exception:
         traceback.print_exc()
         return False
+    if 'EXTERNAL_FAILURE_FLAG' in attributes:
+        logger.info('EXTERNAL_FAILURE_FLAG: %s', attributes['EXTERNAL_FAILURE_FLAG'])
+        return attributes['EXTERNAL_FAILURE_FLAG'] not in os.environ
     if 'IGNORE' in attributes:
         return None
 

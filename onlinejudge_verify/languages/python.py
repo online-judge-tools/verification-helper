@@ -27,6 +27,7 @@ class PythonLanguageEnvironment(LanguageEnvironment):
             \"\"\"
 
             import os
+            import subprocess
             import sys
 
             # arguments
@@ -39,7 +40,10 @@ class PythonLanguageEnvironment(LanguageEnvironment):
                 env["PYTHONPATH"] = basedir + os.pathsep + env["PYTHONPATH"] 
             else:
                 env["PYTHONPATH"] = basedir  # set `PYTHONPATH` to import files relative to the root directory
-            os.execve(sys.executable, [sys.executable, path], env=env)  # use `os.execve` to avoid making an unnecessary parent process
+            if sys.platform == 'win32':
+                subprocess.run([sys.executable, path], env=env, check=True) # in Windows, exit code of `os.execve` is invalid.
+            else:
+                os.execve(sys.executable, [sys.executable, path], env=env)  # use `os.execve` to avoid making an unnecessary parent process
         """)
         with open(tempdir / 'compiled.py', 'wb') as fh:
             fh.write(code.encode())

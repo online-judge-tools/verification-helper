@@ -258,6 +258,7 @@ class CSharpLanguage(Language):
     def list_attributes(self, path: pathlib.Path, *, basedir: pathlib.Path) -> Dict[str, Any]:
         path = path.resolve()
         attributes: Dict[str, Any] = special_comments.list_special_comments(path)
+        attributes.update(special_comments.list_doxygen_annotations(path))
         attributes.setdefault('links', [])
         attributes['links'].extend(special_comments.list_embedded_urls(path))
         return attributes

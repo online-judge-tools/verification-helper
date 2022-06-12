@@ -57,6 +57,7 @@ def _get_verification_status_icon(verification_status: VerificationStatus) -> st
         VerificationStatus.LIBRARY_NO_TESTS: ':warning:',
         VerificationStatus.TEST_ACCEPTED: ':heavy_check_mark:',
         VerificationStatus.TEST_WRONG_ANSWER: ':x:',
+        VerificationStatus.TEST_SKIPPED: ':fast_forward:',
         VerificationStatus.TEST_WAITING_JUDGE: ':warning:',
     }
     return table[verification_status]

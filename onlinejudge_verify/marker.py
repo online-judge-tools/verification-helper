@@ -79,6 +79,21 @@ class VerificationMarker:
         path = path.resolve(strict=True).relative_to(_cwd())
         self.verification_statuses[path] = 'failed'
 
+    def is_skipped(self, path: pathlib.Path) -> bool:
+        if not path.exists():
+            return False
+        path = path.resolve(strict=True).relative_to(_cwd())
+        return self.verification_statuses.get(path) == 'skipped'
+
+    def mark_skipped(self, path: pathlib.Path) -> None:
+        """
+        :param path: should exist
+        """
+
+        path = path.resolve(strict=True).relative_to(_cwd())
+        self.new_timestamps[path] = self.get_current_timestamp(path)
+        self.verification_statuses[path] = 'skipped'
+
     def load_timestamps(self, *, jobs: Optional[int] = None) -> None:
         # 古いものを読み込む
         self.old_timestamps = {}

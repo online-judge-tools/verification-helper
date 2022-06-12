@@ -105,6 +105,8 @@ def _build_verification_status(paths: List[pathlib.Path], *, verified_with: Dict
                 status = VerificationStatus.TEST_ACCEPTED
             elif marker.is_failed(path):
                 status = VerificationStatus.TEST_WRONG_ANSWER
+            elif marker.mark_skipped(path):
+                status = VerificationStatus.TEST_SKIPPED
             else:
                 status = VerificationStatus.TEST_WAITING_JUDGE
             verification_status[absolute_path] = status

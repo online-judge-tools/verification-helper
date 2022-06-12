@@ -144,6 +144,7 @@ def main(paths: List[pathlib.Path], *, marker: onlinejudge_verify.marker.Verific
 
         if verified is None:
             logger.info('ignored')
+            marker.mark_skipped(path)
         elif verified:
             marker.mark_verified(path)
         else:

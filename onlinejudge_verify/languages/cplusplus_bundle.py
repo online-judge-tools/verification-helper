@@ -346,7 +346,11 @@ class Bundler:
                         continue
 
                 if uncommented_line:
-                    non_guard_line_found = True
+                    if not non_guard_line_found and uncommented_line == b"\n":
+                        # include guard の前がコメントまたは空行の場合は non_guard_line_found を True にしない
+                        pass
+                    else:
+                        non_guard_line_found = True
                     if include_guard_macro is not None and not include_guard_define_found:
                         # 先頭に #ifndef が見付かっても #define が続かないならそれは include guard ではない
                         include_guard_macro = None

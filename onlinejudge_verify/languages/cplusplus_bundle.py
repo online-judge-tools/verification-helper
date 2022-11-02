@@ -308,8 +308,8 @@ class Bundler:
                 if re.match(rb'\s*#\s*pragma\s+once\s*', line):  # #pragma once は comment 扱いで消されてしまう
                     logger.debug('%s: line %s: #pragma once', str(path), i + 1)
                     if non_guard_line_found:
-                        # 先頭以外で #pragma once されてた場合は諦める
-                        raise BundleErrorAt(path, i + 1, "#pragma once found in a non-first line")
+                        # #pragma once の前にコードが書かれていた場合に落とす
+                        raise BundleErrorAt(path, i + 1, "found codes before #pragma once")
                     if include_guard_macro is not None:
                         raise BundleErrorAt(path, i + 1, "#pragma once found in an include guard with #ifndef")
                     if path.resolve() in self.pragma_once:

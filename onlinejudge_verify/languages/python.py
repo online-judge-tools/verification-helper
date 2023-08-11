@@ -57,7 +57,7 @@ def _python_list_depending_files(path: pathlib.Path, basedir: pathlib.Path) -> L
     )
     try:
         executor = concurrent.futures.ThreadPoolExecutor()
-        future = executor.submit(importlab.graph.ImportGraph.create, env, [str(path)])
+        future = executor.submit(importlab.graph.ImportGraph.create, env, [str(path)], trim=True)
         if platform.uname().system == 'Windows':
             timeout = 5.0  # 1.0 sec causes timeout on CI using Windows
         else:

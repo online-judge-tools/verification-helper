@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
 
     - name: Set up Python
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
 
     - name: Install dependencies
       run: pip3 install -U git+https://github.com/${{ github.repository }}.git@master
@@ -21,32 +21,41 @@ jobs:
 
     # required only if you want to verify Haskell code
     - name: Install dependencies (Haskell)
-      uses: actions/setup-haskell@v1
+      uses: haskell/actions/setup@v2
+      with:
+        ghc-version: '8.8.4'
+        cabal-version: '3.0.0.0'
 
     # required only if you want to verify Java code
     - name: Install dependencies (Java)
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v3
       with:
-        java-version: 11
+        distribution: temurin
+        java-version: '11'
 
     # required only if you want to verify C# script files
-    - uses: actions/setup-dotnet@v1
+    - uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '3.1.101'
     - name: Install dependencies (C#)
-      run: dotnet tool install -g dotnet-script
+      run: dotnet tool install --global dotnet-script --version 1.4.0
 
     # required only if you want to verify Go code
     - name: Install dependencies (Go)
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v4
 
     # required only if you want to verify Ruby code
     - name: Install dependencies (Ruby)
-      uses: actions/setup-ruby@v1
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.0'
 
     # required only if you want to verify Nim code
     - name: Install dependencies (Nim)
-      run: sudo apt install nim
+      uses: jiro4989/setup-nim-action@v1
+      with:
+        nim-version: '1.6.14'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set up Rust (1.42.0)
       uses: actions-rs/toolchain@v1

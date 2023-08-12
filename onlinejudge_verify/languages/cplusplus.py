@@ -27,7 +27,7 @@ class CPlusPlusLanguageEnvironment(LanguageEnvironment):
         self.CXXFLAGS = CXXFLAGS
 
     def compile(self, path: pathlib.Path, *, basedir: pathlib.Path, tempdir: pathlib.Path) -> None:
-        command = [str(self.CXX), *self.CXXFLAGS, '-I', str(basedir), '-o', str(tempdir / 'a.out'), str(path)]
+        command = [str(self.CXX), *self.CXXFLAGS, '-liconv', '-I', str(basedir), '-o', str(tempdir / 'a.out'), str(path)]
         logger.info('$ %s', ' '.join(command))
         subprocess.check_call(command)
 

@@ -66,6 +66,20 @@ if __name__ == "__main__":
         main()
 """
 
+TESTS_MAIN_PY_WITH_STDLIB = rb"""\
+# verify-helper: PROBLEM http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_B
+from library.imported import solve
+import os
+
+def main() -> None:
+    x = int(input())
+    ans = solve(x)
+    print(ans)
+
+if __name__ == "__main__":
+        main()
+"""
+
 
 class TestPythonVerification(unittest.TestCase):
     """TestPythonListDependencies has end-to-end tests for the verification of Python files.
@@ -78,6 +92,26 @@ class TestPythonVerification(unittest.TestCase):
             pathlib.Path('library', '__init__.py'): b"",
             pathlib.Path('library', 'imported.py'): LIBRARY_IMPORTED_PY,
             pathlib.Path('tests', 'main.py'): TESTS_MAIN_PY,
+        }
+        path = pathlib.Path('tests', 'main.py')
+        with tests.utils.load_files_pathlib(files) as tempdir:
+            with tests.utils.chdir(tempdir):
+                timestamps_path = tempdir / 'timestamps.json'
+                with onlinejudge_verify.marker.VerificationMarker(json_path=timestamps_path, use_git_timestamp=False) as marker:
+                    self.assertEqual(verify.main([path], marker=marker).failed_test_paths, [])
+                with open(timestamps_path) as fh:
+                    timestamps = json.load(fh)
+                self.assertEqual(list(timestamps.keys()), [str(pathlib.Path('tests', 'main.py'))])
+
+    def test_separated_dir_with_stdlib(self) -> None:
+        """`test_separated_dir_with_stdlib` is a test for the case when the library files exist at the separate directory of the test file.
+        In this test, main.py has an import of a module in stdlib.
+        """
+
+        files = {
+            pathlib.Path('library', '__init__.py'): b"",
+            pathlib.Path('library', 'imported.py'): LIBRARY_IMPORTED_PY,
+            pathlib.Path('tests', 'main.py'): TESTS_MAIN_PY_WITH_STDLIB,
         }
         path = pathlib.Path('tests', 'main.py')
         with tests.utils.load_files_pathlib(files) as tempdir:

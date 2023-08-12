@@ -2,7 +2,7 @@
 compile = "bash -c 'echo hello > {tempdir}/hello'"
 execute = "env AWKPATH={basedir} awk -f {path}"
 bundle = "false"
-list_dependencies = "sed 's/^@include \"\\(.*\\)\"$/\\1/ ; t ; d' {path}"
+list_dependencies = "sed -re 's/^@include \"\\(.*\\)\"$/\\1/' -e t -e d {path}"
 
 [languages.go]
 # Because of Go modules, go run does not work outside a module.

@@ -25,7 +25,7 @@ Please read this: <https://online-judge-tools.github.io/verification-helper/inst
 $ pip3 install online-judge-verify-helper
 ```
 
-Python 3.6 or above is required.
+Python 3.8 or above is required.
 
 #### Automating the verification
 

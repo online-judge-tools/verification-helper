@@ -9,7 +9,7 @@ setup(
     url='https://github.com/kmyk/online-judge-verify-helper',
     license='MIT License',
     description='',
-    python_requires='>=3.6',
+    python_requires='>=3.8',
     install_requires=[
         'colorlog',
         'pyyaml',

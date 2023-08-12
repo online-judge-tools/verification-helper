@@ -25,7 +25,7 @@
 $ pip3 install online-judge-verify-helper
 ```
 
-Python のバージョンは 3.6 以上が必要です。
+Python のバージョンは 3.8 以上が必要です。
 
 #### verify 自動実行
 

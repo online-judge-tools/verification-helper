@@ -3,10 +3,10 @@
 package main
 
 import (
-    "fmt"
-    "./helloworld"
+	"example-go/helloworld"
+	"fmt"
 )
 
 func main() {
-    fmt.Printf("%s\n", helloworld.GetHelloWorld())
+	fmt.Printf("%s\n", helloworld.GetHelloWorld())
 }

@@ -37,13 +37,15 @@ jobs:
     # required only if you want to verify C# script files
     - uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '3.1.101'
+        dotnet-version: '6.0.413'
     - name: Install dependencies (C#)
-      run: dotnet tool install --global dotnet-script --version 1.4.0
+      run: dotnet tool install --global dotnet-script --version 1.3.0
 
     # required only if you want to verify Go code
     - name: Install dependencies (Go)
       uses: actions/setup-go@v4
+      with:
+        go-version: '1.20.7'
 
     # required only if you want to verify Ruby code
     - name: Install dependencies (Ruby)

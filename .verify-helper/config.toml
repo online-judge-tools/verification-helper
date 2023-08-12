@@ -3,3 +3,11 @@ compile = "bash -c 'echo hello > {tempdir}/hello'"
 execute = "env AWKPATH={basedir} awk -f {path}"
 bundle = "false"
 list_dependencies = "sed 's/^@include \"\\(.*\\)\"$/\\1/ ; t ; d' {path}"
+
+[languages.go]
+# Because of Go modules, go run does not work outside a module.
+# With -C option, go run changes directory and executes otherwise normally.
+# We need to add the prefix ../../ because {path} is something like examples/go/helloworld.test.go
+# and the argument is interpreted relative to ./examples/go.
+# -C option is available in Go >=1.20.
+execute = "go run -C ./examples/go ../../{path}"

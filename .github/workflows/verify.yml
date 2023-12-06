@@ -77,10 +77,11 @@ jobs:
 
     # required only if you set `languages.rust.list_dependencies_backend.kind` to `"cargo-udeps"`
     - name: Install cargo-udeps for Rust
-      uses: actions-rs/install@v0.1
+      uses: baptiste0928/cargo-install@v2
       with:
         crate: cargo-udeps
-        use-tool-cache: true
+        version: '0.1.44'
+        args: --debug
 
     - name: Run tests
       env:

@@ -19,10 +19,9 @@ jobs:
     - name: Install dependencies
       run: pip3 install -U git+https://github.com/${{ github.repository }}.git@master
 
-
     # required only if you want to verify Haskell code
     - name: Install dependencies (Haskell)
-      uses: haskell/actions/setup@v2
+      uses: haskell-actions/setup@v2
       with:
         ghc-version: '8.8.4'
         cabal-version: '3.0.0.0'

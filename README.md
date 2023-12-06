@@ -48,7 +48,7 @@ The function can be used by running the following command:
 $ oj-bundle main.cpp
 ```
 
-If your competitive programming library resides outside the current directory, please specify the flag in the form of `-I path/to/your/library`. I recommend make shell aliases like `alias oj-bundle='\oj-bundle -I path/to/your/library'`.
+If your competitive programming library resides outside the current directory, please specify the flag in the form of `-I path/to/your/library`. I recommend making shell aliases like `alias oj-bundle='\oj-bundle -I path/to/your/library'`.
 
 [Include guards](https://ja.wikibooks.org/wiki/More_C%2B%2B_Idioms/%E3%82%A4%E3%83%B3%E3%82%AF%E3%83%AB%E3%83%BC%E3%83%89%E3%82%AC%E3%83%BC%E3%83%89%E3%83%9E%E3%82%AF%E3%83%AD%28Include_Guard_Macro%29) like `#pragma once` are partially supported. If you have files that will be included multiple times but you only want them to appear once in the generated code, add `#pragma once` to the first line of the files.
 
@@ -66,10 +66,10 @@ For the details, see [the reference](https://online-judge-tools.github.io/verifi
 
 ## Tips
 
--   If you cannot find problems to verify your library, you can refer to other users' libraries. You can find all users of `online-judge-verify-helper` at <https://github.com/search?q=online-judge-verify-helper+path%3A.github>.
--   If you cannot find problems to verify your library anywhere, we suggest that you add a problem to [Library Checker](https://judge.yosupo.jp/). You can use [Hello World](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_A) as a dummy problem to run your own stress tests.
+-   If you cannot find problems to verify your library with, you can refer to other users' libraries. You can find all users of `online-judge-verify-helper` at <https://github.com/search?q=online-judge-verify-helper+path%3A.github>.
+-   If you cannot find problems to verify your library with anywhere, we suggest that you add a problem to [Library Checker](https://judge.yosupo.jp/). You can use [Hello World](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_1_A) as a dummy problem to run your own stress tests.
 -   You do not need to display the MIT License if you call `online-judge-verify-helper` from GitHub Actions ([Details, in Japanese](https://github.com/online-judge-tools/verification-helper/issues/34)).
--   This is tool to efficiently verify your library, not to check or prettify your code. If you need such functions, you can try formatters like [clang-format](https://clang.llvm.org/docs/ClangFormat.html) or linters like [cppcheck](http://cppcheck.sourceforge.net/).
+-   This is a tool to efficiently verify your library, not to check or prettify your code. If you need such functions, you can try formatters like [clang-format](https://clang.llvm.org/docs/ClangFormat.html) or linters like [cppcheck](http://cppcheck.sourceforge.net/).
 
 ## Authors
 

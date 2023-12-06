@@ -59,20 +59,18 @@ jobs:
         nim-version: '1.6.14'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Set up Rust (1.42.0)
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: 1.42.0-x86_64-unknown-linux-gnu
-        default: true
-        profile: minimal
+    - name: Set up Rust (1.70.0)
+      run: |
+        rustup set profile minimal
+        rustup install 1.70.0
+        rustup override set nightly
 
     # required by cargo-udeps
     - name: Set up Rust (nightly)
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: nightly-x86_64-unknown-linux-gnu
-        default: true
-        profile: minimal
+      run: |
+        rustup set profile minimal
+        rustup install nightly
+        rustup override set nightly
 
     # required only if you set `languages.rust.list_dependencies_backend.kind` to `"cargo-udeps"`
     - name: Install cargo-udeps for Rust

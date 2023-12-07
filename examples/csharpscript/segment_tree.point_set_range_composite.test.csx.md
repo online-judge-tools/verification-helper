@@ -13,9 +13,10 @@ data:
     PROBLEM: https://judge.yosupo.jp/problem/point_set_range_composite
     links:
     - https://judge.yosupo.jp/problem/point_set_range_composite
-  bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.9.5/x64/lib/python3.9/site-packages/onlinejudge_verify/documentation/build.py\"\
+    - https://judge.yosupo.jp/problem/point_set_range_composite
+  bundledCode: "Traceback (most recent call last):\n  File \"/home/runner/.local/lib/python3.10/site-packages/onlinejudge_verify/documentation/build.py\"\
     , line 71, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
-    \ basedir=basedir, options={'include_paths': [basedir]}).decode()\n  File \"/opt/hostedtoolcache/Python/3.9.5/x64/lib/python3.9/site-packages/onlinejudge_verify/languages/csharpscript.py\"\
+    \ basedir=basedir, options={'include_paths': [basedir]}).decode()\n  File \"/home/runner/.local/lib/python3.10/site-packages/onlinejudge_verify/languages/csharpscript.py\"\
     , line 113, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "#load \"./segment_tree.csx\"\n#pragma PROBLEM https://judge.yosupo.jp/problem/point_set_range_composite\n\
     \nusing System;\nusing System.Linq;\n\nstruct Linear\n{\n    const int MOD = 998244353;\n\
@@ -37,7 +38,7 @@ data:
   isVerificationFile: true
   path: examples/csharpscript/segment_tree.point_set_range_composite.test.csx
   requiredBy: []
-  timestamp: '2020-02-16 04:32:52+09:00'
+  timestamp: '2023-12-07 23:59:11+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: examples/csharpscript/segment_tree.point_set_range_composite.test.csx

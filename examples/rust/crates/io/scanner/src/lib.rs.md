@@ -14,9 +14,9 @@ data:
   _verificationStatusIcon: ':warning:'
   attributes:
     links: []
-  bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.9.5/x64/lib/python3.9/site-packages/onlinejudge_verify/documentation/build.py\"\
+  bundledCode: "Traceback (most recent call last):\n  File \"/home/runner/.local/lib/python3.10/site-packages/onlinejudge_verify/documentation/build.py\"\
     , line 71, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
-    \ basedir=basedir, options={'include_paths': [basedir]}).decode()\n  File \"/opt/hostedtoolcache/Python/3.9.5/x64/lib/python3.9/site-packages/onlinejudge_verify/languages/rust.py\"\
+    \ basedir=basedir, options={'include_paths': [basedir]}).decode()\n  File \"/home/runner/.local/lib/python3.10/site-packages/onlinejudge_verify/languages/rust.py\"\
     , line 288, in bundle\n    raise NotImplementedError\nNotImplementedError\n"
   code: "//! A quite simple input scanner.\n//!\n//! ```no_run\n//! use scanner::Scanner;\n\
     //!\n//! let mut sc = Scanner::from_stdin();\n//! let _: u64 = sc.read();\n//!\
@@ -41,7 +41,7 @@ data:
   requiredBy:
   - examples/rust/crates/io/input/src/lib.rs
   - examples/rust/src/lib.rs
-  timestamp: '2020-11-30 13:30:54+09:00'
+  timestamp: '2023-12-07 23:59:11+09:00'
   verificationStatus: LIBRARY_NO_TESTS
   verifiedWith: []
 documentation_of: examples/rust/crates/io/scanner/src/lib.rs

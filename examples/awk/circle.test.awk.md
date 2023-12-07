@@ -12,15 +12,15 @@ data:
   attributes:
     ERROR: 1e-5
     PROBLEM: http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_4_B
-  bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.9.5/x64/lib/python3.9/site-packages/onlinejudge_verify/documentation/build.py\"\
+  bundledCode: "Traceback (most recent call last):\n  File \"/home/runner/.local/lib/python3.10/site-packages/onlinejudge_verify/documentation/build.py\"\
     , line 71, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
-    \ basedir=basedir, options={'include_paths': [basedir]}).decode()\n  File \"/opt/hostedtoolcache/Python/3.9.5/x64/lib/python3.9/site-packages/onlinejudge_verify/languages/user_defined.py\"\
+    \ basedir=basedir, options={'include_paths': [basedir]}).decode()\n  File \"/home/runner/.local/lib/python3.10/site-packages/onlinejudge_verify/languages/user_defined.py\"\
     , line 71, in bundle\n    return subprocess.check_output(shlex.split(command))\n\
-    \  File \"/opt/hostedtoolcache/Python/3.9.5/x64/lib/python3.9/subprocess.py\"\
-    , line 424, in check_output\n    return run(*popenargs, stdout=PIPE, timeout=timeout,\
-    \ check=True,\n  File \"/opt/hostedtoolcache/Python/3.9.5/x64/lib/python3.9/subprocess.py\"\
-    , line 528, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError:\
-    \ Command '['false']' returned non-zero exit status 1.\n"
+    \  File \"/usr/lib/python3.10/subprocess.py\", line 421, in check_output\n   \
+    \ return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,\n  File \"\
+    /usr/lib/python3.10/subprocess.py\", line 526, in run\n    raise CalledProcessError(retcode,\
+    \ process.args,\nsubprocess.CalledProcessError: Command '['false']' returned non-zero\
+    \ exit status 1.\n"
   code: "# verification-helper: PROBLEM http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=ITP1_4_B\n\
     # verification-helper: ERROR 1e-5\n@include \"examples/awk/circle.awk\"\n{\n \
     \   print get_area($1), get_circumference($1);\n}\n"
@@ -29,7 +29,7 @@ data:
   isVerificationFile: true
   path: examples/awk/circle.test.awk
   requiredBy: []
-  timestamp: '2020-09-17 18:25:50+09:00'
+  timestamp: '2023-12-07 23:59:11+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: examples/awk/circle.test.awk

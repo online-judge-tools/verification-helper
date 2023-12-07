@@ -20,14 +20,14 @@ data:
   _verificationStatusIcon: ':heavy_check_mark:'
   attributes:
     PROBLEM: https://onlinejudge.u-aizu.ac.jp/courses/lesson/2/ITP1/1/ITP1_1_A
-  bundledCode: "Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.9.5/x64/lib/python3.9/site-packages/onlinejudge_verify/documentation/build.py\"\
+  bundledCode: "Traceback (most recent call last):\n  File \"/home/runner/.local/lib/python3.10/site-packages/onlinejudge_verify/documentation/build.py\"\
     , line 71, in _render_source_code_stat\n    bundled_code = language.bundle(stat.path,\
-    \ basedir=basedir, options={'include_paths': [basedir]}).decode()\n  File \"/opt/hostedtoolcache/Python/3.9.5/x64/lib/python3.9/site-packages/onlinejudge_verify/languages/user_defined.py\"\
+    \ basedir=basedir, options={'include_paths': [basedir]}).decode()\n  File \"/home/runner/.local/lib/python3.10/site-packages/onlinejudge_verify/languages/user_defined.py\"\
     , line 68, in bundle\n    raise RuntimeError('bundler is not specified: {}'.format(str(path)))\n\
     RuntimeError: bundler is not specified: examples/go/helloworld.test.go\n"
   code: "// verification-helper: PROBLEM https://onlinejudge.u-aizu.ac.jp/courses/lesson/2/ITP1/1/ITP1_1_A\n\
-    \npackage main\n\nimport (\n    \"fmt\"\n    \"./helloworld\"\n)\n\nfunc main()\
-    \ {\n    fmt.Printf(\"%s\\n\", helloworld.GetHelloWorld())\n}\n"
+    \npackage main\n\nimport (\n\t\"example-go/helloworld\"\n\t\"fmt\"\n)\n\nfunc\
+    \ main() {\n\tfmt.Printf(\"%s\\n\", helloworld.GetHelloWorld())\n}\n"
   dependsOn:
   - examples/go/helloworld/helloworld.go
   - examples/go/helloworld.go
@@ -36,7 +36,7 @@ data:
   requiredBy:
   - examples/go/helloworld/helloworld.go
   - examples/go/helloworld.go
-  timestamp: '2020-09-17 19:04:09+09:00'
+  timestamp: '2023-12-07 23:59:11+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: examples/go/helloworld.test.go

@@ -76,7 +76,7 @@ data:
   isVerificationFile: true
   path: examples/segment_tree.range_minimum_query.test.cpp
   requiredBy: []
-  timestamp: '2020-09-14 23:28:24+09:00'
+  timestamp: '2023-12-07 23:59:11+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: examples/segment_tree.range_minimum_query.test.cpp

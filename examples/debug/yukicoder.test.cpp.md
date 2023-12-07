@@ -32,7 +32,7 @@ data:
   isVerificationFile: true
   path: examples/debug/yukicoder.test.cpp
   requiredBy: []
-  timestamp: '2020-02-28 16:21:27+09:00'
+  timestamp: '2023-12-07 23:59:11+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: examples/debug/yukicoder.test.cpp

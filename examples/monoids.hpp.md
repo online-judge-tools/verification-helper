@@ -35,7 +35,7 @@ data:
   isVerificationFile: false
   path: examples/monoids.hpp
   requiredBy: []
-  timestamp: '2019-11-29 11:28:05+09:00'
+  timestamp: '2023-12-07 23:59:11+09:00'
   verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
   - examples/segment_tree.range_sum_query.test.cpp

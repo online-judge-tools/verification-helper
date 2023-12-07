@@ -45,7 +45,7 @@ data:
   isVerificationFile: false
   path: examples/union_find_tree.hpp
   requiredBy: []
-  timestamp: '2019-12-16 05:18:36+09:00'
+  timestamp: '2023-12-07 23:59:11+09:00'
   verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
   - examples/union_find_tree.aoj.test.cpp

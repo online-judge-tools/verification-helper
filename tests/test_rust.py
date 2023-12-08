@@ -13,7 +13,7 @@ class TestRustListDependencies(unittest.TestCase):
     def test_separate_crates(self) -> None:
         files = {
             pathlib.Path('rust-toolchain'): textwrap.dedent("""\
-                1.42.0
+                1.70.0
                 """).encode(),
             pathlib.Path('Cargo.toml'): textwrap.dedent("""\
                 [workspace]
@@ -124,7 +124,7 @@ class TestRustListDependencies(unittest.TestCase):
     def test_separate_workspaces(self) -> None:
         files = {
             pathlib.Path('rust-toolchain'): textwrap.dedent("""\
-                1.42.0
+                1.70.0
                 """).encode(),
             pathlib.Path('Cargo.toml'): textwrap.dedent("""\
                 [workspace]
@@ -193,7 +193,7 @@ class TestRustListDependencies(unittest.TestCase):
     def test_gathered_source_files(self) -> None:
         files = {
             pathlib.Path('rust-toolchain'): textwrap.dedent("""\
-                1.42.0
+                1.70.0
                 """).encode(),
             pathlib.Path('Cargo.toml'): textwrap.dedent("""\
                 [workspace]
@@ -307,7 +307,7 @@ class TestRustListDependencies(unittest.TestCase):
     def test_mono_package(self) -> None:
         files = {
             pathlib.Path('rust-toolchain'): textwrap.dedent("""\
-                1.42.0
+                1.70.0
                 """).encode(),
             pathlib.Path('Cargo.toml'): textwrap.dedent("""\
                 [package]
@@ -348,7 +348,7 @@ class TestRustListDependencies(unittest.TestCase):
     def test_external_crates(self) -> None:
         files = {
             pathlib.Path('rust-toolchain'): textwrap.dedent("""\
-                1.42.0
+                1.70.0
                 """).encode(),
             pathlib.Path('Cargo.toml'): textwrap.dedent("""\
                 [package]
@@ -375,7 +375,7 @@ class TestRustListDependencies(unittest.TestCase):
     def test_build_dependencies(self) -> None:
         files = {
             pathlib.Path('rust-toolchain'): textwrap.dedent("""\
-                1.42.0
+                1.70.0
                 """).encode(),
             pathlib.Path('Cargo.toml'): textwrap.dedent("""\
                 [workspace]
@@ -441,7 +441,7 @@ class TestRustVerification(unittest.TestCase):
     def test_success(self) -> None:
         files = {
             pathlib.Path('rust-toolchain'): textwrap.dedent("""\
-                1.42.0
+                1.70.0
                 """).encode(),
             pathlib.Path('Cargo.toml'): textwrap.dedent("""\
                 [package]

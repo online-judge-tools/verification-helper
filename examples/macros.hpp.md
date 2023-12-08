@@ -56,15 +56,15 @@ data:
   isVerificationFile: false
   path: examples/macros.hpp
   requiredBy: []
-  timestamp: '2023-12-08 11:08:52+09:00'
+  timestamp: '2023-12-08 11:18:27+09:00'
   verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
-  - examples/segment_tree.range_minimum_query.test.cpp
   - examples/union_find_tree.aoj.test.cpp
-  - examples/debug/include_relative.test.cpp
-  - examples/segment_tree.point_set_range_composite.test.cpp
   - examples/segment_tree.range_sum_query.test.cpp
   - examples/union_find_tree.yosupo.test.cpp
+  - examples/segment_tree.range_minimum_query.test.cpp
+  - examples/debug/include_relative.test.cpp
+  - examples/segment_tree.point_set_range_composite.test.cpp
 documentation_of: examples/macros.hpp
 layout: document
 redirect_from:

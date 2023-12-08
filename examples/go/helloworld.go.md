@@ -33,7 +33,7 @@ data:
   path: examples/go/helloworld.go
   requiredBy:
   - examples/go/helloworld/helloworld.go
-  timestamp: '2023-12-08 11:08:52+09:00'
+  timestamp: '2023-12-08 11:18:27+09:00'
   verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
   - examples/go/helloworld.test.go

@@ -33,7 +33,7 @@ data:
   requiredBy:
   - examples/nim/union_find_tree.nim
   - examples/nim/union_find_tree.nim
-  timestamp: '2023-12-08 11:08:52+09:00'
+  timestamp: '2023-12-08 11:18:27+09:00'
   verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
   - examples/nim/union_find_tree_aoj_test.nim

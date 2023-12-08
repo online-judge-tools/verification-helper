@@ -79,7 +79,7 @@ data:
   isVerificationFile: true
   path: examples/segment_tree.point_set_range_composite.test.cpp
   requiredBy: []
-  timestamp: '2023-12-08 11:08:52+09:00'
+  timestamp: '2023-12-08 11:18:27+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: examples/segment_tree.point_set_range_composite.test.cpp

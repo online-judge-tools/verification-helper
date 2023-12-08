@@ -33,7 +33,7 @@ data:
   isVerificationFile: true
   path: examples/rust/verification/src/bin/library-checker-aplusb.rs
   requiredBy: []
-  timestamp: '2023-12-08 10:48:14+09:00'
+  timestamp: '2023-12-08 11:08:52+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: examples/rust/verification/src/bin/library-checker-aplusb.rs

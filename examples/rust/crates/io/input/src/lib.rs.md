@@ -36,7 +36,7 @@ data:
   path: examples/rust/crates/io/input/src/lib.rs
   requiredBy:
   - examples/rust/src/lib.rs
-  timestamp: '2023-12-08 10:48:14+09:00'
+  timestamp: '2023-12-08 11:08:52+09:00'
   verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
   - examples/rust/verification/src/bin/library-checker-aplusb.rs

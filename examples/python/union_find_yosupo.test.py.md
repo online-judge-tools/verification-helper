@@ -29,7 +29,7 @@ data:
   isVerificationFile: true
   path: examples/python/union_find_yosupo.test.py
   requiredBy: []
-  timestamp: '2023-12-08 10:48:14+09:00'
+  timestamp: '2023-12-08 11:08:52+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: examples/python/union_find_yosupo.test.py

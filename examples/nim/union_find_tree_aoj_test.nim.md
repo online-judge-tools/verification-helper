@@ -42,14 +42,14 @@ data:
   dependsOn:
   - examples/nim/union_find_tree.nim
   - examples/nim/union_find_tree.nim
+  - examples/nim/headers.nim
+  - examples/nim/headers.nim
   - examples/nim/hoge.nim
-  - examples/nim/headers.nim
-  - examples/nim/headers.nim
   - examples/nim/hoge.nim
   isVerificationFile: true
   path: examples/nim/union_find_tree_aoj_test.nim
   requiredBy: []
-  timestamp: '2023-12-07 23:59:11+09:00'
+  timestamp: '2023-12-08 10:48:14+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: examples/nim/union_find_tree_aoj_test.nim

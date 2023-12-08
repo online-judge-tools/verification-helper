@@ -29,7 +29,7 @@ data:
   isVerificationFile: true
   path: examples/awk/circle.test.awk
   requiredBy: []
-  timestamp: '2023-12-07 23:59:11+09:00'
+  timestamp: '2023-12-08 10:48:14+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: examples/awk/circle.test.awk

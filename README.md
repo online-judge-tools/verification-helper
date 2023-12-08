@@ -1,6 +1,6 @@
 # online-judge-tools/verification-helper
 
-[![Actions Status](https://github.com/online-judge-tools/verification-helper/actions/workflows/verify.yml/badge.svg)](https://github.com/kmyk/online-judge-verify-helper/actions)
+[![Actions Status](https://github.com/online-judge-tools/verification-helper/actions/workflows/verify.yml/badge.svg?branch=master)](https://github.com/online-judge-tools/verification-helper/actions/workflows/verify.yml?query=branch%3Amaster)
 [![GitHub Pages](https://img.shields.io/static/v1?label=GitHub+Pages&message=+&color=brightgreen&logo=github)](https://online-judge-tools.github.io/verification-helper/)
 [![PyPI](https://img.shields.io/pypi/v/online-judge-verify-helper)](https://pypi.org/project/online-judge-verify-helper/)
 [![LICENSE](https://img.shields.io/pypi/l/online-judge-verify-helper.svg)](https://github.com/online-judge-tools/verification-helper/blob/master/LICENSE)

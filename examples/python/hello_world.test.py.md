@@ -25,7 +25,7 @@ data:
   isVerificationFile: true
   path: examples/python/hello_world.test.py
   requiredBy: []
-  timestamp: '2023-12-08 11:18:27+09:00'
+  timestamp: '2023-12-08 11:36:08+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: examples/python/hello_world.test.py

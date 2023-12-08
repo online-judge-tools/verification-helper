@@ -41,7 +41,7 @@ data:
   requiredBy:
   - examples/rust/crates/io/input/src/lib.rs
   - examples/rust/src/lib.rs
-  timestamp: '2023-12-08 11:18:27+09:00'
+  timestamp: '2023-12-08 11:36:08+09:00'
   verificationStatus: LIBRARY_NO_TESTS
   verifiedWith: []
 documentation_of: examples/rust/crates/io/scanner/src/lib.rs

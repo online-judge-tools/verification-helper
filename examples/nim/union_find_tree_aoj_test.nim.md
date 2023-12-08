@@ -41,15 +41,15 @@ data:
     \ com == 1:\n    echo if uft.is_same(x, y): 1 else: 0\n"
   dependsOn:
   - examples/nim/union_find_tree.nim
-  - examples/nim/hoge.nim
-  - examples/nim/headers.nim
-  - examples/nim/hoge.nim
   - examples/nim/headers.nim
   - examples/nim/union_find_tree.nim
+  - examples/nim/hoge.nim
+  - examples/nim/headers.nim
+  - examples/nim/hoge.nim
   isVerificationFile: true
   path: examples/nim/union_find_tree_aoj_test.nim
   requiredBy: []
-  timestamp: '2023-12-08 11:18:27+09:00'
+  timestamp: '2023-12-08 11:36:08+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: examples/nim/union_find_tree_aoj_test.nim

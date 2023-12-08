@@ -46,7 +46,7 @@ data:
   isVerificationFile: false
   path: examples/nim/union_find_tree.nim
   requiredBy: []
-  timestamp: '2023-12-08 11:18:27+09:00'
+  timestamp: '2023-12-08 11:36:08+09:00'
   verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
   - examples/nim/union_find_tree_aoj_test.nim

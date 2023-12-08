@@ -31,7 +31,7 @@ data:
   isVerificationFile: false
   path: examples/python/union_find.py
   requiredBy: []
-  timestamp: '2023-12-08 11:18:27+09:00'
+  timestamp: '2023-12-08 11:36:08+09:00'
   verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
   - examples/python/union_find_aoj.test.py

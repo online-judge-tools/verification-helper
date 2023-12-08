@@ -27,7 +27,8 @@ jobs:
 
     - name: Run tests
       run: |
+        pip install pytest
         unset GITHUB_ACTION
         oj-verify -h
-        python setup.py test
+        pytest
       shell: bash

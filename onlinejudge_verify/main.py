@@ -59,7 +59,7 @@ def get_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def subcommand_run(paths: List[pathlib.Path], *, timeout: float = 600, tle: float = 60, jobs: int = 1) -> onlinejudge_verify.verify.VerificationSummary:
+def subcommand_run(paths: List[pathlib.Path], *, timeout: float = math.inf, tle: float = 60, jobs: int = 1) -> onlinejudge_verify.verify.VerificationSummary:
     """
     :raises Exception: if test.sh fails
     """
@@ -70,11 +70,6 @@ def subcommand_run(paths: List[pathlib.Path], *, timeout: float = 600, tle: floa
         branch = os.environ['GITHUB_REF'][len('refs/heads/'):]
         logger.info('$ git checkout %s', branch)
         subprocess.check_call(['git', 'checkout', branch])
-
-    # NOTE: the GITHUB_TOKEN expires in 60 minutes (https://help.github.com/en/actions/automating-your-workflow-with-github-actions/authenticating-with-the-github_token#about-the-github_token-secret)
-    # use 10 minutes as timeout for safety; 理由はよく分かってないぽいけど以前 20 分でやって死んだことがあるらしいので
-    if 'GITHUB_ACTION' not in os.environ:
-        timeout = math.inf
 
     if not paths:
         paths = sorted(list(onlinejudge_verify.utils.iterate_verification_files()))

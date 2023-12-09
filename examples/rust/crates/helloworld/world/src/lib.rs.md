@@ -32,11 +32,11 @@ data:
   path: examples/rust/crates/helloworld/world/src/lib.rs
   requiredBy:
   - examples/rust/src/lib.rs
-  timestamp: '2023-12-08 11:36:08+09:00'
+  timestamp: '2023-12-09 20:36:27+09:00'
   verificationStatus: LIBRARY_ALL_AC
   verifiedWith:
-  - examples/rust/verification/src/bin/aizu-online-judge-itp1-1-a.rs
   - examples/rust/verification/src/bin/library-checker-aplusb.rs
+  - examples/rust/verification/src/bin/aizu-online-judge-itp1-1-a.rs
 documentation_of: examples/rust/crates/helloworld/world/src/lib.rs
 layout: document
 redirect_from:

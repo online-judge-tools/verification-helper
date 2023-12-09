@@ -29,14 +29,14 @@ data:
     \npackage main\n\nimport (\n\t\"example-go/helloworld\"\n\t\"fmt\"\n)\n\nfunc\
     \ main() {\n\tfmt.Printf(\"%s\\n\", helloworld.GetHelloWorld())\n}\n"
   dependsOn:
-  - examples/go/helloworld/helloworld.go
   - examples/go/helloworld.go
+  - examples/go/helloworld/helloworld.go
   isVerificationFile: true
   path: examples/go/helloworld.test.go
   requiredBy:
-  - examples/go/helloworld/helloworld.go
   - examples/go/helloworld.go
-  timestamp: '2023-12-08 11:36:08+09:00'
+  - examples/go/helloworld/helloworld.go
+  timestamp: '2023-12-09 20:36:27+09:00'
   verificationStatus: TEST_ACCEPTED
   verifiedWith: []
 documentation_of: examples/go/helloworld.test.go

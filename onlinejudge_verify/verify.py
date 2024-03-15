@@ -1,5 +1,6 @@
 # Python Version: 3.x
 import hashlib
+import json
 import math
 import os
 import pathlib
@@ -8,6 +9,8 @@ import time
 import traceback
 from logging import getLogger
 from typing import *
+
+import requests
 
 import onlinejudge
 import onlinejudge_verify.languages.list
@@ -47,6 +50,19 @@ def exec_command(command: List[str]):
             os.chdir(str(cwd))
 
 
+def get_fresh_dropbox_token() -> str:
+    data = {
+        'grant_type': 'refresh_token',
+        'refresh_token': os.environ['DROPBOX_REFRESH_TOKEN'],
+    }
+    response = requests.post('https://api.dropbox.com/oauth2/token', data=data, auth=(os.environ['DROPBOX_APP_KEY'], os.environ['DROPBOX_APP_SECRET']), timeout=30)
+    try:
+        data = response.json()
+        return data.get('access_token', '')
+    except json.JSONDecodeError:
+        return ''
+
+
 def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: int) -> Optional[bool]:
     logger.info('verify: %s', path)
 
@@ -81,6 +97,9 @@ def verify_file(path: pathlib.Path, *, compilers: List[str], tle: float, jobs: i
 
         if os.environ.get('DROPBOX_TOKEN'):
             command += ['--dropbox-token', os.environ['DROPBOX_TOKEN']]
+        # 短期間で失効するDROPBOX_TOKENを新規に取得するオプションを用意する
+        elif os.environ.get('DROPBOX_REFRESH_TOKEN') and os.environ.get('DROPBOX_APP_KEY') and os.environ.get('DROPBOX_APP_SECRET'):
+            command += ['--dropbox-token', get_fresh_dropbox_token()]
         if os.environ.get('YUKICODER_TOKEN'):
             command += ['--yukicoder-token', os.environ['YUKICODER_TOKEN']]
         try:

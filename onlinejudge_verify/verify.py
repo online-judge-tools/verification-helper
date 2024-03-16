@@ -4,6 +4,7 @@ import json
 import math
 import os
 import pathlib
+import re
 import subprocess
 import time
 import traceback
@@ -37,7 +38,10 @@ class VerificationSummary:
 
 def exec_command(command: List[str]):
     # NOTE: secrets like YUKICODER_TOKEN are masked
-    logger.info('$ %s', ' '.join(command))
+    # dropbox-tokenを新規に取得する場合は、そのトークンが表示されるのでそれもマスクする
+    dropbox_token_pattern = re.compile(r'(--dropbox-token)\s+([^\s]+)')
+    message = dropbox_token_pattern.sub(r'\1 ***', ' '.join(command))
+    logger.info('$ %s', message)
 
     cwd = pathlib.Path.cwd()
     try:

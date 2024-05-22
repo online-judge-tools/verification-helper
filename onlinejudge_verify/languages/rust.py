@@ -233,7 +233,7 @@ class RustLanguageEnvironment(LanguageEnvironment):
         metadata = _cargo_metadata(cwd=path.parent)
         target = _ensure_target(metadata, path)
         subprocess.run(
-            ['cargo', 'build', '--release', *_target_option(target)],
+            ['cargo', 'build', *_target_option(target)],
             cwd=path.parent,
             check=True,
         )
@@ -242,7 +242,7 @@ class RustLanguageEnvironment(LanguageEnvironment):
         path = basedir / path
         metadata = _cargo_metadata(cwd=path.parent)
         target = _ensure_target(metadata, path)
-        return [str(pathlib.Path(metadata['target_directory'], 'release', *([] if _is_bin(target) else ['examples']), target['name']))]
+        return [str(pathlib.Path(metadata['target_directory'], 'debug', *([] if _is_bin(target) else ['examples']), target['name']))]
 
 
 class RustLanguage(Language):

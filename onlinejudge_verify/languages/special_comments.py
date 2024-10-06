@@ -53,7 +53,7 @@ def list_doxygen_annotations(path: pathlib.Path) -> Dict[str, str]:
 
 @functools.lru_cache(maxsize=None)
 def list_embedded_urls(path: pathlib.Path) -> List[str]:
-    pattern = re.compile(r"""['"`]?https?://\S*""")  # use a broad pattern. There are no needs to make match strict.
+    pattern = re.compile(r"""['"`<\(]?https?://\S*""")  # use a broad pattern. There are no needs to make match strict.
     with open(path, 'rb') as fh:
         content = fh.read().decode()
     urls = []
@@ -69,6 +69,18 @@ def list_embedded_urls(path: pathlib.Path) -> List[str]:
                 else:
                     # Remove quotes and trailing superfluous chars around the URL
                     url = url[1:end_quote_pos]
+                break
+        # The URL may be written like `[atcoder](https://atcoder.jp/)` or `<https://atcoder.jp/>` in Markdown syntax.
+        # In this case, we need to remove brackets around the URL.
+        for (lbracket, rbracket) in (('<', '>'), ('(', ')')):
+            if url.startswith(lbracket):
+                end_bracket_pos = url.rfind(rbracket)
+                if end_bracket_pos == 0:
+                    # Remove opening bracket from the URL like `<https://atcoder.jp/`
+                    url = url[1:]
+                else:
+                    # Remove brackets and trailing superfluous chars around the URL
+                    url = url[1:end_bracket_pos]
                 break
         urls.append(url)
     return sorted(set(urls))

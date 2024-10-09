@@ -113,7 +113,7 @@ verification_file_suffix = ".test.sed"
 | [Library Checker](https://judge.yosupo.jp/) | |
 | [Aizu Online Judge](https://onlinejudge.u-aizu.ac.jp/home) | |
 | [HackerRank](https://www.hackerrank.com/) | |
-| [AtCoder](https://atcoder.jp) | 環境変数 `DROPBOX_TOKEN` の設定が必要です。token の値は `$ oj d --system https://atcoder.jp/contests/agc001/tasks/agc001_a` として表示されるヒントに従って取得してください。 |
+| [AtCoder](https://atcoder.jp) | 環境変数 `DROPBOX_TOKEN` の設定が必要です。token の値は `$ oj d --system https://atcoder.jp/contests/agc001/tasks/agc001_a` として表示されるヒントに従って取得してください。<br>(2024.03.16追記)<br>現在ヘルプ通りにはトークンを取得できなくなっています。まず<https://www.dropbox.com/developers/>からAppを作成し、Permissions で `files.metadata.read` と `sharing.read` にチェックをつけます。ここで、generate access token で一時的なトークンを作成し、環境変数`DROPBOX_TOKEN`に設定することができますが、これは短期間で失効してしまうので、再設定が面倒な方は<https://dropbox.tech/developers/migrating-app-permissions-and-access-tokens#updating-access-token-type>を参考に、Refresh Tokenを取得して環境変数`DROPBOX_REFRESH_TOKEN`を、App作成時に出てきたApp KeyとApp Secretをそれぞれ環境変数`DROPBOX_APP_KEY`,`DROPBOX_APP_SECRET`として登録してください。これらを用いて毎回アクセストークンを自動で生成して適用するようになります。 |
 | [yukicoder](https://yukicoder.me) | 環境変数 `YUKICODER_TOKEN` の設定が必要です。[ヘルプ - yukicoder](https://yukicoder.me/help) の「ログインしてないと使えない機能をAPIとして使いたい」の節や [暗号化されたシークレットの作成と利用 - GitHub ヘルプ](https://help.github.com/ja/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets#creating-encrypted-secrets) 参考にして設定してください。 |
 
 これらの他サービスはテストケースを利用できる形で公開してくれていないため利用できません。

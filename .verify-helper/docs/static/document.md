@@ -10,6 +10,7 @@ Summary:
 |---|---|---|---|---|---|
 | C++ | `.cpp` `.hpp` | `.test.cpp` | `#define [KEY] [VALUE]` | :heavy_check_mark: / :heavy_check_mark: / :heavy_check_mark: | [segment_tree.range_sum_query.test.cpp](https://github.com/online-judge-tools/verification-helper/blob/master/examples/segment_tree.range_sum_query.test.cpp) |
 | C# script | `.csx` | `.test.csx` | `// verification-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :heavy_check_mark: | [segment_tree.range_sum_query.test.csx](https://github.com/online-judge-tools/verification-helper/blob/master/examples/csharpscript/segment_tree.range_sum_query.test.csx) |
+| C# | `.cs` | `.test.cs` | `// verification-helper: [KEY] [VALUE]` | :heavy_check_mark: / :heavy_check_mark: / :heavy_check_mark: | [segment_tree.range_sum_query.test.csx](https://github.com/online-judge-tools/verification-helper/blob/master/examples/csharpsx/Verifier/segment_tree.range_sum_query.test.csx) |
 | Nim | `.nim` | `_test.nim` | `# verification-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :heavy_check_mark: | [union_find_tree_yosupo_test.nim](https://github.com/online-judge-tools/verification-helper/blob/master/examples/nim/union_find_tree_yosupo_test.nim) |
 | Python 3 | `.py` | `.test.py` | `# verification-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :heavy_check_mark: | [union_find_yosupo.test.py](https://github.com/online-judge-tools/verification-helper/blob/master/examples/python/union_find_yosupo.test.py) |
 | Haskell | `.hs` | `.test.hs` | `-- verification-helper: [KEY] [VALUE]` | :heavy_check_mark: / :x: / :warning: | [HelloWorld.test.hs](https://github.com/online-judge-tools/verification-helper/blob/master/Examples2/Haskell/HelloWorld.test.hs) |
@@ -35,12 +36,32 @@ CXXFLAGS = ["-std=c++17", "-Wall", "-g", "-fsanitize=undefined", "-D_GLIBCXX_DEB
 -   If you use environments which [`ulimit`](https://linux.die.net/man/3/ulimit) doesn't work on, and if you want to set `CXXFLAGS` by yourself, please be careful about the stack size.
 -   The supported extensions are `.cpp`, `.hpp`, `.cc`, and `.h`. Please note that files with other extensions like `.c` `.h++` and files without extensions are not recognized.
 
-### Settings for C#
+### Settings for C# script
 
 There is no config now.
 .NET Core is used as the compiler.
 
--   Note that currently the `.cs` extension is not recognized ([#248](https://github.com/online-judge-tools/verification-helper/issues/248)).
+### Settings for C#
+
+`oj-verify` and `oj-bundle` work with [SourceExpander](https://github.com/kzrnm/SourceExpander).
+
+Requied settings
+- Install .NET 6 or newer SDK regardless of target framework of library.
+- Create Library project and Test project as different projects.
+- Add `SourceExpander.Embedder` reference to Library project.
+
+For the details refer to [examples/csharpsx](https://github.com/online-judge-tools/verification-helper/tree/master/examples/csharpsx).
+
+You can specify compilers and options with writing `.verify-helper/config.toml` as below.
+
+- static_embedding: `dotnet-source-expand` with `--static-embedding` option.
+- csproj_template: test file will be compiled with this csproj file.
+
+``` toml
+[[languages.csharp]]
+static_embedding = "// embed"
+csproj_template = ".verify-helper/csproj.template"
+```
 
 ### Settings for Nim
 

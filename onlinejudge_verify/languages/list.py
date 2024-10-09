@@ -4,6 +4,7 @@ from typing import *
 
 from onlinejudge_verify.config import get_config
 from onlinejudge_verify.languages.cplusplus import CPlusPlusLanguage
+from onlinejudge_verify.languages.csharp import CSharpLanguage
 from onlinejudge_verify.languages.csharpscript import CSharpScriptLanguage
 from onlinejudge_verify.languages.go import GoLanguage
 from onlinejudge_verify.languages.haskell import HaskellLanguage
@@ -29,6 +30,7 @@ def _get_dict() -> Dict[str, Language]:
         _dict['.cc'] = _dict['.cpp']
         _dict['.h'] = _dict['.cpp']
         _dict['.csx'] = CSharpScriptLanguage()
+        _dict['.cs'] = CSharpLanguage()
         _dict['.nim'] = NimLanguage()
         _dict['.py'] = PythonLanguage()
         _dict['.hs'] = HaskellLanguage()
